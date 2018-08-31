@@ -47,6 +47,9 @@ class Package:
                 continue
             release = Release.from_response(self.name, version, info)
             releases.add(release)
+        releases = list(releases)
+        releases.sort(key=lambda r: r.time, reverse=True)
+        releases = tuple(releases)
 
         cache.parent.mkdir(parents=True, exist_ok=True)
         with cache.open('wb') as stream:

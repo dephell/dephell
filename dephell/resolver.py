@@ -1,11 +1,12 @@
 from logging import getLogger
 from collections import OrderedDict
-from itertools import product
+from itertools import product, islice
 
 from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
 
 from .choice import Choice
+from .config import config
 from .dependency import Dependency
 from .package import Package
 
@@ -51,13 +52,13 @@ class Resolver:
         choices = []
         for package in self.packages:
             combination = []
-            for release in package.releases:
+            for release in islice(package.releases, 0, config['releases_limit']):
                 choice = Choice(package=package, release=release)
                 combination.append(choice)
             choices.append(combination)
         combinations = list(product(*choices))
         combinations.sort(key=lambda choices: sum(choice.distance for choice in choices))
-        return combinations
+        return combinations[:config['choices_limit']]
 
     def get_deps(self, dep):
         release = dep.best_release
