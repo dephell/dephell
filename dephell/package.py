@@ -1,7 +1,10 @@
 import attr
 from cached_property import cached_property
+from pathlib import Path
 import requests
+import pickle
 
+from .config import config
 from .release import Release
 from .utils import check_spec
 
@@ -28,18 +31,28 @@ class Package:
             if check_spec(release.version, spec)
         )
 
-    @cached_property
+    @property
     def all_releases(self):
+        cache = Path(config['cache_dir']) / 'releases' / self.name
+        if cache.exists():
+            with cache.open('rb') as stream:
+                return pickle.load(stream)
+
         url = "https://pypi.org/pypi/{}/json".format(self.name)
         response = requests.get(url)
-        releases = []
+        releases = set()
         for version, info in response.json()['releases'].items():
             # ignore version if no files for release
             if not info:
                 continue
             release = Release.from_response(self.name, version, info)
-            releases.append(release)
-        return set(releases)
+            releases.add(release)
+
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        with cache.open('wb') as stream:
+            pickle.dump(releases, stream)
+
+        return releases
 
     @cached_property
     def releases(self):
