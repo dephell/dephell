@@ -47,8 +47,7 @@ class Resolver:
 
     # other
 
-    @property
-    def combinations(self):
+    def get_combinations(self):
         choices = []
         for package in self.packages:
             combination = []
@@ -56,9 +55,11 @@ class Resolver:
                 choice = Choice(package=package, release=release)
                 combination.append(choice)
             choices.append(combination)
-        combinations = list(product(*choices))
-        combinations.sort(key=lambda choices: sum(choice.distance for choice in choices))
-        return combinations[:config['choices_limit']]
+        combinations = product(*choices)
+        if config['sort']:
+            combinations = list(combinations)
+            combinations.sort(key=lambda choices: sum(choice.distance for choice in choices))
+        return islice(combinations, 0, config['choices_limit'])
 
     def get_deps(self, dep):
         release = dep.best_release
@@ -89,7 +90,7 @@ class Resolver:
             )
 
             if subdep.package.name == dep.package.name:
-                raise RecursionError('package depends on itself')
+                logger.warning('{} depends on itself'.format(dep.package.name))
 
             # save this deps to list
             subdeps = self.get_deps(subdep)
@@ -142,7 +143,8 @@ class Resolver:
         return OrderedDict(sorted(list(graph.items())))
 
     def resolve(self):
-        for choices in self.combinations:
+        for choices in self.get_combinations():
+            logger.warning("Try combination...")
             graph = self.build_graph(choices)
             if graph is None:
                 continue
