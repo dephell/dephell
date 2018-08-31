@@ -32,3 +32,10 @@ def test_resolution():
     assert resolver.graph['numpy'].best_release.version == '1.15.1'
     assert resolver.graph['scipy'].best_release.version == '0.19.1'
     assert resolver.graph['pandas'].best_release.version > '0.20.3'
+
+
+def test_unlocked():
+    resolver = Resolver.from_requirements('./tests/requirements/attrs-requests.txt')
+    resolver.resolve()
+    assert 'attrs' in resolver.graph
+    assert 'requests' in resolver.graph

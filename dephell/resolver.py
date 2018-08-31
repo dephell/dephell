@@ -17,6 +17,9 @@ class Resolver:
     def __init__(self, packages):
         self.packages = packages
         self._packages_cache = {package.name: package for package in packages}
+        self._deps_log = set()
+
+    # constructors
 
     @classmethod
     def from_requirements(cls, path):
@@ -24,6 +27,24 @@ class Resolver:
         for req in parse_requirements(str(path), session=PipSession()):
             packages.append(Package.from_requirement(req.req))
         return cls(packages)
+
+    # dumpers
+
+    def to_requirements(self, path=None):
+        lines = []
+        for dep in self.graph.values():
+            line = '{name}=={version}'.format(
+                name=dep.best_release.name,
+                version=dep.best_release.version,
+            )
+            lines.append(line)
+        content = '\n'.join(lines) + '\n'
+        if path is None:
+            return content
+        with open(str(path), 'w') as stream:
+            stream.write(content)
+
+    # other
 
     @property
     def combinations(self):
@@ -41,6 +62,13 @@ class Resolver:
     def get_deps(self, dep):
         release = dep.best_release
         all_deps = [(dep.package.name, dep)]
+
+        # avoid dependencies recursion
+        digest = ''.join([dep.package.name, dep.package.version_spec])
+        if digest in self._deps_log:
+            return dict(all_deps)
+        self._deps_log.add(digest)
+
         for subdep in release.dependencies:
             # get package
             package = self._packages_cache.get(subdep.name)
@@ -58,6 +86,9 @@ class Resolver:
                 version_spec=subdep.specifier,
                 python_spec='',
             )
+
+            if subdep.package.name == dep.package.name:
+                raise RecursionError('package depends on itself')
 
             # save this deps to list
             subdeps = self.get_deps(subdep)
