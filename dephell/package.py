@@ -12,6 +12,13 @@ class Package:
     version_spec = attr.ib()
     python_spec = attr.ib()
 
+    @classmethod
+    def from_requirement(cls, req):
+        return cls(
+            name=req.name,
+            version_spec=req.specifier,
+        )
+
     def filter_releases(self, releases, spec=None):
         if spec is None:
             spec = self.version_spec
