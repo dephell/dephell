@@ -42,6 +42,8 @@ class Release:
             url = 'https://pypi.org/pypi/{}/{}/json'.format(self.name, self.version)
             response = requests.get(url)
             deps = response.json()['info']['requires_dist'] or []
+            # TODO: select right extras
+            deps = [dep for dep in deps if 'extra ==' not in dep]
 
             cache.parent.mkdir(parents=True, exist_ok=True)
             with cache.open('w') as stream:

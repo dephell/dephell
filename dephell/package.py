@@ -40,14 +40,13 @@ class Package:
 
         url = "https://pypi.org/pypi/{}/json".format(self.name)
         response = requests.get(url)
-        releases = set()
+        releases = []
         for version, info in response.json()['releases'].items():
             # ignore version if no files for release
             if not info:
                 continue
             release = Release.from_response(self.name, version, info)
-            releases.add(release)
-        releases = list(releases)
+            releases.append(release)
         releases.sort(key=lambda r: r.time, reverse=True)
         releases = tuple(releases)
 
