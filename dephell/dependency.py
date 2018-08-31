@@ -5,8 +5,8 @@ from cached_property import cached_property
 @attr.s()
 class Dependency:
     package = attr.ib()
-    version_spec = attr.ib()
-    python_spec = attr.ib()
+    version_spec = attr.ib(converter=str)
+    python_spec = attr.ib(converter=str)
 
     @classmethod
     def from_package(cls, package, release=None):
@@ -30,12 +30,12 @@ class Dependency:
         return max(self.package.releases, key=lambda release: release.time)
 
     def __and__(self, other):
-        if other.package != self.package:
-            raise NotImplementedError
+        if other.package.name != self.package.name:
+            raise ValueError('different packages union')
         new = self.__class__(
             package=self.package,
-            version_spec=','.join(self.version_spec, other.version_spec),
-            python_spec=','.join(self.python_spec, other.python_spec),
+            version_spec=','.join([self.version_spec, other.version_spec]),
+            python_spec=','.join([self.python_spec, other.python_spec]),
         )
         new.releases = self.releases & other.releases
         return new

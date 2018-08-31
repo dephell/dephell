@@ -9,8 +9,8 @@ from .utils import check_spec
 @attr.s()
 class Package:
     name = attr.ib()
-    version_spec = attr.ib()
-    python_spec = attr.ib()
+    version_spec = attr.ib(converter=str)
+    python_spec = attr.ib(converter=str)
 
     @classmethod
     def from_requirement(cls, req):
