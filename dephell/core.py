@@ -12,7 +12,7 @@ from .package import Package
 class Resolver:
     def __init__(self, packages):
         self.packages = packages
-        self._packages_cache = packages.copy()
+        self._packages_cache = {package.name: package for package in packages}
 
     @classmethod
     def from_requirements(cls, path):
@@ -51,7 +51,7 @@ class Resolver:
             # get dep
             subdep = Dependency(
                 package=package,
-                version_spec=dep.specifier,
+                version_spec=subdep.specifier,
                 python_spec='',
             )
 
@@ -67,7 +67,7 @@ class Resolver:
         graph = dict()
         # get first-level dependencies
         for choice in choices:
-            dep = Dependency(
+            dep = Dependency.from_package(
                 package=choice.package,
                 release=choice.release,
             )

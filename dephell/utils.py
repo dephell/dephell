@@ -8,7 +8,7 @@ def check_spec(version: str, spec: str):
     """
     if not spec:
         return True
-    spec = SpecifierSet(spec)
+    spec = SpecifierSet(str(spec))
     version = parse(version)
 
     # check semantic version

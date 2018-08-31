@@ -34,6 +34,9 @@ class Package:
         response = requests.get(url)
         releases = []
         for version, info in response.json()['releases'].items():
+            # ignore version if no files for release
+            if not info:
+                continue
             release = Release.from_response(self.name, version, info)
             releases.append(release)
         return set(releases)

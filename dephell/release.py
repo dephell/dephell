@@ -28,7 +28,7 @@ class Release:
     @cached_property
     def dependencies(self):
         url = 'https://pypi.org/pypi/{}/{}/json'.format(self.name, self.version)
-        response = requests(url).get()
+        response = requests.get(url)
         deps = response.json()['info']['requires_dist']
         return [Requirement(dep) for dep in deps]
 
