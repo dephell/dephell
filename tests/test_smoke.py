@@ -1,6 +1,6 @@
 import pytest
 
-from dephell.core import Resolver
+from dephell.resolver import Resolver
 
 
 def test_one():
