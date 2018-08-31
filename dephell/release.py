@@ -30,6 +30,8 @@ class Release:
         url = 'https://pypi.org/pypi/{}/{}/json'.format(self.name, self.version)
         response = requests.get(url)
         deps = response.json()['info']['requires_dist']
+        if not deps:
+            return []
         return [Requirement(dep) for dep in deps]
 
     def __hash__(self):

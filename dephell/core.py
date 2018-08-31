@@ -1,3 +1,4 @@
+from logging import getLogger
 from collections import OrderedDict
 from itertools import product
 
@@ -7,6 +8,9 @@ from pip._internal.req import parse_requirements
 from .choice import Choice
 from .dependency import Dependency
 from .package import Package
+
+
+logger = getLogger(__name__)
 
 
 class Resolver:
@@ -36,7 +40,7 @@ class Resolver:
 
     def get_deps(self, dep):
         release = dep.best_release
-        deps = {dep.package.name: dep}
+        all_deps = [(dep.package.name, dep)]
         for subdep in release.dependencies:
             # get package
             package = self._packages_cache.get(subdep.name)
@@ -55,13 +59,24 @@ class Resolver:
                 python_spec='',
             )
 
+            # save this deps to list
+            subdeps = self.get_deps(subdep)
+            if not subdeps:
+                return
+            all_deps.extend(list(subdeps.items()))
+
+        # collect all deps to one mapping
+        deps = {}
+        for name, subdep in all_deps:
+            if name not in deps:
+                deps[name] = subdep
+                continue
             # try merge this dep with other deps
-            if package.name in deps:
-                deps[package.name] &= subdep
-                if not deps[package.name].releases:
-                    return
-            else:
-                deps[package.name] = subdep
+            deps[name] &= subdep
+            if not deps[name].releases:
+                logger.warning('no compat releases for {}'.format(subdep))
+                return
+        return deps
 
     def build_graph(self, choices):
         graph = dict()
@@ -74,6 +89,7 @@ class Resolver:
             deps = self.get_deps(dep)
             # if cannot resolve conflicts
             if deps is None:
+                logger.warning('no resolved deps for {}'.format(dep))
                 return
 
             # add deps to graph
@@ -84,6 +100,7 @@ class Resolver:
                 graph[name] &= dep
                 # if cannot resolve conflicts
                 if not graph[name].releases:
+                    logger.warning('cannot resolve {}'.format(dep))
                     return
 
         return graph
