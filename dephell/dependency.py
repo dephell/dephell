@@ -1,6 +1,11 @@
 import attr
 from cached_property import cached_property
 
+from .config import config
+
+
+alg = min if config['minimal'] else max
+
 
 @attr.s()
 class Dependency:
@@ -27,7 +32,7 @@ class Dependency:
     def best_release(self):
         """Latest release from allowed in spec
         """
-        return max(self.package.releases, key=lambda release: release.time)
+        return alg(self.package.releases, key=lambda release: release.time)
 
     def __and__(self, other):
         if other.package.name != self.package.name:

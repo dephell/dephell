@@ -47,7 +47,7 @@ class Package:
                 continue
             release = Release.from_response(self.name, version, info)
             releases.append(release)
-        releases.sort(key=lambda r: r.time, reverse=True)
+        releases.sort(key=lambda r: r.time, reverse=not config['minimal'])
         releases = tuple(releases)
 
         cache.parent.mkdir(parents=True, exist_ok=True)
