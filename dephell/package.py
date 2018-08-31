@@ -17,6 +17,7 @@ class Package:
         return cls(
             name=req.name,
             version_spec=req.specifier,
+            python_spec='',
         )
 
     def filter_releases(self, releases, spec=None):

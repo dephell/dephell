@@ -1,3 +1,4 @@
 attrs
+cached_property
 packaging
 requests
