@@ -1,4 +1,4 @@
-# DepHell
+# ![DepHell](./assets/logo.png)
 
 Dependency resolution for Python.
 
