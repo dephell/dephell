@@ -46,3 +46,6 @@ class Dependency:
         )
         new.releases = self.releases & other.releases
         return new
+
+    def __str__(self):
+        return '{}{}'.format(self.package.name, self.version_spec)

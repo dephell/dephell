@@ -39,3 +39,9 @@ def test_unlocked():
     resolver.resolve()
     assert 'attrs' in resolver.graph
     assert 'requests' in resolver.graph
+
+
+def test_subpackages():
+    resolver = Resolver.from_requirements('./tests/requirements/oslo.txt')
+    resolver.resolve()
+    assert 'oslo.utils' in resolver.graph
