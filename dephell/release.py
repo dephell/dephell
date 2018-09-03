@@ -1,11 +1,14 @@
+# built-in
 from datetime import datetime
 from pathlib import Path
 
+# external
 import attr
+import requests
 from cached_property import cached_property
 from packaging.requirements import Requirement
-import requests
 
+# app
 from .config import config
 
 

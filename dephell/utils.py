@@ -1,5 +1,6 @@
+# external
+from packaging.specifiers import LegacySpecifier, SpecifierSet
 from packaging.version import LegacyVersion, parse
-from packaging.specifiers import SpecifierSet, LegacySpecifier
 
 
 def check_spec(version: str, spec: str):

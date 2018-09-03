@@ -1,10 +1,13 @@
-from logging import getLogger
+# built-in
 from collections import OrderedDict
-from itertools import product, islice
+from itertools import islice, product
+from logging import getLogger
 
+# external
 from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
 
+# app
 from .choice import Choice
 from .config import config
 from .dependency import Dependency

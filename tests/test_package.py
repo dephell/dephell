@@ -1,5 +1,8 @@
-from dephell.package import Package
+# external
 from packaging.requirements import Requirement
+
+# project
+from dephell.package import Package
 
 
 def test_from_requirement():

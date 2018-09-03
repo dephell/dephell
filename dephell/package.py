@@ -1,9 +1,13 @@
-import attr
-from cached_property import cached_property
-from pathlib import Path
-import requests
+# built-in
 import pickle
+from pathlib import Path
 
+# external
+import attr
+import requests
+from cached_property import cached_property
+
+# app
 from .config import config
 from .release import Release
 from .utils import check_spec
