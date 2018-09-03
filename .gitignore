@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 .dephell/
+*.egg-info/
+dist/
