@@ -1,16 +1,20 @@
 import attr
 from cached_property import cached_property
+from collections import namedtuple
 
 from .utils import check_spec
+
+
+Spec = namedtuple('Spec', ['version', 'spec'])
 
 
 @attr.s()
 class Dependency:
     repo = None
 
-    name = attr.ib(convert=lambda name: name.lower.replace('_', '-'))
+    name = attr.ib()
     # versions specify mapping of specs by source of constraint
-    # versions[name][version] = spec
+    # versions[name] = Spec(version, spec)
     versions = attr.ib()
 
     # constructors
@@ -19,15 +23,18 @@ class Dependency:
     def from_requirement(cls, source, req):
         return cls(
             name=req.name,
-            versions={source.name: {source.version: req.specifier}},
+            versions={source.normalized_name: Spec(source.version, str(req.specifier))},
         )
 
     # properties
 
     @cached_property
+    def normalized_name(self):
+        return self.name.lower.replace('_', '-')
+
+    @cached_property
     def spec(self):
-        specs = (spec for specs in self.versions.values() for spec in specs.values())
-        return ','.join(specs)
+        return ','.join(spec.spec for spec in self.versions.values())
 
     @cached_property
     def releases(self):
@@ -53,7 +60,18 @@ class Dependency:
             if name in self.__dict__:
                 del self.__dict__[name]
 
+    def apply(self, dep, spec):
+        self.unapply(dep.normalized_name)
+        self.versions[dep.normalized_name] = Spec(dep.version, str(spec))
+        self.reset()
+
+    def unapply(self, normalized_name):
+        if normalized_name not in self.versions:
+            return
+        del self.versions[normalized_name]
+        self.reset()
+
     # magic methods
 
     def __str__(self):
-        return '{}{}'.format(self.package.name, self.version_spec)
+        return '{}{}'.format(self.name, self.spec)
