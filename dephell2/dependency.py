@@ -5,7 +5,7 @@ from collections import namedtuple
 from .utils import check_spec
 
 
-Spec = namedtuple('Spec', ['version', 'spec'])
+Spec = namedtuple('Spec', ['parent_spec', 'this_spec'])
 
 
 @attr.s()
@@ -34,7 +34,7 @@ class Dependency:
 
     @cached_property
     def spec(self):
-        return ','.join(spec.spec for spec in self.versions.values())
+        return ','.join(spec.this_spec for spec in self.versions.values())
 
     @cached_property
     def releases(self):
@@ -61,13 +61,20 @@ class Dependency:
                 del self.__dict__[name]
 
     def apply(self, dep, spec):
-        self.unapply(dep.normalized_name)
-        self.versions[dep.normalized_name] = Spec(dep.version, str(spec))
+        if dep.normalized_name in self.versions:
+            # do not apply twice
+            other_spec, _ = self.versions[dep.normalized_name]
+            if dep.spec == other_spec:
+                return
+
+            # unapply old dep spec
+            self.unapply(dep.normalized_name)
+
+        # apply new spec
+        self.versions[dep.normalized_name] = Spec(dep.spec, str(spec))
         self.reset()
 
     def unapply(self, normalized_name):
-        if normalized_name not in self.versions:
-            return
         del self.versions[normalized_name]
         self.reset()
 
