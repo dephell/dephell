@@ -47,7 +47,7 @@ class Dependency:
     def best_release(self):
         """Latest release from allowed in spec
         """
-        return max(self.package.releases, key=lambda release: release.time)
+        return max(self.releases, key=lambda release: release.time)
 
     @property
     def compat(self):
