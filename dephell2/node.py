@@ -9,7 +9,9 @@ from cached_property import cached_property
 class Node:
     release = attr.id()
     dependency = attr.ib(repr=False)
-    layer = attr.ib()
+
+    layer = attr.ib()  # int, >0, layer number
+    applied = attr.ib(default=False)  # True if node's deps applied to graph
 
     @classmethod
     def from_dependency(cls, dependency):

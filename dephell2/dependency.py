@@ -60,7 +60,9 @@ class Dependency:
             if name in self.__dict__:
                 del self.__dict__[name]
 
-    def apply(self, dep, spec):
+    def apply(self, dep, spec=None):
+        if spec is None:
+            spec = dep.spec
         if dep.normalized_name in self.versions:
             # do not apply twice
             other_spec, _ = self.versions[dep.normalized_name]
