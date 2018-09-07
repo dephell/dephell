@@ -15,16 +15,16 @@ class WareHouseRepo:
         if data is not None:
             return data
 
-        url = "https://pypi.org/pypi/{}/json".format(name)
+        url = "{}{}/json".format(self.url, name)
         response = requests.get(url)
         releases = []
         for version, info in response.json()['releases'].items():
             # ignore version if no files for release
             if not info:
                 continue
-            release = Release.from_response(self.name, version, info)
+            release = Release.from_response(name, version, info)
             releases.append(release)
-        releases.sort(key=lambda r: r.time, reverse=True)
+        releases.sort(key=lambda release: release.time, reverse=True)
         releases = tuple(releases)
 
         cache.dump(releases)
@@ -34,7 +34,7 @@ class WareHouseRepo:
         cache = TextCache('deps', self.name, self.version)
         deps = cache.load()
         if deps is None:
-            url = 'https://pypi.org/pypi/{}/{}/json'.format(self.name, self.version)
+            url = '{}{}/{}/json'.format(self.url, name, version)
             response = requests.get(url)
             deps = response.json()['info']['requires_dist'] or []
             # TODO: select right extras

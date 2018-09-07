@@ -1,4 +1,7 @@
 from collections import OrderedDict
+from operator import attrgetter
+from itertools import count
+
 from .dependency import Dependency
 from .release import Release
 from .repositories import WareHouseRepo
@@ -13,8 +16,8 @@ class Resolver:
     def __init__(self, deps):
         self.graph = OrderedDict(('root', RootDependency(deps)))
 
-    def apply(self, dep):
-        """Apply deps of passed dep to graph
+    def apply(self, node):
+        """Apply deps of passed node to graph
         """
         ...
 
@@ -45,14 +48,19 @@ class Resolver:
     def get_layers(self):
         """Iterate by graph layers
         """
-        ...
+        last_layer = 0
+        for layer in count(start=1):
+            child = [node for node in self.graph if node.layer == last_layer]
+            if not child:
+                return
+            yield child
 
     def resolve(self):
         while True:
             for layer in self.get_layers():
-                for dep in layer:
+                for node in layer:
                     # apply dep to it's child deps
-                    conflict = self.apply(dep)
+                    conflict = self.apply(node)
                     if conflict is None:
                         continue
 

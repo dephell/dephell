@@ -14,7 +14,7 @@ class RootRelease:
         return 'root'
 
 
-class RootDependency:
+class RootDependency(Dependency):
     repo = None
     name = 'root'
     versions = None

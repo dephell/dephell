@@ -23,7 +23,7 @@ class Dependency:
     def from_requirement(cls, source, req):
         return cls(
             name=req.name,
-            versions={source.normalized_name: Spec(source.version, str(req.specifier))},
+            versions={source.normalized_name: Spec(source.spec, str(req.specifier))},
         )
 
     # properties
