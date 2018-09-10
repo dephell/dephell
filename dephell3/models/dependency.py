@@ -60,15 +60,22 @@ class Dependency:
                 return group
 
     @property
+    def locked(self):
+        return 'group' in self.__dict__
+
+    @property
     def compat(self):
         # if group has already choosed
-        if 'group' in self.__dict__:
+        if self.locked:
             return not self.group.empty
         # if group hasn't choosed
         for group in self.groups:
             return bool(self.releases)
 
     # methods
+
+    def unlock(self):
+        del self.__dict__['group']
 
     def apply(self, dep, spec=None):
         ...
