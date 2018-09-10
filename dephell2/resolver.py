@@ -17,6 +17,7 @@ class Resolver:
         self.graph = OrderedDict((
             'root', Node.from_dependency(RootDependency(deps)),
         ))
+        self.snapshots = []
 
     def apply(self, node):
         """Apply deps of passed node to graph
