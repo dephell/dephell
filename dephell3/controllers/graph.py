@@ -6,7 +6,11 @@ logger = getLogger(__name__)
 
 class Graph:
     def __init__(self, root):
-        self.mapping = {root.name: root}
+        self.root = root
+        self.reset()
+
+    def reset(self):
+        self.mapping = {self.root.name: self.root}
         self.conflict = None
 
     def get_leafs(self):
@@ -21,16 +25,20 @@ class Graph:
             layers -= 1
 
         result = dict()
-        for subdep in dep.dependencies:
-            if graph and subdep.name not in self.mapping:
+        for children in dep.dependencies:
+            if graph and children.normalized_name not in self.mapping:
                 continue
-            if subdep.name in result:
-                logger.warning('Recursive dependency: {}'.format(subdep))
+            if children.normalized_name in result:
+                logger.warning('Recursive dependency: {}'.format(children))
             else:
-                result[subdep.name] = subdep
+                result[children.normalized_name] = children
             if layers != 0:
-                result.update(self.get_child(subdep, layers=layers))
+                result.update(self.get_child(children, layers=layers))
         return result
 
     def get_parents(self, dep, *, layers=None) -> dict:
-        ...
+        parents = dict()
+        for parent in self.mapping.values():
+            if dep.normalized_name in self.get_child(parent, layers=layers):
+                parents[dep.normalized_name] = dep
+        return parents
