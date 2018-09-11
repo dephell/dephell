@@ -12,6 +12,7 @@ class Dependency:
 
     name = attr.ib()
     constraint = attr.ib(repr=False)
+    applied = attr.ib(default=False)
 
     # constructors
 
@@ -82,8 +83,11 @@ class Dependency:
     def unlock(self):
         del self.__dict__['group']
 
-    def apply(self, dep, spec=None):
-        ...
+    def merge(self, dep):
+        self.constraint.merge(dep.constraint)
+        filtrate = self.constraint.filter
+        for group in self.groups:
+            group.releases = filtrate(group.all_releases)
 
-    def unapply(self, normalized_name):
-        ...
+    def unapply(self, normalized_name: str):
+        self.constraint.unapply(normalized_name)

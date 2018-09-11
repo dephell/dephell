@@ -22,6 +22,10 @@ class Group:
     def name(self) -> str:
         return self.random.name
 
+    @cached_property
+    def normalized_name(self):
+        return self.name.lower.replace('_', '-')
+
     @property
     def empty(self) -> bool:
         return bool(self.releases)

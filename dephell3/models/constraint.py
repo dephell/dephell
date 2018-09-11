@@ -13,15 +13,15 @@ class Constraint:
         self._groups = {source.normalized_name: source.group.number}
 
     @staticmethod
-    def _make_spec(self, spec):
+    def _make_spec(self, spec) -> set:
         if not isinstance(spec, (list, tuple)):
             spec = str(spec).split(',')
-        result = []
+        result = set()
         for constr in spec:
             try:
-                result.append(Specifier(spec))
+                result.add(Specifier(spec))
             except InvalidSpecifier:
-                result.append(LegacySpecifier(spec))
+                result.add(LegacySpecifier(spec))
         return result
 
     @staticmethod
@@ -54,16 +54,29 @@ class Constraint:
             if self._groups[dep.normalized_name] == dep.group.number:
                 return
             # unapply old group of this package:
-            self.unapply(dep)
+            self.unapply(dep.normalized_name)
         # save params
         self._specs[dep.normalized_name] = self._make_spec(spec)
         self._groups[dep.normalized_name] = dep.group.number
 
-    def unapply(self, dep):
-        if dep.normalized_name not in self._specs:
+    def merge(self, constraint):
+        for name, group in constraint._groups.items():
+            # if group already applied
+            if self._groups.get(name, -1) == group:
+                continue
+            self._groups[name] = group
+
+            spec = constraint._specs[name]
+            if name in self._specs:
+                self._specs[name].add(spec)
+            else:
+                self._specs[name] = {spec}
+
+    def unapply(self, normalized_name: str) -> None:
+        if normalized_name not in self._specs:
             return
-        del self._specs[dep.normalized_name]
-        del self._groups[dep.normalized_name]
+        del self._specs[normalized_name]
+        del self._groups[normalized_name]
 
     def filter(self, releases):
         """Filter releases
@@ -78,5 +91,5 @@ class Constraint:
         return result
 
     def __str__(self):
-        specs = sorted(set(self._specs.values()))
+        specs = sorted(chain(*self._specs.values()))
         return ','.join(specs)
