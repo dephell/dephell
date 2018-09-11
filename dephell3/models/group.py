@@ -15,11 +15,15 @@ class Group:
         return max(self.releases, key=attrgetter('time'))
 
     @cached_property
-    def name(self):
-        return next(iter(self.all_releases)).name
+    def random(self):
+        return next(iter(self.all_releases))
+
+    @cached_property
+    def name(self) -> str:
+        return self.random.name
 
     @property
-    def empty(self):
+    def empty(self) -> bool:
         return bool(self.releases)
 
     @property

@@ -2,14 +2,14 @@ import requests
 from packaging.requirements import Requirement
 
 from ..cache import BinCache, TextCache
-from ..release import Release
+from ..model.release import Release
 
 
 class WareHouseRepo:
     def __init__(self, url='https://pypi.org/pypi/'):
         self.url = url
 
-    def get_releases(self, name):
+    def get_releases(self, name: str) -> tuple:
         cache = BinCache('releases', name)
         data = cache.load()
         if data is not None:
@@ -30,7 +30,7 @@ class WareHouseRepo:
         cache.dump(releases)
         return releases
 
-    def get_dependencies(self, name, version):
+    def get_dependencies(self, name: str, version: str) -> tuple:
         cache = TextCache('deps', self.name, self.version)
         deps = cache.load()
         if deps is None:
@@ -40,4 +40,4 @@ class WareHouseRepo:
             # TODO: select right extras
             deps = [dep for dep in deps if 'extra ==' not in dep]
             cache.dump(deps)
-        return [Requirement(dep) for dep in deps]
+        return tuple(Requirement(dep) for dep in deps)

@@ -59,6 +59,11 @@ class Dependency:
             if not group.empty:
                 return group
 
+    @cached_property
+    def dependencies(self) -> tuple:
+        constructor = self.__class__.from_requirement
+        return tuple(constructor(self, req) for req in self.group.dependencies)
+
     @property
     def locked(self):
         return 'group' in self.__dict__

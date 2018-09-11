@@ -26,7 +26,7 @@ class Release:
         )
 
     @cached_property
-    def dependencies(self):
+    def dependencies(self) -> tuple:
         return self.repo.get_dependencies(self.name, self.version)
 
     def __str__(self):
