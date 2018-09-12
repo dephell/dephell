@@ -2,11 +2,12 @@
 from packaging.requirements import Requirement
 
 # project
-from dephell.package import Package
+from dephell3.models import Dependency, RootDependency
 
 
 def test_from_requirement():
+    root = RootDependency([])
     req = Requirement('Django>=1.5,<=1.9')
-    p = Package.from_requirement(req)
+    p = Dependency.from_requirement(source=root, req=req)
     assert p.name == 'Django'
-    assert set(p.version_spec.split(',')) == {'>=1.5', '<=1.9'}
+    assert set(str(p.constraint).split(',')) == {'>=1.5', '<=1.9'}

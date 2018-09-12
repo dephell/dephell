@@ -13,15 +13,15 @@ class Constraint:
         self._groups = {source.normalized_name: source.group.number}
 
     @staticmethod
-    def _make_spec(self, spec) -> set:
+    def _make_spec(spec) -> set:
         if not isinstance(spec, (list, tuple)):
             spec = str(spec).split(',')
         result = set()
         for constr in spec:
             try:
-                result.add(Specifier(spec))
+                result.add(Specifier(constr))
             except InvalidSpecifier:
-                result.add(LegacySpecifier(spec))
+                result.add(LegacySpecifier(constr))
         return result
 
     @staticmethod
@@ -91,5 +91,6 @@ class Constraint:
         return result
 
     def __str__(self):
-        specs = sorted(chain(*self._specs.values()))
+        specs = map(str, chain(*self._specs.values()))
+        specs = sorted(specs)
         return ','.join(specs)
