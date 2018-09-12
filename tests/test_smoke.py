@@ -5,17 +5,19 @@ from dephell3.constructors import from_requirements
 
 def test_one():
     resolver = from_requirements('./tests/requirements/django.txt')
-    resolver.resolve()
+    resolved = resolver.resolve()
+    assert resolved is True
     assert 'django' in resolver.graph.mapping
 
 
-# def test_two_different():
-#     resolver = Resolver.from_requirements('./tests/requirements/django-deal.txt')
-#     resolver.resolve()
-#     assert 'Django' in resolver.graph
-#     assert 'deal' in resolver.graph
-#
-#
+def test_two_different():
+    resolver = from_requirements('./tests/requirements/django-deal.txt')
+    resolved = resolver.resolve()
+    assert resolved is True
+    assert 'django' in resolver.graph.mapping.keys()
+    assert 'deal' in resolver.graph.mapping.keys()
+
+
 # def test_unresolved():
 #     resolver = Resolver.from_requirements('./tests/requirements/django-django.txt')
 #     with pytest.raises(ImportError):

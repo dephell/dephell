@@ -18,6 +18,8 @@ class Constraint:
             spec = str(spec).split(',')
         result = set()
         for constr in spec:
+            if constr == '':
+                continue
             try:
                 result.add(Specifier(constr))
             except InvalidSpecifier:

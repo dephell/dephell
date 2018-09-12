@@ -27,8 +27,12 @@ class Group:
         return self.random.name
 
     @property
+    def dependencies(self) -> tuple:
+        return self.random.dependencies
+
+    @property
     def empty(self) -> bool:
-        return bool(self.releases)
+        return not bool(self.releases)
 
     @property
     def time(self):
