@@ -80,10 +80,10 @@ class Constraint:
         del self._specs[name]
         del self._groups[name]
 
-    def filter(self, releases):
+    def filter(self, releases) -> set:
         """Filter releases
         """
-        result = {}
+        result = set()
         for release in releases:
             for spec in chain(*self._specs.values()):
                 if not self._check(version=release.version, spec=spec):

@@ -1,5 +1,4 @@
 # project
-import pytest
 from dephell3.constructors import from_requirements
 
 
@@ -18,12 +17,12 @@ def test_two_different():
     assert 'deal' in resolver.graph.mapping.keys()
 
 
-# def test_unresolved():
-#     resolver = Resolver.from_requirements('./tests/requirements/django-django.txt')
-#     with pytest.raises(ImportError):
-#         resolver.resolve()
-#
-#
+def test_unresolved():
+    resolver = from_requirements('./tests/requirements/django-django.txt')
+    resolved = resolver.resolve()
+    assert resolved is False
+
+
 # def test_resolution():
 #     resolver = Resolver.from_requirements('./tests/requirements/scipy-pandas-numpy.txt')
 #     resolver.resolve()
