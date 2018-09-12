@@ -11,8 +11,8 @@ class RootRelease:
 
 class RootDependency:
     repo = None
-    name = 'ROOT'
-    normalized_name = 'root'
+    raw_name = 'ROOT'
+    name = 'root'
     applied = False
     locked = False
     compat = True
@@ -29,7 +29,7 @@ class RootDependency:
     def merge(self, dep):
         raise NotImplementedError
 
-    def unapply(self, normalized_name: str):
+    def unapply(self, name: str):
         raise NotImplementedError
 
     def __str__(self):

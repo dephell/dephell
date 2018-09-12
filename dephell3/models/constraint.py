@@ -9,8 +9,8 @@ class Constraint:
         source (Dependency)
         spec (str, LegacySpecifier, Specifier)
         """
-        self._specs = {source.normalized_name: self._make_spec(spec)}
-        self._groups = {source.normalized_name: source.group.number}
+        self._specs = {source.name: self._make_spec(spec)}
+        self._groups = {source.name: source.group.number}
 
     @staticmethod
     def _make_spec(spec) -> set:
@@ -49,15 +49,15 @@ class Constraint:
         return version in spec
 
     def apply(self, dep, spec):
-        if dep.normalized_name in self._groups:
+        if dep.name in self._groups:
             # don't apply same group twice
-            if self._groups[dep.normalized_name] == dep.group.number:
+            if self._groups[dep.name] == dep.group.number:
                 return
             # unapply old group of this package:
-            self.unapply(dep.normalized_name)
+            self.unapply(dep.name)
         # save params
-        self._specs[dep.normalized_name] = self._make_spec(spec)
-        self._groups[dep.normalized_name] = dep.group.number
+        self._specs[dep.name] = self._make_spec(spec)
+        self._groups[dep.name] = dep.group.number
 
     def merge(self, constraint):
         for name, group in constraint._groups.items():
@@ -72,11 +72,11 @@ class Constraint:
             else:
                 self._specs[name] = {spec}
 
-    def unapply(self, normalized_name: str) -> None:
-        if normalized_name not in self._specs:
+    def unapply(self, name: str) -> None:
+        if name not in self._specs:
             return
-        del self._specs[normalized_name]
-        del self._groups[normalized_name]
+        del self._specs[name]
+        del self._groups[name]
 
     def filter(self, releases):
         """Filter releases

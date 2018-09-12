@@ -10,10 +10,10 @@ class Resolver:
         Returns conflicting (incompatible) dependency
         """
         for new_dep in parent.dependencies:
-            other_dep = self.graph.mapping.get(new_dep.normalized_name)
+            other_dep = self.graph.mapping.get(new_dep.name)
             if other_dep is None:
                 # add new dep to graph
-                self.graph.mapping.get[new_dep.normalized_name] = new_dep
+                self.graph.mapping.get[new_dep.name] = new_dep
                 other_dep = new_dep
             else:
                 # merge deps
@@ -28,7 +28,7 @@ class Resolver:
             return
         for child in dep.dependencies:
             # unapply current dependency for child
-            child.unapply(dep.normalized_name)
+            child.unapply(dep.name)
             # unapply child because he is modified
             self.unapply(child)
         dep.applied = False
@@ -59,7 +59,7 @@ class Resolver:
                 return False
             # apply mutation
             for group in groups:
-                dep = self.graph.mapping[group.normalized_name]
+                dep = self.graph.mapping[group.name]
                 if dep.group.number != group.number:
                     self.unapply(dep)
                     dep.group = group

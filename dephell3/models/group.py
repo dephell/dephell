@@ -19,12 +19,12 @@ class Group:
         return next(iter(self.all_releases))
 
     @cached_property
-    def name(self) -> str:
-        return self.random.name
+    def raw_name(self) -> str:
+        return self.random.raw_name
 
     @cached_property
-    def normalized_name(self):
-        return self.name.lower.replace('_', '-')
+    def name(self) -> str:
+        return self.random.name
 
     @property
     def empty(self) -> bool:

@@ -2,6 +2,7 @@ from operator import attrgetter
 from collections import defaultdict
 import attr
 from cached_property import cached_property
+from packaging.utils import canonicalize_name
 from .constraint import Constraint
 from .group import Group
 
@@ -10,7 +11,7 @@ from .group import Group
 class Dependency:
     repo = None
 
-    name = attr.ib()
+    raw_name = attr.ib()
     constraint = attr.ib(repr=False)
     applied = attr.ib(default=False, repr=False)
 
@@ -19,15 +20,15 @@ class Dependency:
     @classmethod
     def from_requirement(cls, source, req):
         return cls(
-            name=req.name,
+            raw_name=req.name,
             constraint=Constraint(source, req.specifier),
         )
 
     # properties
 
     @cached_property
-    def normalized_name(self) -> str:
-        return self.name.lower.replace('_', '-')
+    def name(self) -> str:
+        return canonicalize_name(self.raw_name)
 
     @cached_property
     def all_releases(self) -> tuple:
@@ -89,5 +90,5 @@ class Dependency:
         for group in self.groups:
             group.releases = filtrate(group.all_releases)
 
-    def unapply(self, normalized_name: str):
-        self.constraint.unapply(normalized_name)
+    def unapply(self, name: str):
+        self.constraint.unapply(name)

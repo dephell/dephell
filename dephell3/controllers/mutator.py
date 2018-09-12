@@ -26,7 +26,7 @@ class Mutator:
 
     @staticmethod
     def _make_snapshot(groups) -> tuple:
-        snapshot = sorted(group.normalized_name + str(group.number) for group in groups)
+        snapshot = sorted(group.name + str(group.number) for group in groups)
         return tuple(snapshot)
 
     def check(self, groups):
