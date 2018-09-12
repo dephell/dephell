@@ -12,7 +12,7 @@ class Dependency:
 
     name = attr.ib()
     constraint = attr.ib(repr=False)
-    applied = attr.ib(default=False)
+    applied = attr.ib(default=False, repr=False)
 
     # constructors
 
@@ -26,15 +26,15 @@ class Dependency:
     # properties
 
     @cached_property
-    def normalized_name(self):
+    def normalized_name(self) -> str:
         return self.name.lower.replace('_', '-')
 
     @cached_property
-    def all_releases(self):
+    def all_releases(self) -> tuple:
         return self.repo.get_releases(self.name)
 
     @cached_property
-    def groups(self):
+    def groups(self) -> tuple:
         # group releases by their dependencies
         groups = defaultdict(set)
         for release in self.all_releases:
@@ -47,10 +47,10 @@ class Dependency:
             reverse=True,
         )
         # convert every group to Group object
-        return [
+        return tuple(
             Group(releases=releases, number=number)
             for number, releases in enumerate(groups)
-        ]
+        )
 
     @cached_property
     def group(self):
