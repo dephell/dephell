@@ -31,17 +31,18 @@ def test_resolution():
     assert 'numpy' in resolver.graph.mapping
 
     assert str(resolver.graph.mapping['numpy'].group.best_release.version) == '1.15.1'
+    print(resolver.graph.mapping['scipy'].group.releases)
     assert str(resolver.graph.mapping['scipy'].group.best_release.version) == '0.19.1'
     assert str(resolver.graph.mapping['pandas'].group.best_release.version) > '0.20.3'
 
 
-# def test_unlocked():
-#     resolver = Resolver.from_requirements('./tests/requirements/attrs-requests.txt')
-#     resolver.resolve()
-#     assert 'attrs' in resolver.graph
-#     assert 'requests' in resolver.graph
-#
-#
+def test_unlocked():
+    resolver = Resolver.from_requirements('./tests/requirements/attrs-requests.txt')
+    resolver.resolve()
+    assert 'attrs' in resolver.graph
+    assert 'requests' in resolver.graph
+
+
 # def test_subpackages():
 #     resolver = Resolver.from_requirements('./tests/requirements/oslo.txt')
 #     resolver.resolve()

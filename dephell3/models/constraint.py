@@ -45,7 +45,7 @@ class Constraint:
         if not legacy_version:
             version = LegacyVersion(version)
         if not legacy_spec:
-            version = LegacySpecifier(version)
+            spec = LegacySpecifier(str(spec))
 
         # check legacy version
         return version in spec

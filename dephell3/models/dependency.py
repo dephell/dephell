@@ -19,10 +19,12 @@ class Dependency:
 
     @classmethod
     def from_requirement(cls, source, req):
-        return cls(
+        self = cls(
             raw_name=req.name,
             constraint=Constraint(source, req.specifier),
         )
+        self._actualize_groups()
+        return self
 
     # properties
 
@@ -88,9 +90,12 @@ class Dependency:
 
     def merge(self, dep):
         self.constraint.merge(dep.constraint)
-        filtrate = self.constraint.filter
-        for group in self.groups:
-            group.releases = filtrate(group.all_releases)
+        self._actualize_groups()
 
     def unapply(self, name: str):
         self.constraint.unapply(name)
+
+    def _actualize_groups(self):
+        filtrate = self.constraint.filter
+        for group in self.groups:
+            group.releases = filtrate(group.all_releases)
