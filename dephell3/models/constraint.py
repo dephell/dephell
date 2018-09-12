@@ -64,13 +64,13 @@ class Constraint:
     def merge(self, constraint):
         for name, group in constraint._groups.items():
             # if group already applied
-            if self._groups.get(name, -1) == group:
-                continue
+            # if self._groups.get(name, -1) == group:
+            #     continue
             self._groups[name] = group
 
             spec = constraint._specs[name]
             if name in self._specs:
-                self._specs[name].add(spec)
+                self._specs[name].update(spec)
             else:
                 self._specs[name] = {spec}
 
