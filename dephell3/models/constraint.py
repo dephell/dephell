@@ -72,7 +72,7 @@ class Constraint:
             if name in self._specs:
                 self._specs[name].update(spec)
             else:
-                self._specs[name] = {spec}
+                self._specs[name] = spec
 
     def unapply(self, name: str) -> None:
         if name not in self._specs:
