@@ -77,7 +77,9 @@ class Dependency:
             return not self.group.empty
         # if group hasn't choosed
         for group in self.groups:
-            return bool(self.releases)
+            if not group.empty:
+                return True
+        return False
 
     # methods
 

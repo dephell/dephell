@@ -5,7 +5,7 @@ from packaging.utils import canonicalize_name
 from packaging.version import parse
 
 
-@attr.s()
+@attr.s(hash=False)
 class Release:
     repo = None
 
@@ -36,3 +36,6 @@ class Release:
 
     def __str__(self):
         return '{}=={}'.format(self.raw_name, self.version)
+
+    def hash(self):
+        return hash((self.name, self.version))

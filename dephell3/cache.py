@@ -1,7 +1,8 @@
 import pickle
+import json
 from pathlib import Path
 
-cache_dir = './dephell'
+cache_dir = '.dephell'
 
 
 class BaseCache:
@@ -33,3 +34,15 @@ class TextCache(BaseCache):
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open('w') as stream:
             stream.write('\n'.join(data))
+
+
+class JSONCache(BaseCache):
+    def load(self):
+        if self.path.exists():
+            with self.path.open('r') as stream:
+                return json.load(stream)
+
+    def dump(self, data):
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self.path.open('w') as stream:
+            json.dump(data, stream)

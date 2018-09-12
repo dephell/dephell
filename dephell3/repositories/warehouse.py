@@ -1,8 +1,8 @@
 import requests
 from packaging.requirements import Requirement
 
-from ..cache import BinCache, TextCache
-from ..model.release import Release
+from ..cache import TextCache, JSONCache
+from ..models.release import Release
 
 
 class WareHouseRepo:
@@ -10,15 +10,18 @@ class WareHouseRepo:
         self.url = url
 
     def get_releases(self, name: str) -> tuple:
-        cache = BinCache('releases', name)
+        cache = JSONCache('releases', name)
         data = cache.load()
-        if data is not None:
-            return data
+        if data is None:
+            url = "{}{}/json".format(self.url, name)
+            response = requests.get(url)
+            data = response.json()['releases']
+            cache.dump(data)
+        elif isinstance(data, str) and data == '':
+            return ()
 
-        url = "{}{}/json".format(self.url, name)
-        response = requests.get(url)
         releases = []
-        for version, info in response.json()['releases'].items():
+        for version, info in data.items():
             # ignore version if no files for release
             if not info:
                 continue
@@ -27,11 +30,10 @@ class WareHouseRepo:
         releases.sort(key=lambda release: release.time, reverse=True)
         releases = tuple(releases)
 
-        cache.dump(releases)
         return releases
 
     def get_dependencies(self, name: str, version: str) -> tuple:
-        cache = TextCache('deps', self.name, self.version)
+        cache = TextCache('deps', name, str(version))
         deps = cache.load()
         if deps is None:
             url = '{}{}/{}/json'.format(self.url, name, version)
@@ -40,4 +42,6 @@ class WareHouseRepo:
             # TODO: select right extras
             deps = [dep for dep in deps if 'extra ==' not in dep]
             cache.dump(deps)
+        elif deps == ['']:
+            return ()
         return tuple(Requirement(dep) for dep in deps)

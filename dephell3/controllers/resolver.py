@@ -13,7 +13,7 @@ class Resolver:
             other_dep = self.graph.mapping.get(new_dep.name)
             if other_dep is None:
                 # add new dep to graph
-                self.graph.mapping.get[new_dep.name] = new_dep
+                self.graph.mapping[new_dep.name] = new_dep
                 other_dep = new_dep
             else:
                 # merge deps

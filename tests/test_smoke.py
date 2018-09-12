@@ -1,14 +1,14 @@
 # project
 import pytest
-# from dephell3.resolver import Resolver
+from dephell3.constructors import from_requirements
 
 
-# def test_one():
-#     resolver = Resolver.from_requirements('./tests/requirements/django.txt')
-#     resolver.resolve()
-#     assert 'Django' in resolver.graph
-#
-#
+def test_one():
+    resolver = from_requirements('./tests/requirements/django.txt')
+    resolver.resolve()
+    assert 'django' in resolver.graph.mapping
+
+
 # def test_two_different():
 #     resolver = Resolver.from_requirements('./tests/requirements/django-deal.txt')
 #     resolver.resolve()
