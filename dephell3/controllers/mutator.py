@@ -12,7 +12,7 @@ class Mutator:
         from parents of conflicting dependency.
         """
         parents = graph.get_parents(graph.conflict)
-        for groups in self.get_mutations(parents):
+        for groups in self.get_mutations(parents.values()):
             if self.check(groups):
                 self.remember(groups)
                 return groups

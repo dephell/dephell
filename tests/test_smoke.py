@@ -25,7 +25,8 @@ def test_unresolved():
 
 def test_resolution():
     resolver = from_requirements('./tests/requirements/scipy-pandas-numpy.txt')
-    resolver.resolve()
+    resolved = resolver.resolve()
+    assert resolved is True
     assert 'pandas' in resolver.graph.mapping
     assert 'scipy' in resolver.graph.mapping
     assert 'numpy' in resolver.graph.mapping
@@ -37,13 +38,16 @@ def test_resolution():
 
 
 def test_unlocked():
-    resolver = Resolver.from_requirements('./tests/requirements/attrs-requests.txt')
-    resolver.resolve()
-    assert 'attrs' in resolver.graph
-    assert 'requests' in resolver.graph
+    resolver = from_requirements('./tests/requirements/attrs-requests.txt')
+    resolved = resolver.resolve()
+    assert resolved is True
+    assert 'attrs' in resolver.graph.mapping
+    assert 'requests' in resolver.graph.mapping
 
 
-# def test_subpackages():
-#     resolver = Resolver.from_requirements('./tests/requirements/oslo.txt')
-#     resolver.resolve()
-#     assert 'oslo.utils' in resolver.graph
+def test_subpackages():
+    resolver = from_requirements('./tests/requirements/oslo.txt')
+    resolved = resolver.resolve()
+    assert resolved is True
+    assert 'oslo.utils' in resolver.graph.mapping
+    assert 'pdb' in resolver.graph.mapping
