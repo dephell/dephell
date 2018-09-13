@@ -5,6 +5,7 @@ from cached_property import cached_property
 from packaging.utils import canonicalize_name
 from .constraint import Constraint
 from .group import Group
+from copy import deepcopy
 
 
 @attr.s()
@@ -63,7 +64,7 @@ class Dependency:
             if not group.empty:
                 return group
 
-    @cached_property
+    @property
     def dependencies(self) -> tuple:
         constructor = self.__class__.from_requirement
         return tuple(constructor(self, req) for req in self.group.dependencies)
@@ -87,6 +88,8 @@ class Dependency:
 
     def unlock(self):
         del self.__dict__['group']
+        # if 'dependencies' in self.__dict__:
+        #     del self.__dict__['dependencies']
 
     def merge(self, dep):
         self.constraint.merge(dep.constraint)
@@ -94,6 +97,16 @@ class Dependency:
 
     def unapply(self, name: str):
         self.constraint.unapply(name)
+        self._actualize_groups()
+        if self.locked:
+            self.unlock()
+
+    def copy(self):
+        obj = deepcopy(self)
+        obj.constraint = self.constraint.copy()
+        if obj.locked:
+            obj.unlock()
+        return obj
 
     def _actualize_groups(self):
         filtrate = self.constraint.filter

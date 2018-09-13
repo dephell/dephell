@@ -38,5 +38,5 @@ class Graph:
         parents = dict()
         for parent in self.mapping.values():
             if dep.name in self.get_children(parent, layers=layers):
-                parents[dep.name] = dep
+                parents[parent.name] = parent
         return parents

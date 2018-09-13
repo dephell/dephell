@@ -1,6 +1,7 @@
 from itertools import chain
 from packaging.specifiers import LegacySpecifier, Specifier, InvalidSpecifier
 from packaging.version import LegacyVersion
+from copy import deepcopy
 
 
 class Constraint:
@@ -91,6 +92,9 @@ class Constraint:
             else:
                 result.add(release)
         return result
+
+    def copy(self):
+        return deepcopy(self)
 
     def __str__(self):
         specs = map(str, chain(*self._specs.values()))

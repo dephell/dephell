@@ -30,7 +30,7 @@ class Mutator:
         return tuple(snapshot)
 
     def check(self, groups):
-        return self._make_snapshot(groups) in self._snapshots
+        return self._make_snapshot(groups) not in self._snapshots
 
     def remember(self, groups):
         self._snapshots.add(self._make_snapshot(groups))

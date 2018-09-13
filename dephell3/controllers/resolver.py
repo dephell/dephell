@@ -1,3 +1,7 @@
+from logging import getLogger
+
+
+logger = getLogger('dephell.resolver')
 
 
 class Resolver:
@@ -13,8 +17,8 @@ class Resolver:
             other_dep = self.graph.mapping.get(new_dep.name)
             if other_dep is None:
                 # add new dep to graph
-                self.graph.mapping[new_dep.name] = new_dep
-                other_dep = new_dep
+                other_dep = new_dep.copy()
+                self.graph.mapping[new_dep.name] = other_dep
             else:
                 # merge deps
                 other_dep.merge(new_dep)
@@ -23,10 +27,13 @@ class Resolver:
                 return other_dep
         parent.applied = True
 
-    def unapply(self, dep):
-        if not dep.applied:
+    def unapply(self, dep, *, force=False):
+        if not force and not dep.applied:
             return
         for child in dep.dependencies:
+            child = self.graph.mapping.get(child.name)
+            if child is None:
+                continue
             # unapply current dependency for child
             child.unapply(dep.name)
             # unapply child because he is modified
@@ -44,8 +51,9 @@ class Resolver:
             for dep in deps:
                 conflict = self.apply(dep)
                 if conflict is not None:
+                    logger.debug('conflict {}{}'.format(conflict.name, conflict.constraint))
                     # Dep can be partialy applied. Clean it.
-                    self.unapply(dep)
+                    self.unapply(dep, force=True)
                     self.graph.conflict = conflict
                     break
             else:
@@ -57,9 +65,11 @@ class Resolver:
             # if cannot mutate
             if groups is None:
                 return False
+            self.graph.conflict = None
             # apply mutation
             for group in groups:
                 dep = self.graph.mapping[group.name]
                 if dep.group.number != group.number:
+                    logger.debug('mutated {}'.format(str(dep.group.best_release)))
                     self.unapply(dep)
                     dep.group = group

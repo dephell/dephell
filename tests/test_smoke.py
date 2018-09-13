@@ -49,5 +49,6 @@ def test_subpackages():
     resolver = from_requirements('./tests/requirements/oslo.txt')
     resolved = resolver.resolve()
     assert resolved is True
-    assert 'oslo.utils' in resolver.graph.mapping
-    assert 'pdb' in resolver.graph.mapping
+    assert 'oslo-utils' in resolver.graph.mapping.keys()
+    assert 'pbr' in resolver.graph.mapping
+    # assert str(resolver.graph.mapping['oslo-i18n'].group.best_release.version) == '2.1.0'

@@ -2,6 +2,10 @@ from .group import Group
 
 
 class RootRelease:
+    raw_name = 'root'
+    version = ''
+    time = ''
+
     def __init__(self, dependencies):
         self.dependencies = dependencies
 
