@@ -7,7 +7,7 @@ from packaging.version import parse
 
 @attr.s(hash=False)
 class Release:
-    repo = None
+    dependencies = None
 
     raw_name = attr.ib()
     version = attr.ib(converter=parse)
@@ -29,10 +29,6 @@ class Release:
     @cached_property
     def name(self) -> str:
         return canonicalize_name(self.raw_name)
-
-    @cached_property
-    def dependencies(self) -> tuple:
-        return self.repo.get_dependencies(self.name, self.version)
 
     def __str__(self):
         return '{}=={}'.format(self.raw_name, self.version)

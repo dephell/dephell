@@ -1,5 +1,6 @@
 import requests
 from packaging.requirements import Requirement
+from aiohttp import ClientSession
 
 from ..cache import TextCache, JSONCache
 from ..models.release import Release
@@ -32,13 +33,15 @@ class WareHouseRepo:
 
         return releases
 
-    def get_dependencies(self, name: str, version: str) -> tuple:
+    async def get_dependencies(self, name: str, version: str) -> tuple:
         cache = TextCache('deps', name, str(version))
         deps = cache.load()
         if deps is None:
             url = '{}{}/{}/json'.format(self.url, name, version)
-            response = requests.get(url)
-            deps = response.json()['info']['requires_dist'] or []
+            async with ClientSession() as session:
+                async with session.get(url) as response:
+                    response = await response.json()
+            deps = response['info']['requires_dist'] or []
             # TODO: select right extras
             deps = [dep for dep in deps if 'extra ==' not in dep]
             cache.dump(deps)

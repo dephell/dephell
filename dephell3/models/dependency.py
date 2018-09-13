@@ -1,11 +1,15 @@
 from operator import attrgetter
 from collections import defaultdict
 import attr
+import asyncio
 from cached_property import cached_property
 from packaging.utils import canonicalize_name
 from .constraint import Constraint
 from .group import Group
 from copy import deepcopy
+
+
+loop = asyncio.get_event_loop()
 
 
 @attr.s()
@@ -37,8 +41,27 @@ class Dependency:
     def all_releases(self) -> tuple:
         return self.repo.get_releases(self.name)
 
+    async def _fetch_releases_deps(self):
+        tasks = []
+        releases = []
+        for release in self.all_releases:
+            if 'dependencies' not in release.__dict__:
+                task = asyncio.ensure_future(self.repo.get_dependencies(
+                    release.name,
+                    release.version,
+                ))
+                tasks.append(task)
+                releases.append(release)
+        responses = await asyncio.gather(*tasks)
+        for release, response in zip(releases, responses):
+            release.dependencies = response
+
     @cached_property
     def groups(self) -> tuple:
+        # fetch releases
+        future = asyncio.ensure_future(self._fetch_releases_deps())
+        loop.run_until_complete(future)
+
         # group releases by their dependencies
         groups = defaultdict(set)
         for release in self.all_releases:

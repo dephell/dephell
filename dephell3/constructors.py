@@ -1,13 +1,11 @@
 from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
-from .models import Dependency, RootDependency, Release
+from .models import Dependency, RootDependency
 from .controllers import Graph, Mutator, Resolver
 from .repositories import WareHouseRepo
 
 
-repo = WareHouseRepo()
-Dependency.repo = repo
-Release.repo = repo
+Dependency.repo = WareHouseRepo()
 
 
 def from_requirements(path):

@@ -1,3 +1,4 @@
+aiohttp
 attrs
 cached_property
 packaging
