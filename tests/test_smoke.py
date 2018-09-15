@@ -1,5 +1,5 @@
 # project
-from dephell3.core import load
+from dephell.core import load
 
 
 def test_one():

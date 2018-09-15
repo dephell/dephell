@@ -2,7 +2,7 @@
 from packaging.requirements import Requirement
 
 # project
-from dephell3.models import Dependency, RootDependency
+from dephell.models import Dependency, RootDependency
 
 
 def test_from_requirement():
