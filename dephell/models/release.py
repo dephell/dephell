@@ -11,9 +11,9 @@ class Release:
 
     raw_name = attr.ib()
     version = attr.ib(converter=parse)
-    time = attr.ib(repr=False, hash=False)
-    # digest = attr.ib(repr=False, hash=False)
-    # python_spec = attr.ib(repr=False, hash=False)
+    time = attr.ib(repr=False, hash=False)      # upload_time
+    # digest = attr.ib(repr=False, hash=False)  # digests/sha256
+    python_constraint = attr.ib(default=None, repr=False)  # requires_python
 
     @classmethod
     def from_response(cls, name, version, info):

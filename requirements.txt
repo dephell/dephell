@@ -5,3 +5,4 @@ cleo
 packaging
 requests
 pip
+tomlkit

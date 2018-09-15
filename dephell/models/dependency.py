@@ -19,7 +19,19 @@ class Dependency:
     constraint = attr.ib(repr=False)
     repo = attr.ib(repr=False)
     url = attr.ib(repr=False)
+
+    # flags
     applied = attr.ib(default=False, repr=False)
+
+    # optional info
+    description = attr.ib(default='', repr=False)       # summary
+    authors = attr.ib(factory=list, repr=False)         # author, author_email, maintainer, maintainer_email
+    links = attr.ib(factory=dict, repr=False)           # project_url, project_urls, package_url
+    classifiers = attr.ib(factory=list, repr=False)     # classifiers
+
+    # info from requirements file
+    extras = attr.ib(factory=set, repr=False)
+    marker = attr.ib(default=None, repr=False)
 
     # constructors
 
@@ -30,7 +42,9 @@ class Dependency:
             raw_name=req.name,
             constraint=Constraint(source, req.specifier),
             repo=get_repo(url),
-            url=url,
+            url=url or req.url,
+            extras=req.extras,
+            marker=req.marker,
         )
         self._actualize_groups()
         return self
