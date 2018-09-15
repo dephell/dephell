@@ -1,10 +1,25 @@
-from .constructors import from_requirements
-from .exporters import to_requirements
+import sys
+from .core import load, dump, analize_conflict
 
 
-def cli(path_from, path_to=False):
-    resolver = from_requirements(path=path_from)
+USAGE = """
+Usage:
+{args[0]} from [format] [path] to [format] [path]
+
+Example:
+{args[0]} from pip requirements.in to pip requirements.txt
+"""
+
+
+def resolve(args=sys.argv):
+    if len(args) < 7 or args[1] != 'from' or args[4] != 'to':
+        print(USAGE.format(args=args))
+        exit()
+
+    resolver = load(loader=args[2], path=args[3])
     resolved = resolver.resolve()
     if resolved:
-        result = to_requirements(graph=resolver.graph)
-        print(result)
+        dump(dumper=args[5], path=args[6], graph=resolver.graph)
+    else:
+        print(analize_conflict(graph=resolver.graph), file=sys.stderr)
+    return 1 - int(resolved)

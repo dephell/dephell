@@ -6,6 +6,7 @@ from cached_property import cached_property
 from packaging.utils import canonicalize_name
 from .constraint import Constraint
 from .group import Group
+from ..repositories import get_repo
 from copy import deepcopy
 
 
@@ -14,19 +15,22 @@ loop = asyncio.get_event_loop()
 
 @attr.s()
 class Dependency:
-    repo = None
-
     raw_name = attr.ib()
     constraint = attr.ib(repr=False)
+    repo = attr.ib(repr=False)
+    url = attr.ib(repr=False)
     applied = attr.ib(default=False, repr=False)
 
     # constructors
 
     @classmethod
-    def from_requirement(cls, source, req):
+    def from_requirement(cls, source, req, url=None):
+        # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
         self = cls(
             raw_name=req.name,
             constraint=Constraint(source, req.specifier),
+            repo=get_repo(url),
+            url=url,
         )
         self._actualize_groups()
         return self

@@ -39,11 +39,13 @@ class Group:
         return self.best_release.time
 
     def __str__(self):
-        versions = sorted(release.version for release in self.releases)
-        if len(versions) < 10:
+        versions = [str(v) for v in sorted(release.version for release in self.releases)]
+        if not versions:
+            versions = 'EMPTY'
+        elif len(versions) <= 4:
             versions = ', '.join(versions)
         else:
-            versions = '{}, ..., {}'.format(versions[0], versions[-1])
+            versions = '{}–{}'.format(versions[0], versions[-1])
         return '{} ({})'.format(self.name, versions)
 
     def __repr__(self):
