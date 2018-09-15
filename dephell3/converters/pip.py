@@ -17,5 +17,7 @@ def from_pip(path):
 def to_pip(graph):
     deps = []
     for dep in graph.mapping.values():
-        deps.append(str(dep.group.best_release))
-    return '\n'.join(deps)
+        if dep.used:
+            deps.append(str(dep.group.best_release))
+    deps.sort()
+    return '\n'.join(deps) + '\n'

@@ -1,5 +1,4 @@
-from sys import argv
-from .cli import cli
+from .cli import resolve
 
 
-cli(*argv[1:])
+resolve()

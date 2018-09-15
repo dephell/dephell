@@ -111,6 +111,10 @@ class Dependency:
                 return True
         return False
 
+    @property
+    def used(self) -> bool:
+        return not self.constraint.empty
+
     # methods
 
     def unlock(self):

@@ -20,6 +20,7 @@ class RootDependency:
     applied = False
     locked = False
     compat = True
+    used = False
 
     def __init__(self):
         self.dependencies = []

@@ -51,6 +51,10 @@ class Constraint:
         # check legacy version
         return version in spec
 
+    @property
+    def empty(self) -> bool:
+        return not bool(self._specs)
+
     def apply(self, dep, spec):
         if dep.name in self._groups:
             # don't apply same group twice
