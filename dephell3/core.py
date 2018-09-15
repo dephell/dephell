@@ -23,6 +23,6 @@ def dump(dumper, path, graph):
 
 
 def analize_conflict(graph):
-    conflict = str(graph.conlict)
-    constraint = str(graph.conlict.constraint)
-    return 'CONFLICT: {} {}'.format(conflict, constraint)
+    conflict = graph.conflict.name
+    constraint = str(graph.conflict.constraint)
+    return '{} {}'.format(conflict, constraint)

@@ -52,9 +52,9 @@ class Resolver:
                 conflict = self.apply(dep)
                 if conflict is not None:
                     logger.debug('conflict {}{}'.format(conflict.name, conflict.constraint))
+                    self.graph.conflict = conflict.copy()
                     # Dep can be partialy applied. Clean it.
                     self.unapply(dep, force=True)
-                    self.graph.conflict = conflict
                     break
             else:
                 # only if all deps applied

@@ -1,5 +1,6 @@
 import sys
 from .core import load, dump, analize_conflict
+from .console import Progress, output
 
 
 USAGE = """
@@ -17,9 +18,12 @@ def resolve(args=sys.argv):
         exit()
 
     resolver = load(loader=args[2], path=args[3])
-    resolved = resolver.resolve()
+    with Progress().auto():
+        resolved = resolver.resolve()
     if resolved:
+        output.writeln('<info>Resolved!</info>')
         dump(dumper=args[5], path=args[6], graph=resolver.graph)
     else:
-        print(analize_conflict(graph=resolver.graph), file=sys.stderr)
+        conflict = analize_conflict(graph=resolver.graph)
+        output.writeln('<error>CONFLICT:</error> ' + conflict)
     return 1 - int(resolved)
