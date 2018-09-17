@@ -38,7 +38,7 @@ class Dependency:
     @classmethod
     def from_requirement(cls, source, req, url=None):
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
-        self = cls(
+        return cls(
             raw_name=req.name,
             constraint=Constraint(source, req.specifier),
             repo=get_repo(url),
@@ -46,8 +46,6 @@ class Dependency:
             extras=req.extras,
             marker=req.marker,
         )
-        self._actualize_groups()
-        return self
 
     # properties
 
@@ -85,17 +83,26 @@ class Dependency:
         for release in self.all_releases:
             key = '|'.join(sorted(map(str, release.dependencies)))
             groups[key].add(release)
+
         # sort groups by latest release
         groups = sorted(
             groups.values(),
             key=lambda releases: max(releases, key=attrgetter('time')),
             reverse=True,
         )
+
         # convert every group to Group object
-        return tuple(
+        groups = tuple(
             Group(releases=releases, number=number)
             for number, releases in enumerate(groups)
         )
+
+        # actualize
+        filtrate = self.constraint.filter
+        for group in groups:
+            group.releases = filtrate(group.all_releases)
+
+        return groups
 
     @cached_property
     def group(self):
@@ -138,11 +145,11 @@ class Dependency:
 
     def merge(self, dep):
         self.constraint.merge(dep.constraint)
-        self._actualize_groups()
+        self._actualize_groups(force=True)
 
     def unapply(self, name: str):
         self.constraint.unapply(name)
-        self._actualize_groups()
+        self._actualize_groups(force=True)
         if self.locked:
             self.unlock()
 
@@ -153,7 +160,11 @@ class Dependency:
             obj.unlock()
         return obj
 
-    def _actualize_groups(self):
+    def _actualize_groups(self, *, force: bool=False) -> bool:
+        if not force and 'groups' not in self.__dict__:
+            return False
+
         filtrate = self.constraint.filter
         for group in self.groups:
             group.releases = filtrate(group.all_releases)
+        return True
