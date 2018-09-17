@@ -11,6 +11,24 @@ class WareHouseRepo:
     def __init__(self, url='https://pypi.org/pypi/'):
         self.url = url
 
+    @staticmethod
+    def _update_dep_from_data(dep, data):
+        if not dep.description:
+            dep.description = data['summary']
+        if not dep.authors:
+            dep.authors = (
+                Author(name=data['author'], mail=data['author_email']),
+                Author(name=data['maintainer'], mail=data['maintainer_email']),
+            )
+        if not dep.links:
+            dep.links = {k.lower(): v for k, v in data['project_urls'].items()}
+            if data['package_url'] not in dep.links.values():
+                dep.links['package'] = data['package_url']
+            if data['project_url'] not in dep.links.values():
+                dep.links['project'] = data['project_url']
+        if not dep.classifiers:
+            dep.classifiers = tuple(data['classifiers'])
+
     def get_releases(self, dep) -> tuple:
         # retrieve data
         cache = JSONCache('releases', dep.name)
@@ -24,21 +42,7 @@ class WareHouseRepo:
             return ()
 
         # update info for dependency
-        if not dep.description:
-            dep.description = data['summary']
-        if not dep.authors:
-            dep.authors = tuple(
-                Author(name=data['author'], mail=data['author_email']),
-                Author(name=data['maintainer'], mail=data['maintainer_email']),
-            )
-        if not dep.links:
-            dep.links = {k.lower(): v for k, v in data['project_urls'].items()}
-            if data['package_url'] not in dep.links.values():
-                dep.links['package'] = data['package_url']
-            if data['project_url'] not in dep.links.values():
-                dep.links['project'] = data['project_url']
-        if not dep.classifiers:
-            dep.classifiers = tuple(data['classifiers'])
+        self._update_dep_from_data(dep=dep, data=data['info'])
 
         # init releases
         releases = []
