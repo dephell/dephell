@@ -13,9 +13,9 @@ def load(loader, path):
     )
 
 
-def dump(dumper, path, graph):
+def dump(dumper, path, graph, lock=False):
     dumper = DUMPERS[dumper]
-    content = dumper(graph)
+    content = dumper(graph, lock=lock)
     if not isinstance(path, Path):
         path = Path(path)
     with path.open('w') as stream:

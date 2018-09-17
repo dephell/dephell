@@ -36,6 +36,7 @@ class ConvertCommand(Command):
                 dumper=self.argument('to-format'),
                 path=self.argument('to-path'),
                 graph=resolver.graph,
+                lock=bool(self.option('to-lock')),
             )
         else:
             conflict = analize_conflict(graph=resolver.graph)
