@@ -1,4 +1,3 @@
-# app
 from .cli import resolve
 
 

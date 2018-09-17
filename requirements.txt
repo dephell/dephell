@@ -1,4 +1,8 @@
+aiohttp
 attrs
 cached_property
+cleo
 packaging
 requests
+pip
+tomlkit

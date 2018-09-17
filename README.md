@@ -22,7 +22,7 @@ dephell requirements.in requirements.txt
 As runnable module:
 
 ```bash
-python3 -m dephell /path/to/requirements.txt output.txt
+python3 -m dephell from pip /path/to/requirements.in to pip /path/to/requirements.txt
 ```
 
 As python lib:

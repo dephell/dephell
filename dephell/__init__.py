@@ -1,6 +1,9 @@
-# app
 from .cli import resolve
-from .resolver import Resolver
+from .core import load, dump, analize_conflict
 
-
-__all__ = ['resolve', 'Resolver']
+__all__ = [
+    'resolve',
+    'load',
+    'dump',
+    'analize_conflict',
+]
