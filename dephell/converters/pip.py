@@ -28,9 +28,9 @@ def _format_dep(dep, *, lock: bool):
     if lock:
         line += '==' + str(release.version)
     else:
-        line += str(dep.specifier)
+        line += str(dep.constraint)
     if dep.marker:
-        line += '; ' + dep.marker
+        line += '; ' + str(dep.marker)
     if lock:
         for digest in release.hashes:
             # https://github.com/jazzband/pip-tools/blob/master/piptools/writer.py
