@@ -25,9 +25,9 @@ class Dependency:
 
     # optional info
     description = attr.ib(default='', repr=False)       # summary
-    authors = attr.ib(factory=list, repr=False)         # author, author_email, maintainer, maintainer_email
+    authors = attr.ib(factory=tuple, repr=False)         # author, author_email, maintainer, maintainer_email
     links = attr.ib(factory=dict, repr=False)           # project_url, project_urls, package_url
-    classifiers = attr.ib(factory=list, repr=False)     # classifiers
+    classifiers = attr.ib(factory=tuple, repr=False)     # classifiers
 
     # info from requirements file
     extras = attr.ib(factory=set, repr=False)
@@ -57,7 +57,7 @@ class Dependency:
 
     @cached_property
     def all_releases(self) -> tuple:
-        return self.repo.get_releases(self.name)
+        return self.repo.get_releases(self)
 
     async def _fetch_releases_deps(self):
         tasks = []

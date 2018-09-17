@@ -22,8 +22,8 @@ class Release:
             raw_name=name,
             version=version,
             time=datetime.strptime(latest['upload_time'], '%Y-%m-%dT%H:%M:%S'),
+            # python_constraint=latest['requires_python'],
             hashes=tuple(rel['digests']['sha256'] for rel in info),
-            # python_spec=latest['requires_python'],
         )
 
     @cached_property
