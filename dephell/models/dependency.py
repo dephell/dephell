@@ -31,6 +31,7 @@ class Dependency:
 
     # info from requirements file
     extras = attr.ib(factory=set, repr=False)
+    # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(default=None, repr=False)
 
     # constructors

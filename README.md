@@ -8,24 +8,25 @@ Dependency resolution for Python.
 sudo pip3 install dephell
 ```
 
-## Usage
 
-As CLI:
-
-```bash
-# output to stdout:
-dephell requirements.txt
-# output to file:
-dephell requirements.in requirements.txt
-```
-
-As runnable module:
+## CLI usage
 
 ```bash
-python3 -m dephell from pip /path/to/requirements.in to pip /path/to/requirements.txt
+python3 -m dephell convert [-tl|--to-lock] [--] <from-format> <from-path> <to-format> <to-path>
 ```
 
-As python lib:
+Example:
+
+```bash
+python3 -m dephell convert --to-lock pip requirements.in pip requirements.txt
+```
+
+Available formats:
+
+1. `pip` -- [pip's requirements file](https://pip.pypa.io/en/stable/user_guide/#id1).
+
+
+## Python lib usage
 
 ```python
 from dephell import Resolver
