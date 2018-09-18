@@ -55,6 +55,10 @@ class Constraint:
     def empty(self) -> bool:
         return not bool(self._specs)
 
+    @property
+    def sources(self) -> tuple:
+        return tuple(sorted(self._specs.keys()))
+
     def apply(self, dep, spec):
         if dep.name in self._groups:
             # don't apply same group twice

@@ -1,4 +1,4 @@
-from .cli import resolve
+from .cli import run
 
 
-resolve()
+run()

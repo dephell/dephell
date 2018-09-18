@@ -12,18 +12,18 @@ class Release:
     raw_name = attr.ib()
     version = attr.ib(converter=parse)
     time = attr.ib(repr=False, hash=False)      # upload_time
-    # digest = attr.ib(repr=False, hash=False)  # digests/sha256
     python_constraint = attr.ib(default=None, repr=False)  # requires_python
+    hashes = attr.ib(factory=tuple, repr=False)  # # digests/sha256
 
     @classmethod
     def from_response(cls, name, version, info):
-        info = info[-1]
+        latest = info[-1]
         return cls(
             raw_name=name,
             version=version,
-            time=datetime.strptime(info['upload_time'], '%Y-%m-%dT%H:%M:%S'),
-            # digest=info['digests']['sha256'],
-            # python_spec=info['requires_python'],
+            time=datetime.strptime(latest['upload_time'], '%Y-%m-%dT%H:%M:%S'),
+            # python_constraint=latest['requires_python'],
+            hashes=tuple(rel['digests']['sha256'] for rel in info),
         )
 
     @cached_property
