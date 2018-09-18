@@ -1,21 +1,20 @@
 from pathlib import Path
 from .controllers import Graph, Mutator, Resolver
-from .converters import LOADERS, DUMPERS
+from .converters import CONVERTERS
 
 
 def load(loader, path):
-    loader = LOADERS[loader]
-    root = loader(path)
-    graph = Graph(root)
+    loader = CONVERTERS[loader]
+    root = loader.loads(path)
     return Resolver(
-        graph=graph,
+        graph=Graph(root),
         mutator=Mutator()
     )
 
 
-def dump(dumper, path, graph, lock=False):
-    dumper = DUMPERS[dumper]
-    content = dumper(graph, lock=lock)
+def dump(dumper, path, graph):
+    dumper = CONVERTERS[dumper]
+    content = dumper.dumps(graph)
     if not isinstance(path, Path):
         path = Path(path)
     with path.open('w') as stream:

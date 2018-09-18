@@ -12,7 +12,6 @@ class ConvertCommand(Command):
         {from-path : path to input file}
         {to-format : format of output file}
         {to-path : path to output file}
-        {--tl|to-lock : lock requirements}
     """
 
     def handle(self):
