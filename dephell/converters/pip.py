@@ -1,15 +1,16 @@
 from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
 from ..models import Dependency, RootDependency
+from .base import BaseConverter
 
 
-class PIPConverter:
+class PIPConverter(BaseConverter):
     sep = ' \\\n  '
 
     def __init__(self, lock):
         self.lock = lock
 
-    def loads(self, path) -> RootDependency:
+    def load(self, path) -> RootDependency:
         deps = []
         root = RootDependency()
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py

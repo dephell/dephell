@@ -1,5 +1,6 @@
-from ..core import load, dump, analize_conflict
+from ..controllers import analize_conflict
 from ..console import Progress, output
+from ..converters import CONVERTERS
 from cleo import Command
 
 
@@ -15,29 +16,24 @@ class ConvertCommand(Command):
     """
 
     def handle(self):
+        loader = CONVERTERS[self.argument('from-format')]
+        dumper = CONVERTERS[self.argument('to-format')]
+
         # load
-        resolver = load(
-            loader=self.argument('from-format'),
-            path=self.argument('from-path'),
-        )
+        resolver = loader.load_resolver(path=self.argument('from-path'))
 
         # resolve
-        if self.option('to-lock'):
+        if not loader.lock and dumper.lock:
             with Progress().auto():
                 resolved = resolver.resolve()
-        else:
-            resolved = True
+            if not resolved:
+                conflict = analize_conflict(graph=resolver.graph)
+                output.writeln('<error>CONFLICT:</error> ' + conflict)
+                return 1
 
         # dump
-        if resolved:
-            output.writeln('<info>Resolved!</info>')
-            dump(
-                dumper=self.argument('to-format'),
-                path=self.argument('to-path'),
-                graph=resolver.graph,
-                lock=bool(self.option('to-lock')),
-            )
-        else:
-            conflict = analize_conflict(graph=resolver.graph)
-            output.writeln('<error>CONFLICT:</error> ' + conflict)
-        return 1 - int(resolved)
+        output.writeln('<info>Resolved!</info>')
+        dumper.dump(
+            path=self.argument('to-path'),
+            graph=resolver.graph,
+        )

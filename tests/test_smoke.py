@@ -1,16 +1,19 @@
 # project
-from dephell.core import load
+from dephell.converters.pip import PIPConverter
+
+
+loader = PIPConverter(lock=False)
 
 
 def test_one():
-    resolver = load(loader='pip', path='./tests/requirements/django.txt')
+    resolver = loader.load_resolver(path='./tests/requirements/django.txt')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'django' in resolver.graph.mapping
 
 
 def test_two_different():
-    resolver = load(loader='pip', path='./tests/requirements/django-deal.txt')
+    resolver = loader.load_resolver(path='./tests/requirements/django-deal.txt')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'django' in resolver.graph.mapping.keys()
@@ -18,13 +21,13 @@ def test_two_different():
 
 
 def test_unresolved():
-    resolver = load(loader='pip', path='./tests/requirements/django-django.txt')
+    resolver = loader.load_resolver(path='./tests/requirements/django-django.txt')
     resolved = resolver.resolve()
     assert resolved is False
 
 
 def test_resolution():
-    resolver = load(loader='pip', path='./tests/requirements/scipy-pandas-numpy.txt')
+    resolver = loader.load_resolver(path='./tests/requirements/scipy-pandas-numpy.txt')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'pandas' in resolver.graph.mapping
@@ -38,7 +41,7 @@ def test_resolution():
 
 
 def test_unlocked():
-    resolver = load(loader='pip', path='./tests/requirements/attrs-requests.txt')
+    resolver = loader.load_resolver(path='./tests/requirements/attrs-requests.txt')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'attrs' in resolver.graph.mapping
@@ -46,7 +49,7 @@ def test_unlocked():
 
 
 def test_subpackages():
-    resolver = load(loader='pip', path='./tests/requirements/oslo.txt')
+    resolver = loader.load_resolver(path='./tests/requirements/oslo.txt')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'oslo-utils' in resolver.graph.mapping.keys()

@@ -1,14 +1,14 @@
 from tomlkit import parse, array, table, document, dumps, inline_table
 from ..models import Dependency, RootDependency, Constraint
 from ..repositories import get_repo
+from .base import BaseConverter
 
 
-class PIPFileConverter:
+class PIPFileConverter(BaseConverter):
     lock = False
 
-    def loads(self, path) -> RootDependency:
-        with open(str(path), 'r') as stream:
-            doc = parse(stream.read())
+    def loads(self, content) -> RootDependency:
+        doc = parse(content)
         deps = []
         root = RootDependency()
         if 'packages' in doc:
