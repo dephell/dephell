@@ -6,7 +6,7 @@ loader = PIPConverter(lock=False)
 
 
 def test_one():
-    resolver = loader.load_resolver(path='./tests/requirements/django.txt')
+    resolver = loader.loads_resolver(content='Django<=1.11')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'django' in resolver.graph.mapping
@@ -49,7 +49,8 @@ def test_unlocked():
 
 
 def test_subpackages():
-    resolver = loader.load_resolver(path='./tests/requirements/oslo.txt')
+    # https://github.com/sdispater/poetry#dependency-resolution
+    resolver = loader.loads_resolver(content='oslo.utils==1.4.0')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'oslo-utils' in resolver.graph.mapping.keys()
