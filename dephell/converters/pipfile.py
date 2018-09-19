@@ -1,4 +1,5 @@
-from tomlkit import parse, array, table, document, dumps, inline_table
+from operator import attrgetter
+from tomlkit import parse, aot, table, document, dumps, inline_table
 from ..models import Dependency, RootDependency, Constraint
 from ..repositories import get_repo
 from .base import BaseConverter
@@ -23,14 +24,16 @@ class PIPFileConverter(BaseConverter):
         source['url'] = 'https://pypi.python.org/simple'
         source['verify_ssl'] = True
         source['name'] = 'pypi'
-        doc.add('source', array([source]))
+        sources = aot()
+        sources.append(source)
+        doc.add('source', sources)
 
         deps = table()
-        for dep in graph.mapping.values():
+        for dep in sorted(graph.mapping.values(), key=attrgetter('name')):
             if not dep.used:
                 continue
             deps[dep.name] = self._format_dep(dep)
-        deps.sort()
+        doc.add('packages', deps)
 
         return dumps(doc)
 
@@ -60,9 +63,18 @@ class PIPFileConverter(BaseConverter):
     @staticmethod
     def _format_dep(dep):
         result = inline_table()
-        result['version'] = str(dep.constraint)
+        result['version'] = str(dep.constraint) or '*'
         if dep.extras:
             result['extras'] = list(sorted(dep.extras))
         if dep.marker:
             result['markers'] = str(dep.marker)
+
+        # if we have only version, return string instead of table
+        if tuple(result.value) == ('version', ):
+            return result['version']
+
+        # do not specify version explicit
+        if result['version'] == '*':
+            del result['version']
+
         return result
