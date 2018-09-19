@@ -1,5 +1,6 @@
-from dephell.converters.pip import _format_dep
 from packaging.requirements import Requirement
+
+from dephell.converters.pip import PIPConverter
 from dephell.models.dependency import Dependency
 from dephell.models.root import RootDependency
 
@@ -21,6 +22,6 @@ def test_format():
     assert str(dep.marker).startswith('python_version == "2.7"')
 
     # test format
-    result = _format_dep(dep, lock=False)
+    result = PIPConverter(lock=False)._format_dep(dep)
     assert result.startswith(text)
     assert 'from root' in result

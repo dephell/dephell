@@ -1,10 +1,9 @@
-from .pip import from_pip, to_pip
+from .pip import PIPConverter
+from .pipfile import PIPFileConverter
 
 
-LOADERS = dict(
-    pip=from_pip,
-)
-
-DUMPERS = dict(
-    pip=to_pip,
+CONVERTERS = dict(
+    pip=PIPConverter(lock=False),
+    piplock=PIPConverter(lock=True),
+    pipfile=PIPFileConverter(),
 )

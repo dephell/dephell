@@ -1,2 +1,0 @@
-# https://github.com/sdispater/poetry#dependency-resolution
-oslo.utils==1.4.0

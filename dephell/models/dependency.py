@@ -18,16 +18,16 @@ class Dependency:
     raw_name = attr.ib()
     constraint = attr.ib(repr=False)
     repo = attr.ib(repr=False)
-    url = attr.ib(repr=False)
+    url = attr.ib(default=None, repr=False)
 
     # flags
     applied = attr.ib(default=False, repr=False)
 
     # optional info
     description = attr.ib(default='', repr=False)       # summary
-    authors = attr.ib(factory=tuple, repr=False)         # author, author_email, maintainer, maintainer_email
+    authors = attr.ib(factory=tuple, repr=False)        # author, author_email, maintainer, maintainer_email
     links = attr.ib(factory=dict, repr=False)           # project_url, project_urls, package_url
-    classifiers = attr.ib(factory=tuple, repr=False)     # classifiers
+    classifiers = attr.ib(factory=tuple, repr=False)    # classifiers
 
     # info from requirements file
     extras = attr.ib(factory=set, repr=False)
