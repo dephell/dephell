@@ -24,6 +24,7 @@ python3 -m dephell convert --to-lock pip requirements.in pip requirements.txt
 Available formats:
 
 1. `pip` -- [pip's requirements file](https://pip.pypa.io/en/stable/user_guide/#id1).
+1. `pipfile` -- not locked [Pipfile](https://github.com/pypa/pipfile#pipfile)
 
 
 ## Python lib usage
