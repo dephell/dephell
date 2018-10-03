@@ -39,7 +39,7 @@ class PIPFileConverter(BaseConverter):
 
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
     @staticmethod
-    def _make_dep(root, name, content):
+    def _make_dep(root, name: str, content) -> Dependency:
         if isinstance(content, str):
             return Dependency(
                 raw_name=name,
@@ -60,14 +60,26 @@ class PIPFileConverter(BaseConverter):
             marker=content.get('markers'),
         )
 
-    @staticmethod
-    def _format_dep(dep):
+    def _format_dep(self, dep: Dependency):
+        if self.lock:
+            release = dep.group.best_release
+
         result = inline_table()
-        result['version'] = str(dep.constraint) or '*'
+
+        if self.lock:
+            result['version'] += '==' + str(release.version)
+        else:
+            result['version'] = str(dep.constraint) or '*'
+
         if dep.extras:
             result['extras'] = list(sorted(dep.extras))
         if dep.marker:
             result['markers'] = str(dep.marker)
+
+        if self.lock:
+            result['hashes'] = dict()
+            for digest in release.hashes:
+                result['hashes'].append('sha256:' + digest)
 
         # if we have only version, return string instead of table
         if tuple(result.value) == ('version', ):
