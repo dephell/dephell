@@ -1,0 +1,11 @@
+# https://www.python.org/dev/peps/pep-0518/#tool-table
+
+[tool.dephell.some_env]
+from = {format = "pip", path = "requirements.in"}
+to = {format = "piplock", path = "requirements.txt"}
+silent = false
+
+[tool.dephell.other_env]
+from = {format = "pipfile", path = "Pipfile"}
+to = {format = "piplock", path = "Pipfile.lock"}
+env = 'main'
