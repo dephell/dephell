@@ -24,7 +24,9 @@ python3 -m dephell convert pip requirements.in pip requirements.txt
 Available formats:
 
 1. `pip` -- [pip's requirements file](https://pip.pypa.io/en/stable/user_guide/#id1).
+1. `piplock` -- [locked](https://pip.pypa.io/en/stable/reference/pip_freeze/) pip's requirements file.
 1. `pipfile` -- not locked [Pipfile](https://github.com/pypa/pipfile#pipfile)
+1. `pipfilelock` -- locked [Pipfile](https://github.com/pypa/pipfile#pipfilelock)
 
 
 ## Python lib usage
@@ -35,3 +37,16 @@ resolver = Resolver.from_requirements(path_from)
 resolver.resolve()
 content = resolver.to_requirements()
 ```
+
+
+## TODO
+
+1. poetry
+1. poetry lock
+1. config
+1. environments
+1. Python version
+1. Zero release (compatible with any constraints)
+1. url defined release
+1. git based dependency
+1. Beautiful CLI
