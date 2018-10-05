@@ -13,7 +13,7 @@ from ..models import RootDependency
 # https://github.com/pypa/pipfile/blob/master/pipfile/api.py
 
 
-class PIPFileConverter(PIPFileConverter):
+class PIPFileLockConverter(PIPFileConverter):
     lock = False
 
     def loads(self, content) -> RootDependency:
@@ -30,20 +30,20 @@ class PIPFileConverter(PIPFileConverter):
         for dep in sorted(graph.mapping.values(), key=attrgetter('name')):
             if not dep.used:
                 continue
-            deps[dep.name] = dict(self._format_dep(dep))
+            deps[dep.name] = dict(self._format_dep(dep, short=False))
 
-        data = OrderedDict(
-            ('_meta', OrderedDict(
-                ('sources', [OrderedDict(
+        data = OrderedDict([
+            ('_meta', OrderedDict([
+                ('sources', [OrderedDict([
                     ('url', 'https://pypi.python.org/simple'),
                     ('verify_ssl', True),
                     ('name', 'pypi'),
-                )]),
+                ])]),
                 ('requires', {'python_version': '2.7'}),
-            )),
+            ])),
             ('default', deps),
             ('develop', OrderedDict()),
-        )
+        ])
         data['_meta']['hash'] = {'sha256': self._get_hash(data)}
         data['_meta']['pipfile-spec'] = 6
         return json.dumps(data, indent=4, separators=(',', ': '))

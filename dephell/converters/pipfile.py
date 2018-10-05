@@ -60,7 +60,7 @@ class PIPFileConverter(BaseConverter):
             marker=content.get('markers'),
         )
 
-    def _format_dep(self, dep: Dependency):
+    def _format_dep(self, dep: Dependency, *, short: bool=True):
         if self.lock:
             release = dep.group.best_release
 
@@ -82,7 +82,7 @@ class PIPFileConverter(BaseConverter):
                 result['hashes'].append('sha256:' + digest)
 
         # if we have only version, return string instead of table
-        if tuple(result.value) == ('version', ):
+        if short and tuple(result.value) == ('version', ):
             return result['version']
 
         # do not specify version explicit
