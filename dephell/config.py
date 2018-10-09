@@ -26,7 +26,7 @@ class Config:
 
     def get(self, env: str) -> dict:
         if env not in self._data:
-            raise KeyError('environment not found')
+            raise KeyError('environment not found', env)
 
         config = self._data[env]
         for key in ('from', 'to'):
@@ -36,7 +36,7 @@ class Config:
         return config
 
     @staticmethod
-    def _process_line(key, line):
+    def _process_line(key: str, line) -> dict:
         if isinstance(line, str):
             line = dict(format=line)
         if 'format' not in line:
@@ -48,3 +48,4 @@ class Config:
             ))
         if 'path' not in line:
             line['path'] = DEFAULTS[line['format']]
+        return line

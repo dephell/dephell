@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(
     description='Lock and convert dependencies between formats.',
 )
 parser.add_argument('-c', '--config', default='pyproject.toml', help='path to config file')
-parser.add_argument('-e', '--env', help='environment')
+parser.add_argument('-e', '--env', default='main', help='environment')
 
 
 def resolve(rule) -> bool:
@@ -40,6 +40,6 @@ def resolve(rule) -> bool:
 
 def main(args):
     args = parser.parse_args(args)
-    rule = Config(args.config).get(args.env)
+    rule = Config.load(args.config).get(args.env)
     result = resolve(rule)
     return int(not result)
