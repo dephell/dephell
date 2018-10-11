@@ -7,6 +7,8 @@ logger = getLogger(__name__)
 class Graph:
     def __init__(self, root):
         self.root = root
+        if not root.dependencies:
+            logger.warning('empty root passed')
         self.reset()
 
     def reset(self):

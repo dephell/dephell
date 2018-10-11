@@ -14,7 +14,7 @@ from ..models import RootDependency
 
 
 class PIPFileLockConverter(PIPFileConverter):
-    lock = False
+    lock = True
 
     def loads(self, content) -> RootDependency:
         doc = json.loads(content, object_pairs_hook=OrderedDict)
