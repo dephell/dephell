@@ -1,0 +1,19 @@
+# https://www.python.org/dev/peps/pep-0518/#tool-table
+
+[tool.dephell.some_env]
+# file and format to read requirements
+from = {format = "pip", path = "requirements.in"}
+# TODO: `and` for additional requirements file
+# file and format to save requirements
+to = {format = "piplock", path = "requirements.txt"}
+# TODO: `with` for old lockfile reusage
+silent = false
+
+[tool.dephell.other_env]
+# Path can be missed. In this case dephell will use default path for given format.
+from = {format = "pipfile"}
+# If you want to specify only format, you can specify it as string.
+to = "pipfilelock"
+# Pipfile and poetry contains two environments: `dev` and `main`.
+# Dephell uses both environments by default.
+env = "main"

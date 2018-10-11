@@ -1,4 +1,5 @@
-from .cli import run
+from sys import argv
+from .cli import main
 
 
-run()
+main(argv[1:])

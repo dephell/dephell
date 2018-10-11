@@ -67,7 +67,7 @@ class PIPFileConverter(BaseConverter):
         result = inline_table()
 
         if self.lock:
-            result['version'] += '==' + str(release.version)
+            result['version'] = '==' + str(release.version)
         else:
             result['version'] = str(dep.constraint) or '*'
 
@@ -77,7 +77,7 @@ class PIPFileConverter(BaseConverter):
             result['markers'] = str(dep.marker)
 
         if self.lock:
-            result['hashes'] = dict()
+            result['hashes'] = []
             for digest in release.hashes:
                 result['hashes'].append('sha256:' + digest)
 
