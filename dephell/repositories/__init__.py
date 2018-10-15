@@ -1,10 +1,7 @@
+from .file import FileRepo
+from .directory import DirectoryRepo
 from .warehouse import WareHouseRepo
+from .parsers import get_repo_by_url
 
 
-__all__ = ['WareHouseRepo', 'get_repo']
-
-
-def get_repo(url=None):
-    if url is None:
-        return WareHouseRepo()
-    raise NotImplementedError
+__all__ = ['FileRepo', 'DirectoryRepo', 'WareHouseRepo', 'get_repo_by_url']

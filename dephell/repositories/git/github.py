@@ -15,7 +15,6 @@ class GitHubRepo(BaseRepo):
     def author(self):
         match = rex_author.search(self.link)
         if match:
-            # get from `#hash=...`
             return match.group(1)
 
     # https://developer.github.com/v3/repos/releases/
