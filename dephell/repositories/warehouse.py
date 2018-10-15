@@ -2,12 +2,13 @@ import requests
 from packaging.requirements import Requirement
 from aiohttp import ClientSession
 
+from .base import BaseRepo
 from ..cache import TextCache, JSONCache
 from ..models.author import Author
 from ..models.release import Release
 
 
-class WareHouseRepo:
+class WareHouseRepo(BaseRepo):
     def __init__(self, url='https://pypi.org/pypi/'):
         self.url = url
 
