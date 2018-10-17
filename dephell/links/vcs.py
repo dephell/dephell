@@ -30,7 +30,7 @@ class VCSLink:
         r'(?:(?P<user>.+)@)?'                       # username for auth on server (optional)
         r'(?P<server>.+)[:/]'                       # server name
         r'(?P<author>.+)/'                          # project author
-        r'(?P<project>.+?)'                         # project name
+        r'(?P<project>[^\s#]+?)'                    # project name
         r'(?P<ext>\.git)?'                          # extension (save only for link constructing)
         r'(?:@(?P<rev>.+))?'                        # revision (commit hash, tag, branch)
         r'(?:#egg=(?P<name>.+))?'                   # dependency name
@@ -58,6 +58,13 @@ class VCSLink:
             parsed['rev'] = rev
 
         return cls(**parsed)
+
+    @property
+    def commit(self):
+        if not self.rev:
+            return
+        if self.rex_hash.fullmatch(self.rev):
+            return self.rev
 
     @property
     def link(self) -> str:
