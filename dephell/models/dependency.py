@@ -57,7 +57,7 @@ class Dependency:
     @classmethod
     def from_params(cls, url, raw_name, **kwargs):
         link = parse_link(url)
-        if rex_hash.fullmatch(raw_name):
+        if link and link.name and rex_hash.fullmatch(raw_name):
             raw_name = link.name
         return cls(link=link, repo=get_repo(link), raw_name=raw_name, **kwargs)
 

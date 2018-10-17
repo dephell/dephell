@@ -11,7 +11,11 @@ class URLLink:
             return
         if link.startswith('file://'):
             return
+        # protocol required
         if '://' not in link:
+            return
+        # file extension required
+        if '.' not in link.rstrip('/').rsplit('/', maxsplit=1)[-1]:
             return
         return cls(link)
 
