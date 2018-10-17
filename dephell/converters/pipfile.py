@@ -52,12 +52,12 @@ class PIPFileConverter(BaseConverter):
 
         # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/requirements.py
         # https://github.com/pypa/pipenv/blob/master/pipenv/project.py
-        return Dependency(
+        return Dependency.from_params(
             raw_name=name,
             constraint=Constraint(root, version),
-            repo=get_repo(),
             extras=set(content.get('extras', [])),
             marker=content.get('markers'),
+            url=content.get('git') or content.get('file') or content.get('path'),
         )
 
     def _format_dep(self, dep: Dependency, *, short: bool=True):

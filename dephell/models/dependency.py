@@ -50,6 +50,11 @@ class Dependency:
             marker=req.marker,
         )
 
+    @classmethod
+    def from_params(cls, url, **kwargs):
+        link = parse_link(url)
+        return cls(link=link, repo=get_repo(link), **kwargs)
+
     # properties
 
     @cached_property
