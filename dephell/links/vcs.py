@@ -75,7 +75,9 @@ class VCSLink:
     def link(self) -> str:
         """construct short link suitable for pipenv and poetry
         """
-        link = self.protocol
+        link = ''
+        if self.protocol != 'ssh':
+            link += self.protocol + '://'
         if self.user:
             link += self.user + '@'
         link += self.server

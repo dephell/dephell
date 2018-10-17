@@ -6,9 +6,9 @@ from .unknown import UnknownLink
 
 _links = (
     URLLink,
-    VCSLink,
     DirLink,
     FileLink,
+    VCSLink,
 )
 
 

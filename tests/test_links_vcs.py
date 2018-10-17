@@ -69,6 +69,17 @@ import pytest
             user='hg',
         ),
     ),
+    (
+        'git@bitbucket.org:atlassian/python-bitbucket.git',
+        dict(
+            server='bitbucket.org',
+            author='atlassian',
+            project='python-bitbucket',
+            vcs='git',
+            protocol='ssh',
+            user='git',
+        ),
+    ),
     # other info parsing
     (
         'hg+https://www.mercurial-scm.org/repo/hello',
@@ -109,4 +120,3 @@ def test_ssh_github(url, params):
     link = VCSLink.parse(url)
     for name, value in params.items():
         assert getattr(link, name) == value
-    link.link == url

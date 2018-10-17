@@ -1,4 +1,4 @@
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 
 class URLLink:
@@ -9,13 +9,18 @@ class URLLink:
     def parse(cls, link):
         if '@' in link:
             return
+        if '.git' in link:
+            return
         if link.startswith('file://'):
             return
-        # protocol required
-        if '://' not in link:
+
+        parsed = urlparse(link)
+        if not parsed.scheme:
+            return
+        if not parsed.netloc:
             return
         # file extension required
-        if '.' not in link.rstrip('/').rsplit('/', maxsplit=1)[-1]:
+        if '.' not in parsed.path.rstrip('/').rsplit('/', maxsplit=1)[-1]:
             return
         return cls(link)
 
