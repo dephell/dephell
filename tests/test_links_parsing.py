@@ -11,4 +11,4 @@ import pytest
 def test_parsing(link_type, url):
     link = parse_link(url)
     assert isinstance(link, link_type)
-    assert link.link == url
+    assert link.short == url

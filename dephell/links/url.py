@@ -3,7 +3,8 @@ from urllib.parse import unquote, urlparse
 
 class URLLink:
     def __init__(self, link):
-        self.link = link
+        self.short = link.split('#')[0]
+        self.long = link
 
     @classmethod
     def parse(cls, link):
@@ -27,9 +28,12 @@ class URLLink:
     @property
     def name(self):
         # get last part of path
-        name = self.link.split('/')[-1]
+        name = self.short.split('/')[-1]
         # drop all extensions, because in Python package name has no dots
         name = name.split('.')[0]
         # pip can return urlencoded name
         name = unquote(name)
         return name or None
+
+    def __str__(self):
+        return self.long

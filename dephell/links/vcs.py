@@ -72,7 +72,7 @@ class VCSLink:
             return self.rev
 
     @property
-    def link(self) -> str:
+    def short(self) -> str:
         """construct short link suitable for pipenv and poetry
         """
         link = ''
@@ -87,7 +87,8 @@ class VCSLink:
             link += self.ext
         return link
 
-    def __str__(self):
+    @property
+    def long(self) -> str:
         """construct full link suitable for pip
         """
         link = self.vcs + '+' + self.link
@@ -96,3 +97,6 @@ class VCSLink:
         if self.name:
             link += '#egg=' + self.name
         return link
+
+    def __str__(self):
+        return self.long
