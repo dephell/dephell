@@ -7,6 +7,7 @@ from packaging.utils import canonicalize_name
 from .constraint import Constraint
 from .group import Group
 from ..repositories import get_repo
+from ..links import parse_link
 from copy import deepcopy
 
 
@@ -18,7 +19,7 @@ class Dependency:
     raw_name = attr.ib()
     constraint = attr.ib(repr=False)
     repo = attr.ib(repr=False)
-    url = attr.ib(default=None, repr=False)
+    link = attr.ib(default=None, repr=False)
 
     # flags
     applied = attr.ib(default=False, repr=False)
@@ -39,11 +40,12 @@ class Dependency:
     @classmethod
     def from_requirement(cls, source, req, url=None):
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
+        link = parse_link(url or req.url)
         return cls(
             raw_name=req.name,
             constraint=Constraint(source, req.specifier),
-            repo=get_repo(url),
-            url=url or req.url,
+            repo=get_repo(link),
+            link=link,
             extras=req.extras,
             marker=req.marker,
         )

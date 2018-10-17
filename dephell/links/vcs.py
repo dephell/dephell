@@ -4,12 +4,14 @@ import re
 
 @attr.s()
 class VCSLink:
-    vcs = attr.ib(default='git')
-    protocol = attr.ib(default='ssh')
-    user = attr.ib(default=None)
     server = attr.ib()
     author = attr.ib()
     project = attr.ib()
+
+    vcs = attr.ib(default='git')
+    protocol = attr.ib(default='ssh')
+    user = attr.ib(default=None)
+
     ext = attr.ib(default=None)
     rev = attr.ib(default=None)
     name = attr.ib(default=None)

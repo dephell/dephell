@@ -41,6 +41,8 @@ class WareHouseRepo(Interface):
         if data is None:
             url = "{}{}/json".format(self.url, dep.name)
             response = requests.get(url)
+            if response.status_code == 404:
+                raise KeyError('project {} is not found'.format(dep.name))
             data = response.json()
             cache.dump(data)
         elif isinstance(data, str) and data == '':
