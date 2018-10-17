@@ -1,6 +1,8 @@
 import os.path
 from urllib.parse import unquote
-from os.path import sep
+from hashlib import sha256
+
+from cached_property import cached_property
 
 
 class _PathLink:
@@ -17,7 +19,7 @@ class _PathLink:
             link = link[len('file://'):]
         if '://' in link:
             return
-        if cls._check(link.replace('/', sep)):
+        if cls._check(link.replace('/', os.path.sep)):
             return cls(link)
 
     @property
@@ -29,6 +31,14 @@ class _PathLink:
         # pip can return urlencoded name
         name = unquote(name)
         return name or None
+
+    @cached_property
+    def hashes(self):
+        with self.link.open('rb') as stream:
+            content = stream.read()
+        hasher = sha256()
+        hasher.update(content)
+        return 'sha256:' + hasher.digest()
 
 
 class FileLink(_PathLink):

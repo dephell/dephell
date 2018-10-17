@@ -1,7 +1,11 @@
-from .file import FileRepo
-from .directory import DirectoryRepo
+from .release import ReleaseRepo
 from .warehouse import WareHouseRepo
-from .parsers import get_repo_by_url
 
 
-__all__ = ['FileRepo', 'DirectoryRepo', 'WareHouseRepo', 'get_repo_by_url']
+__all__ = ['ReleaseRepo', 'WareHouseRepo']
+
+
+def get_repo(link=None):
+    if link is None:
+        return WareHouseRepo()
+    return ReleaseRepo(link)
