@@ -28,7 +28,7 @@ class Constraint:
         return result
 
     @staticmethod
-    def _check(version, spec):
+    def _check(version, spec) -> bool:
         """
         https://www.python.org/dev/peps/pep-0440/
         """
@@ -56,8 +56,8 @@ class Constraint:
         return not bool(self._specs)
 
     @property
-    def sources(self) -> tuple:
-        return tuple(sorted(self._specs.keys()))
+    def sources(self) -> set:
+        return set(self._specs.keys())
 
     def apply(self, dep, spec):
         if dep.name in self._groups:

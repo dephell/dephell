@@ -2,12 +2,17 @@ import requests
 from packaging.requirements import Requirement
 from aiohttp import ClientSession
 
+from .base import Interface
 from ..cache import TextCache, JSONCache
 from ..models.author import Author
 from ..models.release import Release
 
 
-class WareHouseRepo:
+class WareHouseRepo(Interface):
+    name = None
+    hash = None
+    link = None
+
     def __init__(self, url='https://pypi.org/pypi/'):
         self.url = url
 
@@ -36,6 +41,8 @@ class WareHouseRepo:
         if data is None:
             url = "{}{}/json".format(self.url, dep.name)
             response = requests.get(url)
+            if response.status_code == 404:
+                raise KeyError('project {} is not found'.format(dep.name))
             data = response.json()
             cache.dump(data)
         elif isinstance(data, str) and data == '':

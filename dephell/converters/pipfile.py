@@ -5,6 +5,9 @@ from ..repositories import get_repo
 from .base import BaseConverter
 
 
+VCS_LIST = ('git', 'svn', 'hg', 'bzr')
+
+
 class PIPFileConverter(BaseConverter):
     lock = False
 
@@ -40,6 +43,22 @@ class PIPFileConverter(BaseConverter):
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
     @staticmethod
     def _make_dep(root, name: str, content) -> Dependency:
+        """
+        Fields:
+            ref
+            vcs
+            editable
+            extras
+            markers
+            index
+            hashes
+
+            subdirectory
+            path
+            file
+            uri
+            git, svn, hg, bzr
+        """
         if isinstance(content, str):
             return Dependency(
                 raw_name=name,
@@ -47,17 +66,25 @@ class PIPFileConverter(BaseConverter):
                 repo=get_repo(),
             )
 
-        # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
-        version = content['version'] if 'version' in content else ''
+        # get link
+        url = content.get('file') or content.get('path') or content.get('vcs')
+        if not url:
+            for vcs in VCS_LIST:
+                if vcs in content:
+                    url = vcs + '+' + content[vcs]
+                    break
+        if 'ref' in content:
+            url += '@' + content['ref']
 
         # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/requirements.py
         # https://github.com/pypa/pipenv/blob/master/pipenv/project.py
-        return Dependency(
+        return Dependency.from_params(
             raw_name=name,
-            constraint=Constraint(root, version),
-            repo=get_repo(),
+            # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
+            constraint=Constraint(root, content.get('version', '')),
             extras=set(content.get('extras', [])),
             marker=content.get('markers'),
+            url=url,
         )
 
     def _format_dep(self, dep: Dependency, *, short: bool=True):
