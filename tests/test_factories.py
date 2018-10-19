@@ -1,8 +1,8 @@
-from .factories import make_deps
+from .factories import make_root
 
 
 def test_make_deps():
-    root = make_deps(
+    root = make_root(
         root=dict(
             a='*',
             b='*',

@@ -1,6 +1,8 @@
 from logging import getLogger
 from collections import ChainMap
 
+from ..models.requirement import Requirement
+
 
 logger = getLogger(__name__)
 
@@ -128,6 +130,14 @@ class Graph:
         if parents:
             parents.update(self.get_parents(*parents.values()))
         return parents
+
+    def get_requirements(self, *, lock: bool) -> tuple:
+        result = []
+        for layer in self._layers:
+            for dep in sorted(layer):
+                req = Requirement(dep=dep, lock=lock)
+                result.append(req)
+        return tuple(result)
 
     @property
     def names(self) -> set:

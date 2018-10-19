@@ -12,7 +12,11 @@ class Group:
 
     @property
     def best_release(self):
-        return max(self.releases, key=attrgetter('time'))
+        best_time = max(release.time for release in self.releases)
+        best_releases = [release for release in self.releases if release.time == best_time]
+        if len(best_releases) == 1:
+            return best_releases[0]
+        return max(self.releases, key=attrgetter('version'))
 
     @cached_property
     def random(self):

@@ -13,7 +13,7 @@ class ReleaseRepo(Interface):
 
     def get_releases(self, dep) -> tuple:
         if self.releases:
-            return self.releases
+            return tuple(release for release in self.releases if release.name == dep.name)
 
         release = Release(
             raw_name=dep.name,
@@ -25,5 +25,5 @@ class ReleaseRepo(Interface):
 
     async def get_dependencies(self, name: str, version: str) -> tuple:
         if self.deps:
-            return self.deps.get(name, {}).get(version, ())
+            return self.deps.get(name, {}).get(str(version), ())
         return ()
