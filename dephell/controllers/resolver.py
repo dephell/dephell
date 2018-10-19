@@ -14,11 +14,11 @@ class Resolver:
         Returns conflicting (incompatible) dependency
         """
         for new_dep in parent.dependencies:
-            other_dep = self.graph.mapping.get(new_dep.name)
+            other_dep = self.graph.get(new_dep.name)
             if other_dep is None:
                 # add new dep to graph
                 other_dep = new_dep.copy()
-                self.graph.mapping[new_dep.name] = other_dep
+                self.graph.add(other_dep)
             else:
                 # merge deps
                 other_dep.merge(new_dep)
@@ -31,7 +31,7 @@ class Resolver:
         if not force and not dep.applied:
             return
         for child in dep.dependencies:
-            child = self.graph.mapping.get(child.name)
+            child = self.graph.get(child.name)
             if child is None:
                 continue
             # unapply current dependency for child
@@ -68,7 +68,7 @@ class Resolver:
             self.graph.conflict = None
             # apply mutation
             for group in groups:
-                dep = self.graph.mapping[group.name]
+                dep = self.graph.get(group.name)
                 if dep.group.number != group.number:
                     logger.debug('mutated {}'.format(str(dep.group.best_release)))
                     self.unapply(dep)

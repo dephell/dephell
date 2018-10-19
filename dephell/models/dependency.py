@@ -148,6 +148,8 @@ class Dependency:
 
     @property
     def used(self) -> bool:
+        """True if some deps in graph depends on this dep.
+        """
         return not self.constraint.empty
 
     # methods
