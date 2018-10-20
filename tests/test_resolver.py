@@ -120,4 +120,4 @@ def test_circular_dependency_on_older_version():
     reqs = resolver.graph.get_requirements(lock=True)
     reqs = {req.name: req for req in reqs}
     assert reqs['a'].version == '==1.0.0'
-    assert 'b' not in reqs
+    assert reqs['b'].version == '==1.0.0'

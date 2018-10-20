@@ -117,26 +117,36 @@ class Graph:
             result.update(self.get_children(child))
         return result
 
-    def get_parents(self, *deps) -> dict:
+    def get_parents(self, *deps, avoid=None) -> dict:
+        if avoid is None:
+            avoid = []
+
         parents = dict()
         for dep in deps:
-            layer = self.get_layer(dep)
-            if layer.level == 0:  # root has no parents
-                continue
-            layer = self.get_layer(layer.level - 1)
-            for parent in layer:
-                if dep in parent.dependencies:
-                    parents[parent.name] = parent
+            for layer in self._layers:
+                for parent in layer:
+                    for children in parent.dependencies:
+                        if children.name != dep.name:
+                            continue
+                        if children.name in avoid:
+                            continue
+                        parents[parent.name] = parent
+                        break
         if parents:
-            parents.update(self.get_parents(*parents.values()))
+            parents.update(self.get_parents(
+                *parents.values(),
+                avoid=avoid + [dep.name for dep in deps]
+            ))
         return parents
 
     def get_requirements(self, *, lock: bool) -> tuple:
         result = []
+        applied = self.root.applied
         for layer in self._layers:
             for dep in sorted(layer):
-                req = Requirement(dep=dep, lock=lock)
-                result.append(req)
+                if not applied or dep.applied:
+                    req = Requirement(dep=dep, lock=lock)
+                    result.append(req)
         return tuple(result)
 
     @property

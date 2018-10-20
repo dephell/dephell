@@ -2,7 +2,8 @@ from .group import Group
 
 
 class RootRelease:
-    raw_name = 'root'
+    name = 'root'
+    raw_name = 'Root'
     version = ''
     time = ''
 
