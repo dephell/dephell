@@ -79,3 +79,29 @@ def test_diamond_dependency_graph():
         ),
     )
     check(root=root, a='==1.0.0', b='==2.0.0', c='==3.0.0')
+
+
+def test_backjumps_after_partial_satisfier():
+    root = make_root(
+        root=Fake('', 'c', 'y==2'),
+        a=(
+            Fake('1', 'x>=1'),
+        ),
+        b=(
+            Fake('1', 'x<2'),
+        ),
+        c=(
+            Fake('1'),
+            Fake('2', 'a', 'b'),
+        ),
+        x=(
+            Fake('0'),
+            Fake('1', 'y==1'),
+            Fake('2'),
+        ),
+        y=(
+            Fake('1'),
+            Fake('2'),
+        ),
+    )
+    check(root=root, c='==1', y='==2')

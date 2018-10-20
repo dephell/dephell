@@ -61,11 +61,11 @@ def check(root, resolved=True, **deps):
     ):
         result = resolver.resolve()
 
-    assert result is resolved
-    assert resolver.graph.get('root').applied
-
     reqs = resolver.graph.get_requirements(lock=True)
     reqs = {req.name: req for req in reqs}
+
+    assert result is resolved
+    assert resolver.graph.get('root').applied
 
     for name, version in deps.items():
         assert reqs[name].version == version
