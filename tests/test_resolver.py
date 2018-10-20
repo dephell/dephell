@@ -1,19 +1,18 @@
-from .factories import make_root
+from .factories import make_root, Fake
 from dephell.controllers import Graph, Mutator, Resolver
 from unittest.mock import patch
 
 
 def test_constraint_checks():
     root = make_root(
-        root=dict(
-            a='*',
-            b='<1.1',
+        root=Fake('', 'a', 'b<1.1'),
+        a=(
+            Fake('1.0'), 
         ),
-        releases=dict(
-            a=('1.0', ),
-            b=('1.0', '1.1'),
+        b=(
+            Fake('1.0'), 
+            Fake('1.1'),
         ),
-        constraints=dict(),
     )
 
     resolver = Resolver(
@@ -35,15 +34,16 @@ def test_constraint_checks():
 
 def test_more_complex_constraint():
     root = make_root(
-        root=dict(
-            a='*',
-            b='<=1.3,!=1.3,!=1.2',
+        root=Fake('', 'a', 'b<=1.3,!=1.3,!=1.2'),
+        a=(
+            Fake('1.0'),
         ),
-        releases=dict(
-            a=('1.0', ),
-            b=('1.0', '1.1', '1.2', '1.3'),
+        b=(
+            Fake('1.0'),
+            Fake('1.1'),
+            Fake('1.2'),
+            Fake('1.3'),
         ),
-        constraints=dict(),
     )
 
     resolver = Resolver(
@@ -65,17 +65,15 @@ def test_more_complex_constraint():
 
 def test_all_have_constraints():
     root = make_root(
-        root=dict(
-            b='*',
+        root=Fake('', 'a', 'b<=1.3,!=1.3,!=1.2'),
+        a=(
+            Fake('1.0'),
         ),
-        releases=dict(
-            a=('1.0', ),
-            b=('1.0', ),
-            c=('1.0', ),
+        b=(
+            Fake('1.0', 'a>=1.0', 'c>=1.0'),
         ),
-        constraints=dict(
-            b={'1.0': ('a>=1.0', 'c>=1.0')},
-            c={'1.0': 'a>=1.0'},
+        c=(
+            Fake('1.0', 'a>=1.0'),
         ),
     )
 
@@ -98,16 +96,13 @@ def test_all_have_constraints():
 
 def test_circular_dependency_on_older_version():
     root = make_root(
-        root=dict(
-            a='>=1.0.0',
+        root=Fake('', 'a>=1.0.0'),
+        a=(
+            Fake('1.0.0'),
+            Fake('2.0.0', 'b==1.0.0'),
         ),
-        releases=dict(
-            a=('1.0.0', '2.0.0'),
-            b=('1.0.0', ),
-        ),
-        constraints=dict(
-            a={'2.0.0': ('b==1.0.0')},
-            b={'1.0.0': ('a==1.0.0')},
+        b=(
+            Fake('1.0.0', 'a==1.0.0'),
         ),
     )
 

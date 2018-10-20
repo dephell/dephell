@@ -1,22 +1,18 @@
-from .factories import make_root
+from .factories import make_root, Fake
 
 
 def test_make_deps():
     root = make_root(
-        root=dict(
-            a='*',
-            b='*',
+        root=Fake('', 'a', 'b'),
+        a=(
+            Fake('1', 'b>5'),
+            Fake('2', 'b>5'),
+            Fake('3', 'b>7'),
         ),
-        releases=dict(
-            a=(1, 2, 3),
-            b=(4, 5, 6),
-        ),
-        constraints=dict(
-            a={
-                '1': 'b>5',
-                '2': 'b>5',
-                '3': 'b>7',
-            },
+        b=(
+            Fake('4'),
+            Fake('5'),
+            Fake('6'),
         ),
     )
 
