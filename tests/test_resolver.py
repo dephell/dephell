@@ -1,6 +1,4 @@
-from .factories import make_root, Fake
-from dephell.controllers import Graph, Mutator, Resolver
-from unittest.mock import patch
+from .factories import make_root, Fake, check
 
 
 def test_constraint_checks():
@@ -14,22 +12,7 @@ def test_constraint_checks():
             Fake('1.1'),
         ),
     )
-
-    resolver = Resolver(
-        graph=Graph(root),
-        mutator=Mutator()
-    )
-    with patch(
-        target='dephell.models.dependency.get_repo',
-        return_value=resolver.graph.root.repo,
-    ):
-        resolved = resolver.resolve()
-    assert resolved
-    assert resolver.graph.get('root').applied
-    reqs = resolver.graph.get_requirements(lock=True)
-    reqs = {req.name: req for req in reqs}
-    assert reqs['a'].version == '==1.0'
-    assert reqs['b'].version == '==1.0'
+    check(root=root, a='==1.0', b='==1.0')
 
 
 def test_more_complex_constraint():
@@ -45,22 +28,7 @@ def test_more_complex_constraint():
             Fake('1.3'),
         ),
     )
-
-    resolver = Resolver(
-        graph=Graph(root),
-        mutator=Mutator()
-    )
-    with patch(
-        target='dephell.models.dependency.get_repo',
-        return_value=resolver.graph.root.repo,
-    ):
-        resolved = resolver.resolve()
-    assert resolved
-    assert resolver.graph.get('root').applied
-    reqs = resolver.graph.get_requirements(lock=True)
-    reqs = {req.name: req for req in reqs}
-    assert reqs['a'].version == '==1.0'
-    assert reqs['b'].version == '==1.1'
+    check(root=root, a='==1.0', b='==1.1')
 
 
 def test_all_have_constraints():
@@ -76,22 +44,7 @@ def test_all_have_constraints():
             Fake('1.0', 'a>=1.0'),
         ),
     )
-
-    resolver = Resolver(
-        graph=Graph(root),
-        mutator=Mutator()
-    )
-    with patch(
-        target='dephell.models.dependency.get_repo',
-        return_value=resolver.graph.root.repo,
-    ):
-        resolved = resolver.resolve()
-    assert resolved
-    assert resolver.graph.get('root').applied
-    reqs = resolver.graph.get_requirements(lock=True)
-    reqs = {req.name: req for req in reqs}
-    assert reqs['a'].version == '==1.0'
-    assert reqs['b'].version == '==1.0'
+    check(root=root, a='==1.0', b='==1.0')
 
 
 def test_circular_dependency_on_older_version():
@@ -105,19 +58,24 @@ def test_circular_dependency_on_older_version():
             Fake('1.0.0', 'a==1.0.0'),
         ),
     )
+    check(root=root, a='==1.0.0', b='==1.0.0')
 
-    resolver = Resolver(
-        graph=Graph(root),
-        mutator=Mutator()
+
+def test_diamond_dependency_graph():
+    root = make_root(
+        root=Fake('', 'a', 'b'),
+        a=(
+            Fake('1.0.0'),
+            Fake('2.0.0', 'c==1.0.0'),
+        ),
+        b=(
+            Fake('1.0.0', 'c==2.0.0'),
+            Fake('2.0.0', 'c==3.0.0'),
+        ),
+        c=(
+            Fake('1.0.0'),
+            Fake('2.0.0'),
+            Fake('3.0.0'),
+        ),
     )
-    with patch(
-        target='dephell.models.dependency.get_repo',
-        return_value=resolver.graph.root.repo,
-    ):
-        resolved = resolver.resolve()
-    assert resolved
-    assert resolver.graph.get('root').applied
-    reqs = resolver.graph.get_requirements(lock=True)
-    reqs = {req.name: req for req in reqs}
-    assert reqs['a'].version == '==1.0.0'
-    assert reqs['b'].version == '==1.0.0'
+    check(root=root, a='==1.0.0', b='==2.0.0', c='==3.0.0')

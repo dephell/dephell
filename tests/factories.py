@@ -1,9 +1,12 @@
 from collections import defaultdict
 from datetime import datetime
+from unittest.mock import patch
+
 from packaging.requirements import Requirement
 
 from dephell.models import Dependency, Release, RootDependency
 from dephell.repositories import ReleaseRepo
+from dephell.controllers import Graph, Mutator, Resolver
 
 
 DEFAULT_TIME = datetime(1970, 1, 1, 0, 0)
@@ -45,3 +48,24 @@ def make_root(root, **releases) -> RootDependency:
         deps.append(dep)
     root_dep.attach_dependencies(deps)
     return root_dep
+
+
+def check(root, resolved=True, **deps):
+    resolver = Resolver(
+        graph=Graph(root),
+        mutator=Mutator()
+    )
+    with patch(
+        target='dephell.models.dependency.get_repo',
+        return_value=resolver.graph.root.repo,
+    ):
+        result = resolver.resolve()
+
+    assert result is resolved
+    assert resolver.graph.get('root').applied
+
+    reqs = resolver.graph.get_requirements(lock=True)
+    reqs = {req.name: req for req in reqs}
+
+    for name, version in deps.items():
+        assert reqs[name].version == version
