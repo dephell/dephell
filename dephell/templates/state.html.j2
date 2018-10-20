@@ -1,0 +1,25 @@
+
+{% if conflict %}
+    <div>
+        Conflict found:
+        {{ conflict.name }}{{ conflict.constraint }}
+    </div>
+
+    <div>
+        Parent packages:
+        <ul>
+            {% for name in conflict.constraint.sources %}
+                <li>{{ graph.get(name).group }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<div>
+    Graph:
+    <ul>
+        {% for dep in graph %}
+            <li>{{ dep }}</li>
+        {% endfor %}
+    </ul>
+</div>
