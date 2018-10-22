@@ -59,7 +59,7 @@ def check(root, resolved=True, **deps):
         target='dephell.models.dependency.get_repo',
         return_value=resolver.graph.root.repo,
     ):
-        result = resolver.resolve()
+        result = resolver.resolve(debug=True)
 
     reqs = resolver.graph.get_requirements(lock=True)
     reqs = {req.name: req for req in reqs}

@@ -151,9 +151,9 @@ class Graph:
                     result.append(req)
         return tuple(result)
 
-    def draw(self, path: str='.'):
+    def draw(self, path: str='.dephell_report', suffix: str=''):
         dot = Digraph(
-            name=self.root.name,
+            name=self.root.name + suffix,
             directory=path,
             format='png',
         )

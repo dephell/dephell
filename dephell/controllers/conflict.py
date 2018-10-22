@@ -8,9 +8,9 @@ env = Environment(
 )
 
 
-def analize_conflict(resolver):
+def analize_conflict(resolver, suffix: str='') -> str:
     try:
-        resolver.graph.draw()
+        resolver.graph.draw(suffix=suffix)
     except ExecutableNotFound:
         print('GraphViz is not installed yet.')
 

@@ -1,5 +1,5 @@
 from logging import getLogger
-
+from .conflict import analize_conflict
 
 logger = getLogger('dephell.resolver')
 
@@ -40,7 +40,7 @@ class Resolver:
             self.unapply(child)
         dep.applied = False
 
-    def resolve(self) -> bool:
+    def resolve(self, debug=False) -> bool:
         while True:
             # get not applied deps
             deps = self.graph.get_leafs()
@@ -53,6 +53,13 @@ class Resolver:
                 if conflict is not None:
                     logger.debug('conflict {}{}'.format(conflict.name, conflict.constraint))
                     self.graph.conflict = conflict.copy()
+
+                    if debug:
+                        print(analize_conflict(
+                            resolver=self,
+                            suffix=str(self.mutator.mutations),
+                        ))
+
                     # Dep can be partialy applied. Clean it.
                     self.unapply(dep, force=True)
                     break
