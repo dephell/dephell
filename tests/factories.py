@@ -6,7 +6,7 @@ from packaging.requirements import Requirement
 
 from dephell.models import Dependency, Release, RootDependency
 from dephell.repositories import ReleaseRepo
-from dephell.controllers import Graph, Mutator, Resolver
+from dephell.controllers import Graph, Mutator, Resolver, analize_conflict
 
 
 DEFAULT_TIME = datetime(1970, 1, 1, 0, 0)
@@ -64,7 +64,13 @@ def check(root, resolved=True, **deps):
     reqs = resolver.graph.get_requirements(lock=True)
     reqs = {req.name: req for req in reqs}
 
-    assert result is resolved
+    try:
+        assert result is resolved
+    except AssertionError:
+        if result is False:
+            print(analize_conflict(resolver=resolver))
+        raise
+
     assert resolver.graph.get('root').applied
 
     for name, version in deps.items():

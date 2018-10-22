@@ -43,7 +43,8 @@ class Group:
         return self.best_release.time
 
     def __str__(self):
-        versions = [str(v) for v in sorted(release.version for release in self.releases)]
+        versions = sorted(release.version for release in self.releases)
+        versions = [str(v) for v in versions]
         if not versions:
             versions = 'EMPTY'
         elif len(versions) <= 4:

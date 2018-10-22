@@ -149,6 +149,8 @@ class Graph:
                     result.append(req)
         return tuple(result)
 
+    # properties
+
     @property
     def names(self) -> set:
         return set(self._deps.keys())
@@ -156,6 +158,8 @@ class Graph:
     @property
     def deps(self) -> tuple:
         return tuple(dep for dep in self._deps.values() if dep is not self.root)
+
+    # magic
 
     def __iter__(self):
         return iter(self.deps)

@@ -34,3 +34,7 @@ class Mutator:
 
     def remember(self, groups):
         self._snapshots.add(self._make_snapshot(groups))
+
+    @property
+    def mutations(self):
+        return len(self._snapshots)

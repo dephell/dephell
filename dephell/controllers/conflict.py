@@ -1,12 +1,17 @@
 from jinja2 import Environment, PackageLoader
+from html2text import html2text
 
 
 env = Environment(
-    loader=PackageLoader('yourapplication', 'templates'),
+    loader=PackageLoader('dephell', 'templates'),
 )
 
 
-def analize_conflict(graph):
-    conflict = graph.conflict.name
-    constraint = str(graph.conflict.constraint)
-    return '{} {}'.format(conflict, constraint)
+def analize_conflict(resolver):
+    template = env.get_template('state.html.j2')
+    content = template.render(
+        conflict=resolver.graph.conflict,
+        graph=resolver.graph,
+        mutator=resolver.mutator,
+    )
+    return html2text(content)

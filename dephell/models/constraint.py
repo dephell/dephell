@@ -59,6 +59,14 @@ class Constraint:
     def sources(self) -> set:
         return set(self._specs.keys())
 
+    @property
+    def specs(self) -> tuple:
+        result = []
+        for name, spec in self._specs.items():
+            spec = ','.join(map(str, spec))
+            result.append((name, spec))
+        return tuple(sorted(result))
+
     def apply(self, dep, spec):
         if dep.name in self._groups:
             # don't apply same group twice

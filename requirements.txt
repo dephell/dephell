@@ -2,7 +2,8 @@ aiohttp
 attrs
 cached_property
 cleo
+html2text
 packaging
-requests
 pip
+requests
 tomlkit

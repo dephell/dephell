@@ -4,7 +4,7 @@ from .group import Group
 class RootRelease:
     name = 'root'
     raw_name = 'Root'
-    version = ''
+    version = '1.0'
     time = ''
 
     def __init__(self, dependencies):

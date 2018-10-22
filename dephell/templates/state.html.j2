@@ -6,10 +6,11 @@
     </div>
 
     <div>
-        Parent packages:
         <ul>
-            {% for name in conflict.constraint.sources %}
-                <li>{{ graph.get(name).group }}</li>
+            {% for name, spec in conflict.constraint.specs %}
+                <li>
+                    {{ spec }} goes from {{ graph.get(name).group }}
+                </li>
             {% endfor %}
         </ul>
     </div>
@@ -19,7 +20,11 @@
     Graph:
     <ul>
         {% for dep in graph %}
-            <li>{{ dep }}</li>
+            <li>{{ dep.name }}{{ dep.constraint }}</li>
         {% endfor %}
     </ul>
+</div>
+
+<div>
+    Tried {{ mutator.mutations }} mutations.
 </div>
