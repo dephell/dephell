@@ -3,8 +3,6 @@ from collections import ChainMap
 
 from graphviz import Digraph
 
-from ..models.requirement import Requirement
-
 
 logger = getLogger(__name__)
 

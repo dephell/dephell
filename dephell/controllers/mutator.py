@@ -38,3 +38,9 @@ class Mutator:
     @property
     def mutations(self):
         return len(self._snapshots)
+
+    def __repr__(self):
+        return '{name}(mutations={mutations})'.format(
+            name=self.__class__.__name__,
+            mutations=self.mutations,
+        )
