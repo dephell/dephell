@@ -148,8 +148,8 @@ class Graph:
         for dep in self:
             dot.node(dep.name, dep.raw_name + str(dep.constraint))
         for dep in self:
-            for parent in dep.constraint.sources:
-                dot.edge(parent, dep.name)
+            for parent, constraint in dep.constraint.specs:
+                dot.edge(parent, dep.name, label=constraint)
         dot.render()
 
     # properties
