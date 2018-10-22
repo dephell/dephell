@@ -2,6 +2,7 @@ aiohttp
 attrs
 cached_property
 cleo
+graphviz
 html2text
 packaging
 pip

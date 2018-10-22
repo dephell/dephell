@@ -1,6 +1,8 @@
 from logging import getLogger
 from collections import ChainMap
 
+from graphviz import Digraph
+
 from ..models.requirement import Requirement
 
 
@@ -148,6 +150,19 @@ class Graph:
                     req = Requirement(dep=dep, lock=lock)
                     result.append(req)
         return tuple(result)
+
+    def draw(self, path: str='.'):
+        dot = Digraph(
+            name=self.root.name,
+            directory=path,
+            format='png',
+        )
+        for dep in self:
+            dot.node(dep.name, dep.raw_name + str(dep.constraint))
+        for dep in self:
+            for parent in dep.constraint.sources:
+                dot.edge(parent, dep.name)
+        dot.render()
 
     # properties
 
