@@ -2,9 +2,9 @@ from collections import defaultdict
 from datetime import datetime
 from unittest.mock import patch
 
-from packaging.requirements import Requirement
+from packaging.requirements import Requirement as PackagingRequirement
 
-from dephell.models import Dependency, Release, RootDependency
+from dephell.models import Dependency, Release, RootDependency, Requirement
 from dephell.repositories import ReleaseRepo
 from dephell.controllers import Graph, Mutator, Resolver, analize_conflict
 
@@ -32,7 +32,7 @@ def make_root(root, **releases) -> RootDependency:
     constraints = defaultdict(dict)
     for name, fakes in releases.items():
         for fake in fakes:
-            constraints[name][fake.version] = tuple(Requirement(dep) for dep in fake.deps)
+            constraints[name][fake.version] = tuple(PackagingRequirement(dep) for dep in fake.deps)
 
     repo = ReleaseRepo(*release_objects, deps=constraints)
 
@@ -41,7 +41,7 @@ def make_root(root, **releases) -> RootDependency:
     root_dep.repo = repo
     for constr in root.deps:
         dep = Dependency.from_requirement(
-            req=Requirement(constr),
+            req=PackagingRequirement(constr),
             source=root_dep,
         )
         dep.repo = repo
@@ -61,7 +61,7 @@ def check(root, resolved=True, **deps):
     ):
         result = resolver.resolve(debug=True)
 
-    reqs = resolver.graph.get_requirements(lock=True)
+    reqs = Requirement.from_graph(resolver.graph, lock=True)
     reqs = {req.name: req for req in reqs}
 
     try:

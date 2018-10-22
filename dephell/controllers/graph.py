@@ -141,16 +141,6 @@ class Graph:
             ))
         return parents
 
-    def get_requirements(self, *, lock: bool) -> tuple:
-        result = []
-        applied = self.root.applied
-        for layer in self._layers:
-            for dep in sorted(layer):
-                if not applied or dep.applied:
-                    req = Requirement(dep=dep, lock=lock)
-                    result.append(req)
-        return tuple(result)
-
     def draw(self, path: str='.dephell_report', suffix: str=''):
         dot = Digraph(
             name=self.root.name + suffix,
