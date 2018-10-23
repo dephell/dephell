@@ -145,11 +145,28 @@ class Graph:
             directory=path,
             format='png',
         )
+        first_deps = self._layers[1]
+
+        # add root node
+        dot.node(self.root.name, self.root.raw_name, color='blue')
+
+        # add nodes
         for dep in self:
-            dot.node(dep.name, dep.raw_name + str(dep.constraint))
+            # https://graphviz.gitlab.io/_pages/doc/info/colors.html
+            if dep.name == self.conflict.name:
+                color = 'crimson'
+            elif dep in first_deps:
+                color = 'forestgreen'
+            else:
+                color = 'black'
+            dot.node(dep.name, dep.raw_name + str(dep.constraint), color=color)
+
+        # add edges
         for dep in self:
             for parent, constraint in dep.constraint.specs:
                 dot.edge(parent, dep.name, label=constraint)
+
+        # save files
         dot.render()
 
     # properties
