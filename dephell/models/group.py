@@ -46,12 +46,14 @@ class Group:
         versions = sorted(release.version for release in self.releases)
         versions = [str(v) for v in versions]
         if not versions:
-            versions = 'EMPTY'
+            versions = '[EMPTY]'
+        elif len(versions) == 1:
+            versions = '==' + versions[0]
         elif len(versions) <= 4:
-            versions = ', '.join(versions)
+            versions = '({})'.format(', '.join(versions))
         else:
-            versions = '{}–{}'.format(versions[0], versions[-1])
-        return '{} ({})'.format(self.name, versions)
+            versions = '({}–{})'.format(versions[0], versions[-1])
+        return '{}{}'.format(self.name, versions)
 
     def __repr__(self):
         return 'Group({})'.format(str(self))

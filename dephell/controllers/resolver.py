@@ -33,6 +33,7 @@ class Resolver:
         for child in dep.dependencies:
             child = self.graph.get(child.name)
             if child is None:
+                logger.warning('child not found')
                 continue
             # unapply current dependency for child
             child.unapply(dep.name)

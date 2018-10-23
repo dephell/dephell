@@ -17,10 +17,30 @@
 {% endif %}
 
 <div>
-    Graph:
+    Locked nodes:
     <ul>
         {% for dep in graph %}
-            <li>{{ dep.name }}{{ dep.constraint }}</li>
+            {% if dep.locked %}
+                <li>{{ dep.group }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    Nodes with constraints:
+    <ul>
+        {% for dep in graph %}
+            {% if dep.constraint.sources %}
+                <li>{{ dep.name }}{{ dep.constraint }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    Free nodes:
+    <ul>
+        {% for dep in graph %}
+            {% if not dep.constraint.sources %}
+                <li>{{ dep.name }}</li>
+            {% endif %}
         {% endfor %}
     </ul>
 </div>
