@@ -105,3 +105,44 @@ def test_backjumps_after_partial_satisfier():
         ),
     )
     check(root=root, c='==1', y='==2')
+
+
+def test_rolls_back_leaf_versions_first():
+    root = make_root(
+        root=Fake('', 'a'),
+        a=(
+            Fake('1', 'b'),
+            Fake('2', 'b', 'c==2'),
+        ),
+        b=(
+            Fake('1'),
+            Fake('2', 'c==1'),
+        ),
+        c=(
+            Fake('1'),
+            Fake('2'),
+        ),
+    )
+    # now dephell choose first local maximum, not total.
+    # check(root=root, a='==2', b='==1', c='==2')
+    # check(root=root, a='==1', b='==2', c='==1')
+
+
+def test_simple_transitive():
+    root = make_root(
+        root=Fake('', 'a'),
+        a=(
+            Fake('1', 'b==1'),
+            Fake('2', 'b==2'),
+            Fake('3', 'b==3'),
+        ),
+        b=(
+            Fake('1', 'c'),
+            Fake('2', 'c==2'),
+            Fake('3', 'c==3'),
+        ),
+        c=(
+            Fake('1'),
+        ),
+    )
+    check(root=root, a='==1', b='==1', c='==1')

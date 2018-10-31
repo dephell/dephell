@@ -74,7 +74,7 @@ def check(root, resolved=True, missed=None, **deps):
     assert resolver.graph.get('root').applied
 
     for name, version in deps.items():
-        assert reqs[name].version == version
+        assert reqs[name].version == version, '{}: {} != {}'.format(name, reqs[name].version, version)
 
     if missed:
         for name in missed:
