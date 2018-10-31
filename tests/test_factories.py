@@ -1,4 +1,4 @@
-from .factories import make_root, Fake
+from .helpers import make_root, Fake
 
 
 def test_make_deps():

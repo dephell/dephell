@@ -1,4 +1,4 @@
-from .factories import make_root, Fake, check
+from .helpers import make_root, Fake, check
 
 
 def test_constraint_checks():
