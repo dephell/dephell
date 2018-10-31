@@ -19,7 +19,7 @@ class RootDependency:
     applied = False
     locked = False
     compat = True
-    used = False
+    used = True
 
     def __init__(self, name: str='root'):
         self.name = name

@@ -81,7 +81,7 @@ class Graph:
         result = []
         for layer in self._layers:
             for dep in layer:
-                if not dep.applied:
+                if not dep.applied and dep.used:
                     result.append(dep)
         return tuple(result)
 

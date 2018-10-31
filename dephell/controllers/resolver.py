@@ -27,7 +27,7 @@ class Resolver:
                 return other_dep
         parent.applied = True
 
-    def unapply(self, dep, *, force=False):
+    def unapply(self, dep, *, force=True):
         if not force and not dep.applied:
             return
         for child in dep.dependencies:
@@ -38,7 +38,7 @@ class Resolver:
             # unapply current dependency for child
             child.unapply(dep.name)
             # unapply child because he is modified
-            self.unapply(child)
+            self.unapply(child, force=False)
         dep.applied = False
 
     def resolve(self, debug=False) -> bool:
@@ -62,7 +62,7 @@ class Resolver:
                         ))
 
                     # Dep can be partialy applied. Clean it.
-                    self.unapply(dep, force=True)
+                    self.unapply(dep)
                     break
             else:
                 # only if all deps applied
@@ -78,6 +78,6 @@ class Resolver:
             for group in groups:
                 dep = self.graph.get(group.name)
                 if dep.group.number != group.number:
-                    logger.debug('mutated {}'.format(str(dep.group.best_release)))
+                    logger.debug('mutated {} to {}'.format(str(dep.group), str(group)))
                     self.unapply(dep)
                     dep.group = group

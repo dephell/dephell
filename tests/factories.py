@@ -50,7 +50,7 @@ def make_root(root, **releases) -> RootDependency:
     return root_dep
 
 
-def check(root, resolved=True, **deps):
+def check(root, resolved=True, missed=None, **deps):
     resolver = Resolver(
         graph=Graph(root),
         mutator=Mutator()
@@ -75,3 +75,7 @@ def check(root, resolved=True, **deps):
 
     for name, version in deps.items():
         assert reqs[name].version == version
+
+    if missed:
+        for name in missed:
+            assert name not in reqs

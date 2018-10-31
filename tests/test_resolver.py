@@ -5,10 +5,10 @@ def test_constraint_checks():
     root = make_root(
         root=Fake('', 'a', 'b<1.1'),
         a=(
-            Fake('1.0'), 
+            Fake('1.0'),
         ),
         b=(
-            Fake('1.0'), 
+            Fake('1.0'),
             Fake('1.1'),
         ),
     )
@@ -58,7 +58,7 @@ def test_circular_dependency_on_older_version():
             Fake('1.0.0', 'a==1.0.0'),
         ),
     )
-    check(root=root, a='==1.0.0', b='==1.0.0')
+    check(root=root, a='==1.0.0', missed=['b'])
 
 
 def test_diamond_dependency_graph():
