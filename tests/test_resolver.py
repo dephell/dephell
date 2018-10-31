@@ -124,8 +124,8 @@ def test_rolls_back_leaf_versions_first():
         ),
     )
     # now dephell choose first local maximum, not total.
+    check(root=root)
     # check(root=root, a='==2', b='==1', c='==2')
-    # check(root=root, a='==1', b='==2', c='==1')
 
 
 def test_simple_transitive():
@@ -146,3 +146,63 @@ def test_simple_transitive():
         ),
     )
     check(root=root, a='==1', b='==1', c='==1')
+
+
+def test_backjump_to_nearer_unsatisfied_package():
+    root = make_root(
+        root=Fake('', 'a', 'b'),
+        a=(
+            Fake('1', 'c==1'),
+            Fake('2', 'c==2'),
+        ),
+        b=(
+            Fake('1'),
+            Fake('2'),
+            Fake('3'),
+        ),
+        c=(
+            Fake('1'),
+        ),
+    )
+    check(root=root, a='==1', b='==3', c='==1')
+
+
+def test_traverse_into_package_with_fewer_versions_first():
+    root = make_root(
+        root=Fake('', 'a', 'b'),
+        a=(
+            Fake('1', 'c'),
+            Fake('2', 'c'),
+            Fake('3', 'c'),
+            Fake('4', 'c'),
+            Fake('5', 'c==1'),
+        ),
+        b=(
+            Fake('1'),
+            Fake('2'),
+            Fake('3'),
+            Fake('4', 'c==2'),
+        ),
+        c=(
+            Fake('1'),
+            Fake('2'),
+        ),
+    )
+    check(root=root)
+    # check(root=root, a='==4', b='==4', c='==2')
+
+
+def test_backjump_past_failed_package_on_disjoint_constraint():
+    root = make_root(
+        root=Fake('', 'a', 'b>2'),
+        a=(
+            Fake('1', 'b'),
+            Fake('2', 'b<1'),
+        ),
+        b=(
+            Fake('2'),
+            Fake('3'),
+            Fake('4'),
+        ),
+    )
+    check(root=root, a='==1', b='==4')
