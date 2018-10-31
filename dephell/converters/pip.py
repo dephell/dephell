@@ -22,7 +22,7 @@ class PIPConverter(BaseConverter):
 
     def dumps(self, graph) -> str:
         deps = []
-        for dep in graph.mapping.values():
+        for dep in graph:
             if not dep.used:
                 continue
             deps.append(self._format_dep(dep))

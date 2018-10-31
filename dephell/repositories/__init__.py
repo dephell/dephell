@@ -8,4 +8,4 @@ __all__ = ['ReleaseRepo', 'WareHouseRepo']
 def get_repo(link=None):
     if link is None:
         return WareHouseRepo()
-    return ReleaseRepo(link)
+    return ReleaseRepo(link=link)

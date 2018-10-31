@@ -2,8 +2,9 @@ from .group import Group
 
 
 class RootRelease:
-    raw_name = 'root'
-    version = ''
+    name = 'root'
+    raw_name = 'Root'
+    version = '1.0'
     time = ''
 
     def __init__(self, dependencies):
@@ -15,14 +16,15 @@ class RootRelease:
 
 class RootDependency:
     repo = None
-    raw_name = 'ROOT'
-    name = 'root'
     applied = False
     locked = False
     compat = True
-    used = False
+    used = True
 
-    def __init__(self):
+    def __init__(self, name: str='root'):
+        self.name = name
+        self.raw_name = name.title()
+
         self.dependencies = []
         self.all_releases = (RootRelease(self.dependencies), )
         self.group = Group(number=0, releases=self.all_releases)
@@ -41,4 +43,7 @@ class RootDependency:
         raise NotImplementedError
 
     def __str__(self):
-        return 'root'
+        return self.name
+
+    def __repr__(self):
+        return '{}({})'.format(self.__class__.__name__, self.name)

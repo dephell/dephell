@@ -30,7 +30,9 @@ class _PathLink:
     @property
     def name(self):
         # get last part of path
-        name = self.short.split('/')[-1]
+        path = os.path.abspath(self.short.replace('/', os.path.sep))
+        name = os.path.basename(path)
+
         # drop all extensions, because in Python package name has no dots
         name = name.split('.')[0]
         # pip can return urlencoded name

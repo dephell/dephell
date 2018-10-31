@@ -27,7 +27,7 @@ class PIPFileLockConverter(PIPFileConverter):
 
     def dumps(self, graph) -> str:
         deps = OrderedDict()
-        for dep in sorted(graph.mapping.values(), key=attrgetter('name')):
+        for dep in sorted(graph):
             if not dep.used:
                 continue
             deps[dep.name] = dict(self._format_dep(dep, short=False))

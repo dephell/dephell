@@ -32,7 +32,7 @@ class PIPFileConverter(BaseConverter):
         doc.add('source', sources)
 
         deps = table()
-        for dep in sorted(graph.mapping.values(), key=attrgetter('name')):
+        for dep in sorted(graph):
             if not dep.used:
                 continue
             deps[dep.name] = self._format_dep(dep)

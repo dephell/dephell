@@ -1,5 +1,5 @@
 from logging import getLogger
-
+from .conflict import analize_conflict
 
 logger = getLogger('dephell.resolver')
 
@@ -14,11 +14,11 @@ class Resolver:
         Returns conflicting (incompatible) dependency
         """
         for new_dep in parent.dependencies:
-            other_dep = self.graph.mapping.get(new_dep.name)
+            other_dep = self.graph.get(new_dep.name)
             if other_dep is None:
                 # add new dep to graph
                 other_dep = new_dep.copy()
-                self.graph.mapping[new_dep.name] = other_dep
+                self.graph.add(other_dep)
             else:
                 # merge deps
                 other_dep.merge(new_dep)
@@ -27,20 +27,21 @@ class Resolver:
                 return other_dep
         parent.applied = True
 
-    def unapply(self, dep, *, force=False):
+    def unapply(self, dep, *, force=True):
         if not force and not dep.applied:
             return
         for child in dep.dependencies:
-            child = self.graph.mapping.get(child.name)
+            child = self.graph.get(child.name)
             if child is None:
+                logger.warning('child not found')
                 continue
             # unapply current dependency for child
             child.unapply(dep.name)
             # unapply child because he is modified
-            self.unapply(child)
+            self.unapply(child, force=False)
         dep.applied = False
 
-    def resolve(self) -> bool:
+    def resolve(self, debug=False) -> bool:
         while True:
             # get not applied deps
             deps = self.graph.get_leafs()
@@ -53,8 +54,15 @@ class Resolver:
                 if conflict is not None:
                     logger.debug('conflict {}{}'.format(conflict.name, conflict.constraint))
                     self.graph.conflict = conflict.copy()
+
+                    if debug:
+                        print(analize_conflict(
+                            resolver=self,
+                            suffix=str(self.mutator.mutations),
+                        ))
+
                     # Dep can be partialy applied. Clean it.
-                    self.unapply(dep, force=True)
+                    self.unapply(dep)
                     break
             else:
                 # only if all deps applied
@@ -68,8 +76,8 @@ class Resolver:
             self.graph.conflict = None
             # apply mutation
             for group in groups:
-                dep = self.graph.mapping[group.name]
+                dep = self.graph.get(group.name)
                 if dep.group.number != group.number:
-                    logger.debug('mutated {}'.format(str(dep.group.best_release)))
+                    logger.debug('mutated {} to {}'.format(str(dep.group), str(group)))
                     self.unapply(dep)
                     dep.group = group

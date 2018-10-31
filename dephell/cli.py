@@ -25,7 +25,7 @@ def resolve(rule) -> bool:
         with Progress().auto():
             resolved = resolver.resolve()
         if not resolved:
-            conflict = analize_conflict(graph=resolver.graph)
+            conflict = analize_conflict(resolver=resolver)
             output.writeln('<error>CONFLICT:</error> ' + conflict)
             return False
 

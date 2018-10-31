@@ -11,6 +11,17 @@ class Requirement:
         self.dep = dep
         self.lock = lock
 
+    @classmethod
+    def from_graph(cls, graph, *, lock: bool):
+        result = []
+        applied = graph.root.applied
+        for layer in graph._layers:
+            for dep in sorted(layer):
+                if not applied or dep.applied:
+                    req = cls(dep=dep, lock=lock)
+                    result.append(req)
+        return tuple(result)
+
     @cached_property
     def release(self):
         if self.lock:

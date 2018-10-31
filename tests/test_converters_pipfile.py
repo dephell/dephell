@@ -14,9 +14,9 @@ def test_load():
 def test_dump():
     converter = PIPFileConverter()
     resolver = converter.load_resolver('./tests/requirements/pipfile.toml')
-    for dep in resolver.graph.mapping['root'].dependencies:
+    for dep in resolver.graph.root.dependencies:
         dep.__dict__['used'] = True
-        resolver.graph.mapping[dep.name] = dep
+        resolver.graph.add(dep)
     content = converter.dumps(resolver.graph)
     assert 'requests = ' in content
     assert "extras = ['socks']" in content

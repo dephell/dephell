@@ -55,11 +55,21 @@ class Dependency:
         )
 
     @classmethod
-    def from_params(cls, url, raw_name, **kwargs):
+    def from_params(cls, *, raw_name, constraint, url=None, source=None, repo=None, **kwargs):
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
             raw_name = link.name
-        return cls(link=link, repo=get_repo(link), raw_name=raw_name, **kwargs)
+        if source:
+            constraint = Constraint(source, constraint)
+        if repo is None:
+            repo = get_repo(link)
+        return cls(
+            link=link,
+            repo=repo,
+            raw_name=raw_name,
+            constraint=constraint,
+            **kwargs,
+        )
 
     # properties
 
@@ -148,6 +158,8 @@ class Dependency:
 
     @property
     def used(self) -> bool:
+        """True if some deps in graph depends on this dep.
+        """
         return not self.constraint.empty
 
     # methods
