@@ -63,17 +63,16 @@ class InitCommand:
                 table = tomlkit.table()
 
                 table['from'] = tomlkit.inline_table()
-                table['from'].add('format', rule.from_format)
-                table['from'].add('path', rule.from_path)
+                table['from']['format'] = rule.from_format
+                table['from']['path'] = rule.from_path
 
                 table['to'] = tomlkit.inline_table()
-                table['to'].add('format', rule.to_format)
-                table['to'].add('path', rule.to_path)
+                table['to']['format'] = rule.to_format
+                table['to']['path'] = rule.to_path
+
+                table['silent'] = False
 
                 doc.add(rule.from_format, table)
-
-        # add defaults
-        doc.add('silent', False)
 
         # write
         with open(self.args.config, 'w', encoding='utf8') as stream:
