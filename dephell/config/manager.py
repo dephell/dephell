@@ -22,7 +22,7 @@ class Config:
             else:
                 container[key] = value
 
-    def attach_config(self, path: str, env: str) -> dict:
+    def attach_file(self, path: str, env: str) -> dict:
         # read
         with open(path, 'r', encoding='utf8') as stream:
             doc = tomlkit.parse(stream.read())
