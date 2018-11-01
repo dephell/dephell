@@ -1,6 +1,7 @@
 aiohttp
 attrs
 cached_property
+cerberus
 cleo
 graphviz
 html2text
