@@ -12,9 +12,12 @@ def main(argv):
     args = parser.parse_args(argv)
     if args.command is None:
         parser.parse_args('--help')
-
     command = commands[args.command]
-    args = command.parser(argv[1:])
-    task = command(args)
+    task = command(argv[1:])
+
+    is_valid = task.validate()
+    if not is_valid:
+        return 2
+
     result = task()
     return int(not result)
