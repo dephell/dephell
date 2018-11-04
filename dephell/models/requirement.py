@@ -57,6 +57,7 @@ class Requirement:
             hashes.add(digest)
 
         if not hashes:
+            # TODO: calculate hash for local data
             ...
 
         return tuple(sorted(hashes))

@@ -21,11 +21,11 @@ class BaseConverter:
         with open(str(path), 'r') as stream:
             return self.loads(stream.read())
 
-    def dumps(self, graph) -> str:
+    def dumps(self, reqs) -> str:
         raise NotImplementedError
 
-    def dump(self, graph, path):
-        content = self.dumps(graph)
+    def dump(self, reqs, path):
+        content = self.dumps(reqs=reqs)
         with open(str(path), 'w') as stream:
             stream.write(content)
 

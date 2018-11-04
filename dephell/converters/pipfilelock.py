@@ -1,7 +1,6 @@
 import json
 from collections import OrderedDict
 from hashlib import sha256
-from operator import attrgetter
 
 # from .base import BaseConverter
 from .pipfile import PIPFileConverter

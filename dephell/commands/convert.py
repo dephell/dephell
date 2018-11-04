@@ -1,6 +1,7 @@
 from ..console import Progress, output
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
+from ..models import Requirement
 
 from .base import BaseCommand
 
@@ -19,13 +20,14 @@ class ConvertCommand(BaseCommand):
                 resolved = resolver.resolve()
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
-                output.writeln('<error>CONFLICT:</error> ' + conflict)
+                output.writeln('<error>Conflict has found:</error> ')
+                output.writeln(conflict)
                 return False
 
         # dump
         output.writeln('<info>Resolved!</info>')
         dumper.dump(
             path=self.config['to']['path'],
-            graph=resolver.graph,
+            reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),
         )
         return True

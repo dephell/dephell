@@ -20,33 +20,26 @@ class PIPConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, graph) -> str:
+    def dumps(self, reqs) -> str:
         deps = []
-        for dep in graph:
-            if not dep.used:
-                continue
-            deps.append(self._format_dep(dep))
+        for req in reqs:
+            deps.append(self._format_req(req=req))
         deps.sort()
         return '\n'.join(deps) + '\n'
 
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
     # https://github.com/jazzband/pip-tools/blob/master/piptools/utils.py
-    def _format_dep(self, dep):
-        if self.lock:
-            release = dep.group.best_release
-        line = dep.name
-        if dep.extras:
-            line += '[{}]'.format(','.join(sorted(dep.extras)))
-        if self.lock:
-            line += '==' + str(release.version)
-        else:
-            line += str(dep.constraint)
-        if dep.marker:
-            line += '; ' + str(dep.marker)
-        if self.lock:
-            for digest in release.hashes:
+    def _format_req(self, req):
+        line = req.name
+        if req.extras:
+            line += '[{}]'.format(','.join(req.extras))
+        line += req.version
+        if req.markers:
+            line += '; ' + req.markers
+        if req.hashes:
+            for digest in req.hashes:
                 # https://github.com/jazzband/pip-tools/blob/master/piptools/writer.py
                 line += '{}--hash sha256:{}'.format(self.sep, digest)
-        if not dep.constraint.empty:
-            line += '{}# ^ from {}'.format(self.sep, ', '.join(dep.constraint.sources))
+        if req.sources:
+            line += '{}# ^ from {}'.format(self.sep, ', '.join(req.sources))
         return line
