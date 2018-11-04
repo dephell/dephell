@@ -1,4 +1,5 @@
 from cached_property import cached_property
+from typing import Optional
 
 
 class Requirement:
@@ -15,7 +16,10 @@ class Requirement:
     def from_graph(cls, graph, *, lock: bool):
         result = []
         applied = graph.root.applied
-        for layer in graph._layers:
+        if len(graph._layers) == 1:
+            for dep in graph.get('root').dependencies:
+                graph.add(dep)
+        for layer in graph._layers[1:]:  # skip roots
             for dep in sorted(layer):
                 if not applied or dep.applied:
                     req = cls(dep=dep, lock=lock)
@@ -42,8 +46,10 @@ class Requirement:
         return tuple(sorted(self.dep.extras))
 
     @property
-    def markers(self) -> str:
-        return str(self.dep.marker)
+    def markers(self) -> Optional[str]:
+        markers = self.dep.marker
+        if markers:
+            return str(markers)
 
     @cached_property
     def hashes(self) -> tuple:

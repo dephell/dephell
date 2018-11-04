@@ -1,4 +1,5 @@
-from dephell.converters.pipfile import PIPFileConverter
+from dephell.converters import PIPFileConverter
+from dephell.models import Requirement
 
 
 def test_load():
@@ -14,10 +15,9 @@ def test_load():
 def test_dump():
     converter = PIPFileConverter()
     resolver = converter.load_resolver('./tests/requirements/pipfile.toml')
-    for dep in resolver.graph.root.dependencies:
-        dep.__dict__['used'] = True
-        resolver.graph.add(dep)
-    content = converter.dumps(resolver.graph)
+    reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
+    assert len(reqs) > 2
+    content = converter.dumps(reqs=reqs)
     assert 'requests = ' in content
     assert "extras = ['socks']" in content
     assert 'records = ">0.5.0"' in content
