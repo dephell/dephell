@@ -74,7 +74,7 @@ class PIPFileConverter(BaseConverter):
             url=url,
         )
 
-    def _format_req(self, req):
+    def _format_req(self, req, *, short=True):
         result = inline_table()
         for name, value in req:
             if name in self.fields:
@@ -84,7 +84,7 @@ class PIPFileConverter(BaseConverter):
         if 'version' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table
-        if tuple(result.value) == ('version', ):
+        if short and tuple(result.value) == ('version', ):
             return result['version']
         # do not specify version explicit
         if result['version'] == '*':

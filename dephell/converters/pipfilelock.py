@@ -24,12 +24,10 @@ class PIPFileLockConverter(PIPFileConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, graph) -> str:
-        deps = OrderedDict()
-        for dep in sorted(graph):
-            if not dep.used:
-                continue
-            deps[dep.name] = dict(self._format_dep(dep, short=False))
+    def dumps(self, reqs) -> str:
+        packages = OrderedDict()
+        for req in reqs:
+            packages[req.name] = dict(self._format_req(req=req, short=False))
 
         data = OrderedDict([
             ('_meta', OrderedDict([
@@ -40,7 +38,7 @@ class PIPFileLockConverter(PIPFileConverter):
                 ])]),
                 ('requires', {'python_version': '2.7'}),
             ])),
-            ('default', deps),
+            ('default', packages),
             ('develop', OrderedDict()),
         ])
         data['_meta']['hash'] = {'sha256': self._get_hash(data)}
