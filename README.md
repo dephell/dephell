@@ -43,10 +43,16 @@ Available formats:
 ## Python lib usage
 
 ```python
-from dephell import Resolver
-resolver = Resolver.from_requirements(path_from)
+from dephell import PIPConverter, Requirement
+
+loader = PIPConverter(lock=False)
+resolver = loader.load_resolver(path='requirements.in')
+
 resolver.resolve()
-content = resolver.to_requirements()
+reqs = Requirement.from_graph(resolver.graph, lock=True)
+
+dumper = PIPConverter(lock=True)
+dumper.dump(reqs=reqs, path='requirements.txt')
 ```
 
 
