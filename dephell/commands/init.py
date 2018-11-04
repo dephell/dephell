@@ -51,7 +51,7 @@ class InitCommand(BaseCommand):
         return config
 
     def validate(self):
-        pass
+        return True
 
     @staticmethod
     def _make_env(rule):

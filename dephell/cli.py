@@ -9,7 +9,7 @@ parser.add_argument('command', choices=commands.keys(), help='command to execute
 
 
 def main(argv):
-    args = parser.parse_args(argv)
+    args = parser.parse_args(argv[:1])
     if args.command is None:
         parser.parse_args('--help')
     command = commands[args.command]
