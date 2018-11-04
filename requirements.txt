@@ -7,5 +7,6 @@ graphviz
 html2text
 packaging
 pip
+pyyaml
 requests
 tomlkit

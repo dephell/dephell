@@ -19,12 +19,12 @@ parser.add_argument('-e', '--env', default='main', help='environment')
 
 # from
 parser.add_argument('--from-format', choices=FORMATS, help='format for reading requirements')
-parser.add_argument('--from-file', help='path to input file')
+parser.add_argument('--from-path', help='path to input file')
 parser.add_argument('--from-env', action='append', dest='from_envs', choices=ENVS, help=env_help)
 
 # to
 parser.add_argument('--to-format', choices=FORMATS, help='output requirements file format')
-parser.add_argument('--to-file', help='path to output file')
+parser.add_argument('--to-path', help='path to output file')
 parser.add_argument('--to-env', action='append', dest='to_envs', choices=ENVS, help=env_help)
 
 # other

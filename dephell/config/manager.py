@@ -2,12 +2,15 @@ from collections import defaultdict
 from typing import Optional
 
 import tomlkit
+import yaml
 from cerberus import Validator
 
 from .scheme import SCHEME
 
 
 class Config:
+    _skip = ('config', 'env')
+
     def __init__(self, data: Optional[dict] = None):
         self._data = data or dict()
 
@@ -52,18 +55,14 @@ class Config:
         return data
 
     def validate(self) -> bool:
+        self._data = {k: v for k, v in self._data.items() if k not in self._skip}
         validator = Validator(SCHEME)
         result = validator.validate(self._data)
         self.errors = validator.errors
         return result
 
     def format_errors(self) -> str:
-        result = []
-        for field, errors in self.errors:
-            result.append(field)
-            for error in errors:
-                result.append('    ' + error)
-        return '\n'.join(result)
+        return yaml.dump(self.errors)
 
     def __getattr__(self, name):
         return getattr(self._data, name)

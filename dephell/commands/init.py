@@ -88,10 +88,18 @@ class InitCommand(BaseCommand):
         path = Path(self.args.config).parent
         for rule in rules:
             if (path / rule.from_path).exists():
-                doc['tool']['dephell'].add(rule.from_format, self._make_env(rule))
+                if rule.from_format not in doc['tool']['dephell']:
+                    doc['tool']['dephell'].add(
+                        rule.from_format,
+                        self._make_env(rule),
+                    )
 
         if not doc['tool']['dephell'].value:
-            doc['tool']['dephell'].add('example', self._make_env(example_rule))
+            if 'example' not in doc['tool']['dephell']:
+                doc['tool']['dephell'].add(
+                    'example',
+                    self._make_env(example_rule),
+                )
 
         # write
         with config_path.open('w', encoding='utf8') as stream:
