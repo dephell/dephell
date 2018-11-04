@@ -1,45 +1,23 @@
-import argparse
-
-from .config import Config
-from .console import Progress, output
-from .controllers import analize_conflict
-from .converters import CONVERTERS
+from argparse import ArgumentParser
+from .commands import commands
 
 
-parser = argparse.ArgumentParser(
+parser = ArgumentParser(
     description='Lock and convert dependencies between formats.',
 )
-parser.add_argument('-c', '--config', default='pyproject.toml', help='path to config file')
-parser.add_argument('-e', '--env', default='main', help='environment')
+parser.add_argument('command', choices=commands.keys(), help='command to execute')
 
 
-def resolve(rule) -> bool:
-    loader = CONVERTERS[rule['from']['format']]
-    dumper = CONVERTERS[rule['to']['format']]
+def main(argv):
+    args = parser.parse_args(argv[:1])
+    if args.command is None:
+        parser.parse_args('--help')
+    command = commands[args.command]
+    task = command(argv[1:])
 
-    # load
-    resolver = loader.load_resolver(path=rule['from']['path'])
+    is_valid = task.validate()
+    if not is_valid:
+        return 2
 
-    # resolve
-    if not loader.lock and dumper.lock:
-        with Progress().auto():
-            resolved = resolver.resolve()
-        if not resolved:
-            conflict = analize_conflict(resolver=resolver)
-            output.writeln('<error>CONFLICT:</error> ' + conflict)
-            return False
-
-    # dump
-    output.writeln('<info>Resolved!</info>')
-    dumper.dump(
-        path=rule['to']['path'],
-        graph=resolver.graph,
-    )
-    return True
-
-
-def main(args):
-    args = parser.parse_args(args)
-    rule = Config.load(args.config).get(args.env)
-    result = resolve(rule)
+    result = task()
     return int(not result)

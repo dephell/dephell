@@ -1,8 +1,7 @@
-from packaging.requirements import Requirement
+from packaging.requirements import Requirement as PackagingRequirement
 
 from dephell.converters.pip import PIPConverter
-from dephell.models.dependency import Dependency
-from dephell.models.root import RootDependency
+from dephell.models import Dependency, RootDependency, Requirement
 
 
 def test_format():
@@ -12,7 +11,7 @@ def test_format():
         'python_version == "2.7" and '
         'platform_python_implementation == "CPython"'
     )
-    req = Requirement(text)
+    req = PackagingRequirement(text)
     dep = Dependency.from_requirement(root, req)
 
     # test dep
@@ -22,6 +21,11 @@ def test_format():
     assert str(dep.marker).startswith('python_version == "2.7"')
 
     # test format
-    result = PIPConverter(lock=False)._format_dep(dep)
-    assert result.startswith(text)
+    result = PIPConverter(lock=False)._format_req(
+        req=Requirement(dep=dep, lock=False),
+    )
+    assert 'hypothesis[django]' in result
+    assert '<=3.0.0' in result
+    assert 'python_version == "2.7"' in result
     assert 'from root' in result
+    assert result.startswith(text)
