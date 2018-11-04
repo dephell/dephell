@@ -11,14 +11,25 @@ sudo pip3 install dephell
 
 ## CLI usage
 
+With arguments:
+
 ```bash
-python3 -m dephell convert <from-format> <from-path> <to-format> <to-path>
+python3 -m dephell convert \
+    --from-format=pip --from-path=requirements.in \
+    --to-format=piplock --to-path=requirements.txt
 ```
 
-Example:
+With config:
 
 ```bash
-python3 -m dephell convert pip requirements.in pip requirements.txt
+python3 -m dephell convert --config=pyproject.toml --env=main
+```
+
+Mix config and arguments:
+
+```bash
+python3 -m dephell convert --config=pyproject.toml \
+    --to-format=piplock --to-path=requirements.txt
 ```
 
 Available formats:

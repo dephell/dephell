@@ -18,6 +18,8 @@ class Config:
         if container is None:
             container = self._data
         for key, value in data.items():
+            if value is None:
+                continue
             if key not in container:
                 container[key] = value
             elif isinstance(value, dict):
@@ -62,7 +64,10 @@ class Config:
         return result
 
     def format_errors(self) -> str:
-        return yaml.dump(self.errors)
+        return yaml.dump(
+            self.errors,
+            default_flow_style=False,
+        ).replace('-', ' ')
 
     def __getattr__(self, name):
         return getattr(self._data, name)
