@@ -15,7 +15,7 @@ class Requirement:
     @classmethod
     def from_graph(cls, graph, *, lock: bool):
         result = []
-        applied = graph.root.applied
+        applied = graph.applied
         if len(graph._layers) == 1:
             for dep in graph.get('root').dependencies:
                 graph.add(dep)

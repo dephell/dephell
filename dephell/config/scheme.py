@@ -40,6 +40,11 @@ _TARGET = dict(
 SCHEME = {
     'from': _TARGET,
     'to': _TARGET,
+    'and': dict(
+        type='list',
+        schema=_TARGET,
+        required=False,
+    ),
     'silent': dict(
         type='boolean',
         required=False,
