@@ -1,4 +1,5 @@
-from ..console import output
+import huepy
+
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
@@ -19,12 +20,12 @@ class ConvertCommand(BaseCommand):
             resolved = resolver.resolve(progress=True)
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
-                output.writeln('<error>Conflict has found:</error> ')
-                output.writeln(conflict)
+                print(huepy.bad('Conflict has found:'))
+                print(conflict)
                 return False
 
         # dump
-        output.writeln('<info>Resolved!</info>')
+        print(huepy.good('Resolved!'))
         dumper.dump(
             path=self.config['to']['path'],
             reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),

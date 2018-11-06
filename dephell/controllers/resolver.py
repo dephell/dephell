@@ -59,6 +59,7 @@ class Resolver:
                 total=10 ** 10,
                 bar_format='{n:>7} layers   [{elapsed} elapsed]',
                 position=1,
+                leave=False,
             )
 
         while True:
@@ -69,7 +70,8 @@ class Resolver:
             # if we already build deps for all nodes in graph
             if not deps:
                 if progress:
-                    print('\n\r\n')
+                    del layers_bar
+                    print('\r')
                 return True
 
             no_conflicts = self._apply_deps(deps, debug=debug, progress=progress)
@@ -96,6 +98,7 @@ class Resolver:
                 total=len(deps),
                 bar_format='{n:>3}/{total:>3} packages [{elapsed} elapsed]',
                 position=2,
+                leave=False,
             )
 
         for dep in deps:

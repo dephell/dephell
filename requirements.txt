@@ -5,8 +5,10 @@ cerberus
 cleo
 graphviz
 html2text
+huepy
 packaging
 pip
 pyyaml
 requests
 tomlkit
+tqdm
