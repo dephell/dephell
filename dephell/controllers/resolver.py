@@ -1,3 +1,4 @@
+from contextlib import suppress
 from logging import getLogger
 
 from tqdm import tqdm
@@ -6,6 +7,13 @@ from .conflict import analize_conflict
 
 
 logger = getLogger('dephell.resolver')
+
+
+class _Progress(tqdm):
+    @classmethod
+    def _decr_instances(cls, instance):
+        with suppress(RuntimeError):
+            return super()._decr_instances(instance)
 
 
 class Resolver:
@@ -47,15 +55,15 @@ class Resolver:
 
     def resolve(self, debug: bool=False, progress: bool=False) -> bool:
         if progress:
-            mutations_bar = tqdm(
+            layers_bar = _Progress(
                 total=10 ** 10,
-                bar_format='{n:>7} mutations [{elapsed} elapsed]',
+                bar_format='{n:>7} layers   [{elapsed} elapsed]',
                 position=1,
             )
 
         while True:
             if progress:
-                mutations_bar.update()
+                layers_bar.update()
             # get not applied deps
             deps = self.graph.get_leafs()
             # if we already build deps for all nodes in graph
@@ -84,9 +92,9 @@ class Resolver:
 
     def _apply_deps(self, deps, progress=False, debug=False):
         if progress:
-            packages_bar = tqdm(
+            packages_bar = _Progress(
                 total=len(deps),
-                bar_format='{n:>3}/{total:>3} packages  [{elapsed} elapsed]',
+                bar_format='{n:>3}/{total:>3} packages [{elapsed} elapsed]',
                 position=2,
             )
 
