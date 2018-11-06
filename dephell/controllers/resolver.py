@@ -1,5 +1,9 @@
 from logging import getLogger
+
+from tqdm import tqdm
+
 from .conflict import analize_conflict
+
 
 logger = getLogger('dephell.resolver')
 
@@ -41,31 +45,27 @@ class Resolver:
             self.unapply(child, force=False)
         dep.applied = False
 
-    def resolve(self, debug=False) -> bool:
+    def resolve(self, debug: bool=False, progress: bool=False) -> bool:
+        if progress:
+            mutations_bar = tqdm(
+                total=10 ** 10,
+                bar_format='{n:>7} mutations [{elapsed} elapsed]',
+                position=1,
+            )
+
         while True:
+            if progress:
+                mutations_bar.update()
             # get not applied deps
             deps = self.graph.get_leafs()
             # if we already build deps for all nodes in graph
             if not deps:
+                if progress:
+                    print('\n\r\n')
                 return True
 
-            for dep in deps:
-                conflict = self.apply(dep)
-                if conflict is not None:
-                    logger.debug('conflict {}{}'.format(conflict.name, conflict.constraint))
-                    self.graph.conflict = conflict.copy()
-
-                    if debug:
-                        print(analize_conflict(
-                            resolver=self,
-                            suffix=str(self.mutator.mutations),
-                        ))
-
-                    # Dep can be partialy applied. Clean it.
-                    self.unapply(dep)
-                    break
-            else:
-                # only if all deps applied
+            no_conflicts = self._apply_deps(deps, debug=debug, progress=progress)
+            if no_conflicts:
                 continue
 
             # if we have conflict, try to mutate graph
@@ -81,3 +81,34 @@ class Resolver:
                     logger.debug('mutated {} to {}'.format(str(dep.group), str(group)))
                     self.unapply(dep)
                     dep.group = group
+
+    def _apply_deps(self, deps, progress=False, debug=False):
+        if progress:
+            packages_bar = tqdm(
+                total=len(deps),
+                bar_format='{n:>3}/{total:>3} packages  [{elapsed} elapsed]',
+                position=2,
+            )
+
+        for dep in deps:
+            if progress:
+                packages_bar.update()
+            conflict = self.apply(dep)
+            if conflict is None:
+                continue
+
+            logger.debug('conflict {}{}'.format(conflict.name, conflict.constraint))
+            self.graph.conflict = conflict.copy()
+
+            if debug:
+                print(analize_conflict(
+                    resolver=self,
+                    suffix=str(self.mutator.mutations),
+                ))
+
+            # Dep can be partialy applied. Clean it.
+            self.unapply(dep)
+            return False
+
+        # only if all deps applied
+        return True

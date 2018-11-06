@@ -1,4 +1,4 @@
-from ..console import Progress, output
+from ..console import output
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
@@ -16,8 +16,7 @@ class ConvertCommand(BaseCommand):
 
         # resolve
         if not loader.lock and dumper.lock:
-            with Progress().auto():
-                resolved = resolver.resolve()
+            resolved = resolver.resolve(progress=True)
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
                 output.writeln('<error>Conflict has found:</error> ')

@@ -17,8 +17,9 @@ class Requirement:
         result = []
         applied = graph.applied
         if len(graph._layers) == 1:
-            for dep in graph.get('root').dependencies:
-                graph.add(dep)
+            for root in graph._layers[0]:
+                for dep in root.dependencies:
+                    graph.add(dep)
         for layer in graph._layers[1:]:  # skip roots
             for dep in sorted(layer):
                 if not applied or dep.applied:

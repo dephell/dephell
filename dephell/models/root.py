@@ -1,17 +1,22 @@
+import attr
+
 from .group import Group
 
 
+@attr.s()
 class RootRelease:
-    name = 'root'
-    raw_name = 'Root'
-    version = '1.0'
-    time = ''
+    name = attr.ib()
+    dependencies = attr.ib()
 
-    def __init__(self, dependencies):
-        self.dependencies = dependencies
+    version = attr.ib(default='1.0')
+    time = attr.ib(default='')
+
+    @property
+    def raw_name(self):
+        return self.name
 
     def __str__(self):
-        return 'root'
+        return self.name
 
 
 class RootDependency:
@@ -26,7 +31,10 @@ class RootDependency:
         self.raw_name = name.title()
 
         self.dependencies = []
-        self.all_releases = (RootRelease(self.dependencies), )
+        self.all_releases = (RootRelease(
+            name=name,
+            dependencies=self.dependencies,
+        ), )
         self.group = Group(number=0, releases=self.all_releases)
         self.groups = (self.group, )
 

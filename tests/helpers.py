@@ -71,7 +71,7 @@ def check(root, resolved=True, missed=None, **deps):
             print(analize_conflict(resolver=resolver))
         raise
 
-    assert resolver.graph.get('root').applied
+    assert resolver.graph.applied
 
     for name, version in deps.items():
         assert reqs[name].version == version, '{}: {} != {}'.format(name, reqs[name].version, version)
