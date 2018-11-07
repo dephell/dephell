@@ -19,7 +19,7 @@ class PIPFileConverter(BaseConverter):
     def loads(self, content) -> RootDependency:
         doc = parse(content)
         deps = []
-        root = RootDependency()
+        root = RootDependency(self._get_name(content=content))
         if 'packages' in doc:
             for name, content in doc['packages'].items():
                 deps.append(self._make_dep(root, name, content))

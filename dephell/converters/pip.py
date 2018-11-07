@@ -1,4 +1,3 @@
-from pathlib import Path
 from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
 from ..models import Dependency, RootDependency
@@ -13,8 +12,7 @@ class PIPConverter(BaseConverter):
 
     def load(self, path) -> RootDependency:
         deps = []
-        # root = RootDependency(name=self._get_name(path))
-        root = RootDependency()
+        root = RootDependency(name=self._get_name(path=path))
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py
         for req in parse_requirements(str(path), session=PipSession()):
             # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py
@@ -45,10 +43,3 @@ class PIPConverter(BaseConverter):
         if req.sources:
             line += '{}# ^ from {}'.format(self.sep, ', '.join(req.sources))
         return line
-
-    @staticmethod
-    def _get_name(path):
-        path = Path(str(path))
-        if not path.name.startswith('requirements'):
-            return path.name
-        return path.parent.name

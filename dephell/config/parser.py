@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from .scheme import FORMATS, ENVS
+from ..constants import FORMATS, ENVS
 
 
 parser = ArgumentParser(

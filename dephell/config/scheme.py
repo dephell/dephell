@@ -1,17 +1,4 @@
-
-
-DEFAULTS = dict(
-    pip='requirements.in',
-    piplock='requirements.txt',
-
-    pipfile='Pipfile',
-    pipfilelock='Pipfile.lock',
-
-    poetry='pyproject.toml',
-    poetrylock='pyproject.lock',
-)
-FORMATS = tuple(DEFAULTS)
-ENVS = ('main', 'dev', 'main-opt', 'dev-opt')
+from ..constants import ENVS, FORMATS
 
 
 _TARGET = dict(
@@ -33,7 +20,7 @@ _TARGET = dict(
             default=('main', 'dev'),
             allowed=ENVS,
         ),
-    }
+    },
 )
 
 
