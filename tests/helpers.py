@@ -37,7 +37,9 @@ def make_root(root, **releases) -> RootDependency:
     repo = ReleaseRepo(*release_objects, deps=constraints)
 
     deps = []
-    root_dep = RootDependency()
+    root_dep = RootDependency(
+        name=''.join(sorted(releases)),
+    )
     root_dep.repo = repo
     for constr in root.deps:
         dep = Dependency.from_requirement(
@@ -53,7 +55,7 @@ def make_root(root, **releases) -> RootDependency:
 def check(root, resolved=True, missed=None, **deps):
     resolver = Resolver(
         graph=Graph(root),
-        mutator=Mutator()
+        mutator=Mutator(),
     )
     with patch(
         target='dephell.models.dependency.get_repo',

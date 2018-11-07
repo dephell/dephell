@@ -44,10 +44,13 @@ class Layer:
 
 
 class Graph:
-    def __init__(self, root):
-        if not root.dependencies:
-            logger.warning('empty root passed')
-        self._roots = [root]
+    def __init__(self, root=None):
+        if root is not None:
+            if not root.dependencies:
+                logger.warning('empty root passed')
+            self._roots = [root]
+        else:
+            self._roots = []
         self._layers = []
         self.reset()
 
