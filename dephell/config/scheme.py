@@ -31,6 +31,7 @@ SCHEME = {
         type='list',
         schema=_TARGET,
         required=False,
+        empty=True,
     ),
     'silent': dict(
         type='boolean',

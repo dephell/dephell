@@ -53,7 +53,7 @@ class Resolver:
             self.unapply(child, force=False)
         dep.applied = False
 
-    def resolve(self, debug: bool=False, progress: bool=False) -> bool:
+    def resolve(self, debug: bool=False, progress: bool=False, level=None) -> bool:
         if progress:
             layers_bar = _Progress(
                 total=10 ** 10,
@@ -66,7 +66,7 @@ class Resolver:
             if progress:
                 layers_bar.update()
             # get not applied deps
-            deps = self.graph.get_leafs()
+            deps = self.graph.get_leafs(level=level)
             # if we already build deps for all nodes in graph
             if not deps:
                 if progress:

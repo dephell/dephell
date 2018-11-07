@@ -1,5 +1,6 @@
 from logging import getLogger
 from collections import ChainMap
+from typing import Optional
 
 from graphviz import Digraph
 
@@ -83,11 +84,15 @@ class Graph:
                     return self.add(dep, level=layer.level + 1)
         raise KeyError('Can\'t find any parent for dependency')
 
-    def get_leafs(self) -> tuple:
+    def get_leafs(self, level: Optional[int]=None) -> tuple:
         """Get deps that isn't applied yet
         """
+        layers = self._layers
+        if level is not None:
+            layers = layers[:level + 1]
+
         result = []
-        for layer in self._layers:
+        for layer in layers:
             for dep in layer:
                 if not dep.applied and dep.used:
                     result.append(dep)
@@ -143,7 +148,7 @@ class Graph:
         if parents:
             parents.update(self.get_parents(
                 *parents.values(),
-                avoid=avoid + [dep.name for dep in deps]
+                avoid=avoid + [dep.name for dep in deps],
             ))
         return parents
 
