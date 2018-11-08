@@ -1,5 +1,6 @@
 from enum import Enum, unique
 
+CACHE_DIR = '.dephell'
 
 @unique
 class ReturnCodes(Enum):

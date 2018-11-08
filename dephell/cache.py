@@ -2,12 +2,12 @@ import pickle
 import json
 from pathlib import Path
 
-cache_dir = '.dephell'
+from .constants import CACHE_DIR
 
 
 class BaseCache:
     def __init__(self, *keys):
-        self.path = Path(cache_dir)
+        self.path = Path(CACHE_DIR)
         for key in keys:
             self.path /= key
 

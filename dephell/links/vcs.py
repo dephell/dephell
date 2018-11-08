@@ -36,7 +36,7 @@ class VCSLink:
         r'(?P<ext>\.git)?'                          # extension (save only for link constructing)
         r'(?:@(?P<rev>.+))?'                        # revision (commit hash, tag, branch)
         r'(?:#egg=(?P<name>.+))?'                   # dependency name
-        r'$'
+        r'$',
     )
     rex_hash = re.compile(r'[a-fA-F0-9]{40}')
 
