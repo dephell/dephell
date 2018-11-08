@@ -1,4 +1,5 @@
-from ..console import Progress, output
+import huepy
+
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
@@ -13,19 +14,36 @@ class ConvertCommand(BaseCommand):
 
         # load
         resolver = loader.load_resolver(path=self.config['from']['path'])
+        should_be_resolved = not loader.lock and dumper.lock
 
-        # resolve
-        if not loader.lock and dumper.lock:
-            with Progress().auto():
-                resolved = resolver.resolve()
+        # attach
+        if self.config.get('and'):
+            for source in self.config['and']:
+                loader = CONVERTERS[source['format']]
+                root = loader.load(path=source['path'])
+                resolver.graph.add(root)
+
+            # merge (without full graph building)
+            if not should_be_resolved:
+                resolved = resolver.resolve(progress=True, level=1)
+                if not resolved:
+                    conflict = analize_conflict(resolver=resolver)
+                    print(huepy.bad('Conflict has found:'))
+                    print(conflict)
+                    return False
+                print(huepy.good('Merged!'))
+
+        # resolve (and merge)
+        if should_be_resolved:
+            resolved = resolver.resolve(progress=True)
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
-                output.writeln('<error>Conflict has found:</error> ')
-                output.writeln(conflict)
+                print(huepy.bad('Conflict has found:'))
+                print(conflict)
                 return False
+            print(huepy.good('Resolved!'))
 
         # dump
-        output.writeln('<info>Resolved!</info>')
         dumper.dump(
             path=self.config['to']['path'],
             reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),

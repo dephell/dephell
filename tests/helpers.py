@@ -37,7 +37,9 @@ def make_root(root, **releases) -> RootDependency:
     repo = ReleaseRepo(*release_objects, deps=constraints)
 
     deps = []
-    root_dep = RootDependency()
+    root_dep = RootDependency(
+        name=''.join(sorted(releases)),
+    )
     root_dep.repo = repo
     for constr in root.deps:
         dep = Dependency.from_requirement(
@@ -53,11 +55,11 @@ def make_root(root, **releases) -> RootDependency:
 def check(root, resolved=True, missed=None, **deps):
     resolver = Resolver(
         graph=Graph(root),
-        mutator=Mutator()
+        mutator=Mutator(),
     )
     with patch(
         target='dephell.models.dependency.get_repo',
-        return_value=resolver.graph.root.repo,
+        return_value=resolver.graph._roots[0].repo,
     ):
         result = resolver.resolve(debug=True)
 
@@ -71,7 +73,7 @@ def check(root, resolved=True, missed=None, **deps):
             print(analize_conflict(resolver=resolver))
         raise
 
-    assert resolver.graph.get('root').applied
+    assert resolver.graph.applied
 
     for name, version in deps.items():
         assert reqs[name].version == version, '{}: {} != {}'.format(name, reqs[name].version, version)

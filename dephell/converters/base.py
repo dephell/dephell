@@ -1,8 +1,10 @@
+from pathlib import Path
 from os import unlink
 from tempfile import NamedTemporaryFile
 
 from ..models import RootDependency
 from ..controllers import Graph, Mutator, Resolver
+from ..constants import FILES
 
 
 class BaseConverter:
@@ -35,7 +37,7 @@ class BaseConverter:
     def _get_resolver(root: RootDependency) -> Resolver:
         return Resolver(
             graph=Graph(root),
-            mutator=Mutator()
+            mutator=Mutator(),
         )
 
     def loads_resolver(self, content: str) -> Resolver:
@@ -45,3 +47,19 @@ class BaseConverter:
     def load_resolver(self, path) -> Resolver:
         root = self.load(path)
         return self._get_resolver(root)
+
+    # helpers
+
+    @staticmethod
+    def _get_name(*, path=None, content=None):
+        if path is not None:
+            path = Path(str(path))
+            file_name = path.name
+            project_name = path.name
+
+            if file_name in FILES:
+                return project_name
+            return file_name
+
+        if content is not None:
+            return 'root-{}'.format(len(content))

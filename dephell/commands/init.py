@@ -1,6 +1,7 @@
 from collections import namedtuple
 from pathlib import Path
 
+import huepy
 import tomlkit
 
 from ..config import Config
@@ -32,7 +33,7 @@ rules = (
         from_path='pyproject.toml',
         to_path='pyproject.lock',
         from_format='poetry',
-        to_format='poetry.toml',
+        to_format='poetrylock',
     ),
 )
 
@@ -71,7 +72,8 @@ class InitCommand(BaseCommand):
 
     def __call__(self):
         config_path = Path(self.args.config)
-        if config_path.exists():
+        exists = config_path.exists()
+        if exists:
             # read
             with config_path.open('r', encoding='utf8') as stream:
                 doc = tomlkit.parse(stream.read())
@@ -105,4 +107,8 @@ class InitCommand(BaseCommand):
         with config_path.open('w', encoding='utf8') as stream:
             stream.write(tomlkit.dumps(doc))
 
+        if exists:
+            print(huepy.good('pyproject.toml updated'))
+        else:
+            print(huepy.good('pyproject.toml created'))
         return True

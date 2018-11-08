@@ -1,17 +1,4 @@
-
-
-DEFAULTS = dict(
-    pip='requirements.in',
-    piplock='requirements.txt',
-
-    pipfile='Pipfile',
-    pipfilelock='Pipfile.lock',
-
-    poetry='pyproject.toml',
-    poetrylock='pyproject.lock',
-)
-FORMATS = tuple(DEFAULTS)
-ENVS = ('main', 'dev', 'main-opt', 'dev-opt')
+from ..constants import ENVS, FORMATS
 
 
 _TARGET = dict(
@@ -33,13 +20,19 @@ _TARGET = dict(
             default=('main', 'dev'),
             allowed=ENVS,
         ),
-    }
+    },
 )
 
 
 SCHEME = {
     'from': _TARGET,
     'to': _TARGET,
+    'and': dict(
+        type='list',
+        schema=_TARGET,
+        required=False,
+        empty=True,
+    ),
     'silent': dict(
         type='boolean',
         required=False,

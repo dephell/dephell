@@ -1,7 +1,10 @@
 from logging import getLogger
 from collections import ChainMap
+from typing import Optional
 
 from graphviz import Digraph
+
+from ..models.root import RootDependency
 
 
 logger = getLogger(__name__)
@@ -41,14 +44,18 @@ class Layer:
 
 
 class Graph:
-    def __init__(self, root):
-        self.root = root
-        if not root.dependencies:
-            logger.warning('empty root passed')
+    def __init__(self, root=None):
+        if root is not None:
+            if not root.dependencies:
+                logger.warning('empty root passed')
+            self._roots = [root]
+        else:
+            self._roots = []
+        self._layers = []
         self.reset()
 
     def reset(self):
-        self._layers = [Layer(0, self.root)]
+        self._layers = [Layer(0, *self._roots)]
         self._deps = ChainMap(*[layer._mapping for layer in self._layers])
         self.conflict = None
 
@@ -58,7 +65,12 @@ class Graph:
         for layer in self._layers[1:]:
             layer.clear()
 
-    def add(self, dep, *, level=None):
+    def add(self, dep, *, level=None) -> None:
+        if isinstance(dep, RootDependency):
+            self._layers[0].add(dep)
+            self._roots.append(dep)
+            return
+
         if level is not None:
             if level < len(self._layers):
                 self._layers[level].add(dep)
@@ -75,11 +87,15 @@ class Graph:
                     return self.add(dep, level=layer.level + 1)
         raise KeyError('Can\'t find any parent for dependency')
 
-    def get_leafs(self) -> tuple:
+    def get_leafs(self, level: Optional[int]=None) -> tuple:
         """Get deps that isn't applied yet
         """
+        layers = self._layers
+        if level is not None:
+            layers = layers[:level + 1]
+
         result = []
-        for layer in self._layers:
+        for layer in layers:
             for dep in layer:
                 if not dep.applied and dep.used:
                     result.append(dep)
@@ -135,20 +151,21 @@ class Graph:
         if parents:
             parents.update(self.get_parents(
                 *parents.values(),
-                avoid=avoid + [dep.name for dep in deps]
+                avoid=avoid + [dep.name for dep in deps],
             ))
         return parents
 
     def draw(self, path: str='.dephell_report', suffix: str=''):
         dot = Digraph(
-            name=self.root.name + suffix,
+            name=self._roots[0].name + suffix,
             directory=path,
             format='png',
         )
         first_deps = self._layers[1]
 
-        # add root node
-        dot.node(self.root.name, self.root.raw_name, color='blue')
+        # add root nodes
+        for root in self._roots:
+            dot.node(root.name, root.raw_name, color='blue')
 
         # add nodes
         for dep in self:
@@ -177,7 +194,11 @@ class Graph:
 
     @property
     def deps(self) -> tuple:
-        return tuple(dep for dep in self._deps.values() if dep is not self.root)
+        return tuple(dep for dep in self._deps.values() if dep not in self._roots)
+
+    @property
+    def applied(self):
+        return all(root.applied for root in self._roots)
 
     # magic
 

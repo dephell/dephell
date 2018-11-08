@@ -15,10 +15,11 @@ class Requirement:
     @classmethod
     def from_graph(cls, graph, *, lock: bool):
         result = []
-        applied = graph.root.applied
+        applied = graph.applied
         if len(graph._layers) == 1:
-            for dep in graph.get('root').dependencies:
-                graph.add(dep)
+            for root in graph._layers[0]:
+                for dep in root.dependencies:
+                    graph.add(dep)
         for layer in graph._layers[1:]:  # skip roots
             for dep in sorted(layer):
                 if not applied or dep.applied:

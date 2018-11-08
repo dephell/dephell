@@ -10,7 +10,7 @@ def check(root, conflict, mutations):
     )
     with patch(
         target='dephell.models.dependency.get_repo',
-        return_value=resolver.graph.root.repo,
+        return_value=resolver.graph._roots[0].repo,
     ):
         resolver.resolve(debug=True)
 

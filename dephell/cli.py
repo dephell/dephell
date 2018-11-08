@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from .commands import commands
+from .constants import ReturnCodes
 
 
 parser = ArgumentParser(
@@ -17,7 +18,9 @@ def main(argv):
 
     is_valid = task.validate()
     if not is_valid:
-        return 2
+        return ReturnCodes.INVALID_CONFIG.value
 
     result = task()
-    return int(not result)
+    if not result:
+        return ReturnCodes.COMMAND_ERROR.value
+    return ReturnCodes.OK.value

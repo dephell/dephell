@@ -60,10 +60,7 @@ dumper.dump(reqs=reqs, path='requirements.txt')
 
 1. poetry
 1. poetry lock
-1. config
-1. environments
 1. Python version
 1. Zero release (compatible with any constraints)
 1. url defined release
 1. git based dependency
-1. Beautiful CLI
