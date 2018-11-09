@@ -1,12 +1,15 @@
+# built-in
 from collections import defaultdict
 from datetime import datetime
 from unittest.mock import patch
 
+# external
 from packaging.requirements import Requirement as PackagingRequirement
 
-from dephell.models import Dependency, Release, RootDependency, Requirement
-from dephell.repositories import ReleaseRepo
+# project
 from dephell.controllers import Graph, Mutator, Resolver, analize_conflict
+from dephell.models import Dependency, Release, Requirement, RootDependency
+from dephell.repositories import ReleaseRepo
 
 
 DEFAULT_TIME = datetime(1970, 1, 1, 0, 0)

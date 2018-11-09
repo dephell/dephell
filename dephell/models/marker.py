@@ -1,4 +1,5 @@
-from packaging.markers import Marker, _coerce_parse_result, MARKER
+# external
+from packaging.markers import MARKER, Marker, _coerce_parse_result
 
 
 # https://github.com/pypa/packaging/blob/master/packaging/markers.py

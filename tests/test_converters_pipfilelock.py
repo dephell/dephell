@@ -1,4 +1,7 @@
+# built-in
 import json
+
+# project
 from dephell.converters import PIPFileLockConverter
 from dephell.models import Requirement
 

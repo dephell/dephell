@@ -1,6 +1,7 @@
+# app
+from .git.git import GitRepo
 from .release import ReleaseRepo
 from .warehouse import WareHouseRepo
-from .git.git import GitRepo
 
 
 __all__ = ['ReleaseRepo', 'WareHouseRepo']

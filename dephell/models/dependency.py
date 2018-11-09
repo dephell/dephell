@@ -1,15 +1,20 @@
-from operator import attrgetter
-from collections import defaultdict
-import re
-import attr
+# built-in
 import asyncio
+import re
+from collections import defaultdict
+from copy import deepcopy
+from operator import attrgetter
+
+# external
+import attr
 from cached_property import cached_property
 from packaging.utils import canonicalize_name
+
+# app
+from ..links import parse_link
+from ..repositories import get_repo
 from .constraint import Constraint
 from .group import Group
-from ..repositories import get_repo
-from ..links import parse_link
-from copy import deepcopy
 
 
 loop = asyncio.get_event_loop()

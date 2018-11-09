@@ -1,5 +1,8 @@
-import attr
+# built-in
 import re
+
+# external
+import attr
 
 
 @attr.s()

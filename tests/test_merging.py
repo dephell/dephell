@@ -1,6 +1,8 @@
+# project
 from dephell.controllers import Graph, Mutator, Resolver, analize_conflict
 
-from .helpers import make_root, Fake
+# app
+from .helpers import Fake, make_root
 
 
 def merge(*roots, merged=True, deps=None):

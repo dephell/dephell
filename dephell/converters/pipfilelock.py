@@ -1,10 +1,12 @@
+# built-in
 import json
 from collections import OrderedDict
 from hashlib import sha256
 
+# app
+from ..models import RootDependency
 # from .base import BaseConverter
 from .pipfile import PIPFileConverter
-from ..models import RootDependency
 
 
 # https://stackoverflow.com/a/23820416

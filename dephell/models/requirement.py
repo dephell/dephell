@@ -1,5 +1,8 @@
-from cached_property import cached_property
+# built-in
 from typing import Optional
+
+# external
+from cached_property import cached_property
 
 
 class Requirement:

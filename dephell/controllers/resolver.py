@@ -1,8 +1,11 @@
+# built-in
 from contextlib import suppress
 from logging import getLogger
 
+# external
 from tqdm import tqdm
 
+# app
 from .conflict import analize_conflict
 
 

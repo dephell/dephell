@@ -1,5 +1,8 @@
+# external
 from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
+
+# app
 from ..models import Dependency, RootDependency
 from .base import BaseConverter
 

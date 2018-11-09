@@ -1,11 +1,14 @@
+# built-in
 from pathlib import Path
 
+# external
 import huepy
 import tomlkit
 
+# app
 from ..config import Config
+from ..rules import EXAMPLE_RULE, RULES
 from .base import BaseCommand
-from ..rules import RULES, EXAMPLE_RULE
 
 
 class InitCommand(BaseCommand):

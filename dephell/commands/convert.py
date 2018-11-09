@@ -1,9 +1,10 @@
+# external
 import huepy
 
+# app
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
-
 from .base import BaseCommand
 
 

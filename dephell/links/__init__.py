@@ -1,7 +1,8 @@
+# app
 from .path import DirLink, FileLink
+from .unknown import UnknownLink
 from .url import URLLink
 from .vcs import VCSLink
-from .unknown import UnknownLink
 
 
 _links = (

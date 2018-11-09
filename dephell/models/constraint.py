@@ -1,7 +1,10 @@
-from itertools import chain
-from packaging.specifiers import LegacySpecifier, Specifier, InvalidSpecifier
-from packaging.version import LegacyVersion
+# built-in
 from copy import deepcopy
+from itertools import chain
+
+# external
+from packaging.specifiers import InvalidSpecifier, LegacySpecifier, Specifier
+from packaging.version import LegacyVersion
 
 
 class Constraint:

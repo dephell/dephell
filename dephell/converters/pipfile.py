@@ -1,5 +1,8 @@
-from tomlkit import parse, aot, table, document, dumps, inline_table
-from ..models import Dependency, RootDependency, Constraint
+# external
+from tomlkit import aot, document, dumps, inline_table, parse, table
+
+# app
+from ..models import Constraint, Dependency, RootDependency
 from ..repositories import get_repo
 from .base import BaseConverter
 

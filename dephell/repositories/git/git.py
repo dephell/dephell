@@ -1,13 +1,17 @@
+# built-in
 import re
 import subprocess
 from pathlib import Path
 
+# external
 from cached_property import cached_property
 
-from ..base import Interface
+# app
 from ...constants import CACHE_DIR
-from ...utils import chdir
 from ...models.release import Release
+from ...utils import chdir
+from ..base import Interface
+
 
 try:
     from dateutil.parser import isoparse
@@ -89,4 +93,5 @@ class GitRepo(Interface):
         return tuple(releases)
 
     async def get_dependencies(self, name: str, version: str) -> tuple:
+        self._setup()
         ...

@@ -1,4 +1,7 @@
+# built-in
 from datetime import datetime
+
+# external
 import attr
 from cached_property import cached_property
 from packaging.utils import canonicalize_name

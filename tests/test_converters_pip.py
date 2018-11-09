@@ -1,7 +1,9 @@
+# external
 from packaging.requirements import Requirement as PackagingRequirement
 
+# project
 from dephell.converters.pip import PIPConverter
-from dephell.models import Dependency, RootDependency, Requirement
+from dephell.models import Dependency, Requirement, RootDependency
 
 
 def test_format():

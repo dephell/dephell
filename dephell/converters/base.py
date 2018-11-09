@@ -1,10 +1,12 @@
-from pathlib import Path
+# built-in
 from os import unlink
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-from ..models import RootDependency
-from ..controllers import Graph, Mutator, Resolver
+# app
 from ..constants import FILES
+from ..controllers import Graph, Mutator, Resolver
+from ..models import RootDependency
 
 
 class BaseConverter:
