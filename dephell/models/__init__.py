@@ -5,6 +5,7 @@ from .group import Group
 from .release import Release
 from .requirement import Requirement
 from .root import RootDependency
+from .specifier import Specifier
 
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     'Release',
     'Requirement',
     'RootDependency',
+    'Specifier',
 ]

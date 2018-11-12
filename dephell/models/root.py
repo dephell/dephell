@@ -11,7 +11,7 @@ class RootRelease:
     dependencies = attr.ib()
 
     version = attr.ib(default='1.0')
-    time = attr.ib(default='')
+    time = attr.ib(default=None)
 
     @property
     def raw_name(self):
