@@ -3,8 +3,10 @@ from copy import deepcopy
 from itertools import chain
 
 # external
-from packaging.specifiers import InvalidSpecifier, LegacySpecifier, Specifier
+# from packaging.specifiers import InvalidSpecifier, LegacySpecifier, Specifier
 from packaging.version import LegacyVersion
+
+from .specifier import Specifier
 
 
 class Constraint:
@@ -24,35 +26,8 @@ class Constraint:
         for constr in spec:
             if constr in ('', '*'):
                 continue
-            try:
-                result.add(Specifier(constr))
-            except InvalidSpecifier:
-                result.add(LegacySpecifier(constr))
+            result.add(Specifier(constr))
         return result
-
-    @staticmethod
-    def _check(version, spec) -> bool:
-        """
-        https://www.python.org/dev/peps/pep-0440/
-        """
-        if not spec:
-            return True
-
-        legacy_version = isinstance(version, LegacyVersion)
-        legacy_spec = isinstance(version, LegacySpecifier)
-
-        # version and spec both legacy or semantic at the same time
-        if legacy_version == legacy_spec:
-            return version in spec
-
-        # make both legacy
-        if not legacy_version:
-            version = LegacyVersion(version)
-        if not legacy_spec:
-            spec = LegacySpecifier(str(spec))
-
-        # check legacy version
-        return version in spec
 
     def _upgrade(self, releases) -> set:
         """Attach time to all specifiers if possible
@@ -111,7 +86,7 @@ class Constraint:
         result = set()
         for release in releases:
             for spec in chain(*self._specs.values()):
-                if not self._check(version=release.version, spec=spec):
+                if spec and release not in spec:
                     break
             else:
                 result.add(release)

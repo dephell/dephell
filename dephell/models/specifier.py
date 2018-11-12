@@ -29,16 +29,24 @@ class Specifier:
         return False
 
     def _check_version(self, version):
+        """
+        https://www.python.org/dev/peps/pep-0440/
+        """
         if isinstance(version, str):
             version = parse(version)
 
         # if both semver
-        if not isinstance(version, LegacyVersion):
-            return version in self._semver
+        if self._semver is not None:
+            if not isinstance(version, LegacyVersion):
+                return version in self._semver
 
         # otherwise compare both as legacy
-        version = LegacyVersion(str(version))
-        return version in self._legacy
+        if self._legacy is not None:
+            version = LegacyVersion(str(version))
+            return version in self._legacy
+
+        # lovely case, isn't it?
+        return False
 
     @property
     def operator(self):
