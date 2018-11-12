@@ -23,11 +23,10 @@ class PIPConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs) -> str:
+    def dumps(self, reqs, content=None) -> str:
         deps = []
         for req in reqs:
             deps.append(self._format_req(req=req))
-        deps.sort()
         return '\n'.join(deps) + '\n'
 
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py

@@ -29,8 +29,19 @@ class BaseConverter:
         raise NotImplementedError
 
     def dump(self, reqs, path):
-        content = self.dumps(reqs=reqs)
-        with open(str(path), 'w') as stream:
+        # read
+        path = Path(str(path))
+        if path.exists():
+            with path.open('r', encoding='utf8') as stream:
+                content = stream.read()
+        else:
+            content = None
+
+        # make new content
+        content = self.dumps(reqs=reqs, content=content)
+
+        # write
+        with path.open('w') as stream:
             stream.write(content)
 
     # resolver creation

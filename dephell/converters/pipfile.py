@@ -1,5 +1,5 @@
 # external
-from tomlkit import aot, document, dumps, inline_table, parse, table
+import tomlkit
 
 # app
 from ..models import Constraint, Dependency, RootDependency
@@ -20,7 +20,7 @@ class PIPFileConverter(BaseConverter):
     )
 
     def loads(self, content) -> RootDependency:
-        doc = parse(content)
+        doc = tomlkit.parse(content)
         deps = []
         root = RootDependency(self._get_name(content=content))
         if 'packages' in doc:
@@ -29,22 +29,39 @@ class PIPFileConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs) -> str:
-        doc = document()
-        source = table()
-        source['url'] = 'https://pypi.python.org/simple'
-        source['verify_ssl'] = True
-        source['name'] = 'pypi'
-        sources = aot()
-        sources.append(source)
-        doc.add('source', sources)
+    def dumps(self, reqs, content=None) -> str:
+        if content:
+            doc = tomlkit.parse(content)
+        else:
+            doc = tomlkit.document()
 
-        packages = table()
+        if 'source' not in doc:
+            source = tomlkit.table()
+            source['url'] = 'https://pypi.python.org/simple'
+            source['verify_ssl'] = True
+            source['name'] = 'pypi'
+            sources = tomlkit.aot()
+            sources.append(source)
+            doc.add('source', sources)
+
+        if 'packages' in doc:
+            # clean packages from old packages
+            names = {req.name for req in reqs}
+            doc['packages'] = {
+                name: info
+                for name, info in doc['packages'].items()
+                if name in names
+            }
+            # write new packages to this table
+            packages = doc['packages']
+        else:
+            packages = tomlkit.table()
+
         for req in reqs:
             packages[req.name] = self._format_req(req=req)
-        doc.add('packages', packages)
+        doc['packages'] = packages
 
-        return dumps(doc)
+        return tomlkit.dumps(doc)
 
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
     @staticmethod
@@ -78,7 +95,7 @@ class PIPFileConverter(BaseConverter):
         )
 
     def _format_req(self, req, *, short=True):
-        result = inline_table()
+        result = tomlkit.inline_table()
         for name, value in req:
             if name in self.fields:
                 if isinstance(value, tuple):

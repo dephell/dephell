@@ -26,7 +26,7 @@ class PIPFileLockConverter(PIPFileConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs) -> str:
+    def dumps(self, reqs, content=None) -> str:
         packages = OrderedDict()
         for req in reqs:
             packages[req.name] = dict(self._format_req(req=req, short=False))

@@ -19,5 +19,5 @@ class SetupPyConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs) -> str:
+    def dumps(self, reqs, content=None) -> str:
         raise NotImplementedError('dumping to setup.py is not supported yet')
