@@ -32,8 +32,6 @@ class GitRepo(Interface):
     def _call(self, *args, path=None) -> tuple:
         if path is None:
             path = self.path
-        if not path.exists():
-            path.mkdir(parents=True, exist_ok=True)
         with chdir(path):
             result = subprocess.run(
                 [self.name] + list(args),
@@ -61,8 +59,7 @@ class GitRepo(Interface):
     def _setup(self, *, force: bool=False) -> None:
         if self._ready and not force:
             return
-
-        if not self.path.exists():
+        if not self.path.exists() or '.git' not in set(self.path.iterdir()):
             self._call(
                 'clone', self.link.short, self.path.name,
                 path=self.path.parent,
@@ -71,6 +68,7 @@ class GitRepo(Interface):
             self._call('fetch')
         if self.link.rev:
             self._call('checkout', self.link.rev)
+        self._ready = True
 
     def read_file(self, path):
         """
@@ -111,12 +109,13 @@ class GitRepo(Interface):
 
     async def get_dependencies(self, name: str, version: str) -> tuple:
         self._setup()
-        try:
-            content = self.read_file('setup.py')
-        except FileNotFoundError:
+        self._call('checkout', str(version))
+        path = self.path / 'setup.py'
+        if not path.exists():
             return ()
 
+        # sorry for that
         from ...converters import SetupPyConverter
 
-        root = SetupPyConverter().loads(content)
+        root = SetupPyConverter().load(path)
         return tuple(root.dependencies)
