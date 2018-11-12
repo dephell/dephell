@@ -35,21 +35,27 @@ class GitRepo(Interface):
         if not path.exists():
             path.mkdir(parents=True, exist_ok=True)
         with chdir(path):
-            result = subprocess.call([self.name] + args)
-        return tuple(result.stdout.decode().split('\n'))
+            result = subprocess.run(
+                [self.name] + list(args),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+        if result.returncode != 0:
+            print(result.stderr)
+        return tuple(result.stdout.decode().strip().split('\n'))
 
     def _get_tags(self) -> tuple:
-        log = self._call('git', 'show-ref', '--tags')
+        log = self._call('show-ref', '--tags')
         return tuple(line.split() for line in log)
 
     def _get_commits(self) -> tuple:
-        log = self._call('log', r'format="%H %cI"')
-        return tuple(line.split() for line in log)
+        log = self._call('log', r'--format="%H %cI"')
+        return tuple(line.replace('"', '').split() for line in log)
 
     @cached_property
     def path(self):
         name = self.link.name
-        path = Path(CACHE_DIR) / 'git' / name
+        path = Path(CACHE_DIR) / self.name / name
         return path
 
     def _setup(self, *, force: bool=False) -> None:
@@ -58,13 +64,24 @@ class GitRepo(Interface):
 
         if not self.path.exists():
             self._call(
-                'git', 'clone', self.link.short, self.path.name,
+                'clone', self.link.short, self.path.name,
                 path=self.path.parent,
             )
         else:
-            self._call('git', 'fetch')
+            self._call('fetch')
         if self.link.rev:
-            self._call('git', 'checkout', self.link.rev)
+            self._call('checkout', self.link.rev)
+
+    def read_file(self, path):
+        """
+        IMPORTANT: it's danger method. It's allow you to read any file,
+        even not in repository. Don't allow external calls for it.
+        """
+        if isinstance(path, str):
+            path = Path(path)
+        with chdir(self.path):
+            with path.open('r') as stream:
+                return stream.read()
 
     def get_releases(self, dep) -> tuple:
         releases = []
@@ -94,4 +111,12 @@ class GitRepo(Interface):
 
     async def get_dependencies(self, name: str, version: str) -> tuple:
         self._setup()
-        ...
+        try:
+            content = self.read_file('setup.py')
+        except FileNotFoundError:
+            return ()
+
+        from ...converters import SetupPyConverter
+
+        root = SetupPyConverter().loads(content)
+        return tuple(root.dependencies)
