@@ -2,10 +2,6 @@
 from copy import deepcopy
 from itertools import chain
 
-# external
-# from packaging.specifiers import InvalidSpecifier, LegacySpecifier, Specifier
-from packaging.version import LegacyVersion
-
 from .specifier import Specifier
 
 
@@ -29,10 +25,12 @@ class Constraint:
             result.add(Specifier(constr))
         return result
 
-    def _upgrade(self, releases) -> set:
+    def _upgrade(self, releases) -> None:
         """Attach time to all specifiers if possible
         """
-        ...
+        for spec in chain(*self._specs.values()):
+            if spec.time is None:
+                spec.attach_time(releases)
 
     @property
     def empty(self) -> bool:
@@ -83,6 +81,7 @@ class Constraint:
     def filter(self, releases) -> set:
         """Filter releases
         """
+        self._upgrade(releases)
         result = set()
         for release in releases:
             for spec in chain(*self._specs.values()):

@@ -29,3 +29,23 @@ def test_time_attach():
     spec = Specifier('>1.2.3')
     spec.attach_time([release])
     assert spec.time is None
+
+
+def test_time_compare():
+    time = datetime(2018, 9, 11, 12, 13)
+    release = Release(raw_name='lol', version='1.2.3', time=time)
+    spec = Specifier('>1.2.3')
+    spec.attach_time([release])
+    assert release not in spec
+
+    time = datetime(2018, 9, 11, 12, 13)
+    release = Release(raw_name='lol', version='1.2.3', time=time)
+    spec = Specifier('>=1.2.3')
+    spec.attach_time([release])
+    assert release in spec
+
+    time = datetime(2018, 9, 11, 12, 13)
+    release = Release(raw_name='lol', version='1.2.3', time=time)
+    spec = Specifier('==1.2.3')
+    spec.attach_time([release])
+    assert release in spec
