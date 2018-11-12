@@ -54,6 +54,11 @@ class Constraint:
         # check legacy version
         return version in spec
 
+    def _upgrade(self, releases) -> set:
+        """Attach time to all specifiers if possible
+        """
+        ...
+
     @property
     def empty(self) -> bool:
         return not bool(self._specs)
