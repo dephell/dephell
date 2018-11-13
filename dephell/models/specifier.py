@@ -7,19 +7,16 @@ from packaging.version import LegacyVersion, parse
 from .release import Release
 
 
-class CompareTime:
-    """
-    In packaging.Specifier in every compare method hardcoded self._coerce_version.
-    So we have to make our own methods without this junk.
-    """
-    equal = staticmethod(operator.eq)
-    not_equal = staticmethod(operator.ne)
+OPERATORS = {
+    '==': operator.eq,
+    '!=': operator.ne,
 
-    less_than_equal = staticmethod(operator.le)
-    greater_than_equal = staticmethod(operator.ge)
+    '<=': operator.le,
+    '>=': operator.ge,
 
-    less_than = staticmethod(operator.lt)
-    greater_than = staticmethod(operator.gt)
+    '<': operator.lt,
+    '>': operator.gt,
+}
 
 
 class Specifier:
@@ -68,8 +65,7 @@ class Specifier:
 
     @property
     def operator(self):
-        name = self._spec._operators[self._spec.operator]
-        return getattr(CompareTime, name)
+        return OPERATORS.get(self._spec.operator)
 
     # magic methods
 
@@ -77,9 +73,14 @@ class Specifier:
         # compare version
         if not isinstance(release, Release):
             return self._check_version(version=release)
+
         # compare release by time
         if self.time is not None and release.time is not None:
-            return self.operator(release.time, self.time)
+            if '*' not in str(self._spec.version):
+                operator = self.operator
+                if operator is not None:
+                    return operator(release.time, self.time)
+
         # compare release by version
         return self._check_version(version=release.version)
 

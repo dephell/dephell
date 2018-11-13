@@ -25,7 +25,7 @@ class Constraint:
             result.add(Specifier(constr))
         return result
 
-    def _upgrade(self, releases) -> None:
+    def attach_time(self, releases) -> None:
         """Attach time to all specifiers if possible
         """
         for spec in chain(*self._specs.values()):
@@ -81,7 +81,6 @@ class Constraint:
     def filter(self, releases) -> set:
         """Filter releases
         """
-        self._upgrade(releases)
         result = set()
         for release in releases:
             for spec in chain(*self._specs.values()):

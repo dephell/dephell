@@ -126,11 +126,7 @@ class Dependency:
             for number, releases in enumerate(groups)
         )
 
-        # actualize
-        filtrate = self.constraint.filter
-        for group in groups:
-            group.releases = filtrate(group.all_releases)
-
+        self._actualize_groups(groups=groups)
         return groups
 
     @cached_property
@@ -191,11 +187,13 @@ class Dependency:
             obj.unlock()
         return obj
 
-    def _actualize_groups(self, *, force: bool=False) -> bool:
-        if not force and 'groups' not in self.__dict__:
-            return False
+    def _actualize_groups(self, *, force: bool=False, groups=None) -> bool:
+        if not groups:
+            if not force and 'groups' not in self.__dict__:
+                return False
+            groups = self.groups
 
         filtrate = self.constraint.filter
-        for group in self.groups:
+        for group in groups:
             group.releases = filtrate(group.all_releases)
         return True
