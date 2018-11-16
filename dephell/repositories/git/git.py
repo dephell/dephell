@@ -19,7 +19,7 @@ except ImportError:
     from dateutil.parser import parse as isoparse
 
 
-rex_author = re.compile(r'$/([a-zA-Z_-])')
+rex_version = re.compile(r'(?:refs/tags/)?v?\.?\s*(.+)')
 
 
 class GitRepo(Interface):
@@ -46,15 +46,19 @@ class GitRepo(Interface):
         log = self._call('show-ref', '--tags')
         return tuple(line.split() for line in log)
 
-    def _get_commits(self) -> tuple:
+    def _get_commits(self) -> dict:
         log = self._call('log', r'--format="%H %cI"')
-        return tuple(line.replace('"', '').split() for line in log)
+        return dict(line.replace('"', '').split() for line in log)
 
     @cached_property
     def path(self):
         name = self.link.name
         path = Path(CACHE_DIR) / self.name / name
         return path
+
+    @staticmethod
+    def _clean_tag(tag):
+        return rex_version.fullmatch(tag).groups()[0]
 
     def _setup(self, *, force: bool=False) -> None:
         if self._ready and not force:
@@ -84,7 +88,7 @@ class GitRepo(Interface):
     def get_releases(self, dep) -> tuple:
         releases = []
         self._setup()
-        commits = dict(self._get_commits())
+        commits = self._get_commits()
 
         # add tags to releases
         # rev -- commit hash (2d6989d9bcb7fe250a7e55d8e367ac1e0c7d7f55)
@@ -92,7 +96,7 @@ class GitRepo(Interface):
         for rev, ref in self._get_tags():
             release = Release(
                 raw_name=dep.raw_name,
-                version=ref.replace('refs/tags/', ''),
+                version=self._clean_tag(ref),
                 time=isoparse(commits[rev]),
             )
             releases.append(release)
@@ -119,3 +123,13 @@ class GitRepo(Interface):
 
         root = SetupPyConverter().load(path)
         return tuple(root.dependencies)
+
+    def get_nearest_version(self, ref: str):
+        # get version in that this commit has included
+        result = self._call('describe', '--contains', ref)[0]
+        if '~' in result:
+            return self._clean_tag(result.split('~')[0])
+
+        # if this commit isn't released yet than return latest release
+        _commit, tag = self._get_tags()[-1]
+        return self._clean_tag(tag)
