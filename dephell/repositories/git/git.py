@@ -1,6 +1,7 @@
 # built-in
 import re
 import subprocess
+from collections import OrderedDict
 from pathlib import Path
 
 # external
@@ -42,13 +43,25 @@ class GitRepo(Interface):
             print(result.stderr)
         return tuple(result.stdout.decode().strip().split('\n'))
 
-    def _get_tags(self) -> tuple:
+    @cached_property
+    def tags(self) -> OrderedDict:
+        """
+        From newest to oldest.
+        commit_hash -> tag
+        """
+        self._setup()
         log = self._call('show-ref', '--tags')
-        return tuple(line.split() for line in log)
+        return OrderedDict(line.split() for line in reversed(log))
 
-    def _get_commits(self) -> dict:
+    @cached_property
+    def commits(self) -> OrderedDict:
+        """
+        From newest to oldest.
+        commit_hash -> time
+        """
+        self._setup()
         log = self._call('log', r'--format="%H %cI"')
-        return dict(line.replace('"', '').split() for line in log)
+        return OrderedDict(line.replace('"', '').split() for line in log)
 
     @cached_property
     def path(self):
@@ -87,17 +100,14 @@ class GitRepo(Interface):
 
     def get_releases(self, dep) -> tuple:
         releases = []
-        self._setup()
-        commits = self._get_commits()
-
         # add tags to releases
         # rev -- commit hash (2d6989d9bcb7fe250a7e55d8e367ac1e0c7d7f55)
         # ref -- tag name (refs/tags/v0.1.0)
-        for rev, ref in self._get_tags():
+        for rev, ref in self.tags.items():
             release = Release(
                 raw_name=dep.raw_name,
                 version=self._clean_tag(ref),
-                time=isoparse(commits[rev]),
+                time=isoparse(self.commits[rev]),
             )
             releases.append(release)
 
@@ -106,7 +116,7 @@ class GitRepo(Interface):
             release = Release(
                 raw_name=dep.raw_name,
                 version=self.link.rev,
-                time=isoparse(commits[self.link.rev]),
+                time=isoparse(self.commits[self.link.rev]),
             )
             releases.append(release)
         return tuple(releases)
@@ -131,5 +141,5 @@ class GitRepo(Interface):
             return self._clean_tag(result.split('~')[0])
 
         # if this commit isn't released yet than return latest release
-        _commit, tag = self._get_tags()[-1]
+        tag = next(iter(self.tags.values()))
         return self._clean_tag(tag)

@@ -22,8 +22,8 @@ def test_releases():
 
     releases = repo.get_releases(Dep)
     assert len(releases) >= 1
-    assert len(releases) == len(repo._get_tags())
-    assert len(repo._get_commits()) > len(repo._get_tags())
+    assert len(releases) == len(repo.tags)
+    assert len(repo.commits) > len(repo.tags)
 
     first_release = releases[0]
     assert first_release.name == 'dephell'
