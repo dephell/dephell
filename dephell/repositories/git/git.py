@@ -10,6 +10,7 @@ from cached_property import cached_property
 # app
 from ...constants import CACHE_DIR
 from ...models.release import Release
+from ...models.git_release import GitRelease
 from ...utils import chdir
 from ..base import Interface
 
@@ -30,18 +31,7 @@ class GitRepo(Interface):
     def __init__(self, link):
         self.link = link
 
-    def _call(self, *args, path=None) -> tuple:
-        if path is None:
-            path = self.path
-        with chdir(path):
-            result = subprocess.run(
-                [self.name] + list(args),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-        if result.returncode != 0:
-            print(result.stderr)
-        return tuple(result.stdout.decode().strip().split('\n'))
+    # PROPERTIES
 
     @cached_property
     def tags(self) -> OrderedDict:
@@ -69,23 +59,12 @@ class GitRepo(Interface):
         path = Path(CACHE_DIR) / self.name / name
         return path
 
-    @staticmethod
-    def _clean_tag(tag):
-        return rex_version.fullmatch(tag).groups()[0]
-
-    def _setup(self, *, force: bool=False) -> None:
-        if self._ready and not force:
-            return
-        if not self.path.exists() or '.git' not in set(self.path.iterdir()):
-            self._call(
-                'clone', self.link.short, self.path.name,
-                path=self.path.parent,
-            )
-        else:
-            self._call('fetch')
+    @cached_property
+    def metaversion(self):
         if self.link.rev:
-            self._call('checkout', self.link.rev)
-        self._ready = True
+            return self.get_nearest_version(self.link.rev)
+
+    # PUBLIC METHODS
 
     def read_file(self, path):
         """
@@ -113,9 +92,10 @@ class GitRepo(Interface):
 
         # add current revision to releases
         if self.link.rev:
-            release = Release(
+            release = GitRelease(
                 raw_name=dep.raw_name,
-                version=self.link.rev,
+                version=self.metaversion,
+                commit=self.link.rev,
                 time=isoparse(self.commits[self.link.rev]),
             )
             releases.append(release)
@@ -143,3 +123,36 @@ class GitRepo(Interface):
         # if this commit isn't released yet than return latest release
         tag = next(iter(self.tags.values()))
         return self._clean_tag(tag)
+
+    # PRIVATE METHODS
+
+    def _call(self, *args, path=None) -> tuple:
+        if path is None:
+            path = self.path
+        with chdir(path):
+            result = subprocess.run(
+                [self.name] + list(args),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+        if result.returncode != 0:
+            print(result.stderr)
+        return tuple(result.stdout.decode().strip().split('\n'))
+
+    @staticmethod
+    def _clean_tag(tag):
+        return rex_version.fullmatch(tag).groups()[0]
+
+    def _setup(self, *, force: bool=False) -> None:
+        if self._ready and not force:
+            return
+        if not self.path.exists() or '.git' not in set(self.path.iterdir()):
+            self._call(
+                'clone', self.link.short, self.path.name,
+                path=self.path.parent,
+            )
+        else:
+            self._call('fetch')
+        if self.link.rev:
+            self._call('checkout', self.link.rev)
+        self._ready = True

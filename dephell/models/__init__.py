@@ -1,6 +1,7 @@
 # app
 from .constraint import Constraint
 from .dependency import Dependency
+from .git_release import GitRelease
 from .group import Group
 from .release import Release
 from .requirement import Requirement
@@ -11,6 +12,7 @@ from .specifier import Specifier
 __all__ = [
     'Constraint',
     'Dependency',
+    'GitRelease',
     'Group',
     'Release',
     'Requirement',

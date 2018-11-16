@@ -10,10 +10,12 @@ from cached_property import cached_property
 from packaging.utils import canonicalize_name
 
 # app
+from ..exceptions import MergeError
 from ..links import parse_link
-from ..repositories import get_repo
+from ..repositories import get_repo, GitRepo
 from .constraint import Constraint
 from .group import Group
+from .git_specifier import GitSpecifier
 
 
 loop = asyncio.get_event_loop()
@@ -49,9 +51,13 @@ class Dependency:
     def from_requirement(cls, source, req, url=None):
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
         link = parse_link(url or req.url)
+        # make constraint
+        constraint = Constraint(source, req.specifier)
+        if isinstance(link, GitRepo):
+            constraint._specs[source.name] = GitSpecifier()
         return cls(
             raw_name=req.name,
-            constraint=Constraint(source, req.specifier),
+            constraint=constraint,
             repo=get_repo(link),
             link=link,
             extras=req.extras,
@@ -60,11 +66,16 @@ class Dependency:
 
     @classmethod
     def from_params(cls, *, raw_name, constraint, url=None, source=None, repo=None, **kwargs):
+        # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
             raw_name = link.name
+        # make constraint
         if source:
             constraint = Constraint(source, constraint)
+        if isinstance(link, GitRepo):
+            constraint._specs[source.name] = GitSpecifier()
+        # make repo
         if repo is None:
             repo = get_repo(link)
         return cls(
@@ -166,6 +177,29 @@ class Dependency:
         #     del self.__dict__['dependencies']
 
     def merge(self, dep):
+        # some checks when we merge two git based dep
+        if isinstance(self.link, GitRepo) and isinstance(dep.link, GitRepo):
+            if self.link.rev and dep.link.rev and self.link.rev != dep.link.rev:
+                raise MergeError('links point to different revisions')
+            if self.link.server != dep.link.server:
+                raise MergeError('links point to different servers')
+            ...
+
+        # if ...
+        # .. 1. we don't use repo in self,
+        # .. 2. it's a git repo,
+        # .. 3. dep has non-git repo,
+        # .. 4. self has no rev,
+        # then prefer non-git repo, because it's more accurate and fast.
+        if isinstance(self.link, GitRepo) and not isinstance(dep.link, GitRepo):
+            if not self.link.rev:
+                if 'groups' not in self.__dict__:
+                    self.repo = dep.repo
+
+        if not isinstance(self.link, GitRepo) and isinstance(dep.link, GitRepo):
+            self.link = dep.link
+            self.repo = dep.repo
+
         self.constraint.merge(dep.constraint)
         self._actualize_groups(force=True)
 
