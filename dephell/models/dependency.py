@@ -3,7 +3,6 @@ import asyncio
 import re
 from collections import defaultdict
 from copy import deepcopy
-from operator import attrgetter
 
 # external
 import attr
@@ -114,11 +113,7 @@ class Dependency:
             groups[key].add(release)
 
         # sort groups by latest release
-        groups = sorted(
-            groups.values(),
-            key=lambda releases: max(releases, key=attrgetter('time')),
-            reverse=True,
-        )
+        groups = sorted(groups.values(), key=max, reverse=True)
 
         # convert every group to Group object
         groups = tuple(

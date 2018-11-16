@@ -61,7 +61,7 @@ class WareHouseRepo(Interface):
                 continue
             release = Release.from_response(dep.name, version, info)
             releases.append(release)
-        releases.sort(key=lambda release: release.time, reverse=True)
+        releases.sort(reverse=True)
         releases = tuple(releases)
 
         return releases

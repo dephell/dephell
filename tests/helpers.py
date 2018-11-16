@@ -78,6 +78,9 @@ def check(root, resolved=True, missed=None, **deps):
 
     assert resolver.graph.applied
 
+    for name in sorted(deps.keys()):
+        print(name, reqs[name].version)
+
     for name, version in deps.items():
         assert reqs[name].version == version, '{}: {} != {}'.format(name, reqs[name].version, version)
 
