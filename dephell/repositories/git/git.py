@@ -86,7 +86,7 @@ class GitRepo(Interface):
         # add tags to releases
         # rev -- commit hash (2d6989d9bcb7fe250a7e55d8e367ac1e0c7d7f55)
         # ref -- tag name (refs/tags/v0.1.0)
-        for rev, ref in self.tags.items():
+        for rev, ref in reversed(self.tags.items()):
             release = Release(
                 raw_name=dep.raw_name,
                 version=self._clean_tag(ref),
@@ -122,7 +122,8 @@ class GitRepo(Interface):
         # get version in that this commit has included
         result = self._call('describe', '--contains', ref)[0]
         if '~' in result:
-            return self._clean_tag(result.split('~')[0])
+            result = result.split('~')[0].split('^')[0]
+            return self._clean_tag(result)
 
         # if this commit isn't released yet than return latest release
         tag = next(iter(self.tags.values()))
@@ -150,13 +151,18 @@ class GitRepo(Interface):
     def _setup(self, *, force: bool=False) -> None:
         if self._ready and not force:
             return
-        if not self.path.exists() or '.git' not in set(self.path.iterdir()):
+
+        # clone or fetch
+        if self.path.exists():
+            if '.git' not in (subpath.name for subpath in self.path.iterdir()):
+                raise FileNotFoundError('.git directory not found in project cache')
+            self._call('fetch')
+        else:
             self._call(
                 'clone', self.link.short, self.path.name,
                 path=self.path.parent,
             )
-        else:
-            self._call('fetch')
+
         if self.link.rev:
             self._call('checkout', self.link.rev)
         self._ready = True
