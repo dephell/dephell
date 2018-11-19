@@ -41,7 +41,10 @@ class GitRepo(Interface):
         """
         self._setup()
         log = self._call('show-ref', '--tags')
-        return OrderedDict(line.split() for line in reversed(log))
+        result = [line.split() for line in log]
+        # show-ref returns tags in alphabet order, so we have to sort tags ourselves.
+        result.sort(key=lambda line: self.commits[line[0]], reverse=True)
+        return OrderedDict(result)
 
     @cached_property
     def commits(self) -> OrderedDict:
@@ -51,7 +54,8 @@ class GitRepo(Interface):
         """
         self._setup()
         log = self._call('log', r'--format="%H %cI"')
-        return OrderedDict(line.replace('"', '').split() for line in log)
+        result = (line.replace('"', '').split() for line in log)
+        return OrderedDict((rev, isoparse(time)) for rev, time in result)
 
     @cached_property
     def path(self):
@@ -86,7 +90,7 @@ class GitRepo(Interface):
             release = Release(
                 raw_name=dep.raw_name,
                 version=self._clean_tag(ref),
-                time=isoparse(self.commits[rev]),
+                time=self.commits[rev],
             )
             releases.append(release)
 
