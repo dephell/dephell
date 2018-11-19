@@ -3,7 +3,7 @@ from datetime import datetime
 
 from dephell.repositories.git.git import GitRepo
 from dephell.links import VCSLink
-from dephell.models import Dependency, RootDependency
+from dephell.models import Dependency, RootDependency, GitRelease
 
 
 class PatchedGitRepo(GitRepo):
@@ -29,6 +29,9 @@ class PatchedGitRepo(GitRepo):
     async def get_dependencies(self, name: str, version: str) -> tuple:
         return tuple()
 
+    def get_nearest_version(self, rev):
+        return '1.11'
+
 
 def test_no_rev_one_constraint():
     dep = Dependency.from_params(
@@ -49,3 +52,29 @@ def test_no_rev_one_constraint():
 
     versions = {str(release.version) for release in releases}
     assert versions == {'1.7', '1.9', '1.11'}
+
+
+def test_with_rev_one_constraint():
+    commit = '0cf85e6b074794ac91857aa097f0b3dc3e6d9468'
+    dep = Dependency.from_params(
+        raw_name='Django',
+        constraint='',
+        source=RootDependency(),
+        url='https://github.com/django/django.git@' + commit,
+    )
+    assert isinstance(dep.link, VCSLink)
+    assert isinstance(dep.repo, GitRepo)
+    dep.repo = PatchedGitRepo(dep.link)
+
+    releases = set()
+    non_empty = 0
+    for group in dep.groups:
+        non_empty += not group.empty
+        releases.update(set(group.releases))
+    assert non_empty == 1
+    assert len(releases) == 1
+
+    release = list(releases)[0]
+    assert isinstance(release, GitRelease)
+    assert release.commit == commit
+    assert str(release.version) == '1.11'

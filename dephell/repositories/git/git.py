@@ -100,7 +100,7 @@ class GitRepo(Interface):
                 raw_name=dep.raw_name,
                 version=self.metaversion,
                 commit=self.link.rev,
-                time=isoparse(self.commits[self.link.rev]),
+                time=self.commits[self.link.rev],
             )
             releases.append(release)
         return tuple(releases)

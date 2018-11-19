@@ -54,7 +54,7 @@ class Dependency:
         # make constraint
         constraint = Constraint(source, req.specifier)
         if isinstance(link, VCSLink) and link.rev:
-            constraint._specs[source.name] = GitSpecifier()
+            constraint._specs[source.name] = [GitSpecifier()]
         return cls(
             raw_name=req.name,
             constraint=constraint,
@@ -74,7 +74,7 @@ class Dependency:
         if source:
             constraint = Constraint(source, constraint)
             if isinstance(link, VCSLink) and link.rev:
-                constraint._specs[source.name] = GitSpecifier()
+                constraint._specs[source.name] = [GitSpecifier()]
         # make repo
         if repo is None:
             repo = get_repo(link)
