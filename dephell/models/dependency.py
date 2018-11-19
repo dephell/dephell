@@ -11,7 +11,7 @@ from packaging.utils import canonicalize_name
 
 # app
 from ..exceptions import MergeError
-from ..links import parse_link
+from ..links import parse_link, VCSLink
 from ..repositories import get_repo, GitRepo
 from .constraint import Constraint
 from .group import Group
@@ -53,7 +53,7 @@ class Dependency:
         link = parse_link(url or req.url)
         # make constraint
         constraint = Constraint(source, req.specifier)
-        if isinstance(link, GitRepo):
+        if isinstance(link, VCSLink) and link.rev:
             constraint._specs[source.name] = GitSpecifier()
         return cls(
             raw_name=req.name,
@@ -73,8 +73,8 @@ class Dependency:
         # make constraint
         if source:
             constraint = Constraint(source, constraint)
-        if isinstance(link, GitRepo):
-            constraint._specs[source.name] = GitSpecifier()
+            if isinstance(link, VCSLink) and link.rev:
+                constraint._specs[source.name] = GitSpecifier()
         # make repo
         if repo is None:
             repo = get_repo(link)
