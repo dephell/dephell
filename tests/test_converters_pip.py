@@ -46,3 +46,6 @@ def test_git_parsing():
     assert dep.link.vcs == 'git'
     assert dep.link.server == 'github.com'
     assert dep.link.name == 'django'
+
+    assert dep.name == 'django'
+    assert dep.editable is True

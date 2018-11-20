@@ -92,9 +92,10 @@ class PIPFileConverter(BaseConverter):
             extras=set(content.get('extras', [])),
             marker=content.get('markers'),
             url=url,
+            editable=content.get('editable', False),
         )
 
-    def _format_req(self, req, *, short=True):
+    def _format_req(self, req):
         result = tomlkit.inline_table()
         for name, value in req:
             if name in self.fields:
@@ -104,7 +105,7 @@ class PIPFileConverter(BaseConverter):
         if 'version' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table
-        if short and tuple(result.value) == ('version', ):
+        if tuple(result.value) == ('version', ):
             return result['version']
         # do not specify version explicit
         if result['version'] == '*':

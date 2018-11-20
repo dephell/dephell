@@ -29,7 +29,7 @@ class PIPFileLockConverter(PIPFileConverter):
     def dumps(self, reqs, content=None) -> str:
         packages = OrderedDict()
         for req in reqs:
-            packages[req.name] = dict(self._format_req(req=req, short=False))
+            packages[req.name] = dict(self._format_req(req=req))
 
         data = OrderedDict([
             ('_meta', OrderedDict([
@@ -51,3 +51,10 @@ class PIPFileLockConverter(PIPFileConverter):
     def _get_hash(data: dict) -> str:
         content = json.dumps(data, sort_keys=True, separators=(",", ":"))
         return sha256(content.encode('utf8')).hexdigest()
+
+    def _format_req(self, req):
+        result = dict()
+        for name, value in req:
+            if name in self.fields:
+                result[name] = value
+        return result

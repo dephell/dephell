@@ -14,6 +14,9 @@ def test_load():
     assert 'django' in deps
     assert str(deps['records'].constraint) == '>0.5.0'
 
+    assert deps['django'].editable is True
+    assert deps['requests'].editable is False
+
 
 def test_load_git_based_dep():
     converter = PIPFileConverter()

@@ -8,7 +8,7 @@ from cached_property import cached_property
 class Requirement:
     _properties = (
         'name', 'release', 'version', 'extras', 'markers',
-        'hashes', 'sources',
+        'hashes', 'sources', 'editable',
     )
 
     def __init__(self, dep, lock: bool):
@@ -36,11 +36,22 @@ class Requirement:
             return self.dep.group.best_release
 
     @property
+    def editable(self) -> Optional[bool]:
+        if self.dep.editable:
+            return True
+
+    @property
+    def link(self):
+        return self.dep.link
+
+    @property
     def name(self) -> str:
         return self.dep.name
 
     @property
-    def version(self) -> str:
+    def version(self) -> Optional[str]:
+        if self.link:
+            return
         if self.lock:
             return '==' + str(self.release.version)
         return str(self.dep.constraint)

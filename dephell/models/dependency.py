@@ -41,6 +41,7 @@ class Dependency:
     classifiers = attr.ib(factory=tuple, repr=False)    # classifiers
 
     # info from requirements file
+    editable = attr.ib(default=False, repr=False)
     extras = attr.ib(factory=set, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(default=None, repr=False)
@@ -48,7 +49,7 @@ class Dependency:
     # constructors
 
     @classmethod
-    def from_requirement(cls, source, req, url=None):
+    def from_requirement(cls, source, req, url=None, editable=False):
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
         link = parse_link(url or req.url)
         # make constraint
@@ -62,6 +63,7 @@ class Dependency:
             link=link,
             extras=req.extras,
             marker=req.marker,
+            editable=editable,
         )
 
     @classmethod
