@@ -3,6 +3,8 @@ from packaging.requirements import Requirement as PackagingRequirement
 
 # project
 from dephell.converters.pip import PIPConverter
+from dephell.links import VCSLink
+from dephell.repositories import GitRepo
 from dephell.models import Dependency, Requirement, RootDependency
 
 
@@ -18,7 +20,7 @@ def test_format():
 
     # test dep
     assert dep.name == 'hypothesis'
-    assert dep.extras == {'django', }
+    assert dep.extras == {'django'}
     assert str(dep.constraint) == '<=3.0.0'
     assert str(dep.marker).startswith('python_version == "2.7"')
 
@@ -31,3 +33,16 @@ def test_format():
     assert 'python_version == "2.7"' in result
     assert 'from root' in result
     assert result.startswith(text)
+
+
+def test_git_parsing():
+    root = PIPConverter(lock=False).loads('-e git+https://github.com/django/django.git#egg=django')
+    assert len(root.dependencies) == 1
+    dep = root.dependencies[0]
+
+    assert isinstance(dep.link, VCSLink)
+    assert isinstance(dep.repo, GitRepo)
+
+    assert dep.link.vcs == 'git'
+    assert dep.link.server == 'github.com'
+    assert dep.link.name == 'django'
