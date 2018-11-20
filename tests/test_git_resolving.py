@@ -78,3 +78,89 @@ def test_with_rev_one_constraint():
     assert isinstance(release, GitRelease)
     assert release.commit == commit
     assert str(release.version) == '1.11'
+
+
+def test_no_rev_two_constraints():
+    dep = Dependency.from_params(
+        raw_name='Django',
+        constraint='',
+        source=RootDependency(),
+        url='https://github.com/django/django.git',
+    )
+    assert isinstance(dep.link, VCSLink)
+    assert isinstance(dep.repo, GitRepo)
+    dep.repo = PatchedGitRepo(dep.link)
+
+    dep2 = Dependency.from_params(
+        raw_name='Django',
+        constraint='<=1.9',
+        source=RootDependency(),
+    )
+    dep.merge(dep2)
+    assert isinstance(dep.link, VCSLink)
+
+    releases = set()
+    for group in dep.groups:
+        releases.update(set(group.releases))
+    assert len(releases) == 2
+
+    versions = {str(release.version) for release in releases}
+    assert versions == {'1.7', '1.9'}
+
+
+def test_with_rev_two_constraints():
+    commit = '0cf85e6b074794ac91857aa097f0b3dc3e6d9468'
+    dep = Dependency.from_params(
+        raw_name='Django',
+        constraint='',
+        source=RootDependency(),
+        url='https://github.com/django/django.git@' + commit,
+    )
+    assert isinstance(dep.link, VCSLink)
+    assert isinstance(dep.repo, GitRepo)
+    dep.repo = PatchedGitRepo(dep.link)
+
+    dep2 = Dependency.from_params(
+        raw_name='Django',
+        constraint='<=1.11',
+        source=RootDependency(),
+    )
+    dep.merge(dep2)
+    dep3 = Dependency.from_params(
+        raw_name='Django',
+        constraint='>=1.7',
+        source=RootDependency(),
+    )
+    dep.merge(dep3)
+    assert isinstance(dep.link, VCSLink)
+
+    releases = set()
+    for group in dep.groups:
+        releases.update(set(group.releases))
+    assert len(releases) == 1
+
+    versions = {str(release.version) for release in releases}
+    assert versions == {'1.11'}
+
+
+def test_with_rev_two_constraints_unresolved():
+    commit = '0cf85e6b074794ac91857aa097f0b3dc3e6d9468'
+    dep = Dependency.from_params(
+        raw_name='Django',
+        constraint='',
+        source=RootDependency(),
+        url='https://github.com/django/django.git@' + commit,
+    )
+    assert isinstance(dep.link, VCSLink)
+    assert isinstance(dep.repo, GitRepo)
+    dep.repo = PatchedGitRepo(dep.link)
+
+    dep2 = Dependency.from_params(
+        raw_name='Django',
+        constraint='<=1.9',
+        source=RootDependency(),
+    )
+    dep.merge(dep2)
+    for group in dep.groups:
+        assert group.empty
+    assert not dep.compat
