@@ -4,6 +4,8 @@ import json
 # project
 from dephell.converters import PIPFileLockConverter
 from dephell.models import Requirement
+from dephell.links import VCSLink
+from dephell.repositories import GitRepo
 
 
 def test_load():
@@ -16,6 +18,19 @@ def test_load():
     assert 'django' in deps
     assert str(deps['records'].constraint) == '==0.5.2'
     assert len(deps['pyyaml'].group.best_release.hashes) == 14
+
+
+def test_load_git_based_dep():
+    converter = PIPFileLockConverter()
+    root = converter.load('./tests/requirements/pipfile.lock.json')
+    deps = {dep.name: dep for dep in root.dependencies}
+    dep = deps['django']
+    assert isinstance(dep.link, VCSLink)
+    assert isinstance(dep.repo, GitRepo)
+
+    assert dep.link.vcs == 'git'
+    assert dep.link.server == 'github.com'
+    assert dep.link.name == 'django'
 
 
 def test_dump():

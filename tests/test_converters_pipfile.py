@@ -1,6 +1,8 @@
 # project
 from dephell.converters import PIPFileConverter
 from dephell.models import Requirement
+from dephell.links import VCSLink
+from dephell.repositories import GitRepo
 
 
 def test_load():
@@ -11,6 +13,19 @@ def test_load():
     assert 'records' in deps
     assert 'django' in deps
     assert str(deps['records'].constraint) == '>0.5.0'
+
+
+def test_load_git_based_dep():
+    converter = PIPFileConverter()
+    root = converter.load('./tests/requirements/pipfile.toml')
+    deps = {dep.name: dep for dep in root.dependencies}
+    dep = deps['django']
+    assert isinstance(dep.link, VCSLink)
+    assert isinstance(dep.repo, GitRepo)
+
+    assert dep.link.vcs == 'git'
+    assert dep.link.server == 'github.com'
+    assert dep.link.name == 'django'
 
 
 def test_dump():
