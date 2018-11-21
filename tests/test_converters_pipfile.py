@@ -48,5 +48,5 @@ def test_format_req():
         constraint='>=1.9',
         source=RootDependency(),
     )
-    content = PIPFileConverter()._format_req(Requirement(dep))
+    content = PIPFileConverter()._format_req(Requirement(dep, lock=False))
     assert content == '>=1.9'
