@@ -1,4 +1,7 @@
+# built-in
 from operator import attrgetter
+
+# external
 from cached_property import cached_property
 
 

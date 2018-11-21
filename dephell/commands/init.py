@@ -1,48 +1,14 @@
-from collections import namedtuple
+# built-in
 from pathlib import Path
 
+# external
 import huepy
 import tomlkit
 
+# app
 from ..config import Config
+from ..rules import EXAMPLE_RULE, RULES
 from .base import BaseCommand
-
-
-Rule = namedtuple('Rule', ['from_path', 'to_path', 'from_format', 'to_format'])
-
-rules = (
-    Rule(
-        from_path='requirements.in',
-        to_path='requirements.txt',
-        from_format='pip',
-        to_format='piplock',
-    ),
-    Rule(
-        from_path='requirements.txt',
-        to_path='requirements.lock',
-        from_format='pip',
-        to_format='piplock',
-    ),
-    Rule(
-        from_path='Pipfile',
-        to_path='Pipfile.lock',
-        from_format='pipfile',
-        to_format='pipfilelock',
-    ),
-    Rule(
-        from_path='pyproject.toml',
-        to_path='pyproject.lock',
-        from_format='poetry',
-        to_format='poetrylock',
-    ),
-)
-
-example_rule = Rule(
-    from_path='requirements.in',
-    to_path='requirements.txt',
-    from_format='pip',
-    to_format='piplock',
-)
 
 
 class InitCommand(BaseCommand):
@@ -88,7 +54,7 @@ class InitCommand(BaseCommand):
 
         # detect requirements files
         path = Path(self.args.config).parent
-        for rule in rules:
+        for rule in RULES:
             if (path / rule.from_path).exists():
                 if rule.from_format not in doc['tool']['dephell']:
                     doc['tool']['dephell'].add(
@@ -100,7 +66,7 @@ class InitCommand(BaseCommand):
             if 'example' not in doc['tool']['dephell']:
                 doc['tool']['dephell'].add(
                     'example',
-                    self._make_env(example_rule),
+                    self._make_env(EXAMPLE_RULE),
                 )
 
         # write

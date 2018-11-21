@@ -1,5 +1,8 @@
-from dephell.links import parse_link, DirLink, FileLink, URLLink, VCSLink
+# external
 import pytest
+
+# project
+from dephell.links import DirLink, FileLink, URLLink, VCSLink, parse_link
 
 
 @pytest.mark.parametrize("link_type,url", [

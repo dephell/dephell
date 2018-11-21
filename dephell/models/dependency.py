@@ -1,15 +1,21 @@
-from operator import attrgetter
-from collections import defaultdict
-import re
-import attr
+# built-in
 import asyncio
+import re
+from collections import defaultdict
+from copy import deepcopy
+
+# external
+import attr
 from cached_property import cached_property
 from packaging.utils import canonicalize_name
+
+# app
+from ..exceptions import MergeError
+from ..links import parse_link, VCSLink
+from ..repositories import get_repo, GitRepo
 from .constraint import Constraint
 from .group import Group
-from ..repositories import get_repo
-from ..links import parse_link
-from copy import deepcopy
+from .git_specifier import GitSpecifier
 
 
 loop = asyncio.get_event_loop()
@@ -35,6 +41,7 @@ class Dependency:
     classifiers = attr.ib(factory=tuple, repr=False)    # classifiers
 
     # info from requirements file
+    editable = attr.ib(default=False, repr=False)
     extras = attr.ib(factory=set, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(default=None, repr=False)
@@ -42,25 +49,35 @@ class Dependency:
     # constructors
 
     @classmethod
-    def from_requirement(cls, source, req, url=None):
+    def from_requirement(cls, source, req, url=None, editable=False):
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
         link = parse_link(url or req.url)
+        # make constraint
+        constraint = Constraint(source, req.specifier)
+        if isinstance(link, VCSLink) and link.rev:
+            constraint._specs[source.name] = {GitSpecifier()}
         return cls(
             raw_name=req.name,
-            constraint=Constraint(source, req.specifier),
+            constraint=constraint,
             repo=get_repo(link),
             link=link,
             extras=req.extras,
             marker=req.marker,
+            editable=editable,
         )
 
     @classmethod
     def from_params(cls, *, raw_name, constraint, url=None, source=None, repo=None, **kwargs):
+        # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
             raw_name = link.name
+        # make constraint
         if source:
             constraint = Constraint(source, constraint)
+            if isinstance(link, VCSLink) and link.rev:
+                constraint._specs[source.name] = {GitSpecifier()}
+        # make repo
         if repo is None:
             repo = get_repo(link)
         return cls(
@@ -109,11 +126,7 @@ class Dependency:
             groups[key].add(release)
 
         # sort groups by latest release
-        groups = sorted(
-            groups.values(),
-            key=lambda releases: max(releases, key=attrgetter('time')),
-            reverse=True,
-        )
+        groups = sorted(groups.values(), key=max, reverse=True)
 
         # convert every group to Group object
         groups = tuple(
@@ -121,11 +134,7 @@ class Dependency:
             for number, releases in enumerate(groups)
         )
 
-        # actualize
-        filtrate = self.constraint.filter
-        for group in groups:
-            group.releases = filtrate(group.all_releases)
-
+        self._actualize_groups(groups=groups)
         return groups
 
     @cached_property
@@ -170,6 +179,29 @@ class Dependency:
         #     del self.__dict__['dependencies']
 
     def merge(self, dep):
+        # some checks when we merge two git based dep
+        if isinstance(self.link, GitRepo) and isinstance(dep.link, GitRepo):
+            if self.link.rev and dep.link.rev and self.link.rev != dep.link.rev:
+                raise MergeError('links point to different revisions')
+            if self.link.server != dep.link.server:
+                raise MergeError('links point to different servers')
+            ...
+
+        # if ...
+        # .. 1. we don't use repo in self,
+        # .. 2. it's a git repo,
+        # .. 3. dep has non-git repo,
+        # .. 4. self has no rev,
+        # then prefer non-git repo, because it's more accurate and fast.
+        if isinstance(self.link, GitRepo) and not isinstance(dep.link, GitRepo):
+            if not self.link.rev:
+                if 'groups' not in self.__dict__:
+                    self.repo = dep.repo
+
+        if not isinstance(self.link, GitRepo) and isinstance(dep.link, GitRepo):
+            self.link = dep.link
+            self.repo = dep.repo
+
         self.constraint.merge(dep.constraint)
         self._actualize_groups(force=True)
 
@@ -186,11 +218,13 @@ class Dependency:
             obj.unlock()
         return obj
 
-    def _actualize_groups(self, *, force: bool=False) -> bool:
-        if not force and 'groups' not in self.__dict__:
-            return False
+    def _actualize_groups(self, *, force: bool=False, groups=None) -> bool:
+        if not groups:
+            if not force and 'groups' not in self.__dict__:
+                return False
+            groups = self.groups
 
         filtrate = self.constraint.filter
-        for group in self.groups:
+        for group in groups:
             group.releases = filtrate(group.all_releases)
         return True

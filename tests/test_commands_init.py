@@ -1,5 +1,8 @@
-from dephell.commands import InitCommand
+# external
 import tomlkit
+
+# project
+from dephell.commands import InitCommand
 
 
 def test_create(tmpdir):

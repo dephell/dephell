@@ -1,3 +1,4 @@
+# app
 from .convert import ConvertCommand
 from .init import InitCommand
 

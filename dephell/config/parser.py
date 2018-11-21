@@ -1,5 +1,8 @@
+# built-in
 from argparse import ArgumentParser
-from ..constants import FORMATS, ENVS
+
+# app
+from ..constants import ENVS, FORMATS
 
 
 parser = ArgumentParser(

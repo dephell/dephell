@@ -1,11 +1,13 @@
+# external
 import requests
-from packaging.requirements import Requirement
 from aiohttp import ClientSession
+from packaging.requirements import Requirement
 
-from .base import Interface
-from ..cache import TextCache, JSONCache
+# app
+from ..cache import JSONCache, TextCache
 from ..models.author import Author
 from ..models.release import Release
+from .base import Interface
 
 
 class WareHouseRepo(Interface):
@@ -59,7 +61,7 @@ class WareHouseRepo(Interface):
                 continue
             release = Release.from_response(dep.name, version, info)
             releases.append(release)
-        releases.sort(key=lambda release: release.time, reverse=True)
+        releases.sort(reverse=True)
         releases = tuple(releases)
 
         return releases

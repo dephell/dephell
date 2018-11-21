@@ -1,4 +1,8 @@
+# built-in
 from enum import Enum, unique
+
+
+CACHE_DIR = '.dephell'
 
 
 @unique
@@ -13,12 +17,14 @@ FORMATS = (
     'pip',      'piplock',
     'pipfile',  'pipfilelock',
     'poetry',   'poetrylock',
+    'setuppy',
 )
 
 FILES = (
     'requirements.in',  'requirements.txt',
     'Pipfile',          'Pipfile.lock',
     'pyproject.toml',   'pyproject.lock',
+    'setup.py',
 )
 
 ENVS = ('main', 'dev', 'main-opt', 'dev-opt')

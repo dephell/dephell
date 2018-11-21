@@ -1,10 +1,13 @@
+# built-in
 from collections import defaultdict
 from typing import Optional
 
+# external
 import tomlkit
 import yaml
 from cerberus import Validator
 
+# app
 from .scheme import SCHEME
 
 

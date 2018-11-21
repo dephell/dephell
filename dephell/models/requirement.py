@@ -1,11 +1,14 @@
-from cached_property import cached_property
+# built-in
 from typing import Optional
+
+# external
+from cached_property import cached_property
 
 
 class Requirement:
     _properties = (
         'name', 'release', 'version', 'extras', 'markers',
-        'hashes', 'sources',
+        'hashes', 'sources', 'editable',
     )
 
     def __init__(self, dep, lock: bool):
@@ -13,7 +16,7 @@ class Requirement:
         self.lock = lock
 
     @classmethod
-    def from_graph(cls, graph, *, lock: bool):
+    def from_graph(cls, graph, *, lock: bool) -> tuple:
         result = []
         applied = graph.applied
         if len(graph._layers) == 1:
@@ -33,11 +36,31 @@ class Requirement:
             return self.dep.group.best_release
 
     @property
+    def editable(self) -> Optional[bool]:
+        if self.dep.editable:
+            return True
+
+    @property
+    def link(self):
+        return self.dep.link
+
+    @property
+    def git(self) -> Optional[str]:
+        if getattr(self.dep.link, 'vcs', '') == 'git':
+            return self.dep.link.short
+
+    @property
+    def rev(self) -> Optional[str]:
+        return getattr(self.dep.link, 'rev', None)
+
+    @property
     def name(self) -> str:
         return self.dep.name
 
     @property
-    def version(self) -> str:
+    def version(self) -> Optional[str]:
+        if self.link:
+            return
         if self.lock:
             return '==' + str(self.release.version)
         return str(self.dep.constraint)

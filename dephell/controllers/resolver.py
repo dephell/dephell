@@ -1,9 +1,13 @@
+# built-in
 from contextlib import suppress
 from logging import getLogger
 
+# external
 from tqdm import tqdm
 
+# app
 from .conflict import analize_conflict
+from ..exceptions import MergeError
 
 
 logger = getLogger('dephell.resolver')
@@ -33,7 +37,10 @@ class Resolver:
                 self.graph.add(other_dep)
             else:
                 # merge deps
-                other_dep.merge(new_dep)
+                try:
+                    other_dep.merge(new_dep)
+                except MergeError:
+                    return other_dep
             # check
             if not other_dep.compat:
                 return other_dep

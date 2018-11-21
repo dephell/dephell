@@ -1,4 +1,5 @@
-from .helpers import make_root, Fake
+# app
+from .helpers import Fake, make_root
 
 
 def test_make_deps():
