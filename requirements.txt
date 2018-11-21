@@ -7,6 +7,7 @@ html2text
 huepy
 packaging
 pip
+pkginfo
 pyyaml
 requests
 tomlkit
