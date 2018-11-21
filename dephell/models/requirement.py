@@ -16,7 +16,7 @@ class Requirement:
         self.lock = lock
 
     @classmethod
-    def from_graph(cls, graph, *, lock: bool):
+    def from_graph(cls, graph, *, lock: bool) -> tuple:
         result = []
         applied = graph.applied
         if len(graph._layers) == 1:
@@ -43,6 +43,15 @@ class Requirement:
     @property
     def link(self):
         return self.dep.link
+
+    @property
+    def git(self) -> Optional[str]:
+        if getattr(self.dep.link, 'vcs', '') == 'git':
+            return self.dep.link.short
+
+    @property
+    def rev(self) -> Optional[str]:
+        return getattr(self.dep.link, 'rev', None)
 
     @property
     def name(self) -> str:

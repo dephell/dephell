@@ -1,6 +1,6 @@
 # project
 from dephell.converters import PIPFileConverter
-from dephell.models import Requirement
+from dephell.models import Requirement, Dependency, RootDependency
 from dephell.links import VCSLink
 from dephell.repositories import GitRepo
 
@@ -40,3 +40,13 @@ def test_dump():
     assert 'requests = ' in content
     assert "extras = ['socks']" in content
     assert 'records = ">0.5.0"' in content
+
+
+def test_format_req():
+    dep = Dependency.from_params(
+        raw_name='Django',
+        constraint='>=1.9',
+        source=RootDependency(),
+    )
+    content = PIPFileConverter()._format_req(Requirement(dep))
+    assert content == '>=1.9'
