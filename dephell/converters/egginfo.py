@@ -8,6 +8,8 @@ from ..models import Dependency, RootDependency
 
 
 class EggInfoConverter(BaseConverter):
+    lock = False
+
     def load(self, path) -> RootDependency:
         path = Path(str(path))
         with (path / 'PKG-INFO').open('r') as stream:
