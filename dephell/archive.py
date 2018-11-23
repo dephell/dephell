@@ -93,7 +93,7 @@ class ArchivePath:
 
     # methods
 
-    def glob(self, pattern):
+    def iterdir(self, recursive=False):
         with self.get_descriptor() as descriptor:
             if hasattr(descriptor, 'getmembers'):
                 members = descriptor.getmembers()   # tar
@@ -101,14 +101,18 @@ class ArchivePath:
                 members = descriptor.infolist()     # zip
             for member in members:
                 name = getattr(member, 'name', None) or member.filename
-                if fnmatch(name=name, pat=pattern):
-                    obj = self.__class__(
-                        archive_path=self.archive_path,
-                        cache_path=self.cache_path,
-                        member_path=PurePath(name),
-                    )
-                    obj._descriptor = self._descriptor
-                    yield obj
+                obj = self.__class__(
+                    archive_path=self.archive_path,
+                    cache_path=self.cache_path,
+                    member_path=PurePath(name),
+                )
+                obj._descriptor = self._descriptor
+                yield obj
+
+    def glob(self, pattern):
+        for path in self.iterdir(recursive=True):
+            if fnmatch(name=str(path), pat=pattern):
+                yield path
 
     # magic methods
 
