@@ -71,15 +71,21 @@ class ArchivePath:
     @contextmanager
     def get_descriptor(self):
         if self._descriptor is not None:
-            yield self._descriptor
-        else:
-            with self.extractor(str(self.archive_path)) as descriptor:
-                self._descriptor = descriptor
-                try:
-                    yield self._descriptor
-                except Exception:
-                    self._descriptor = None
-                    raise
+            if hasattr(self._descriptor, 'closed'):
+                is_closed = self._descriptor.closed  # tar
+            else:
+                is_closed = self._descriptor.fp  # zip
+            if is_closed:
+                yield self._descriptor
+                return
+
+        with self.extractor(str(self.archive_path)) as descriptor:
+            self._descriptor = descriptor
+            try:
+                yield self._descriptor
+            except Exception:
+                self._descriptor = None
+                raise
 
     @contextmanager
     def open(self, mode='r'):
