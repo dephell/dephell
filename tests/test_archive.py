@@ -32,3 +32,13 @@ def test_glob_zip(tmpdir):
     paths = list(path.glob('*/__init__.py'))
     assert len(paths) == 1
     assert str(paths[0]) == 'dephell/__init__.py'
+
+
+def test_glob_tar(tmpdir):
+    path = ArchivePath(
+        archive_path=Path('tests', 'requirements', 'sdist.tar.gz'),
+        cache_path=Path(str(tmpdir)),
+    )
+    paths = list(path.glob('*/setup.py'))
+    assert len(paths) == 1
+    assert str(paths[0]) == 'dephell-0.2.0/setup.py'
