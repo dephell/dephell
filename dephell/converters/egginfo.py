@@ -37,9 +37,16 @@ class EggInfoConverter(BaseConverter):
             return self._parse_requires(content)
 
     def dumps(self, reqs, content=None) -> str:
+        # distutils.dist.DistributionMetadata.write_pkg_file
         content = []
-        ...
-        return '\n'.join(content)
+        content.append(('Metadata-Version', '1.1'))
+        # TODO: get project info
+        content.append(('Name', 'UNKNOWN'))
+        content.append(('Version', '0.0.0'))
+
+        for req in reqs:
+            content.append(('Requires', self._format_req(req=req)))
+        return '\n'.join(map(': '.join, content))
 
     # helpers
 
@@ -62,3 +69,13 @@ class EggInfoConverter(BaseConverter):
             deps.append(Dependency.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
         return root
+
+    def _format_req(self, req):
+        line = req.name
+        if req.extras:
+            line += '[{extras}]'.format(extras=','.join(req.extras))
+        if req.version:
+            line += req.version
+        if req.markers:
+            line += '; ' + req.markers
+        return line
