@@ -51,9 +51,13 @@ class ArchiveStream:
 @attr.s()
 class ArchivePath:
     archive_path = attr.ib()
-    cache_path = attr.ib()
+    cache_path = attr.ib(default=None)
     member_path = attr.ib(factory=PurePath)
     _descriptor = attr.ib(default=None, repr=False)
+
+    def __attrs_post_init__(self):
+        if self.cache_path is None:
+            self.cache_path = NEW_PATH / self.archive_path.name
 
     # properties
 

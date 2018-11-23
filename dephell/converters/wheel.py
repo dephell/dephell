@@ -6,17 +6,47 @@ from pathlib import Path
 from packaging.requirements import Requirement
 
 # app
-# from ..archive import ArchivePath
+from ..archive import ArchivePath
 from ..models import Dependency, RootDependency
 from .base import BaseConverter
 
 
 class WheelConverter(BaseConverter):
     def load(self, path) -> RootDependency:
+        """Parse wheel
+
+        Supported path format:
+            + *.whl archive,
+            + extracted *.whl (*.dist-info)
+            + METADATA file from *.whl
+        """
         path = Path(str(path))
-        if path.suffix == '.whl':
-            # new_path = extract(path=path, patterns=['*METADATA'])
-            ...
+        paths = None
+
+        # passed .whl archive
+        if path.is_file() and path.suffix == '.whl':
+            archive = ArchivePath(path)
+            paths = list(archive.glob('*METADATA'))
+
+        # passed extracted .whl
+        if path.is_dir():
+            paths = [path / 'METADATA']
+            if not path.exists():
+                paths = list(path.glob('*.dist-info/METADATA'))
+
+        # passed METADATA file
+        if paths is None:
+            paths = [path]
+
+        if not paths:
+            raise FileNotFoundError('cannot find METADATA in dir', str(path))
+        # maybe it's possible, so we will have to process it
+        if len(paths) > 1:
+            raise FileExistsError('too many METADATA in dir')
+
+        with paths[0].open('r') as stream:
+            content = stream.read()
+        return self.loads(content)
 
     def loads(self, content: str) -> RootDependency:
         """Parse METADATA file from .whl archive
