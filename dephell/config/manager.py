@@ -4,8 +4,10 @@ from typing import Optional
 
 # external
 import tomlkit
-import yaml
 from cerberus import Validator
+
+# project
+import yaml
 
 # app
 from .scheme import SCHEME

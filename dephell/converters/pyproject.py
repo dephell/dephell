@@ -1,5 +1,6 @@
-from tomlkit import parse, dumps, document
+# external
 from packaging.requirements import Requirement
+from tomlkit import document, dumps, parse
 
 # app
 from ..models import Dependency, RootDependency

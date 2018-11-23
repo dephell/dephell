@@ -9,8 +9,8 @@ from cached_property import cached_property
 
 # app
 from ...constants import CACHE_DIR
-from ...models.release import Release
 from ...models.git_release import GitRelease
+from ...models.release import Release
 from ...utils import chdir
 from ..base import Interface
 

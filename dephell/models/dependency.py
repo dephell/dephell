@@ -11,11 +11,11 @@ from packaging.utils import canonicalize_name
 
 # app
 from ..exceptions import MergeError
-from ..links import parse_link, VCSLink
-from ..repositories import get_repo, GitRepo
+from ..links import VCSLink, parse_link
+from ..repositories import GitRepo, get_repo
 from .constraint import Constraint
-from .group import Group
 from .git_specifier import GitSpecifier
+from .group import Group
 
 
 loop = asyncio.get_event_loop()

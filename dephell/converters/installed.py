@@ -1,5 +1,8 @@
+# built-in
 import sys
 from pathlib import Path
+
+# app
 from .egginfo import EggInfoConverter
 
 

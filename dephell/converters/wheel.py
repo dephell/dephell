@@ -1,11 +1,14 @@
+# built-in
 from email.parser import Parser
 from pathlib import Path
 
+# external
 from packaging.requirements import Requirement
 
-from .base import BaseConverter
-from ..models import Dependency, RootDependency
+# app
 from ..archive import ArchivePath
+from ..models import Dependency, RootDependency
+from .base import BaseConverter
 
 
 class WheelConverter(BaseConverter):

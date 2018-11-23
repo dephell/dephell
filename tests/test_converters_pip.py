@@ -4,8 +4,8 @@ from packaging.requirements import Requirement as PackagingRequirement
 # project
 from dephell.converters.pip import PIPConverter
 from dephell.links import VCSLink
-from dephell.repositories import GitRepo
 from dephell.models import Dependency, Requirement, RootDependency
+from dephell.repositories import GitRepo
 
 
 def test_format():

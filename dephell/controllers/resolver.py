@@ -6,8 +6,8 @@ from logging import getLogger
 from tqdm import tqdm
 
 # app
-from .conflict import analize_conflict
 from ..exceptions import MergeError
+from .conflict import analize_conflict
 
 
 logger = getLogger('dephell.resolver')

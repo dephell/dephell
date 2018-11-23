@@ -1,9 +1,11 @@
+# built-in
 from contextlib import contextmanager
+from fnmatch import fnmatch
+from pathlib import Path, PurePath
 from tarfile import TarFile
 from zipfile import ZipFile
-from pathlib import Path, PurePath
-from fnmatch import fnmatch
 
+# external
 import attr
 
 

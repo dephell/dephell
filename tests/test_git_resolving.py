@@ -1,9 +1,11 @@
+# built-in
 from collections import OrderedDict
 from datetime import datetime
 
-from dephell.repositories.git.git import GitRepo
+# project
 from dephell.links import VCSLink
-from dephell.models import Dependency, RootDependency, GitRelease
+from dephell.models import Dependency, GitRelease, RootDependency
+from dephell.repositories.git.git import GitRepo
 
 
 class PatchedGitRepo(GitRepo):

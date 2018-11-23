@@ -1,4 +1,7 @@
+# built-in
 from distutils.core import run_setup
+
+# external
 from packaging.requirements import Requirement
 
 # app

@@ -1,7 +1,7 @@
 # project
 from dephell.converters import PIPFileConverter
-from dephell.models import Requirement, Dependency, RootDependency
 from dephell.links import VCSLink
+from dephell.models import Dependency, Requirement, RootDependency
 from dephell.repositories import GitRepo
 
 
