@@ -6,7 +6,7 @@ from pathlib import Path
 from packaging.requirements import Requirement
 
 # app
-from ..archive import ArchivePath
+# from ..archive import ArchivePath
 from ..models import Dependency, RootDependency
 from .base import BaseConverter
 

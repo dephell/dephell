@@ -90,4 +90,7 @@ class Specifier:
         return str(self._spec)
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, str(self._spec))
+        return '{name}({spec})'.format(
+            name=self.__class__.__name__,
+            spec=str(self._spec),
+        )

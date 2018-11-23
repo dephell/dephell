@@ -8,4 +8,4 @@ class Author:
     mail = attr.ib()
 
     def __str__(self):
-        return '{} <{}>'.format(self.name, self.mail)
+        return '{name} <{mail}>'.format(name=self.name, mail=self.mail)

@@ -34,7 +34,7 @@ class Release:
         return canonicalize_name(self.raw_name)
 
     def __str__(self):
-        return '{}=={}'.format(self.raw_name, self.version)
+        return '{name}=={version}'.format(name=self.raw_name, version=self.version)
 
     def hash(self):
         return hash((self.name, self.version))

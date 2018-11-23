@@ -148,7 +148,7 @@ class GitRepo(Interface):
     def _clean_tag(tag):
         return rex_version.fullmatch(tag).groups()[0]
 
-    def _setup(self, *, force: bool=False) -> None:
+    def _setup(self, *, force: bool = False) -> None:
         if self._ready and not force:
             return
 

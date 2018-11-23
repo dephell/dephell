@@ -28,7 +28,7 @@ class RootDependency:
     compat = True
     used = True
 
-    def __init__(self, name: str='root'):
+    def __init__(self, name: str = 'root'):
         self.name = name
         self.raw_name = name.title()
 
@@ -56,4 +56,4 @@ class RootDependency:
         return self.name
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.name)
+        return '{cls}({name})'.format(cls=self.__class__.__name__, name=self.name)

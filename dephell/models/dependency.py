@@ -218,7 +218,7 @@ class Dependency:
             obj.unlock()
         return obj
 
-    def _actualize_groups(self, *, force: bool=False, groups=None) -> bool:
+    def _actualize_groups(self, *, force: bool = False, groups=None) -> bool:
         if not groups:
             if not force and 'groups' not in self.__dict__:
                 return False

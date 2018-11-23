@@ -53,10 +53,10 @@ class Group:
         elif len(versions) == 1:
             versions = '==' + versions[0]
         elif len(versions) <= 4:
-            versions = '({})'.format(', '.join(versions))
+            versions = '({versions})'.format(versions=', '.join(versions))
         else:
-            versions = '({}–{})'.format(versions[0], versions[-1])
-        return '{}{}'.format(self.name, versions)
+            versions = '({first}–{last})'.format(first=versions[0], last=versions[-1])
+        return '{name}{versions}'.format(name=self.name, versions=versions)
 
     def __repr__(self):
-        return 'Group({})'.format(str(self))
+        return 'Group({info})'.format(info=str(self))

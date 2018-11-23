@@ -9,9 +9,6 @@ pep8-naming
 flake8-commas
 # ^ https://github.com/PyCQA/flake8-commas
 
-flake8-isort
-# ^ https://github.com/gforcada/flake8-isort
-
 flake8-quotes
 # ^ https://github.com/zheller/flake8-quotes
 
@@ -23,12 +20,6 @@ flake8-logging-format
 
 flake8-pep3101
 # ^ https://github.com/gforcada/flake8-pep3101
-
-flake8-builtins
-# ^ https://github.com/gforcada/flake8-builtins
-
-flake8-comprehensions
-# ^ https://github.com/adamchainz/flake8-comprehensions
 
 flake8-string-format
 # ^ https://github.com/xZise/flake8-string-format

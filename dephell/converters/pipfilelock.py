@@ -49,7 +49,7 @@ class PIPFileLockConverter(PIPFileConverter):
 
     @staticmethod
     def _get_hash(data: dict) -> str:
-        content = json.dumps(data, sort_keys=True, separators=(",", ":"))
+        content = json.dumps(data, sort_keys=True, separators=(',', ':'))
         return sha256(content.encode('utf8')).hexdigest()
 
     def _format_req(self, req):

@@ -31,7 +31,7 @@ class PyProjectConverter(BaseConverter):
     def _format_req(self, req):
         line = req.name
         if req.extras:
-            line += '[{}]'.format(','.join(req.extras))
+            line += '[{extras}]'.format(extras=','.join(req.extras))
         line += req.version
         if req.markers:
             line += '; ' + req.markers
