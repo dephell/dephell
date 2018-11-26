@@ -66,11 +66,13 @@ class EggInfoConverter(BaseConverter):
         path = paths[0]
 
         with (path / 'PKG-INFO').open('r') as stream:
-            root = self._parse_info(stream.read())
+            content = stream.read()
+        root = self._parse_info(content)
         path = path / 'requires.txt'
-        if not root.dependencies and path.exists():
+        if not root.dependencies:
             with path.open('r') as stream:
-                root = self._parse_requires(stream.read(), root=root)
+                content = stream.read()
+            root = self._parse_requires(content, root=root)
         return root
 
     @staticmethod
@@ -78,7 +80,7 @@ class EggInfoConverter(BaseConverter):
         info = Parser().parsestr(content)
         root = RootDependency(name=info.get('Name').strip())
         deps = []
-        for req in info.get_all('Requires'):
+        for req in info.get_all('Requires', []):
             req = PackagingRequirement(req)
             deps.append(Dependency.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
@@ -88,7 +90,7 @@ class EggInfoConverter(BaseConverter):
         if root is None:
             root = RootDependency(name=self._get_name(content=content))
         deps = []
-        for req in content.split:
+        for req in content.split():
             req = PackagingRequirement(req)
             deps.append(Dependency.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
