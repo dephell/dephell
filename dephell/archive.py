@@ -37,11 +37,12 @@ def glob_path(path: str, pattern: str) -> bool:
         if not fnmatch(name=path_part, pat=pattern_part):
             return False
 
-    for path_part, pattern_part in zip(parts, parts_right):
+    for path_part, pattern_part in zip(reversed(parts), reversed(parts_right)):
         if not fnmatch(name=path_part, pat=pattern_part):
             return False
 
     return True
+
 
 @attr.s()
 class ArchiveStream:

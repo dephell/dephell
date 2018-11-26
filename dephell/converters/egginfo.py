@@ -38,7 +38,7 @@ class EggInfoConverter(BaseConverter):
             return self.loads(stream.read())
 
     def loads(self, content: str) -> RootDependency:
-        if 'Requires: ' in content:
+        if 'Name: ' in content:
             return self._parse_info(content)
         else:
             return self._parse_requires(content)

@@ -26,13 +26,13 @@ class WheelConverter(BaseConverter):
         # passed .whl archive
         if path.is_file() and path.suffix == '.whl':
             archive = ArchivePath(path)
-            paths = list(archive.glob('*METADATA'))
+            paths = list(archive.glob('**/METADATA'))
 
         # passed extracted .whl
         if path.is_dir():
             paths = [path / 'METADATA']
             if not path.exists():
-                paths = list(path.glob('*.dist-info/METADATA'))
+                paths = list(path.glob('**/*.dist-info/METADATA'))
 
         # passed METADATA file
         if paths is None:

@@ -1,8 +1,10 @@
 # built-in
 from pathlib import Path
 
+import pytest
+
 # project
-from dephell.archive import ArchivePath
+from dephell.archive import ArchivePath, glob_path
 
 
 def test_open_zip(tmpdir):
@@ -66,3 +68,25 @@ def test_iterdir(tmpdir):
     for path in paths:
         assert paths.count(path) == 1, 'duplicate dir: ' + path
     assert 'dephell-0.2.0' in paths
+
+
+@pytest.mark.parametrize("path,pattern,ok", [
+    ('/lol/', '/lol/', True),
+    ('/lol/', '/lal/', False),
+
+    ('lol', '/lol/', True),
+    ('lol', '/lal/', False),
+
+    ('/lol/', '/l*', True),
+    ('/tol/', '/l*', False),
+    ('l', '/l*', True),
+    ('lal', '/l*t', False),
+
+    ('lol/lal', '*/lal', True),
+
+    ('lol/lal', '**/lal', True),
+    ('lol/lal', 'lol/**', True),
+    ('lol/lal', 'lal/**', False),
+])
+def test_glob_path(path, pattern, ok):
+    assert glob_path(path=path, pattern=pattern) is ok
