@@ -8,6 +8,7 @@ from packaging.requirements import Requirement as PackagingRequirement
 # app
 from ..models import Dependency, RootDependency
 from .base import BaseConverter
+from ..archive import ArchivePath
 
 
 class EggInfoConverter(BaseConverter):
@@ -19,14 +20,20 @@ class EggInfoConverter(BaseConverter):
     def load(self, path) -> RootDependency:
         path = Path(str(path))
         if path.is_dir():
-            with (path / 'PKG-INFO').open('r') as stream:
-                root = self._parse_info(stream.read())
-            path = path / 'requires.txt'
-            if not root.dependencies and path.exists():
-                with path.open('r') as stream:
-                    root = self._parse_requires(stream.read(), root=root)
-            return root
+            # load from *.egg-info dir
+            if path.name.endswith('.egg-info'):
+                return self._load_dir(path)
+            # find *.egg-info in current dir
+            paths = list(path.glob('*/*.egg-info'))
+            return self._load_dir(*paths)
 
+        # load from archive
+        if path.suffix in ('.zip', '.gz', '.tar'):
+            archive = ArchivePath(path)
+            paths = list(archive.glob('*/*.egg-info'))
+            return self._load_dir(*paths)
+
+        # load from file (requires.txt or PKG-INFO)
         with path.open('r') as stream:
             return self.loads(stream.read())
 
@@ -50,7 +57,24 @@ class EggInfoConverter(BaseConverter):
 
     # helpers
 
-    def _parse_info(self, content: str, root=None) -> RootDependency:
+    def _load_dir(self, *paths):
+        if not paths:
+            raise FileNotFoundError('cannot find egg-info')
+        # maybe it's possible, so we will have to process it
+        if len(paths) > 1:
+            raise FileExistsError('too many egg-info')
+        path = paths[0]
+
+        with (path / 'PKG-INFO').open('r') as stream:
+            root = self._parse_info(stream.read())
+        path = path / 'requires.txt'
+        if not root.dependencies and path.exists():
+            with path.open('r') as stream:
+                root = self._parse_requires(stream.read(), root=root)
+        return root
+
+    @staticmethod
+    def _parse_info(content: str, root=None) -> RootDependency:
         info = Parser().parsestr(content)
         root = RootDependency(name=info.get('Name').strip())
         deps = []
@@ -70,7 +94,8 @@ class EggInfoConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def _format_req(self, req):
+    @staticmethod
+    def _format_req(req):
         line = req.name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))
