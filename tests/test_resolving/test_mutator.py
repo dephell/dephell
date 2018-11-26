@@ -5,7 +5,7 @@ from unittest.mock import patch
 from dephell.controllers import Graph, Mutator, Resolver
 
 # app
-from .helpers import Fake, make_root
+from ..helpers import Fake, make_root
 
 
 def check(root, conflict, mutations):

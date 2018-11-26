@@ -2,7 +2,7 @@
 from dephell.controllers import Graph, Mutator, Resolver, analize_conflict
 
 # app
-from .helpers import Fake, make_root
+from ..helpers import Fake, make_root
 
 
 def merge(*roots, merged=True, deps=None):

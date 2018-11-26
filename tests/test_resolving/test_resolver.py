@@ -1,5 +1,5 @@
 # app
-from .helpers import Fake, check, make_root
+from ..helpers import Fake, check, make_root
 
 
 def test_constraint_checks():
