@@ -45,3 +45,24 @@ def test_glob_tar(tmpdir):
     paths = list(path.glob('*/setup.py'))
     assert len(paths) == 1
     assert str(paths[0]) == 'dephell-0.2.0/setup.py'
+
+
+def test_glob_dir(tmpdir):
+    path = ArchivePath(
+        archive_path=Path('tests', 'requirements', 'sdist.tar.gz'),
+        cache_path=Path(str(tmpdir)),
+    )
+    paths = list(path.glob('dephell-*/'))
+    assert len(paths) == 1
+
+
+def test_iterdir(tmpdir):
+    path = ArchivePath(
+        archive_path=Path('tests', 'requirements', 'sdist.tar.gz'),
+        cache_path=Path(str(tmpdir)),
+    )
+    paths = [str(subpath) for subpath in path.iterdir(recursive=True)]
+
+    for path in paths:
+        assert paths.count(path) == 1, 'duplicate dir: ' + path
+    assert 'dephell-0.2.0' in paths

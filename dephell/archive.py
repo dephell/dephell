@@ -22,6 +22,27 @@ EXTRACTORS = {
 }
 
 
+def glob_path(path: str, pattern: str) -> bool:
+    pattern_left, sep, pattern_right = pattern.rpartition('**')
+
+    parts = [part for part in path.split('/') if part]
+    parts_left = [part for part in pattern_left.split('/') if part]
+    parts_right = [part for part in pattern_right.split('/') if part]
+
+    if not sep:
+        if len(parts) != len(parts_left) + len(parts_right):
+            return False
+
+    for path_part, pattern_part in zip(parts, parts_left):
+        if not fnmatch(name=path_part, pat=pattern_part):
+            return False
+
+    for path_part, pattern_part in zip(parts, parts_right):
+        if not fnmatch(name=path_part, pat=pattern_part):
+            return False
+
+    return True
+
 @attr.s()
 class ArchiveStream:
     descriptor = attr.ib()
@@ -111,6 +132,8 @@ class ArchivePath:
                 members = descriptor.getmembers()   # tar
             else:
                 members = descriptor.infolist()     # zip
+
+            # get files
             for member in members:
                 name = getattr(member, 'name', None) or member.filename
                 obj = self.__class__(
@@ -121,9 +144,28 @@ class ArchivePath:
                 obj._descriptor = self._descriptor
                 yield obj
 
+            # get dirs
+            names = set()
+            for member in members:
+                name = getattr(member, 'name', None) or member.filename
+                names.add(name)
+            dirs = {''}
+            for name in names:
+                path, _sep, _name = name.rpartition('/')
+                if path in dirs or path in names:
+                    continue
+                dirs.add(path)
+                obj = self.__class__(
+                    archive_path=self.archive_path,
+                    cache_path=self.cache_path,
+                    member_path=PurePath(path),
+                )
+                obj._descriptor = self._descriptor
+                yield obj
+
     def glob(self, pattern):
         for path in self.iterdir(recursive=True):
-            if fnmatch(name=str(path), pat=pattern):
+            if glob_path(path=str(path), pattern=pattern):
                 yield path
 
     # magic methods

@@ -11,7 +11,7 @@ from ..helpers import Fake, make_root
 def check(root, conflict, mutations):
     resolver = Resolver(
         graph=Graph(root),
-        mutator=Mutator()
+        mutator=Mutator(),
     )
     with patch(
         target='dephell.models.dependency.get_repo',
@@ -24,7 +24,7 @@ def check(root, conflict, mutations):
     assert graph.conflict is not None
 
     mutator = Mutator()
-    for i in range(10):
+    for _ in range(10):
         groups = mutator.mutate(graph)
         # if cannot mutate
         if groups is None:
