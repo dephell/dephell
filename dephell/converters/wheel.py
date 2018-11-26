@@ -9,9 +9,14 @@ from packaging.requirements import Requirement
 from ..archive import ArchivePath
 from ..models import Dependency, RootDependency
 from .base import BaseConverter
+from .egginfo import EggInfoConverter
 
 
 class WheelConverter(BaseConverter):
+    """
+    PEP-0427
+    https://www.python.org/dev/peps/pep-0427/
+    """
     def load(self, path) -> RootDependency:
         """Parse wheel
 
@@ -26,13 +31,13 @@ class WheelConverter(BaseConverter):
         # passed .whl archive
         if path.is_file() and path.suffix == '.whl':
             archive = ArchivePath(path)
-            paths = list(archive.glob('**/METADATA'))
+            paths = list(archive.glob('*.dist-info/METADATA'))
 
         # passed extracted .whl
         if path.is_dir():
             paths = [path / 'METADATA']
             if not path.exists():
-                paths = list(path.glob('**/*.dist-info/METADATA'))
+                paths = list(path.glob('*.dist-info/METADATA'))
 
         # passed METADATA file
         if paths is None:
@@ -51,11 +56,6 @@ class WheelConverter(BaseConverter):
     def loads(self, content: str) -> RootDependency:
         """Parse METADATA file from .whl archive
         """
-        info = Parser().parsestr(content)
-        root = RootDependency(name=info.get('Name').strip())
-        deps = []
-        for req in info.get_all('Requires-Dist'):
-            req = Requirement(req)
-            deps.append(Dependency.from_requirement(source=root, req=req))
-        root.attach_dependencies(deps)
-        return root
+        # "METADATA is the package metadata, the same format as PKG-INFO"
+        # (c) PEP-0427
+        return EggInfoConverter._parse_info(content)
