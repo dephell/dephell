@@ -14,7 +14,7 @@ class SetupPyConverter(BaseConverter):
 
     def load(self, path) -> RootDependency:
         deps = []
-        root = RootDependency(name=self._get_name(path=path))
+        root = RootDependency(raw_name=self._get_name(path=path))
         info = run_setup(str(path))
         for req in info.install_requires:
             req = Requirement(req)

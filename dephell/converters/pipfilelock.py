@@ -20,7 +20,7 @@ class PIPFileLockConverter(PIPFileConverter):
     def loads(self, content) -> RootDependency:
         doc = json.loads(content, object_pairs_hook=OrderedDict)
         deps = []
-        root = RootDependency(name=self._get_name(content=content))
+        root = RootDependency(raw_name=self._get_name(content=content))
         for name, content in doc['default'].items():
             deps.append(self._make_dep(root, name, content))
         root.attach_dependencies(deps)

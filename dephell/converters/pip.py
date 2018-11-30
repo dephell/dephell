@@ -15,7 +15,7 @@ class PIPConverter(BaseConverter):
 
     def load(self, path) -> RootDependency:
         deps = []
-        root = RootDependency(name=self._get_name(path=path))
+        root = RootDependency(raw_name=self._get_name(path=path))
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py
         for req in parse_requirements(str(path), session=PipSession()):
             # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py

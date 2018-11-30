@@ -79,7 +79,7 @@ class EggInfoConverter(BaseConverter):
     @staticmethod
     def _parse_info(content: str, root=None) -> RootDependency:
         info = Parser().parsestr(content)
-        root = RootDependency(name=info.get('Name').strip())
+        root = RootDependency(raw_name=info.get('Name').strip())
         deps = []
         reqs = chain(
             info.get_all('Requires', []),
@@ -93,7 +93,7 @@ class EggInfoConverter(BaseConverter):
 
     def _parse_requires(self, content: str, root=None) -> RootDependency:
         if root is None:
-            root = RootDependency(name=self._get_name(content=content))
+            root = RootDependency(raw_name=self._get_name(content=content))
         deps = []
         for req in content.split():
             req = PackagingRequirement(req)

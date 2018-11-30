@@ -1,5 +1,7 @@
 # external
 import attr
+from cached_property import cached_property
+from packaging.utils import canonicalize_name
 
 # app
 from .group import Group
@@ -7,38 +9,50 @@ from .group import Group
 
 @attr.s()
 class RootRelease:
-    name = attr.ib()
-    dependencies = attr.ib()
+    raw_name = attr.ib()
+    dependencies = attr.ib(repr=False)
 
     version = attr.ib(default='1.0')
     time = attr.ib(default=None)
 
-    @property
-    def raw_name(self):
-        return self.name
+    @cached_property
+    def name(self) -> str:
+        return canonicalize_name(self.raw_name)
 
     def __str__(self):
         return self.name
 
 
+@attr.s()
 class RootDependency:
+    raw_name = attr.ib(default='root')
+    dependencies = attr.ib(factory=list, repr=False)
+
     repo = None
     applied = False
     locked = False
     compat = True
     used = True
 
-    def __init__(self, name: str = 'root'):
-        self.name = name
-        self.raw_name = name.title()
+    @cached_property
+    def name(self) -> str:
+        return canonicalize_name(self.raw_name)
 
-        self.dependencies = []
-        self.all_releases = (RootRelease(
-            name=name,
+    @cached_property
+    def all_releases(self) -> str:
+        release = RootRelease(
+            raw_name=self.raw_name,
             dependencies=self.dependencies,
-        ), )
-        self.group = Group(number=0, releases=self.all_releases)
-        self.groups = (self.group, )
+        )
+        return (release, )
+
+    @cached_property
+    def group(self) -> str:
+        return Group(number=0, releases=self.all_releases)
+
+    @property
+    def groups(self):
+        return (self.group, )
 
     def attach_dependencies(self, dependencies):
         self.dependencies.extend(dependencies)
