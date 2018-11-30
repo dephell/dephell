@@ -1,7 +1,10 @@
 # external
-import pytest
-
 # project
+# project
+# project
+# project
+# project
+import pytest
 from dephell.links.vcs import VCSLink
 
 

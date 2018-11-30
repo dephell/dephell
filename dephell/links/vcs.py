@@ -44,7 +44,7 @@ class VCSLink:
     rex_hash = re.compile(r'[a-fA-F0-9]{40}')
 
     @classmethod
-    def parse(cls, link: str, vcs: str='git', rev=None, name=None):
+    def parse(cls, link: str, vcs: str = 'git', rev=None, name=None):
         match = cls.rex.search(link)
         if not match:
             return

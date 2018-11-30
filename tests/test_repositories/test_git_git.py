@@ -1,8 +1,10 @@
-from pathlib import Path
+# built-in
 import asyncio
+from pathlib import Path
 
-from dephell.repositories.git.git import GitRepo
+# project
 from dephell.links import VCSLink
+from dephell.repositories.git.git import GitRepo
 
 
 loop = asyncio.get_event_loop()

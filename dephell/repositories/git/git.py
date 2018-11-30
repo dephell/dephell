@@ -9,8 +9,8 @@ from cached_property import cached_property
 
 # app
 from ...constants import CACHE_DIR
-from ...models.release import Release
 from ...models.git_release import GitRelease
+from ...models.release import Release
 from ...utils import chdir
 from ..base import Interface
 
@@ -148,7 +148,7 @@ class GitRepo(Interface):
     def _clean_tag(tag):
         return rex_version.fullmatch(tag).groups()[0]
 
-    def _setup(self, *, force: bool=False) -> None:
+    def _setup(self, *, force: bool = False) -> None:
         if self._ready and not force:
             return
 

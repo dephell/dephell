@@ -90,7 +90,7 @@ class Graph:
                     return self.add(dep, level=layer.level + 1)
         raise KeyError('Can\'t find any parent for dependency')
 
-    def get_leafs(self, level: Optional[int]=None) -> tuple:
+    def get_leafs(self, level: Optional[int] = None) -> tuple:
         """Get deps that isn't applied yet
         """
         layers = self._layers
@@ -130,7 +130,7 @@ class Graph:
             if layer is None:
                 continue
             if child.name in result:
-                logger.warning('Recursive dependency: {}'.format(child))
+                logger.warning('Recursive dependency: {dep}', extra=dict(dep=child.name))
             else:
                 result[child.name] = child
             result.update(self.get_children(child))
@@ -158,7 +158,7 @@ class Graph:
             ))
         return parents
 
-    def draw(self, path: str='.dephell_report', suffix: str=''):
+    def draw(self, path: str = '.dephell_report', suffix: str = ''):
         dot = Digraph(
             name=self._roots[0].name + suffix,
             directory=path,

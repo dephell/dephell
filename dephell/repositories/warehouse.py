@@ -41,10 +41,10 @@ class WareHouseRepo(Interface):
         cache = JSONCache('releases', dep.name)
         data = cache.load()
         if data is None:
-            url = "{}{}/json".format(self.url, dep.name)
+            url = '{url}{name}/json'.format(url=self.url, name=dep.name)
             response = requests.get(url)
             if response.status_code == 404:
-                raise KeyError('project {} is not found'.format(dep.name))
+                raise KeyError('project {name} is not found'.format(name=dep.name))
             data = response.json()
             cache.dump(data)
         elif isinstance(data, str) and data == '':
@@ -70,7 +70,11 @@ class WareHouseRepo(Interface):
         cache = TextCache('deps', name, str(version))
         deps = cache.load()
         if deps is None:
-            url = '{}{}/{}/json'.format(self.url, name, version)
+            url = '{url}{name}/{version}/json'.format(
+                url=self.url,
+                name=name,
+                version=version,
+            )
             async with ClientSession() as session:
                 async with session.get(url) as response:
                     response = await response.json()

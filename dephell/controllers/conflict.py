@@ -9,7 +9,7 @@ env = Environment(
 )
 
 
-def analize_conflict(resolver, suffix: str='') -> str:
+def analize_conflict(resolver, suffix: str = '') -> str:
     try:
         resolver.graph.draw(suffix=suffix)
     except ExecutableNotFound:

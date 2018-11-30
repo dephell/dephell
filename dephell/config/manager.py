@@ -4,8 +4,10 @@ from typing import Optional
 
 # external
 import tomlkit
-import yaml
 from cerberus import Validator
+
+# project
+import yaml
 
 # app
 from .scheme import SCHEME
@@ -79,7 +81,7 @@ class Config:
         return self._data[name]
 
     def __repr__(self):
-        return '{}({})'.format(
-            self.__class__.__name__,
-            repr(self._data),
+        return '{cls}({data})'.format(
+            cls=self.__class__.__name__,
+            data=repr(self._data),
         )

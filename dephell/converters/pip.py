@@ -45,7 +45,7 @@ class PIPConverter(BaseConverter):
         else:
             line += req.name
         if req.extras:
-            line += '[{}]'.format(','.join(req.extras))
+            line += '[{extras}]'.format(extras=','.join(req.extras))
         if req.version:
             line += req.version
         if req.markers:
@@ -53,7 +53,13 @@ class PIPConverter(BaseConverter):
         if req.hashes:
             for digest in req.hashes:
                 # https://github.com/jazzband/pip-tools/blob/master/piptools/writer.py
-                line += '{}--hash sha256:{}'.format(self.sep, digest)
+                line += '{sep}--hash sha256:{hash}'.format(
+                    sep=self.sep,
+                    hash=digest,
+                )
         if req.sources:
-            line += '{}# ^ from {}'.format(self.sep, ', '.join(req.sources))
+            line += '{sep}# ^ from {sources}'.format(
+                sep=self.sep,
+                sources=', '.join(req.sources),
+            )
         return line

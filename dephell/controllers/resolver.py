@@ -1,13 +1,14 @@
 # built-in
 from contextlib import suppress
 from logging import getLogger
+from typing import Optional
 
 # external
 from tqdm import tqdm
 
 # app
-from .conflict import analize_conflict
 from ..exceptions import MergeError
+from .conflict import analize_conflict
 
 
 logger = getLogger('dephell.resolver')
@@ -60,7 +61,8 @@ class Resolver:
             self.unapply(child, force=False)
         dep.applied = False
 
-    def resolve(self, debug: bool=False, progress: bool=False, level=None) -> bool:
+    def resolve(self, debug: bool = False, progress: bool = False,
+                level: Optional[int] = None) -> bool:
         if progress:
             layers_bar = _Progress(
                 total=10 ** 10,
@@ -95,7 +97,10 @@ class Resolver:
             for group in groups:
                 dep = self.graph.get(group.name)
                 if dep.group.number != group.number:
-                    logger.debug('mutated {} to {}'.format(str(dep.group), str(group)))
+                    logger.debug('mutated {group_from} to {group_to}', extra=dict(
+                        group_from=str(dep.group),
+                        group_to=str(group),
+                    ))
                     self.unapply(dep)
                     dep.group = group
 
@@ -115,7 +120,10 @@ class Resolver:
             if conflict is None:
                 continue
 
-            logger.debug('conflict {}{}'.format(conflict.name, conflict.constraint))
+            logger.debug('conflict {name}{constraint}', extra=dict(
+                name=conflict.name,
+                constraint=conflict.constraint,
+            ))
             self.graph.conflict = conflict.copy()
 
             if debug:

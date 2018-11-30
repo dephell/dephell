@@ -5,8 +5,10 @@ cerberus
 graphviz
 html2text
 huepy
+jinja2
 packaging
 pip
+python-dateutil
 pyyaml
 requests
 tomlkit

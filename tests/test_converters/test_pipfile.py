@@ -1,7 +1,7 @@
 # project
 from dephell.converters import PIPFileConverter
-from dephell.models import Requirement, Dependency, RootDependency
 from dephell.links import VCSLink
+from dephell.models import Dependency, Requirement, RootDependency
 from dephell.repositories import GitRepo
 
 
@@ -48,5 +48,5 @@ def test_format_req():
         constraint='>=1.9',
         source=RootDependency(),
     )
-    content = PIPFileConverter()._format_req(Requirement(dep))
+    content = PIPFileConverter()._format_req(Requirement(dep, lock=False))
     assert content == '>=1.9'

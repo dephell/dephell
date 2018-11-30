@@ -1,8 +1,7 @@
-import pytest
-
 # project
+import pytest
 from dephell.controllers import Graph
-from dephell.converters import PIPFileConverter, PIPConverter, PIPFileLockConverter
+from dephell.converters import PIPConverter, PIPFileConverter, PIPFileLockConverter
 from dephell.models import Requirement
 
 

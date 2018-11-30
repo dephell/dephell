@@ -75,4 +75,4 @@ class BaseConverter:
             return file_name
 
         if content is not None:
-            return 'root-{}'.format(len(content))
+            return 'root-{length}'.format(length=len(content))
