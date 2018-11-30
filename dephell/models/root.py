@@ -28,6 +28,18 @@ class RootDependency:
     raw_name = attr.ib(default='root')
     dependencies = attr.ib(factory=list, repr=False)
 
+    # additional info strings
+    description = attr.ib(default='', repr=False)       # Summary
+    license = attr.ib(default='', repr=False)           # License
+    long_description = attr.ib(default='', repr=False)  # Description
+
+    # additional info lists
+    links = attr.ib(factory=dict, repr=False)           # Download-URL
+    authors = attr.ib(factory=tuple, repr=False)        # Author, Author-email
+    keywords = attr.ib(default=tuple, repr=False)       # Keywords
+    classifiers = attr.ib(factory=tuple, repr=False)    # Classifier
+    platforms = attr.ib(factory=tuple, repr=False)      # Platform
+
     repo = None
     applied = False
     locked = False

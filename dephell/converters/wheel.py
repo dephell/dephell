@@ -1,13 +1,9 @@
 # built-in
-from email.parser import Parser
 from pathlib import Path
-
-# external
-from packaging.requirements import Requirement
 
 # app
 from ..archive import ArchivePath
-from ..models import Dependency, RootDependency
+from ..models import RootDependency
 from .base import BaseConverter
 from .egginfo import EggInfoConverter
 
