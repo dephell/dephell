@@ -1,3 +1,6 @@
+from contextlib import suppress
+from itertools import dropwhile
+
 # external
 import attr
 from cached_property import cached_property
@@ -79,6 +82,19 @@ class RootDependency:
 
     def unapply(self, name: str):
         raise NotImplementedError
+
+    @classmethod
+    def get_metainfo(cls, other, *others):
+        """Merge metainfo, but not dependencies
+        """
+        merged = attr.asdict(other)
+        infos = attr.asdict(others)
+        for key, value in merged:
+            if value:
+                continue
+            with suppress(StopIteration):
+                merged[key] = next(dropwhile(info[key] for info in infos))
+        return cls(**merged)
 
     def __str__(self):
         return self.name

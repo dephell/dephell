@@ -57,6 +57,8 @@ class SetupPyConverter(BaseConverter):
     def dumps(self, reqs, content=None) -> str:
         raise NotImplementedError('dumping to setup.py is not supported yet')
 
+    # private methods
+
     @staticmethod
     def _get(msg, name: str) -> str:
         value = getattr(msg.metadata, name, None)
