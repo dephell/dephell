@@ -39,6 +39,7 @@ class Requirement:
     def editable(self) -> Optional[bool]:
         if self.dep.editable:
             return True
+        return None  # mypy wants it
 
     @property
     def link(self):
@@ -48,6 +49,7 @@ class Requirement:
     def git(self) -> Optional[str]:
         if getattr(self.dep.link, 'vcs', '') == 'git':
             return self.dep.link.short
+        return None  # mypy wants it
 
     @property
     def rev(self) -> Optional[str]:
@@ -60,7 +62,7 @@ class Requirement:
     @property
     def version(self) -> Optional[str]:
         if self.link:
-            return
+            return None  # mypy wants it
         if self.lock:
             return '==' + str(self.release.version)
         return str(self.dep.constraint)
@@ -74,11 +76,12 @@ class Requirement:
         markers = self.dep.marker
         if markers:
             return str(markers)
+        return None  # mypy wants it
 
     @cached_property
-    def hashes(self) -> tuple:
+    def hashes(self) -> Optional[tuple]:
         if not self.lock:
-            return
+            return None  # mypy wants it
 
         hashes = set()
         for digest in self.release.hashes:

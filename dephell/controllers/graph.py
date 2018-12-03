@@ -113,6 +113,8 @@ class Graph:
             if dep in layer:
                 return layer
 
+        raise KeyError('cannot find dep')
+
     def get(self, name: str):
         for layer in reversed(self._layers):
             dep = layer.get(name)
@@ -173,7 +175,7 @@ class Graph:
         # add nodes
         for dep in self:
             # https://graphviz.gitlab.io/_pages/doc/info/colors.html
-            if dep.name == self.conflict.name:
+            if self.conflict and dep.name == self.conflict.name:
                 color = 'crimson'
             elif dep in first_deps:
                 color = 'forestgreen'

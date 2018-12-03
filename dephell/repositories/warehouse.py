@@ -67,9 +67,7 @@ class WareHouseRepo(Interface):
             release = Release.from_response(dep.name, version, info)
             releases.append(release)
         releases.sort(reverse=True)
-        releases = tuple(releases)
-
-        return releases
+        return tuple(releases)
 
     async def get_dependencies(self, name: str, version: str) -> tuple:
         cache = TextCache('deps', name, str(version))

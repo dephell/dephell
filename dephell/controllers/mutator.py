@@ -1,12 +1,13 @@
 # built-in
 from itertools import product
+from typing import Optional
 
 
 class Mutator:
     def __init__(self):
         self._snapshots = set()
 
-    def mutate(self, graph) -> tuple:
+    def mutate(self, graph) -> Optional[tuple]:
         """Get graph with conflict and mutate one dependency.
 
         Mutation changes group for one from dependencies
@@ -17,6 +18,7 @@ class Mutator:
             if self.check(groups):
                 self.remember(groups)
                 return groups
+        return None  # mypy wants it
 
     def get_mutations(self, deps):
         all_groups = []

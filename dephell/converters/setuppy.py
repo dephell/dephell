@@ -35,6 +35,7 @@ class SetupPyConverter(BaseConverter):
             link = cls._get(info, name)
             if link:
                 root.links[key] = link
+
         # authors
         for name in ('author', 'maintainer'):
             author = cls._get(info, name)

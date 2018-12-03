@@ -1,5 +1,6 @@
 from contextlib import suppress
 from itertools import dropwhile
+from typing import Tuple
 
 # external
 import attr
@@ -55,7 +56,7 @@ class RootDependency:
         return canonicalize_name(self.raw_name)
 
     @cached_property
-    def all_releases(self) -> str:
+    def all_releases(self) -> Tuple[RootRelease]:
         release = RootRelease(
             raw_name=self.raw_name,
             dependencies=self.dependencies,
@@ -64,11 +65,11 @@ class RootDependency:
         return (release, )
 
     @cached_property
-    def group(self) -> str:
+    def group(self) -> Group:
         return Group(number=0, releases=self.all_releases)
 
     @property
-    def groups(self):
+    def groups(self) -> Tuple[Group]:
         return (self.group, )
 
     def attach_dependencies(self, dependencies):
