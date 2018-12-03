@@ -14,7 +14,8 @@ from ..archive import ArchivePath
 
 class EggInfoConverter(BaseConverter):
     """
-    PEP-314
+    PEP-314, PEP-345, PEP-566
+    https://packaging.python.org/specifications/core-metadata/
     """
     lock = False
 
@@ -85,23 +86,31 @@ class EggInfoConverter(BaseConverter):
 
             description=cls._get(info, 'Summary'),
             license=cls._get(info, 'License'),
-            long_description=cls._get(info, 'Description'),
+            long_description=cls._get(info, 'Description') or info.get_payload(),
 
             keywords=cls._get(info, 'Keywords').split(','),
             classifiers=cls._get_list(info, 'Classifier'),
             platforms=cls._get_list(info, 'Platform'),
         )
+
         # links
-        for key, name in (('home', 'Home-page'), ('download', 'Download-url')):
+        fields = (
+            ('home', 'Home-Page'),
+            ('download', 'Download-URL'),
+            ('project', 'Project-URL'),
+        )
+        for key, name in fields:
             link = cls._get(info, name)
             if link:
                 root.links[key] = link
+
         # authors
-        author = cls._get(info, 'Author')
-        if author:
-            root.authors += (
-                Author(name=author, mail=cls._get(info, 'Author-email')),
-            )
+        for name in ('author', 'maintainer'):
+            author = cls._get(info, name)
+            if author:
+                root.authors += (
+                    Author(name=author, mail=cls._get(info, name + '_email')),
+                )
 
         # dependencies
         deps = []
