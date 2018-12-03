@@ -29,6 +29,7 @@ class SetupPyConverter(BaseConverter):
             classifiers=cls._get_list(info, 'classifiers'),
             platforms=cls._get_list(info, 'platforms'),
         )
+
         # links
         for key, name in (('home', 'url'), ('download', 'download_url')):
             link = cls._get(info, name)
@@ -37,7 +38,7 @@ class SetupPyConverter(BaseConverter):
         # authors
         for name in ('author', 'maintainer'):
             author = cls._get(info, name)
-            if link:
+            if author:
                 root.authors += (
                     Author(name=author, mail=cls._get(info, name + '_email')),
                 )
@@ -58,7 +59,9 @@ class SetupPyConverter(BaseConverter):
 
     @staticmethod
     def _get(msg, name: str) -> str:
-        value = getattr(msg, name, None)
+        value = getattr(msg.metadata, name, None)
+        if not value:
+            value = getattr(msg, name, None)
         if not value:
             return ''
         if value == 'UNKNOWN':
