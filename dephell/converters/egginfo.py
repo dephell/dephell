@@ -25,13 +25,13 @@ class EggInfoConverter(BaseConverter):
             if path.name.endswith('.egg-info'):
                 return self._load_dir(path)
             # find *.egg-info in current dir
-            paths = list(path.glob('*/*.egg-info'))
+            paths = list(path.glob('**/*.egg-info'))
             return self._load_dir(*paths)
 
         # load from archive
         if path.suffix in ('.zip', '.gz', '.tar'):
             archive = ArchivePath(path)
-            paths = list(archive.glob('*/*.egg-info'))
+            paths = list(archive.glob('**/*.egg-info'))
             return self._load_dir(*paths)
 
         # load from file (requires.txt or PKG-INFO)
