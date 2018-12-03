@@ -17,7 +17,7 @@ def test_load_dump_load(converter, path):
     root1 = converter.load(path)
     reqs1 = Requirement.from_graph(graph=Graph(root1), lock=False)
 
-    content = converter.dumps(reqs1)
+    content = converter.dumps(reqs1, project=root1)
     root2 = converter.loads(content)
     reqs2 = Requirement.from_graph(graph=Graph(root2), lock=False)
 

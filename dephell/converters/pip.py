@@ -28,7 +28,7 @@ class PIPConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs, content=None) -> str:
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
         deps = []
         for req in reqs:
             deps.append(self._format_req(req=req))

@@ -20,7 +20,7 @@ class PyProjectConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs, content=None) -> str:
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
         doc = document()
         deps = []
         for req in reqs:

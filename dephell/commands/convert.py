@@ -48,5 +48,6 @@ class ConvertCommand(BaseCommand):
         dumper.dump(
             path=self.config['to']['path'],
             reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),
+            project=resolver.graph.metainfo,
         )
         return True

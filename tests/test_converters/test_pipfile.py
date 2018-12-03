@@ -36,7 +36,7 @@ def test_dump():
     resolver = converter.load_resolver('./tests/requirements/pipfile.toml')
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
-    content = converter.dumps(reqs=reqs)
+    content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     assert 'requests = ' in content
     assert "extras = ['socks']" in content
     assert 'records = ">0.5.0"' in content

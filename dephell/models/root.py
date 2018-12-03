@@ -89,12 +89,13 @@ class RootDependency:
         """Merge metainfo, but not dependencies
         """
         merged = attr.asdict(other)
-        infos = attr.asdict(others)
-        for key, value in merged:
+        infos = [attr.asdict(other) for other in others]
+        for key, value in merged.items():
             if value:
                 continue
+            values = (info[key] for info in infos if info[key])
             with suppress(StopIteration):
-                merged[key] = next(dropwhile(info[key] for info in infos))
+                merged[key] = next(values)
         return cls(**merged)
 
     def __str__(self):

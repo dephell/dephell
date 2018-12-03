@@ -31,7 +31,7 @@ def test_dumps():
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
 
-    content = converter.dumps(reqs=reqs)
+    content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     assert 'Requires: requests' in content
 
     parsed = Parser().parsestr(content)

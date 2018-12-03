@@ -44,7 +44,7 @@ class EggInfoConverter(BaseConverter):
         else:
             return self._parse_requires(content)
 
-    def dumps(self, reqs, content=None) -> str:
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
         # distutils.dist.DistributionMetadata.write_pkg_file
         content = []
         content.append(('Metadata-Version', '1.1'))

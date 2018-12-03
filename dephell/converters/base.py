@@ -2,6 +2,7 @@
 from os import unlink
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from typing import Optional
 
 # app
 from ..constants import FILES
@@ -25,10 +26,10 @@ class BaseConverter:
         with open(str(path), 'r') as stream:
             return self.loads(stream.read())
 
-    def dumps(self, reqs) -> str:
+    def dumps(self, reqs, project: RootDependency, content: Optional[str] = None) -> str:
         raise NotImplementedError
 
-    def dump(self, reqs, path):
+    def dump(self, reqs, path, project: RootDependency):
         # read
         path = Path(str(path))
         if path.exists():
