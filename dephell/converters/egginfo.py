@@ -81,13 +81,13 @@ class EggInfoConverter(BaseConverter):
         info = Parser().parsestr(content)
         root = RootDependency(
             raw_name=cls._get(info, 'Name'),
-            version=cls._get(info, 'Version'),
+            version=cls._get(info, 'Version') or '0.0.0',
 
             description=cls._get(info, 'Summary'),
             license=cls._get(info, 'License'),
             long_description=cls._get(info, 'Description'),
 
-            keywords=cls._get(info, 'Description').split(','),
+            keywords=cls._get(info, 'Keywords').split(','),
             classifiers=cls._get_list(info, 'Classifier'),
             platforms=cls._get_list(info, 'Platform'),
         )
@@ -106,8 +106,8 @@ class EggInfoConverter(BaseConverter):
         # dependencies
         deps = []
         reqs = chain(
-            info.get_all('Requires', []),
-            info.get_all('Requires-Dist', []),
+            cls._get_list(info, 'Requires'),
+            cls._get_list(info, 'Requires-Dist'),
         )
         for req in reqs:
             req = PackagingRequirement(req)
