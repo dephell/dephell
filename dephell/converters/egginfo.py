@@ -7,7 +7,7 @@ from itertools import chain
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
-from ..models import Dependency, RootDependency
+from ..models import Dependency, RootDependency, Author
 from .base import BaseConverter
 from ..archive import ArchivePath
 
@@ -76,10 +76,34 @@ class EggInfoConverter(BaseConverter):
             root = self._parse_requires(content, root=root)
         return root
 
-    @staticmethod
-    def _parse_info(content: str, root=None) -> RootDependency:
+    @classmethod
+    def _parse_info(cls, content: str, root=None) -> RootDependency:
         info = Parser().parsestr(content)
-        root = RootDependency(raw_name=info.get('Name').strip())
+        root = RootDependency(
+            raw_name=cls._get(info, 'Name'),
+            version=cls._get(info, 'Version'),
+
+            description=cls._get(info, 'Summary'),
+            license=cls._get(info, 'License'),
+            long_description=cls._get(info, 'Description'),
+
+            keywords=cls._get(info, 'Description').split(','),
+            classifiers=cls._get_list(info, 'Classifier'),
+            platforms=cls._get_list(info, 'Platform'),
+        )
+        # links
+        for key, name in (('home', 'Home-page'), ('download', 'Download-url')):
+            link = cls._get(info, name)
+            if link:
+                root.links[key] = link
+        # authors
+        author = cls._get(info, 'Author')
+        if author:
+            root.authors += (
+                Author(name=author, mail=cls._get(info, 'Author-email')),
+            )
+
+        # dependencies
         deps = []
         reqs = chain(
             info.get_all('Requires', []),
@@ -111,3 +135,19 @@ class EggInfoConverter(BaseConverter):
         if req.markers:
             line += '; ' + req.markers
         return line
+
+    @staticmethod
+    def _get(msg, name: str) -> str:
+        value = msg.get(name)
+        if not value:
+            return ''
+        if value == 'UNKNOWN':
+            return ''
+        return value.strip()
+
+    @staticmethod
+    def _get_list(msg, name: str) -> tuple:
+        values = msg.get_all(name)
+        if not values:
+            return ()
+        return tuple(value for value in values if value != 'UNKNOWN')

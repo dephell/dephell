@@ -12,7 +12,7 @@ class RootRelease:
     raw_name = attr.ib()
     dependencies = attr.ib(repr=False)
 
-    version = attr.ib(default='1.0')
+    version = attr.ib(default='0.0.0')
     time = attr.ib(default=None)
 
     @cached_property
@@ -29,12 +29,13 @@ class RootDependency:
     dependencies = attr.ib(factory=list, repr=False)
 
     # additional info strings
+    version = attr.ib(default='0.0.0', repr=False)      # Version
     description = attr.ib(default='', repr=False)       # Summary
     license = attr.ib(default='', repr=False)           # License
     long_description = attr.ib(default='', repr=False)  # Description
 
     # additional info lists
-    links = attr.ib(factory=dict, repr=False)           # Download-URL
+    links = attr.ib(factory=dict, repr=False)           # Home-page, Download-URL
     authors = attr.ib(factory=tuple, repr=False)        # Author, Author-email
     keywords = attr.ib(default=tuple, repr=False)       # Keywords
     classifiers = attr.ib(factory=tuple, repr=False)    # Classifier
@@ -55,6 +56,7 @@ class RootDependency:
         release = RootRelease(
             raw_name=self.raw_name,
             dependencies=self.dependencies,
+            version=self.version,
         )
         return (release, )
 

@@ -22,17 +22,22 @@ class WareHouseRepo(Interface):
     def _update_dep_from_data(dep, data):
         if not dep.description:
             dep.description = data['summary']
+
         if not dep.authors:
-            dep.authors = (
-                Author(name=data['author'], mail=data['author_email']),
-                Author(name=data['maintainer'], mail=data['maintainer_email']),
-            )
+            dep.authors = []
+            if data['author']:
+                dep.authors.append(Author(name=data['author'], mail=data['author_email']))
+            if data['maintainer']:
+                dep.authors.append(Author(name=data['maintainer'], mail=data['maintainer_email']))
+            dep.authors = tuple(dep.authors)
+
         if not dep.links:
             dep.links = {k.lower(): v for k, v in data['project_urls'].items()}
             if data['package_url'] not in dep.links.values():
                 dep.links['package'] = data['package_url']
             if data['project_url'] not in dep.links.values():
                 dep.links['project'] = data['project_url']
+
         if not dep.classifiers:
             dep.classifiers = tuple(data['classifiers'])
 

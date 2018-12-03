@@ -1,4 +1,5 @@
 # app
+from .author import Author
 from .constraint import Constraint
 from .dependency import Dependency
 from .git_release import GitRelease
@@ -10,6 +11,7 @@ from .specifier import Specifier
 
 
 __all__ = [
+    'Author',
     'Constraint',
     'Dependency',
     'GitRelease',
