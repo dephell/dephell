@@ -14,16 +14,16 @@ class ReturnCodes(Enum):
 
 
 FORMATS = (
-    'pip',      'piplock',
-    'pipfile',  'pipfilelock',
-    'poetry',   'poetrylock',
+    'pip', 'piplock',
+    'pipfile', 'pipfilelock',
+    'poetry', 'poetrylock',
     'setuppy',
 )
 
 FILES = (
-    'requirements.in',  'requirements.txt',
-    'Pipfile',          'Pipfile.lock',
-    'pyproject.toml',   'pyproject.lock',
+    'requirements.in', 'requirements.txt',
+    'Pipfile', 'Pipfile.lock',
+    'pyproject.toml', 'pyproject.lock',
     'setup.py',
 )
 
