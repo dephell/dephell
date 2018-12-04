@@ -13,14 +13,14 @@ class PyProjectConverter(BaseConverter):
     def loads(self, content: str) -> RootDependency:
         doc = parse(content)
         deps = []
-        root = RootDependency(name=self._get_name(content=content))
+        root = RootDependency(raw_name=self._get_name(content=content))
         for req in doc['build-system']['requires']:
             req = Requirement(req)
             deps.append(Dependency.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs, content=None) -> str:
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
         doc = document()
         deps = []
         for req in reqs:

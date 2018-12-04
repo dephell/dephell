@@ -38,6 +38,6 @@ def test_dump():
     resolver = converter.load_resolver('./tests/requirements/pipfile.lock.json')
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
-    content = converter.dumps(reqs=reqs)
+    content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     content = json.loads(content)
     assert content['default']['chardet']['version'] == '==3.0.4'

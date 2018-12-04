@@ -1,13 +1,9 @@
 # built-in
-from email.parser import Parser
 from pathlib import Path
-
-# external
-from packaging.requirements import Requirement
 
 # app
 from ..archive import ArchivePath
-from ..models import Dependency, RootDependency
+from ..models import RootDependency
 from .base import BaseConverter
 from .egginfo import EggInfoConverter
 
@@ -58,4 +54,7 @@ class WheelConverter(BaseConverter):
         """
         # "METADATA is the package metadata, the same format as PKG-INFO"
         # (c) PEP-0427
-        return EggInfoConverter._parse_info(content)
+        return EggInfoConverter()._parse_info(content)
+
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
+        return EggInfoConverter().dumps(reqs=reqs, project=project, content=content)

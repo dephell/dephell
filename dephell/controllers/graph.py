@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 
 
 class Layer:
-    def __init__(self, level, *deps):
+    def __init__(self, level: int, *deps):
         self.level = level
         self._mapping = dict()
         for dep in deps:
@@ -57,18 +57,18 @@ class Graph:
         self._layers = []
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self._layers = [Layer(0, *self._roots)]
         self._deps = ChainMap(*[layer._mapping for layer in self._layers])
         self.conflict = None
 
-    def clear(self):
+    def clear(self) -> None:
         """Drop from graph all deps that isn't required for roots.
         """
         for layer in self._layers[1:]:
             layer.clear()
 
-    def add(self, dep, *, level=None) -> None:
+    def add(self, dep, *, level: Optional[int] = None) -> None:
         if isinstance(dep, RootDependency):
             self._layers[0].add(dep)
             self._roots.append(dep)
@@ -113,7 +113,9 @@ class Graph:
             if dep in layer:
                 return layer
 
-    def get(self, name):
+        raise KeyError('cannot find dep')
+
+    def get(self, name: str):
         for layer in reversed(self._layers):
             dep = layer.get(name)
             if dep is not None:
@@ -136,7 +138,7 @@ class Graph:
             result.update(self.get_children(child))
         return result
 
-    def get_parents(self, *deps, avoid=None) -> dict:
+    def get_parents(self, *deps, avoid: Optional[list] = None) -> dict:
         if avoid is None:
             avoid = []
 
@@ -158,7 +160,7 @@ class Graph:
             ))
         return parents
 
-    def draw(self, path: str = '.dephell_report', suffix: str = ''):
+    def draw(self, path: str = '.dephell_report', suffix: str = '') -> None:
         dot = Digraph(
             name=self._roots[0].name + suffix,
             directory=path,
@@ -173,7 +175,7 @@ class Graph:
         # add nodes
         for dep in self:
             # https://graphviz.gitlab.io/_pages/doc/info/colors.html
-            if dep.name == self.conflict.name:
+            if self.conflict and dep.name == self.conflict.name:
                 color = 'crimson'
             elif dep in first_deps:
                 color = 'forestgreen'
@@ -200,15 +202,19 @@ class Graph:
         return tuple(dep for dep in self._deps.values() if dep not in self._roots)
 
     @property
-    def applied(self):
+    def applied(self) -> bool:
         return all(root.applied for root in self._roots)
+
+    @property
+    def metainfo(self) -> RootDependency:
+        return RootDependency.get_metainfo(*self._roots)
 
     # magic
 
     def __iter__(self):
         return iter(self.deps)
 
-    def __contains__(self, dep):
+    def __contains__(self, dep) -> bool:
         if isinstance(dep, str):
             return dep in self.names
         return dep in self.deps

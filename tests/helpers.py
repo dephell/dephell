@@ -40,9 +40,7 @@ def make_root(root, **releases) -> RootDependency:
     repo = ReleaseRepo(*release_objects, deps=constraints)
 
     deps = []
-    root_dep = RootDependency(
-        name=''.join(sorted(releases)),
-    )
+    root_dep = RootDependency(raw_name=''.join(sorted(releases)))
     root_dep.repo = repo
     for constr in root.deps:
         dep = Dependency.from_requirement(

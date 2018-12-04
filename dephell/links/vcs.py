@@ -94,7 +94,7 @@ class VCSLink:
     def long(self) -> str:
         """construct full link suitable for pip
         """
-        link = self.vcs + '+' + self.link
+        link = self.vcs + '+' + self.short
         if self.rev:
             link += '@' + self.rev
         if self.name:

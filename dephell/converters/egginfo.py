@@ -7,14 +7,15 @@ from itertools import chain
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
-from ..models import Dependency, RootDependency
+from ..models import Dependency, RootDependency, Author
 from .base import BaseConverter
 from ..archive import ArchivePath
 
 
 class EggInfoConverter(BaseConverter):
     """
-    PEP-314
+    PEP-314, PEP-345, PEP-566
+    https://packaging.python.org/specifications/core-metadata/
     """
     lock = False
 
@@ -25,13 +26,13 @@ class EggInfoConverter(BaseConverter):
             if path.name.endswith('.egg-info'):
                 return self._load_dir(path)
             # find *.egg-info in current dir
-            paths = list(path.glob('*/*.egg-info'))
+            paths = list(path.glob('**/*.egg-info'))
             return self._load_dir(*paths)
 
         # load from archive
         if path.suffix in ('.zip', '.gz', '.tar'):
             archive = ArchivePath(path)
-            paths = list(archive.glob('*/*.egg-info'))
+            paths = list(archive.glob('**/*.egg-info'))
             return self._load_dir(*paths)
 
         # load from file (requires.txt or PKG-INFO)
@@ -44,17 +45,50 @@ class EggInfoConverter(BaseConverter):
         else:
             return self._parse_requires(content)
 
-    def dumps(self, reqs, content=None) -> str:
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
         # distutils.dist.DistributionMetadata.write_pkg_file
         content = []
-        content.append(('Metadata-Version', '1.1'))
-        # TODO: get project info
-        content.append(('Name', 'UNKNOWN'))
-        content.append(('Version', '0.0.0'))
+        content.append(('Metadata-Version', '2.1'))
+        content.append(('Name', project.raw_name))
+        content.append(('Version', project.version))
+        if project.description:
+            content.append(('Summary', project.description))
 
+        # links
+        fields = (
+            ('home', 'Home-Page'),
+            ('download', 'Download-URL'),
+            ('project', 'Project-URL'),
+        )
+        for key, name in fields:
+            if key in project.links:
+                content.append((name, project.links[key]))
+
+        # authors
+        if project.authors:
+            author = project.authors[0]
+            content.append(('Author', author.name))
+            content.append(('Author-email', author.mail))
+        if len(project.authors) > 1:
+            author = project.authors[1]
+            content.append(('Maintainer', author.name))
+            content.append(('Maintainer-email', author.mail))
+
+        if project.license:
+            content.append(('License', project.license))
+        if project.keywords:
+            content.append(('Keywords', ','.join(project.keywords)))
+        for classifier in project.classifiers:
+            content.append(('Classifier', classifier))
+        for platform in project.platforms:
+            content.append(('Platform', platform))
         for req in reqs:
             content.append(('Requires', self._format_req(req=req)))
-        return '\n'.join(map(': '.join, content))
+
+        content = '\n'.join(map(': '.join, content))
+        if project.long_description:
+            content += '\n\n' + project.long_description
+        return content
 
     # helpers
 
@@ -76,14 +110,46 @@ class EggInfoConverter(BaseConverter):
             root = self._parse_requires(content, root=root)
         return root
 
-    @staticmethod
-    def _parse_info(content: str, root=None) -> RootDependency:
+    @classmethod
+    def _parse_info(cls, content: str, root=None) -> RootDependency:
         info = Parser().parsestr(content)
-        root = RootDependency(name=info.get('Name').strip())
+        root = RootDependency(
+            raw_name=cls._get(info, 'Name'),
+            version=cls._get(info, 'Version') or '0.0.0',
+
+            description=cls._get(info, 'Summary'),
+            license=cls._get(info, 'License'),
+            long_description=cls._get(info, 'Description') or info.get_payload(),
+
+            keywords=cls._get(info, 'Keywords').split(','),
+            classifiers=cls._get_list(info, 'Classifier'),
+            platforms=cls._get_list(info, 'Platform'),
+        )
+
+        # links
+        fields = (
+            ('home', 'Home-Page'),
+            ('download', 'Download-URL'),
+            ('project', 'Project-URL'),
+        )
+        for key, name in fields:
+            link = cls._get(info, name)
+            if link:
+                root.links[key] = link
+
+        # authors
+        for name in ('author', 'maintainer'):
+            author = cls._get(info, name)
+            if author:
+                root.authors += (
+                    Author(name=author, mail=cls._get(info, name + '_email')),
+                )
+
+        # dependencies
         deps = []
         reqs = chain(
-            info.get_all('Requires', []),
-            info.get_all('Requires-Dist', []),
+            cls._get_list(info, 'Requires'),
+            cls._get_list(info, 'Requires-Dist'),
         )
         for req in reqs:
             req = PackagingRequirement(req)
@@ -93,7 +159,7 @@ class EggInfoConverter(BaseConverter):
 
     def _parse_requires(self, content: str, root=None) -> RootDependency:
         if root is None:
-            root = RootDependency(name=self._get_name(content=content))
+            root = RootDependency(raw_name=self._get_name(content=content))
         deps = []
         for req in content.split():
             req = PackagingRequirement(req)
@@ -111,3 +177,20 @@ class EggInfoConverter(BaseConverter):
         if req.markers:
             line += '; ' + req.markers
         return line
+
+    @staticmethod
+    def _get(msg, name: str) -> str:
+        value = msg.get(name)
+        if not value:
+            return ''
+        value = value.strip()
+        if value == 'UNKNOWN':
+            return ''
+        return value
+
+    @staticmethod
+    def _get_list(msg, name: str) -> tuple:
+        values = msg.get_all(name)
+        if not values:
+            return ()
+        return tuple(value.strip() for value in values if value.strip() != 'UNKNOWN')

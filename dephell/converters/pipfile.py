@@ -29,7 +29,7 @@ class PIPFileConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs, content=None) -> str:
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
         if content:
             doc = tomlkit.parse(content)
         else:
