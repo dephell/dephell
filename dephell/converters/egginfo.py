@@ -48,14 +48,47 @@ class EggInfoConverter(BaseConverter):
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         # distutils.dist.DistributionMetadata.write_pkg_file
         content = []
-        content.append(('Metadata-Version', '1.1'))
-        # TODO: get project info
-        content.append(('Name', 'UNKNOWN'))
-        content.append(('Version', '0.0.0'))
+        content.append(('Metadata-Version', '2.1'))
+        content.append(('Name', project.raw_name))
+        content.append(('Version', project.version))
+        if project.description:
+            content.append(('Summary', project.description))
 
+        # links
+        fields = (
+            ('home', 'Home-Page'),
+            ('download', 'Download-URL'),
+            ('project', 'Project-URL'),
+        )
+        for key, name in fields:
+            if key in project.links:
+                content.append((name, project.links[key]))
+
+        # authors
+        if project.authors:
+            author = project.authors[0]
+            content.append(('Author', author.name))
+            content.append(('Author-email', author.mail))
+        if len(project.authors) > 1:
+            author = project.authors[1]
+            content.append(('Maintainer', author.name))
+            content.append(('Maintainer-email', author.mail))
+
+        if project.license:
+            content.append(('License', project.license))
+        if project.keywords:
+            content.append(('Keywords', ','.join(project.keywords)))
+        for classifier in project.classifiers:
+            content.append(('Classifier', classifier))
+        for platform in project.platforms:
+            content.append(('Platform', platform))
         for req in reqs:
             content.append(('Requires', self._format_req(req=req)))
-        return '\n'.join(map(': '.join, content))
+
+        content = '\n'.join(map(': '.join, content))
+        if project.long_description:
+            content += '\n\n' + project.long_description
+        return content
 
     # helpers
 
@@ -150,13 +183,14 @@ class EggInfoConverter(BaseConverter):
         value = msg.get(name)
         if not value:
             return ''
+        value = value.strip()
         if value == 'UNKNOWN':
             return ''
-        return value.strip()
+        return value
 
     @staticmethod
     def _get_list(msg, name: str) -> tuple:
         values = msg.get_all(name)
         if not values:
             return ()
-        return tuple(value for value in values if value != 'UNKNOWN')
+        return tuple(value.strip() for value in values if value.strip() != 'UNKNOWN')

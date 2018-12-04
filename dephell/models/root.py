@@ -88,8 +88,8 @@ class RootDependency:
     def get_metainfo(cls, other, *others):
         """Merge metainfo, but not dependencies
         """
-        merged = attr.asdict(other)
-        infos = [attr.asdict(other) for other in others]
+        merged = attr.asdict(other, recurse=False)
+        infos = [attr.asdict(other, recurse=False) for other in others]
         for key, value in merged.items():
             if value:
                 continue
