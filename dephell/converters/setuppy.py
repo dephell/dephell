@@ -10,6 +10,26 @@ from ..models import Dependency, RootDependency, Author
 from .base import BaseConverter
 
 
+TEMPLATE = """
+# -*- coding: utf-8 -*-
+from distutils.core import setup
+import os.path
+
+
+long_description = ''
+for name in ('README.rst', 'README.md'):
+    if not os.path.exists(name):
+        with open(name, encoding='utf8') as stream:
+            long_description = stream.read()
+        break
+
+setup(
+    long_description=long_description,
+    {kwargs},
+)
+"""
+
+
 class SetupPyConverter(BaseConverter):
     lock = False
 
@@ -56,7 +76,52 @@ class SetupPyConverter(BaseConverter):
         return root
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
-        raise NotImplementedError('dumping to setup.py is not supported yet')
+        """
+        https://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=long_description#metadata
+        """
+        content = []
+        content.append(('name', project.raw_name))
+        content.append(('version', project.version))
+        if project.description:
+            content.append(('description', project.description))
+
+        # links
+        fields = (
+            ('home', 'url'),
+            ('download', 'download_url'),
+        )
+        for key, name in fields:
+            if key in project.links:
+                content.append((name, project.links[key]))
+        if project.links:
+            content.append(('project_urls', project.links))
+
+        # authors
+        if project.authors:
+            author = project.authors[0]
+            content.append(('author', author.name))
+            content.append(('author_email', author.mail))
+        if len(project.authors) > 1:
+            author = project.authors[1]
+            content.append(('maintainer', author.name))
+            content.append(('maintainer_email', author.mail))
+
+        if project.license:
+            content.append(('license', project.license))
+        if project.keywords:
+            content.append(('keywords', ' '.join(project.keywords)))
+        if project.classifiers:
+            content.append(('classifiers', project.classifiers))
+        if project.platforms:
+            content.append(('platforms', project.platforms))
+
+        reqs_list = [self._format_req(req=req) for req in reqs]
+        content.append(('requires', reqs_list))
+
+        content = ',\n    '.join(
+            '{}={!r}'.format(name, value) for name, value in content,
+        )
+        return content
 
     # private methods
 
