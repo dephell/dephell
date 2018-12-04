@@ -23,7 +23,8 @@ class BaseConverter:
         return root
 
     def load(self, path) -> RootDependency:
-        with open(str(path), 'r') as stream:
+        path = Path(str(path))
+        with path.open('r', encoding='utf8') as stream:
             return self.loads(stream.read())
 
     def dumps(self, reqs, project: RootDependency, content: Optional[str] = None) -> str:
@@ -42,7 +43,7 @@ class BaseConverter:
         content = self.dumps(reqs=reqs, content=content)
 
         # write
-        with path.open('w') as stream:
+        with path.open('w', encoding='utf8') as stream:
             stream.write(content)
 
     # resolver creation
