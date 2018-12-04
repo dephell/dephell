@@ -17,7 +17,7 @@ env_help = (
 )
 
 # config
-parser.add_argument('-c', '--config', default='pyproject.toml', help='path to config file')
+parser.add_argument('-c', '--config', help='path to config file')
 parser.add_argument('-e', '--env', default='main', help='environment')
 
 # from

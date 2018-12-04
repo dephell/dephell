@@ -1,5 +1,11 @@
+import os.path
+from logging import getLogger
+
 # app
 from ..config import Config, parser
+
+
+logger = getLogger(__name__)
 
 
 class BaseCommand:
@@ -17,7 +23,12 @@ class BaseCommand:
     @classmethod
     def get_config(cls, args):
         config = Config()
-        config.attach_file(path=args.config, env=args.env)
+        if args.config:
+            config.attach_file(path=args.config, env=args.env)
+        elif os.path.exists('pyproject.toml'):
+            config.attach_file(path='pyproject.toml', env=args.env)
+        else:
+            logger.warning('cannot find config file')
         config.attach_cli(args)
         return config
 
