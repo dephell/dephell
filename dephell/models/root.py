@@ -1,5 +1,4 @@
 from contextlib import suppress
-from itertools import dropwhile
 from typing import Tuple
 
 # external
