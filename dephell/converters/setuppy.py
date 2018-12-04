@@ -18,7 +18,7 @@ import os.path
 
 long_description = ''
 for name in ('README.rst', 'README.md'):
-    if not os.path.exists(name):
+    if os.path.exists(name):
         with open(name, encoding='utf8') as stream:
             long_description = stream.read()
         break
@@ -45,7 +45,8 @@ class SetupPyConverter(BaseConverter):
             license=cls._get(info, 'license'),
             long_description=cls._get(info, 'description'),
 
-            keywords=cls._get(info, 'keywords').split(','),
+            # keywords=cls._get(info, 'keywords').split(','),
+            keywords=cls._get_list(info, 'keywords'),
             classifiers=cls._get_list(info, 'classifiers'),
             platforms=cls._get_list(info, 'platforms'),
         )
@@ -116,12 +117,12 @@ class SetupPyConverter(BaseConverter):
             content.append(('platforms', project.platforms))
 
         reqs_list = [self._format_req(req=req) for req in reqs]
-        content.append(('requires', reqs_list))
+        content.append(('install_requires', reqs_list))
 
         content = ',\n    '.join(
             '{}={!r}'.format(name, value) for name, value in content,
         )
-        return content
+        return TEMPLATE.format(kwargs=content)
 
     # private methods
 
@@ -141,4 +142,15 @@ class SetupPyConverter(BaseConverter):
         values = getattr(msg, name, None)
         if not values:
             return ()
-        return tuple(value for value in values if value != 'UNKNOWN')
+        return tuple(value for value in values if value != 'UNKNOWN' and value.strip())
+
+    @staticmethod
+    def _format_req(req):
+        line = req.name
+        if req.extras:
+            line += '[{extras}]'.format(extras=','.join(req.extras))
+        if req.version:
+            line += req.version
+        if req.markers:
+            line += '; ' + req.markers
+        return line
