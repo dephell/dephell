@@ -42,4 +42,8 @@ SCHEME = {
         type='string',
         required=True,  # because represented in default config
     ),
+    'cache': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
 }

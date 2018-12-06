@@ -8,7 +8,7 @@ from pathlib import Path
 from cached_property import cached_property
 
 # app
-from ...constants import CACHE_DIR
+from ...config import config
 from ...models.git_release import GitRelease
 from ...models.release import Release
 from ...utils import chdir
@@ -60,7 +60,7 @@ class GitRepo(Interface):
     @cached_property
     def path(self):
         name = self.link.name
-        path = Path(CACHE_DIR) / self.name / name
+        path = Path(config['cache']) / self.name / name
         return path
 
     @cached_property
