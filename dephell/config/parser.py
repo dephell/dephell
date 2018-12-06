@@ -30,5 +30,10 @@ parser.add_argument('--to-format', choices=FORMATS, help='output requirements fi
 parser.add_argument('--to-path', help='path to output file')
 parser.add_argument('--to-env', action='append', dest='to_envs', choices=ENVS, help=env_help)
 
+# APIs
+parser.add_argument('--warehouse', help='warehouse API URL.')
+parser.add_argument('--bitbucket', help='bitbucket API URL')
+
 # other
 parser.add_argument('--silent', action='store_true', help='suppress any output except errors.')
+parser.add_argument('--cache', help='path to dephell cache')

@@ -7,6 +7,7 @@ from cached_property import cached_property
 
 # app
 from .base import BaseRepo
+from ...config import config
 
 
 rex_author = re.compile(r'bitbucket\.com[/:]([a-zA-Z_-])')
@@ -25,7 +26,7 @@ class BitbucketRepo(BaseRepo):
     # https://bitbucket.org/atlassian/python-bitbucket/src/master/pybitbucket/auth.py
     # https://developer.atlassian.com/bitbucket/api/2/reference/resource/repositories/%7Busername%7D/%7Brepo_slug%7D/refs/tags
     def _get_tags(self):
-        url = 'https://api.bitbucket.org/2.0/repositories/{author}/{name}/refs/tags'.format(
+        url = config['bitbucket'] + '/repositories/{author}/{name}/refs/tags'.format(
             author=self.author,
             name=self.name,
         )
