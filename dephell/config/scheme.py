@@ -36,6 +36,10 @@ SCHEME = {
     ),
     'silent': dict(
         type='boolean',
-        required=False,
+        required=True,  # because represented in default config
+    ),
+    'warehouse': dict(
+        type='string',
+        required=True,  # because represented in default config
     ),
 }

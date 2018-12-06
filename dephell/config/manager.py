@@ -10,6 +10,7 @@ from cerberus import Validator
 import yaml
 
 # app
+from .defaults import DEFAULT
 from .scheme import SCHEME
 
 
@@ -17,7 +18,7 @@ class Config:
     _skip = ('config', 'env')
 
     def __init__(self, data: Optional[dict] = None):
-        self._data = data or dict()
+        self._data = data or DEFAULT
 
     def attach(self, data: dict, container: Optional[dict] = None):
         if container is None:

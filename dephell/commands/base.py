@@ -2,7 +2,7 @@ import os.path
 from logging import getLogger
 
 # app
-from ..config import Config, parser
+from ..config import config, parser
 
 
 logger = getLogger(__name__)
@@ -22,7 +22,6 @@ class BaseCommand:
 
     @classmethod
     def get_config(cls, args):
-        config = Config()
         if args.config:
             config.attach_file(path=args.config, env=args.env)
         elif os.path.exists('pyproject.toml'):

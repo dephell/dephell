@@ -6,4 +6,4 @@ from .parser import parser
 config = Config()
 
 
-__all__ = ['Config', 'parser']
+__all__ = ['Config', 'parser', 'config']
