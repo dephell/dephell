@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS
+from ..constants import ENVS, FORMATS, STRATEGIES
 
 
 _TARGET = dict(
@@ -49,5 +49,10 @@ SCHEME = {
     'bitbucket': dict(
         type='string',
         required=True,  # because represented in default config
+    ),
+    'strategy': dict(
+        type='string',
+        required=True,  # because represented in default config
+        allowed=STRATEGIES,
     ),
 }

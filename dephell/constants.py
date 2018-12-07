@@ -25,3 +25,5 @@ FILES = (
 )
 
 ENVS = ('main', 'dev', 'main-opt', 'dev-opt')
+
+STRATEGIES = ('min', 'max')

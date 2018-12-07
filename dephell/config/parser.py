@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..constants import ENVS, FORMATS
+from ..constants import ENVS, FORMATS, STRATEGIES
 
 
 __all__ = ['parser']
@@ -32,6 +32,9 @@ to_group = parser.add_argument_group('Output file')
 to_group.add_argument('--to-format', choices=FORMATS, help='output requirements file format')
 to_group.add_argument('--to-path', help='path to output file')
 to_group.add_argument('--to-env', action='append', dest='to_envs', choices=ENVS, help=env_help)
+
+resolver_group = parser.add_argument_group('Resolver rules')
+resolver_group.add_argument('--strategy', choices=STRATEGIES, help='Algorithm to select best release')
 
 api_group = parser.add_argument_group('APIs endpoints')
 api_group.add_argument('--warehouse', help='warehouse API URL.')

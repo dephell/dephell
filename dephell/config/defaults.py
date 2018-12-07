@@ -1,7 +1,15 @@
 
 DEFAULT = dict(
-    silent=False,
+    # resolver
+    strategy='max',
+
+    # api
     warehouse='https://pypi.org/pypi/',
-    cache='.dephell',
     bitbucket='https://api.bitbucket.org/2.0',
+
+    # output
+    silent=False,
+
+    # other
+    cache='.dephell',
 )
