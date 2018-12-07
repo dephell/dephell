@@ -27,3 +27,5 @@ FILES = (
 ENVS = ('main', 'dev', 'main-opt', 'dev-opt')
 
 STRATEGIES = ('min', 'max')
+
+LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR')

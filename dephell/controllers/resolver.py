@@ -9,6 +9,7 @@ from tqdm import tqdm
 # app
 from ..exceptions import MergeError
 from .conflict import analize_conflict
+from ..config import config
 
 
 logger = getLogger('dephell.resolver')
@@ -61,9 +62,8 @@ class Resolver:
             self.unapply(child, force=False)
         dep.applied = False
 
-    def resolve(self, debug: bool = False, progress: bool = False,
-                level: Optional[int] = None) -> bool:
-        if progress:
+    def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
+        if not config['silent']:
             layers_bar = _Progress(
                 total=10 ** 10,
                 bar_format='{n:>7} layers   [{elapsed} elapsed]',
@@ -72,18 +72,18 @@ class Resolver:
             )
 
         while True:
-            if progress:
+            if not config['silent']:
                 layers_bar.update()
             # get not applied deps
             deps = self.graph.get_leafs(level=level)
             # if we already build deps for all nodes in graph
             if not deps:
-                if progress:
+                if not config['silent']:
                     del layers_bar
                     print('\r')
                 return True
 
-            no_conflicts = self._apply_deps(deps, debug=debug, progress=progress)
+            no_conflicts = self._apply_deps(deps, debug=debug)
             if no_conflicts:
                 continue
 
@@ -104,8 +104,8 @@ class Resolver:
                     self.unapply(dep)
                     dep.group = group
 
-    def _apply_deps(self, deps, progress=False, debug=False):
-        if progress:
+    def _apply_deps(self, deps, debug=False):
+        if not config['silent']:
             packages_bar = _Progress(
                 total=len(deps),
                 bar_format='{n:>3}/{total:>3} packages [{elapsed} elapsed]',
@@ -114,7 +114,7 @@ class Resolver:
             )
 
         for dep in deps:
-            if progress:
+            if not config['silent']:
                 packages_bar.update()
             conflict = self.apply(dep)
             if conflict is None:

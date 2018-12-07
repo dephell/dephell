@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS, STRATEGIES
+from ..constants import ENVS, FORMATS, STRATEGIES, LOG_LEVELS
 
 
 _TARGET = dict(
@@ -54,5 +54,10 @@ SCHEME = {
         type='string',
         required=True,  # because represented in default config
         allowed=STRATEGIES,
+    ),
+    'level': dict(
+        type='string',
+        required=True,  # because represented in default config
+        allowed=LOG_LEVELS,
     ),
 }

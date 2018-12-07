@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..constants import ENVS, FORMATS, STRATEGIES
+from ..constants import ENVS, FORMATS, STRATEGIES, LOG_LEVELS
 
 
 __all__ = ['parser']
@@ -42,6 +42,7 @@ api_group.add_argument('--bitbucket', help='bitbucket API URL')
 
 output_group = parser.add_argument_group('Console output')
 output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
+output_group.add_argument('--level', choices=LOG_LEVELS, help='minimal level for log messages.')
 
 other_group = parser.add_argument_group('other')
 other_group.add_argument('--cache', help='path to dephell cache')
