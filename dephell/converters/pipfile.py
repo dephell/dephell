@@ -25,9 +25,22 @@ class PIPFileConverter(BaseConverter):
         doc = tomlkit.parse(content)
         deps = []
         root = RootDependency(self._get_name(content=content))
+
+        repos = dict()
+        if 'source' in doc:
+            for repo in doc['source']:
+                repos[repo['name']] = repo['url']
+
         if 'packages' in doc:
             for name, content in doc['packages'].items():
-                deps.append(self._make_dep(root, name, content))
+                dep = self._make_dep(root, name, content)
+                if 'index' in content:
+                    repo_name = content.get('index')
+                    dep.repo = WareHouseRepo(
+                        name=repo_name,
+                        url=repos[repo_name],
+                    )
+                deps.append(dep)
         root.attach_dependencies(deps)
         return root
 
@@ -40,13 +53,13 @@ class PIPFileConverter(BaseConverter):
         if 'source' not in doc:
             doc['source'] = tomlkit.aot()
 
-        added_sources = {source['name'] for source in doc['source']}
+        added_repos = {repo['name'] for repo in doc['source']}
         for req in reqs:
             if not isinstance(req.dep.repo, WareHouseRepo):
                 continue
-            if req.dep.repo.name in added_sources:
+            if req.dep.repo.name in added_repos:
                 continue
-            added_sources.add(req.dep.repo.name)
+            added_repos.add(req.dep.repo.name)
             doc['source'].append(OrderedDict([
                 ('name', req.dep.repo.name),
                 ('url', req.dep.repo.url),
