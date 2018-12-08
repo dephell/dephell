@@ -22,6 +22,7 @@ class BaseCommand:
 
     @classmethod
     def get_config(cls, args):
+        config.setup_logging()
         if args.config:
             config.attach_file(path=args.config, env=args.env)
         elif os.path.exists('pyproject.toml'):
