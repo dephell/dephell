@@ -30,6 +30,7 @@ class BaseCommand:
         else:
             logger.warning('cannot find config file')
         config.attach_cli(args)
+        config.setup_logging()
         return config
 
     def validate(self):

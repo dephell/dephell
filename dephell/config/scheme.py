@@ -60,4 +60,8 @@ SCHEME = {
         required=True,  # because represented in default config
         allowed=LOG_LEVELS,
     ),
+    'nocolors': dict(
+        type='boolean',
+        required=True,  # because represented in default config
+    ),
 }

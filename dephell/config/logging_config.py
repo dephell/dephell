@@ -17,7 +17,7 @@ LOGGING = {
         'dephell': {
             'handlers': ['stderr', 'stdout'],
             'disabled': False,
-            'level': 'DEBUG',
+            'level': None,  # defined via config
             'propagate': False,
         },
     },

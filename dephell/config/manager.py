@@ -22,10 +22,12 @@ class Config:
     def __init__(self, data: Optional[dict] = None):
         self._data = data or DEFAULT
 
-    @staticmethod
-    def setup_logging(data: Optional[dict] = None) -> None:
+    def setup_logging(self, data: Optional[dict] = None) -> None:
         if data is None:
             data = LOGGING
+            if self._data:
+                data['loggers']['dephell']['level'] = self['level']
+                data['formatters']['simple']['colors'] = not self['nocolors']
         dictConfig(LOGGING)
 
     def attach(self, data: dict, container: Optional[dict] = None) -> None:

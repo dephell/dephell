@@ -10,6 +10,7 @@ DEFAULT = dict(
     # output
     silent=False,
     level='INFO',
+    nocolors=False,
 
     # other
     cache='.dephell',
