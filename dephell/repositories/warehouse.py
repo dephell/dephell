@@ -7,6 +7,7 @@ from packaging.requirements import Requirement
 from ..cache import JSONCache, TextCache
 from ..models.author import Author
 from ..models.release import Release
+from ..config import config
 from .base import Interface
 
 
@@ -15,8 +16,8 @@ class WareHouseRepo(Interface):
     hash = None
     link = None
 
-    def __init__(self, url='https://pypi.org/pypi/'):
-        self.url = url
+    def __init__(self, url=None):
+        self.url = config['warehouse'] if url is None else url
 
     @staticmethod
     def _update_dep_from_data(dep, data):

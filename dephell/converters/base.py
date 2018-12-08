@@ -40,7 +40,7 @@ class BaseConverter:
             content = None
 
         # make new content
-        content = self.dumps(reqs=reqs, content=content)
+        content = self.dumps(reqs=reqs, content=content, project=project)
 
         # write
         with path.open('w', encoding='utf8') as stream:

@@ -1,5 +1,6 @@
 # built-in
 from collections import defaultdict
+from logging.config import dictConfig
 from typing import Optional
 
 # external
@@ -10,16 +11,26 @@ from cerberus import Validator
 import yaml
 
 # app
+from .defaults import DEFAULT
 from .scheme import SCHEME
+from .logging_config import LOGGING
 
 
 class Config:
     _skip = ('config', 'env')
 
     def __init__(self, data: Optional[dict] = None):
-        self._data = data or dict()
+        self._data = data or DEFAULT
 
-    def attach(self, data: dict, container: Optional[dict] = None):
+    def setup_logging(self, data: Optional[dict] = None) -> None:
+        if data is None:
+            data = LOGGING
+            if self._data:
+                data['loggers']['dephell']['level'] = self['level']
+                data['formatters']['simple']['colors'] = not self['nocolors']
+        dictConfig(LOGGING)
+
+    def attach(self, data: dict, container: Optional[dict] = None) -> None:
         if container is None:
             container = self._data
         for key, value in data.items():
@@ -50,7 +61,7 @@ class Config:
         self.attach(data)
         return data
 
-    def attach_cli(self, args, sep: str = '_'):
+    def attach_cli(self, args, sep: str = '_') -> dict:
         data = defaultdict(dict)
         for name, value in args._get_kwargs():
             parsed = name.split(sep, maxsplit=1)
@@ -59,7 +70,7 @@ class Config:
             else:
                 data[parsed[0]][parsed[1]] = value
         self.attach(data)
-        return data
+        return dict(data)
 
     def validate(self) -> bool:
         self._data = {k: v for k, v in self._data.items() if k not in self._skip}
@@ -77,7 +88,7 @@ class Config:
     def __getattr__(self, name):
         return getattr(self._data, name)
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: str):
         return self._data[name]
 
     def __repr__(self):

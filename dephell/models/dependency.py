@@ -16,6 +16,7 @@ from ..repositories import GitRepo, get_repo
 from .constraint import Constraint
 from .git_specifier import GitSpecifier
 from .group import Group
+from ..config import config
 
 
 loop = asyncio.get_event_loop()
@@ -126,7 +127,9 @@ class Dependency:
             groups[key].add(release)
 
         # sort groups by latest release
-        groups = sorted(groups.values(), key=max, reverse=True)
+        strategy = max if config['strategy'] == 'max' else min
+        reverse = True if config['strategy'] == 'max' else False
+        groups = sorted(groups.values(), key=strategy, reverse=reverse)
 
         # convert every group to Group object
         groups = tuple(

@@ -4,12 +4,12 @@ import pickle
 from pathlib import Path
 
 # app
-from .constants import CACHE_DIR
+from .config import config
 
 
 class BaseCache:
     def __init__(self, *keys):
-        self.path = Path(CACHE_DIR)
+        self.path = Path(config['cache'])
         for key in keys:
             self.path /= key
 

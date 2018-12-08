@@ -8,8 +8,7 @@ from zipfile import ZipFile
 # external
 import attr
 
-
-NEW_PATH = Path('.dephell') / 'archives'
+from .config import config
 
 
 EXTRACTORS = {
@@ -79,7 +78,7 @@ class ArchivePath:
 
     def __attrs_post_init__(self):
         if self.cache_path is None:
-            self.cache_path = NEW_PATH / self.archive_path.name
+            self.cache_path = Path(config['cache']) / 'archives' / self.archive_path.name
 
     # properties
 

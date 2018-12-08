@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS
+from ..constants import ENVS, FORMATS, STRATEGIES, LOG_LEVELS
 
 
 _TARGET = dict(
@@ -36,6 +36,32 @@ SCHEME = {
     ),
     'silent': dict(
         type='boolean',
-        required=False,
+        required=True,  # because represented in default config
+    ),
+    'warehouse': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
+    'cache': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
+    'bitbucket': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
+    'strategy': dict(
+        type='string',
+        required=True,  # because represented in default config
+        allowed=STRATEGIES,
+    ),
+    'level': dict(
+        type='string',
+        required=True,  # because represented in default config
+        allowed=LOG_LEVELS,
+    ),
+    'nocolors': dict(
+        type='boolean',
+        required=True,  # because represented in default config
     ),
 }

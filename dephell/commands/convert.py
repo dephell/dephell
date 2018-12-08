@@ -26,7 +26,7 @@ class ConvertCommand(BaseCommand):
 
             # merge (without full graph building)
             if not should_be_resolved:
-                resolved = resolver.resolve(progress=True, level=1)
+                resolved = resolver.resolve(level=1)
                 if not resolved:
                     conflict = analize_conflict(resolver=resolver)
                     print(huepy.bad('Conflict has found:'))
@@ -36,7 +36,7 @@ class ConvertCommand(BaseCommand):
 
         # resolve (and merge)
         if should_be_resolved:
-            resolved = resolver.resolve(progress=True)
+            resolved = resolver.resolve()
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
                 print(huepy.bad('Conflict has found:'))
