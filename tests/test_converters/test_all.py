@@ -3,6 +3,7 @@ import pytest
 from dephell.controllers import Graph
 from dephell.converters import PIPConverter, PIPFileConverter, PIPFileLockConverter
 from dephell.models import Requirement
+from dephell.repositories import WareHouseRepo
 
 
 @pytest.mark.parametrize("converter,path", [
@@ -25,9 +26,17 @@ def test_load_dump_load(converter, path):
     map2 = {req.name: req for req in reqs2}
     assert set(map1) == set(map2), 'loaded and dumped different deps set'
 
+    # check all params
     exclude = {'sources'}
     for name, req1 in map1.items():
         req2 = map2[name]
         d1 = {k: v for k, v in req1 if k not in exclude}
         d2 = {k: v for k, v in req2 if k not in exclude}
         assert d1 == d2
+
+    # check warehouse URL
+    for name, req1 in map1.items():
+        req2 = map2[name]
+        if isinstance(req1.dep.repo, WareHouseRepo):
+            assert req1.dep.repo.name == req2.dep.repo.name
+            assert req1.dep.repo.url == req2.dep.repo.url

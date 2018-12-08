@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 # external
 import attr
 import requests
@@ -12,10 +14,23 @@ from ..config import config
 from .base import Interface
 
 
+def _process_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.path in ('', '/', '/simple', '/simple/'):
+        path = '/pypi/'
+    else:
+        path = parsed.path
+    if parsed.hostname == 'pypi.python.org':
+        hostname = 'pypi.org'
+    else:
+        hostname = parsed.hostname
+    return parsed.scheme + '://' + hostname + path
+
+
 @attr.s()
 class WareHouseRepo(Interface):
     name = attr.ib(default='pypi')
-    url = attr.ib(factory=lambda: config['warehouse'])
+    url = attr.ib(factory=lambda: config['warehouse'], converter=_process_url)
 
     hash = None
     link = None
