@@ -1,4 +1,5 @@
 # external
+import attr
 import requests
 from aiohttp import ClientSession
 from packaging.requirements import Requirement
@@ -11,13 +12,13 @@ from ..config import config
 from .base import Interface
 
 
+@attr.s()
 class WareHouseRepo(Interface):
-    name = None
+    name = attr.ib(default='pypi')
+    url = attr.ib(factory=lambda: config['warehouse'])
+
     hash = None
     link = None
-
-    def __init__(self, url=None):
-        self.url = config['warehouse'] if url is None else url
 
     @staticmethod
     def _update_dep_from_data(dep, data):

@@ -1,9 +1,11 @@
+from collections import OrderedDict
+
 # external
 import tomlkit
 
 # app
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import get_repo
+from ..repositories import get_repo, WareHouseRepo
 from .base import BaseConverter
 
 
@@ -36,13 +38,20 @@ class PIPFileConverter(BaseConverter):
             doc = tomlkit.document()
 
         if 'source' not in doc:
-            source = tomlkit.table()
-            source['url'] = 'https://pypi.python.org/simple'
-            source['verify_ssl'] = True
-            source['name'] = 'pypi'
-            sources = tomlkit.aot()
-            sources.append(source)
-            doc.add('source', sources)
+            doc['source'] = tomlkit.aot()
+
+        added_sources = {source['name'] for source in doc['source']}
+        for req in reqs:
+            if not isinstance(req.dep.repo, WareHouseRepo):
+                continue
+            if req.dep.repo.name in added_sources:
+                continue
+            added_sources.add(req.dep.repo.name)
+            doc['source'].append(OrderedDict([
+                ('name', req.dep.repo.name),
+                ('url', req.dep.repo.url),
+                ('verify_ssl', True),
+            ]))
 
         if 'packages' in doc:
             # clean packages from old packages
