@@ -1,5 +1,4 @@
-from operator import attrgetter
-from tomlkit import parse, aot, table, document, dumps, inline_table
+import tomlkit
 from ..models import Dependency, RootDependency, Constraint
 from ..repositories import get_repo
 from .base import BaseConverter
@@ -7,59 +6,62 @@ from .base import BaseConverter
 
 class PoetryConverter(BaseConverter):
     lock = False
+    fields = (
+        'version', 'python', 'platform', 'allows-prereleases',
+        'optional', 'extras', 'develop',
+        'git', 'branch', 'tag', 'rev',
+        'file', 'path',
+    )
 
     def loads(self, content) -> RootDependency:
-        doc = parse(content)
+        doc = tomlkit.parse(content)
+        if 'tool' not in doc:
+            doc['tool'] = {'poetry': tomlkit.table()}
+        elif 'poetry' not in doc['tool']:
+            doc['tool']['poetry'] = tomlkit.table()
+        section = doc['tool']['poetry']
+
         deps = []
         root = RootDependency()
-        if 'packages' in doc:
-            for name, content in doc['packages'].items():
+        if 'dependencies' in section:
+            for name, content in section['dependencies'].items():
                 deps.append(self._make_dep(root, name, content))
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, graph) -> str:
-        doc = document()
-        source = table()
-        source['url'] = 'https://pypi.python.org/simple'
-        source['verify_ssl'] = True
-        source['name'] = 'pypi'
-        sources = aot()
-        sources.append(source)
-        doc.add('source', sources)
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
+        if content:
+            doc = tomlkit.parse(content)
+        else:
+            doc = tomlkit.document()
+        if 'tool' not in doc:
+            doc['tool'] = {'poetry': tomlkit.table()}
+        elif 'poetry' not in doc['tool']:
+            doc['tool']['poetry'] = tomlkit.table()
+        section = doc['tool']['poetry']
 
-        deps = table()
-        for dep in sorted(graph.mapping.values(), key=attrgetter('name')):
-            if not dep.used:
-                continue
-            deps[dep.name] = self._format_dep(dep)
-        doc.add('packages', deps)
+        if 'dependencies' in section:
+            # clean dependencies from old dependencies
+            names = {req.name for req in reqs}
+            section['dependencies'] = {
+                name: info
+                for name, info in section['dependencies'].items()
+                if name in names
+            }
+            # write new dependencies to this table
+            dependencies = section['dependencies']
+        else:
+            dependencies = tomlkit.table()
 
-        return dumps(doc)
+        for req in reqs:
+            dependencies[req.name] = self._format_req(req=req)
+        section['dependencies'] = dependencies
+
+        return tomlkit.dumps(doc)
 
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
     @staticmethod
     def _make_dep(root, name: str, content) -> Dependency:
-        """
-
-        postry fields:
-            main
-                version
-                python
-                platform
-                allows-prereleases
-                optional
-                extras
-                develop
-            git
-                git
-                branch
-                tag
-                rev
-            other
-                file
-                path
-        """
         if isinstance(content, str):
             return Dependency(
                 raw_name=name,
@@ -67,44 +69,44 @@ class PoetryConverter(BaseConverter):
                 repo=get_repo(),
             )
 
-        # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
-        version = content['version'] if 'version' in content else ''
+        # get link
+        url = content.get('file') or content.get('path') or content.get('vcs')
+        if not url and 'git' in content:
+            url = 'git+' + content['git']
+        rev = content.get('rev') or content.get('branch') or content.get('tag')
+        if rev:
+            url += '@' + rev
 
-        # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/requirements.py
-        # https://github.com/pypa/pipenv/blob/master/pipenv/project.py
-        return Dependency(
+        # make marker
+        markers = []
+        if 'platform' in content:
+            markers.append('sys_platform == \'{}\' '.format(content['platform']))
+        if 'python' in content:
+            markers.append('python_version == \'{}\' '.format(content['python']))
+        ' and '.join(markers)
+
+        return Dependency.from_params(
             raw_name=name,
-            constraint=Constraint(root, version),
-            repo=get_repo(),
+            # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
+            constraint=Constraint(root, content.get('version', '')),
             extras=set(content.get('extras', [])),
-            marker=content.get('markers'),
+            marker=markers or None,
+            url=url,
+            editable=content.get('develop', False),
         )
 
-    def _format_dep(self, dep: Dependency, *, short: bool=True):
-        if self.lock:
-            release = dep.group.best_release
-
-        result = inline_table()
-
-        if self.lock:
-            result['version'] = '==' + str(release.version)
-        else:
-            result['version'] = str(dep.constraint) or '*'
-
-        if dep.extras:
-            result['extras'] = list(sorted(dep.extras))
-        if dep.marker:
-            result['markers'] = str(dep.marker)
-
-        if self.lock:
-            result['hashes'] = []
-            for digest in release.hashes:
-                result['hashes'].append('sha256:' + digest)
-
+    def _format_req(self, req):
+        result = tomlkit.inline_table()
+        for name, value in req:
+            if name in self.fields:
+                if isinstance(value, tuple):
+                    value = list(value)
+                result[name] = value
+        if 'version' not in result:
+            result['version'] = '*'
         # if we have only version, return string instead of table
-        if short and tuple(result.value) == ('version', ):
+        if tuple(result.value) == ('version', ):
             return result['version']
-
         # do not specify version explicit
         if result['version'] == '*':
             del result['version']
