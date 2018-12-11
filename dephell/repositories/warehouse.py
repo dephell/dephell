@@ -1,4 +1,7 @@
+from urllib.parse import urlparse
+
 # external
+import attr
 import requests
 from aiohttp import ClientSession
 from packaging.requirements import Requirement
@@ -11,13 +14,26 @@ from ..config import config
 from .base import Interface
 
 
+def _process_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.path in ('', '/', '/simple', '/simple/'):
+        path = '/pypi/'
+    else:
+        path = parsed.path
+    if parsed.hostname == 'pypi.python.org':
+        hostname = 'pypi.org'
+    else:
+        hostname = parsed.hostname
+    return parsed.scheme + '://' + hostname + path
+
+
+@attr.s()
 class WareHouseRepo(Interface):
-    name = None
+    name = attr.ib(default='pypi')
+    url = attr.ib(factory=lambda: config['warehouse'], converter=_process_url)
+
     hash = None
     link = None
-
-    def __init__(self, url=None):
-        self.url = config['warehouse'] if url is None else url
 
     @staticmethod
     def _update_dep_from_data(dep, data):

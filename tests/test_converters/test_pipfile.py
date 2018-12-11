@@ -50,3 +50,43 @@ def test_format_req():
     )
     content = PIPFileConverter()._format_req(Requirement(dep, lock=False))
     assert content == '>=1.9'
+
+
+WAREHOUSE_TEST = """
+[[source]]
+url = 'https://pypi.python.org/simple'
+verify_ssl = true
+name = 'pypi'
+
+[[source]]
+url = 'https://pypi.org/'
+verify_ssl = true
+name = 'pypi2'
+
+[[source]]
+url = 'https://myserver.org/'
+verify_ssl = true
+name = 'pypi3'
+
+[packages]
+pkg1 = {version='*', index='pypi'}
+pkg2 = {version='*', index='pypi2'}
+pkg3 = {version='*', index='pypi3'}
+pkg4 = '*'
+"""
+
+
+def test_load_warehouse():
+    converter = PIPFileConverter()
+    root = converter.loads(WAREHOUSE_TEST)
+    deps = {dep.name: dep for dep in root.dependencies}
+
+    assert deps['pkg1'].repo.name == 'pypi'
+    assert deps['pkg2'].repo.name == 'pypi2'
+    assert deps['pkg3'].repo.name == 'pypi3'
+    assert deps['pkg4'].repo.name == 'pypi'
+
+    assert deps['pkg1'].repo.url == 'https://pypi.org/pypi/', 'old url has not replaced'
+    assert deps['pkg2'].repo.url == 'https://pypi.org/pypi/'
+    assert deps['pkg3'].repo.url == 'https://myserver.org/pypi/', 'server hostname has not used'
+    assert deps['pkg4'].repo.url == 'https://pypi.org/pypi/', 'default url has not applied'
