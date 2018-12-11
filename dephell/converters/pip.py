@@ -1,10 +1,13 @@
 # external
 from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
+from pip._internal.index import PackageFinder
 
 # app
 from ..models import Dependency, RootDependency
 from .base import BaseConverter
+from ..config import config
+from ..repositories import WareHouseRepo
 
 
 class PIPConverter(BaseConverter):
@@ -16,8 +19,20 @@ class PIPConverter(BaseConverter):
     def load(self, path) -> RootDependency:
         deps = []
         root = RootDependency(raw_name=self._get_name(path=path))
+
+        finder = PackageFinder(
+            find_links=[],
+            index_urls=[config['warehouse']],
+            session=PipSession(),
+        )
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py
-        for req in parse_requirements(str(path), session=PipSession()):
+        reqs = parse_requirements(
+            filename=str(path),
+            session=PipSession(),
+            finder=finder,
+        )
+
+        for req in reqs:
             # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py
             deps.append(Dependency.from_requirement(
                 source=root,
@@ -25,14 +40,42 @@ class PIPConverter(BaseConverter):
                 url=req.link and req.link.url,
                 editable=req.editable,
             ))
+
+        # update repository
+        if finder.index_urls and finder.index_urls != [config['warehouse']]:
+            repo_url = finder.index_urls[0]
+            for dep in deps:
+                if isinstance(dep.repo, WareHouseRepo):
+                    dep.repo.url = repo_url
+
         root.attach_dependencies(deps)
         return root
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
-        deps = []
+        lines = []
+
+        # get repos urls
+        urls = dict()
         for req in reqs:
-            deps.append(self._format_req(req=req))
-        return '\n'.join(deps) + '\n'
+            if isinstance(req.dep.repo, WareHouseRepo):
+                urls[req.dep.repo.name] = req.dep.repo.url
+
+        # dump repos urls
+        # pip._internal.build_env
+        if len(urls) == 1:
+            _name, url = urls.popitem()
+        elif 'pypi' in urls:
+            url = urls.pop('pypi')
+        else:
+            url = None
+        if url:
+            lines.append('-i ' + url)
+        for url in urls.values():
+            lines.append('--extra-index-url ' + url)
+
+        for req in reqs:
+            lines.append(self._format_req(req=req))
+        return '\n'.join(lines) + '\n'
 
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
     # https://github.com/jazzband/pip-tools/blob/master/piptools/utils.py
