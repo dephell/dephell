@@ -1,10 +1,15 @@
+# app
+from .git.git import GitRepo
+from .release import ReleaseRepo
 from .warehouse import WareHouseRepo
 
 
-__all__ = ['WareHouseRepo', 'get_repo']
+__all__ = ['ReleaseRepo', 'WareHouseRepo']
 
 
-def get_repo(url=None):
-    if url is None:
+def get_repo(link=None):
+    if link is None:
         return WareHouseRepo()
-    raise NotImplementedError
+    if getattr(link, 'vcs', '') == 'git':
+        return GitRepo(link)
+    return ReleaseRepo(link=link)

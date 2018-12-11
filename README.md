@@ -11,14 +11,25 @@ sudo pip3 install dephell
 
 ## CLI usage
 
+With arguments:
+
 ```bash
-python3 -m dephell convert <from-format> <from-path> <to-format> <to-path>
+python3 -m dephell convert \
+    --from-format=pip --from-path=requirements.in \
+    --to-format=piplock --to-path=requirements.txt
 ```
 
-Example:
+With config:
 
 ```bash
-python3 -m dephell convert pip requirements.in pip requirements.txt
+python3 -m dephell convert --config=pyproject.toml --env=main
+```
+
+Mix config and arguments:
+
+```bash
+python3 -m dephell convert --config=pyproject.toml \
+    --to-format=piplock --to-path=requirements.txt
 ```
 
 Available formats:
@@ -32,10 +43,16 @@ Available formats:
 ## Python lib usage
 
 ```python
-from dephell import Resolver
-resolver = Resolver.from_requirements(path_from)
+from dephell import PIPConverter, Requirement
+
+loader = PIPConverter(lock=False)
+resolver = loader.load_resolver(path='requirements.in')
+
 resolver.resolve()
-content = resolver.to_requirements()
+reqs = Requirement.from_graph(resolver.graph, lock=True)
+
+dumper = PIPConverter(lock=True)
+dumper.dump(reqs=reqs, path='requirements.txt')
 ```
 
 
@@ -43,10 +60,7 @@ content = resolver.to_requirements()
 
 1. poetry
 1. poetry lock
-1. config
-1. environments
 1. Python version
 1. Zero release (compatible with any constraints)
 1. url defined release
 1. git based dependency
-1. Beautiful CLI

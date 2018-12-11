@@ -1,8 +1,15 @@
 aiohttp
 attrs
 cached_property
-cleo
+cerberus
+graphviz
+html2text
+huepy
+jinja2
 packaging
-requests
 pip
+python-dateutil
+pyyaml
+requests
 tomlkit
+tqdm

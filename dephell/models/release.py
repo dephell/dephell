@@ -1,19 +1,22 @@
+# built-in
 from datetime import datetime
+
+# external
 import attr
 from cached_property import cached_property
 from packaging.utils import canonicalize_name
 from packaging.version import parse
 
 
-@attr.s(hash=False)
+@attr.s(hash=False, cmp=True)
 class Release:
     dependencies = None
 
-    raw_name = attr.ib()
-    version = attr.ib(converter=parse)
-    time = attr.ib(repr=False, hash=False)      # upload_time
-    python_constraint = attr.ib(default=None, repr=False)  # requires_python
-    hashes = attr.ib(factory=tuple, repr=False)  # # digests/sha256
+    raw_name = attr.ib(cmp=False)
+    version = attr.ib(converter=parse, cmp=True)
+    time = attr.ib(repr=False, hash=False)                              # upload_time
+    python_constraint = attr.ib(default=None, repr=False, cmp=False)    # requires_python
+    hashes = attr.ib(factory=tuple, repr=False, cmp=False)              # digests/sha256
 
     @classmethod
     def from_response(cls, name, version, info):
@@ -31,7 +34,7 @@ class Release:
         return canonicalize_name(self.raw_name)
 
     def __str__(self):
-        return '{}=={}'.format(self.raw_name, self.version)
+        return '{name}=={version}'.format(name=self.raw_name, version=self.version)
 
     def hash(self):
         return hash((self.name, self.version))

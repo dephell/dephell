@@ -1,3 +1,4 @@
+# app
 from .conflict import analize_conflict
 from .graph import Graph
 from .mutator import Mutator

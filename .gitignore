@@ -1,7 +1,14 @@
 .pytest_cache/
 __pycache__/
 *.pyc
-.dephell/
+
 *.egg-info/
 dist/
+build/
+
 Pipfile.lock
+.tox
+.mypy_cache
+
+.dephell/
+.dephell_report/

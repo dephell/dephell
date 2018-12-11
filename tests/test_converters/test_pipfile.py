@@ -1,0 +1,92 @@
+# project
+from dephell.converters import PIPFileConverter
+from dephell.links import VCSLink
+from dephell.models import Dependency, Requirement, RootDependency
+from dephell.repositories import GitRepo
+
+
+def test_load():
+    converter = PIPFileConverter()
+    root = converter.load('./tests/requirements/pipfile.toml')
+    deps = {dep.name: dep for dep in root.dependencies}
+    assert 'requests' in deps
+    assert 'records' in deps
+    assert 'django' in deps
+    assert str(deps['records'].constraint) == '>0.5.0'
+
+    assert deps['django'].editable is True
+    assert deps['requests'].editable is False
+
+
+def test_load_git_based_dep():
+    converter = PIPFileConverter()
+    root = converter.load('./tests/requirements/pipfile.toml')
+    deps = {dep.name: dep for dep in root.dependencies}
+    dep = deps['django']
+    assert isinstance(dep.link, VCSLink)
+    assert isinstance(dep.repo, GitRepo)
+
+    assert dep.link.vcs == 'git'
+    assert dep.link.server == 'github.com'
+    assert dep.link.name == 'django'
+
+
+def test_dump():
+    converter = PIPFileConverter()
+    resolver = converter.load_resolver('./tests/requirements/pipfile.toml')
+    reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
+    assert len(reqs) > 2
+    content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
+    assert 'requests = ' in content
+    assert "extras = ['socks']" in content
+    assert 'records = ">0.5.0"' in content
+
+
+def test_format_req():
+    dep = Dependency.from_params(
+        raw_name='Django',
+        constraint='>=1.9',
+        source=RootDependency(),
+    )
+    content = PIPFileConverter()._format_req(Requirement(dep, lock=False))
+    assert content == '>=1.9'
+
+
+WAREHOUSE_TEST = """
+[[source]]
+url = 'https://pypi.python.org/simple'
+verify_ssl = true
+name = 'pypi'
+
+[[source]]
+url = 'https://pypi.org/'
+verify_ssl = true
+name = 'pypi2'
+
+[[source]]
+url = 'https://myserver.org/'
+verify_ssl = true
+name = 'pypi3'
+
+[packages]
+pkg1 = {version='*', index='pypi'}
+pkg2 = {version='*', index='pypi2'}
+pkg3 = {version='*', index='pypi3'}
+pkg4 = '*'
+"""
+
+
+def test_load_warehouse():
+    converter = PIPFileConverter()
+    root = converter.loads(WAREHOUSE_TEST)
+    deps = {dep.name: dep for dep in root.dependencies}
+
+    assert deps['pkg1'].repo.name == 'pypi'
+    assert deps['pkg2'].repo.name == 'pypi2'
+    assert deps['pkg3'].repo.name == 'pypi3'
+    assert deps['pkg4'].repo.name == 'pypi'
+
+    assert deps['pkg1'].repo.url == 'https://pypi.org/pypi/', 'old url has not replaced'
+    assert deps['pkg2'].repo.url == 'https://pypi.org/pypi/'
+    assert deps['pkg3'].repo.url == 'https://myserver.org/pypi/', 'server hostname has not used'
+    assert deps['pkg4'].repo.url == 'https://pypi.org/pypi/', 'default url has not applied'

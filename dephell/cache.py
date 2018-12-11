@@ -1,13 +1,15 @@
-import pickle
+# built-in
 import json
+import pickle
 from pathlib import Path
 
-cache_dir = '.dephell'
+# app
+from .config import config
 
 
 class BaseCache:
     def __init__(self, *keys):
-        self.path = Path(cache_dir)
+        self.path = Path(config['cache'])
         for key in keys:
             self.path /= key
 

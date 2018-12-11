@@ -1,7 +1,25 @@
+# built-in
+from contextlib import suppress
 from logging import getLogger
+from typing import Optional
+
+# external
+from tqdm import tqdm
+
+# app
+from ..exceptions import MergeError
+from .conflict import analize_conflict
+from ..config import config
 
 
 logger = getLogger('dephell.resolver')
+
+
+class _Progress(tqdm):
+    @classmethod
+    def _decr_instances(cls, instance):
+        with suppress(RuntimeError):
+            return super()._decr_instances(instance)
 
 
 class Resolver:
@@ -14,50 +32,59 @@ class Resolver:
         Returns conflicting (incompatible) dependency
         """
         for new_dep in parent.dependencies:
-            other_dep = self.graph.mapping.get(new_dep.name)
+            other_dep = self.graph.get(new_dep.name)
             if other_dep is None:
                 # add new dep to graph
                 other_dep = new_dep.copy()
-                self.graph.mapping[new_dep.name] = other_dep
+                self.graph.add(other_dep)
             else:
                 # merge deps
-                other_dep.merge(new_dep)
+                try:
+                    other_dep.merge(new_dep)
+                except MergeError:
+                    return other_dep
             # check
             if not other_dep.compat:
                 return other_dep
         parent.applied = True
 
-    def unapply(self, dep, *, force=False):
+    def unapply(self, dep, *, force=True):
         if not force and not dep.applied:
             return
         for child in dep.dependencies:
-            child = self.graph.mapping.get(child.name)
+            child = self.graph.get(child.name)
             if child is None:
+                logger.warning('child not found')
                 continue
             # unapply current dependency for child
             child.unapply(dep.name)
             # unapply child because he is modified
-            self.unapply(child)
+            self.unapply(child, force=False)
         dep.applied = False
 
-    def resolve(self) -> bool:
+    def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
+        if not config['silent']:
+            layers_bar = _Progress(
+                total=10 ** 10,
+                bar_format='{n:>7} layers   [{elapsed} elapsed]',
+                position=1,
+                leave=False,
+            )
+
         while True:
+            if not config['silent']:
+                layers_bar.update()
             # get not applied deps
-            deps = self.graph.get_leafs()
+            deps = self.graph.get_leafs(level=level)
             # if we already build deps for all nodes in graph
             if not deps:
+                if not config['silent']:
+                    del layers_bar
+                    print('\r')
                 return True
 
-            for dep in deps:
-                conflict = self.apply(dep)
-                if conflict is not None:
-                    logger.debug('conflict {}{}'.format(conflict.name, conflict.constraint))
-                    self.graph.conflict = conflict.copy()
-                    # Dep can be partialy applied. Clean it.
-                    self.unapply(dep, force=True)
-                    break
-            else:
-                # only if all deps applied
+            no_conflicts = self._apply_deps(deps, debug=debug)
+            if no_conflicts:
                 continue
 
             # if we have conflict, try to mutate graph
@@ -68,8 +95,46 @@ class Resolver:
             self.graph.conflict = None
             # apply mutation
             for group in groups:
-                dep = self.graph.mapping[group.name]
+                dep = self.graph.get(group.name)
                 if dep.group.number != group.number:
-                    logger.debug('mutated {}'.format(str(dep.group.best_release)))
+                    logger.debug('mutated {group_from} to {group_to}', extra=dict(
+                        group_from=str(dep.group),
+                        group_to=str(group),
+                    ))
                     self.unapply(dep)
                     dep.group = group
+
+    def _apply_deps(self, deps, debug=False):
+        if not config['silent']:
+            packages_bar = _Progress(
+                total=len(deps),
+                bar_format='{n:>3}/{total:>3} packages [{elapsed} elapsed]',
+                position=2,
+                leave=False,
+            )
+
+        for dep in deps:
+            if not config['silent']:
+                packages_bar.update()
+            conflict = self.apply(dep)
+            if conflict is None:
+                continue
+
+            logger.debug('conflict {name}{constraint}', extra=dict(
+                name=conflict.name,
+                constraint=conflict.constraint,
+            ))
+            self.graph.conflict = conflict.copy()
+
+            if debug:
+                print(analize_conflict(
+                    resolver=self,
+                    suffix=str(self.mutator.mutations),
+                ))
+
+            # Dep can be partialy applied. Clean it.
+            self.unapply(dep)
+            return False
+
+        # only if all deps applied
+        return True

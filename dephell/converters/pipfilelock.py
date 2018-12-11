@@ -1,11 +1,12 @@
+# built-in
 import json
 from collections import OrderedDict
 from hashlib import sha256
-from operator import attrgetter
 
+# app
+from ..models import RootDependency
 # from .base import BaseConverter
 from .pipfile import PIPFileConverter
-from ..models import RootDependency
 
 
 # https://stackoverflow.com/a/23820416
@@ -19,18 +20,16 @@ class PIPFileLockConverter(PIPFileConverter):
     def loads(self, content) -> RootDependency:
         doc = json.loads(content, object_pairs_hook=OrderedDict)
         deps = []
-        root = RootDependency()
+        root = RootDependency(raw_name=self._get_name(content=content))
         for name, content in doc['default'].items():
             deps.append(self._make_dep(root, name, content))
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, graph) -> str:
-        deps = OrderedDict()
-        for dep in sorted(graph.mapping.values(), key=attrgetter('name')):
-            if not dep.used:
-                continue
-            deps[dep.name] = dict(self._format_dep(dep, short=False))
+    def dumps(self, reqs, project: RootDependency, content=None) -> str:
+        packages = OrderedDict()
+        for req in reqs:
+            packages[req.name] = dict(self._format_req(req=req))
 
         data = OrderedDict([
             ('_meta', OrderedDict([
@@ -41,7 +40,7 @@ class PIPFileLockConverter(PIPFileConverter):
                 ])]),
                 ('requires', {'python_version': '2.7'}),
             ])),
-            ('default', deps),
+            ('default', packages),
             ('develop', OrderedDict()),
         ])
         data['_meta']['hash'] = {'sha256': self._get_hash(data)}
@@ -50,5 +49,12 @@ class PIPFileLockConverter(PIPFileConverter):
 
     @staticmethod
     def _get_hash(data: dict) -> str:
-        content = json.dumps(data, sort_keys=True, separators=(",", ":"))
+        content = json.dumps(data, sort_keys=True, separators=(',', ':'))
         return sha256(content.encode('utf8')).hexdigest()
+
+    def _format_req(self, req):
+        result = dict()
+        for name, value in req:
+            if name in self.fields:
+                result[name] = value
+        return result

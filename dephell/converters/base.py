@@ -1,8 +1,13 @@
+# built-in
 from os import unlink
+from pathlib import Path
 from tempfile import NamedTemporaryFile
+from typing import Optional
 
-from ..models import RootDependency
+# app
+from ..constants import FILES
 from ..controllers import Graph, Mutator, Resolver
+from ..models import RootDependency
 
 
 class BaseConverter:
@@ -18,15 +23,27 @@ class BaseConverter:
         return root
 
     def load(self, path) -> RootDependency:
-        with open(str(path), 'r') as stream:
+        path = Path(str(path))
+        with path.open('r', encoding='utf8') as stream:
             return self.loads(stream.read())
 
-    def dumps(self, graph) -> str:
+    def dumps(self, reqs, project: RootDependency, content: Optional[str] = None) -> str:
         raise NotImplementedError
 
-    def dump(self, graph, path):
-        content = self.dumps(graph)
-        with open(str(path), 'w') as stream:
+    def dump(self, reqs, path, project: RootDependency):
+        # read
+        path = Path(str(path))
+        if path.exists():
+            with path.open('r', encoding='utf8') as stream:
+                content = stream.read()
+        else:
+            content = None
+
+        # make new content
+        content = self.dumps(reqs=reqs, content=content, project=project)
+
+        # write
+        with path.open('w', encoding='utf8') as stream:
             stream.write(content)
 
     # resolver creation
@@ -35,7 +52,7 @@ class BaseConverter:
     def _get_resolver(root: RootDependency) -> Resolver:
         return Resolver(
             graph=Graph(root),
-            mutator=Mutator()
+            mutator=Mutator(),
         )
 
     def loads_resolver(self, content: str) -> Resolver:
@@ -45,3 +62,19 @@ class BaseConverter:
     def load_resolver(self, path) -> Resolver:
         root = self.load(path)
         return self._get_resolver(root)
+
+    # helpers
+
+    @staticmethod
+    def _get_name(*, path=None, content=None):
+        if path is not None:
+            path = Path(str(path))
+            file_name = path.name
+            project_name = path.name
+
+            if file_name in FILES:
+                return project_name
+            return file_name
+
+        if content is not None:
+            return 'root-{length}'.format(length=len(content))
