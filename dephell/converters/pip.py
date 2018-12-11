@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 # external
 from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
@@ -20,9 +22,13 @@ class PIPConverter(BaseConverter):
         deps = []
         root = RootDependency(raw_name=self._get_name(path=path))
 
+        warehouse_url = urlparse(config['warehouse']).hostname
+        if warehouse_url in ('pypi.org', 'pypi.python.org'):
+            warehouse_url += '/simple'
+
         finder = PackageFinder(
             find_links=[],
-            index_urls=[config['warehouse']],
+            index_urls=[warehouse_url],
             session=PipSession(),
         )
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py
@@ -42,11 +48,13 @@ class PIPConverter(BaseConverter):
             ))
 
         # update repository
-        if finder.index_urls and finder.index_urls != [config['warehouse']]:
-            repo_url = finder.index_urls[0]
-            for dep in deps:
-                if isinstance(dep.repo, WareHouseRepo):
-                    dep.repo.url = repo_url
+        if finder.index_urls:
+            finded_host = urlparse(finder.index_urls[0]).hostname
+            if finded_host != urlparse(warehouse_url).hostname:
+                repo = WareHouseRepo(url=finder.index_urls[0])
+                for dep in deps:
+                    if isinstance(dep.repo, WareHouseRepo):
+                        dep.repo = repo
 
         root.attach_dependencies(deps)
         return root

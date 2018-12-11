@@ -4,7 +4,7 @@ DEFAULT = dict(
     strategy='max',
 
     # api
-    warehouse='https://pypi.org/',
+    warehouse='https://pypi.org/pypi/',
     bitbucket='https://api.bitbucket.org/2.0',
 
     # output
