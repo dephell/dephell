@@ -70,7 +70,7 @@ class PoetryConverter(BaseConverter):
             )
 
         # get link
-        url = content.get('file') or content.get('path') or content.get('vcs')
+        url = content.get('file') or content.get('path')
         if not url and 'git' in content:
             url = 'git+' + content['git']
         rev = content.get('rev') or content.get('branch') or content.get('tag')
@@ -79,6 +79,7 @@ class PoetryConverter(BaseConverter):
 
         # make marker
         markers = []
+        # https://www.python.org/dev/peps/pep-0496/
         if 'platform' in content:
             markers.append('sys_platform == \'{}\' '.format(content['platform']))
         if 'python' in content:

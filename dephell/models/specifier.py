@@ -25,6 +25,9 @@ class Specifier:
     time = None
 
     def __init__(self, constr):
+        # https://docs.npmjs.com/misc/semver#advanced-range-syntax
+        ...
+
         self._spec = None
         try:
             self._spec = self._legacy = specifiers.LegacySpecifier(str(constr))
