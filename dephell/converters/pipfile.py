@@ -120,6 +120,8 @@ class PIPFileConverter(BaseConverter):
     def _format_req(self, req):
         result = tomlkit.inline_table()
         for name, value in req:
+            if name == 'rev':
+                name = 'ref'
             if name in self.fields:
                 if isinstance(value, tuple):
                     value = list(value)

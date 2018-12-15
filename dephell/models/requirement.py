@@ -8,7 +8,7 @@ from cached_property import cached_property
 class Requirement:
     _properties = (
         'name', 'release', 'version', 'extras', 'markers',
-        'hashes', 'sources', 'editable',
+        'hashes', 'sources', 'editable', 'git', 'rev',
     )
 
     def __init__(self, dep, lock: bool):
@@ -53,7 +53,7 @@ class Requirement:
 
     @property
     def rev(self) -> Optional[str]:
-        return getattr(self.dep.link, 'rev', None)
+        return getattr(self.dep.link, 'rev', None) or None
 
     @property
     def name(self) -> str:

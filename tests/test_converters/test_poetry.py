@@ -27,3 +27,5 @@ def test_dump():
     assert 'requests = ' in content
     assert 'extras = ["security"]' in content
     assert 'pathlib2 = "==2.*,>=2.2.0"' in content
+
+    assert 'https://github.com/sdispater/cleo.git' in content
