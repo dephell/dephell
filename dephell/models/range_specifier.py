@@ -35,9 +35,9 @@ class RangeSpecifier:
                 parts = version.release + (0, 0)
                 parts = tuple(map(str, parts))
                 left = '.'.join(parts[:3])
-                if constr[0] == '^':
+                if constr[0] == '^':    # ^1.2.3 := >=1.2.3 <2.0.0
                     right = '.'.join([parts[0], '*'])
-                elif constr[0] == '~':
+                elif constr[0] == '~':  # ~1.2.3 := >=1.2.3 <1.3.0
                     right = '.'.join([parts[0], parts[1], '*'])
                 result.add(Specifier('>=' + left))
                 result.add(Specifier('==' + right))
