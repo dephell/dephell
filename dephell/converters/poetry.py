@@ -25,6 +25,8 @@ class PoetryConverter(BaseConverter):
         root = RootDependency()
         if 'dependencies' in section:
             for name, content in section['dependencies'].items():
+                if name == 'python':
+                    continue
                 deps.append(self._make_dep(root, name, content))
         root.attach_dependencies(deps)
         return root
