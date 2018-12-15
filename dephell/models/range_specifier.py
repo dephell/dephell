@@ -99,7 +99,7 @@ class RangeSpecifier:
         return True
 
     def __str__(self):
-        return ','.join(map(str, self._specs))
+        return ','.join(sorted(map(str, self._specs)))
 
     def __repr__(self):
         return '{name}({spec})'.format(

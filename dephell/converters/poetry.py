@@ -90,7 +90,6 @@ class PoetryConverter(BaseConverter):
 
         return Dependency.from_params(
             raw_name=name,
-            # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
             constraint=Constraint(root, content.get('version', '')),
             extras=set(content.get('extras', [])),
             marker=markers or None,
