@@ -95,7 +95,7 @@ class ArchivePath:
             if hasattr(self._descriptor, 'closed'):
                 is_closed = self._descriptor.closed  # tar
             else:
-                is_closed = self._descriptor.fp  # zip
+                is_closed = not self._descriptor.fp  # zip
             if not is_closed:
                 yield self._descriptor
                 return
