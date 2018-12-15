@@ -4,6 +4,7 @@ from operator import attrgetter
 # external
 from cached_property import cached_property
 
+# app
 from ..config import config
 
 

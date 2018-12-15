@@ -7,9 +7,9 @@ from typing import Optional
 from tqdm import tqdm
 
 # app
+from ..config import config
 from ..exceptions import MergeError
 from .conflict import analize_conflict
-from ..config import config
 
 
 logger = getLogger('dephell.resolver')

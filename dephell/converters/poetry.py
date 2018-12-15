@@ -1,5 +1,8 @@
+# external
 import tomlkit
-from ..models import Dependency, RootDependency, Constraint
+
+# app
+from ..models import Constraint, Dependency, RootDependency
 from ..repositories import get_repo
 from .base import BaseConverter
 

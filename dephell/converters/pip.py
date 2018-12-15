@@ -1,15 +1,16 @@
+# built-in
 from urllib.parse import urlparse
 
 # external
 from pip._internal.download import PipSession
-from pip._internal.req import parse_requirements
 from pip._internal.index import PackageFinder
+from pip._internal.req import parse_requirements
 
 # app
-from ..models import Dependency, RootDependency
-from .base import BaseConverter
 from ..config import config
+from ..models import Dependency, RootDependency
 from ..repositories import WareHouseRepo
+from .base import BaseConverter
 
 
 class PIPConverter(BaseConverter):

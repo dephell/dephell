@@ -1,3 +1,4 @@
+# built-in
 from urllib.parse import urlparse
 
 # external
@@ -8,9 +9,9 @@ from packaging.requirements import Requirement
 
 # app
 from ..cache import JSONCache, TextCache
+from ..config import config
 from ..models.author import Author
 from ..models.release import Release
-from ..config import config
 from .base import Interface
 
 

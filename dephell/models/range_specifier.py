@@ -1,9 +1,11 @@
-from packaging.version import LegacyVersion, parse
+# external
 from packaging.specifiers import InvalidSpecifier
+from packaging.version import LegacyVersion, parse
 
-from .specifier import Specifier
-from .git_specifier import GitSpecifier
+# app
 from ..constants import JoinTypes
+from .git_specifier import GitSpecifier
+from .specifier import Specifier
 
 
 class RangeSpecifier:

@@ -10,13 +10,13 @@ from cached_property import cached_property
 from packaging.utils import canonicalize_name
 
 # app
+from ..config import config
 from ..exceptions import MergeError
 from ..links import VCSLink, parse_link
 from ..repositories import GitRepo, get_repo
 from .constraint import Constraint
 from .git_specifier import GitSpecifier
 from .group import Group
-from ..config import config
 
 
 loop = asyncio.get_event_loop()

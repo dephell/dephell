@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..constants import ENVS, FORMATS, STRATEGIES, LOG_LEVELS
+from ..constants import ENVS, FORMATS, LOG_LEVELS, STRATEGIES
 
 
 __all__ = ['parser']

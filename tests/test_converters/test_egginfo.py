@@ -1,5 +1,6 @@
-from pathlib import Path
+# built-in
 from email.parser import Parser
+from pathlib import Path
 
 # project
 from dephell.converters.egginfo import EggInfoConverter

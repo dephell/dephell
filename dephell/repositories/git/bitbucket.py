@@ -6,8 +6,8 @@ import requests
 from cached_property import cached_property
 
 # app
-from .base import BaseRepo
 from ...config import config
+from .base import BaseRepo
 
 
 rex_author = re.compile(r'bitbucket\.com[/:]([a-zA-Z_-])')

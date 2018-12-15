@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS, STRATEGIES, LOG_LEVELS
+from ..constants import ENVS, FORMATS, LOG_LEVELS, STRATEGIES
 
 
 _TARGET = dict(

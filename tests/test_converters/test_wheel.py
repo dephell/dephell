@@ -1,5 +1,8 @@
-from dephell.converters.wheel import WheelConverter
+# built-in
 from pathlib import Path
+
+# project
+from dephell.converters.wheel import WheelConverter
 
 
 def test_load_deps():
