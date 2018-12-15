@@ -1,14 +1,9 @@
-from enum import Enum
 from packaging.version import LegacyVersion, parse
 from packaging.specifiers import InvalidSpecifier
 
 from .specifier import Specifier
 from .git_specifier import GitSpecifier
-
-
-class JoinTypes(Enum):
-    AND = 1
-    OR = 2
+from ..constants import JoinTypes
 
 
 class RangeSpecifier:
