@@ -37,7 +37,8 @@ class PoetryLockConverter(BaseConverter):
             doc['package'].append(self._format_req(req=req))
 
         doc['metadata'] = {
-            'content-hash': ...,
+            # sha256 of tool.poetry section from pyproject.toml
+            # 'content-hash': ...,
             'platform': '*',
             'python-versions': '*',
         }
@@ -53,6 +54,7 @@ class PoetryLockConverter(BaseConverter):
     @staticmethod
     def _make_dep(root, content) -> Dependency:
         # get link
+        url = None
         if 'source' in content:
             url = content['source']['url']
             if content['source']['type'] == 'git':
@@ -63,7 +65,7 @@ class PoetryLockConverter(BaseConverter):
         return Dependency.from_params(
             raw_name=content['name'],
             description=content['description'],
-            constraint=Constraint(root, content['version']),
+            constraint=Constraint(root, '==' + content['version']),
             marker=content.get('marker', None),
             url=url,
             editable=False,
@@ -78,6 +80,7 @@ class PoetryLockConverter(BaseConverter):
                 result[name] = value
         if 'version' not in result:
             result['version'] = '*'
+        result['version'] = result['version'].lstrip('=')
 
         # add link
         if req.link:
