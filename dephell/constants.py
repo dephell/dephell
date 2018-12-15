@@ -40,3 +40,6 @@ ENVS = ('main', 'dev', 'main-opt', 'dev-opt')
 STRATEGIES = ('min', 'max')
 
 LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR')
+
+PYTHONS = ('2.7', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '4.0', '4.1')
+# ^ nobody uses 3.3

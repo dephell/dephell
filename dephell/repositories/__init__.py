@@ -4,7 +4,7 @@ from .release import ReleaseRepo
 from .warehouse import WareHouseRepo
 
 
-__all__ = ['ReleaseRepo', 'WareHouseRepo']
+__all__ = ['ReleaseRepo', 'WareHouseRepo', 'GitRepo', 'get_repo']
 
 
 def get_repo(link=None):

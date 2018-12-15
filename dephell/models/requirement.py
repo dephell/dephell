@@ -9,6 +9,7 @@ class Requirement:
     _properties = (
         'name', 'release', 'version', 'extras', 'markers',
         'hashes', 'sources', 'editable', 'git', 'rev',
+        'description',
     )
 
     def __init__(self, dep, lock: bool):
@@ -58,6 +59,10 @@ class Requirement:
     @property
     def name(self) -> str:
         return self.dep.name
+
+    @property
+    def description(self) -> str:
+        return self.dep.description
 
     @property
     def version(self) -> Optional[str]:

@@ -13,6 +13,8 @@ class WheelConverter(BaseConverter):
     PEP-0427
     https://www.python.org/dev/peps/pep-0427/
     """
+    lock = False
+
     def load(self, path) -> RootDependency:
         """Parse wheel
 
