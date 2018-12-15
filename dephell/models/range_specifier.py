@@ -19,17 +19,21 @@ class RangeSpecifier:
             constr = constr.strip()
             if constr in ('', '*'):
                 continue
+            constr = constr.replace('.x', '.*')
+            constr = constr.replace('.X', '.*')
 
             # https://docs.npmjs.com/misc/semver#advanced-range-syntax
 
             if ' - ' in constr:
+                if '.*' in constr:
+                    raise InvalidSpecifier('cannot mix ranges and starred notation')
                 left, right = constr.split(' - ', maxsplit=1)
                 result.add(Specifier('>=' + left))
                 result.add(Specifier('<=' + right))
                 continue
 
             if constr[0] in '~^':
-                version = parse(constr.lstrip('~^='))
+                version = parse(constr.lstrip('~^=').replace('.*', '.0'))
                 if isinstance(version, LegacyVersion):
                     raise InvalidSpecifier(constr)
                 parts = version.release + (0, 0)
@@ -43,8 +47,6 @@ class RangeSpecifier:
                 result.add(Specifier('==' + right))
                 continue
 
-            constr = constr.replace('.x', '.*')
-            constr = constr.replace('.X', '.*')
             result.add(Specifier(constr))
         return result
 
