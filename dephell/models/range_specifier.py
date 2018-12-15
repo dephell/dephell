@@ -21,11 +21,13 @@ class RangeSpecifier:
                 continue
 
             # https://docs.npmjs.com/misc/semver#advanced-range-syntax
+
             if ' - ' in constr:
                 left, right = constr.split(' - ', maxsplit=1)
                 result.add(Specifier('>=' + left))
                 result.add(Specifier('<=' + right))
                 continue
+
             if constr[0] in '~^':
                 version = parse(constr.lstrip('~^='))
                 if isinstance(version, LegacyVersion):
@@ -34,11 +36,12 @@ class RangeSpecifier:
                 parts = tuple(map(str, parts))
                 left = '.'.join(parts[:3])
                 if constr[0] == '^':
-                    right = '.'.join(parts[0], '*')
+                    right = '.'.join([parts[0], '*'])
                 elif constr[0] == '~':
-                    right = '.'.join(parts[0], parts[1], '*')
+                    right = '.'.join([parts[0], parts[1], '*'])
                 result.add(Specifier('>=' + left))
                 result.add(Specifier('==' + right))
+                continue
 
             constr = constr.replace('.x', '.*')
             constr = constr.replace('.X', '.*')
