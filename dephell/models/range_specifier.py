@@ -1,3 +1,6 @@
+from packaging.version import LegacyVersion, parse
+from packaging.specifiers import InvalidSpecifier
+
 from .specifier import Specifier
 from .git_specifier import GitSpecifier
 
@@ -23,10 +26,19 @@ class RangeSpecifier:
                 result.add(Specifier('>=' + left))
                 result.add(Specifier('<=' + right))
                 continue
-            if constr[0] == '~':
-                ...
-            if constr[0] == '^':
-                ...
+            if constr[0] in '~^':
+                version = parse(constr.lstrip('~^='))
+                if isinstance(version, LegacyVersion):
+                    raise InvalidSpecifier(constr)
+                parts = version.release + (0, 0)
+                parts = tuple(map(str, parts))
+                left = '.'.join(parts[:3])
+                if constr[0] == '^':
+                    right = '.'.join(parts[0], '*')
+                elif constr[0] == '~':
+                    right = '.'.join(parts[0], parts[1], '*')
+                result.add(Specifier('>=' + left))
+                result.add(Specifier('==' + right))
 
             constr = constr.replace('.x', '.*')
             constr = constr.replace('.X', '.*')
