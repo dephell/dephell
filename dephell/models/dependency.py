@@ -10,13 +10,13 @@ from cached_property import cached_property
 from packaging.utils import canonicalize_name
 
 # app
+from ..config import config
 from ..exceptions import MergeError
 from ..links import VCSLink, parse_link
 from ..repositories import GitRepo, get_repo
 from .constraint import Constraint
 from .git_specifier import GitSpecifier
 from .group import Group
-from ..config import config
 
 
 loop = asyncio.get_event_loop()
@@ -56,7 +56,7 @@ class Dependency:
         # make constraint
         constraint = Constraint(source, req.specifier)
         if isinstance(link, VCSLink) and link.rev:
-            constraint._specs[source.name] = {GitSpecifier()}
+            constraint._specs[source.name] = GitSpecifier()
         return cls(
             raw_name=req.name,
             constraint=constraint,
@@ -77,7 +77,7 @@ class Dependency:
         if source:
             constraint = Constraint(source, constraint)
             if isinstance(link, VCSLink) and link.rev:
-                constraint._specs[source.name] = {GitSpecifier()}
+                constraint._specs[source.name] = GitSpecifier()
         # make repo
         if repo is None:
             repo = get_repo(link)

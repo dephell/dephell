@@ -1,3 +1,4 @@
+# built-in
 from collections import OrderedDict
 
 # external
@@ -5,7 +6,7 @@ import tomlkit
 
 # app
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import get_repo, WareHouseRepo
+from ..repositories import WareHouseRepo, get_repo
 from .base import BaseConverter
 
 
@@ -120,6 +121,8 @@ class PIPFileConverter(BaseConverter):
     def _format_req(self, req):
         result = tomlkit.inline_table()
         for name, value in req:
+            if name == 'rev':
+                name = 'ref'
             if name in self.fields:
                 if isinstance(value, tuple):
                     value = list(value)

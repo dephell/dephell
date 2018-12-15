@@ -55,6 +55,8 @@ class PIPFileLockConverter(PIPFileConverter):
     def _format_req(self, req):
         result = dict()
         for name, value in req:
+            if name == 'rev':
+                name = 'ref'
             if name in self.fields:
                 result[name] = value
         return result

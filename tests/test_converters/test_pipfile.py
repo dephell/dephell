@@ -1,3 +1,6 @@
+# built-in
+from pathlib import Path
+
 # project
 from dephell.converters import PIPFileConverter
 from dephell.links import VCSLink
@@ -7,7 +10,7 @@ from dephell.repositories import GitRepo
 
 def test_load():
     converter = PIPFileConverter()
-    root = converter.load('./tests/requirements/pipfile.toml')
+    root = converter.load(Path('tests') / 'requirements' / 'pipfile.toml')
     deps = {dep.name: dep for dep in root.dependencies}
     assert 'requests' in deps
     assert 'records' in deps
@@ -20,7 +23,7 @@ def test_load():
 
 def test_load_git_based_dep():
     converter = PIPFileConverter()
-    root = converter.load('./tests/requirements/pipfile.toml')
+    root = converter.load(Path('tests') / 'requirements' / 'pipfile.toml')
     deps = {dep.name: dep for dep in root.dependencies}
     dep = deps['django']
     assert isinstance(dep.link, VCSLink)
@@ -33,7 +36,7 @@ def test_load_git_based_dep():
 
 def test_dump():
     converter = PIPFileConverter()
-    resolver = converter.load_resolver('./tests/requirements/pipfile.toml')
+    resolver = converter.load_resolver(Path('tests') / 'requirements' / 'pipfile.toml')
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
     content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)

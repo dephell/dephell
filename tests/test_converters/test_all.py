@@ -1,12 +1,14 @@
-# project
+# external
 import pytest
+
+# project
 from dephell.controllers import Graph
 from dephell.converters import PIPConverter, PIPFileConverter, PIPFileLockConverter
 from dephell.models import Requirement
 from dephell.repositories import WareHouseRepo
 
 
-@pytest.mark.parametrize("converter,path", [
+@pytest.mark.parametrize('converter, path', [
     (PIPConverter(lock=False), './tests/requirements/attrs-requests.txt'),
     (PIPConverter(lock=False), './tests/requirements/django-deal.txt'),
     (PIPConverter(lock=False), './tests/requirements/scipy-pandas-numpy.txt'),

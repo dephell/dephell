@@ -6,7 +6,7 @@ from itertools import chain
 from packaging.requirements import Requirement
 
 # app
-from ..models import Dependency, RootDependency, Author
+from ..models import Author, Dependency, RootDependency
 from .base import BaseConverter
 
 

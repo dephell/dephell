@@ -1,9 +1,8 @@
 # built-in
 from copy import deepcopy
-from itertools import chain
 
 # app
-from .specifier import Specifier
+from .range_specifier import RangeSpecifier
 
 
 class Constraint:
@@ -12,26 +11,14 @@ class Constraint:
         source (Dependency)
         spec (str, LegacySpecifier, Specifier)
         """
-        self._specs = {source.name: self._make_spec(spec)}
+        self._specs = {source.name: RangeSpecifier(spec)}
         self._groups = {source.name: source.group.number}
-
-    @staticmethod
-    def _make_spec(spec) -> set:
-        if not isinstance(spec, (list, tuple)):
-            spec = str(spec).split(',')
-        result = set()
-        for constr in spec:
-            if constr in ('', '*'):
-                continue
-            result.add(Specifier(constr))
-        return result
 
     def attach_time(self, releases) -> None:
         """Attach time to all specifiers if possible
         """
-        for spec in chain(*self._specs.values()):
-            if spec.time is None:
-                spec.attach_time(releases)
+        for spec in self._specs.values():
+            spec.attach_time(releases)
 
     @property
     def empty(self) -> bool:
@@ -45,8 +32,7 @@ class Constraint:
     def specs(self) -> tuple:
         result = []
         for name, spec in self._specs.items():
-            spec = ','.join(map(str, spec))
-            result.append((name, spec))
+            result.append((name, str(spec)))
         return tuple(sorted(result))
 
     def apply(self, dep, spec):
@@ -57,7 +43,7 @@ class Constraint:
             # unapply old group of this package:
             self.unapply(dep.name)
         # save params
-        self._specs[dep.name] = self._make_spec(spec)
+        self._specs[dep.name] = RangeSpecifier(spec)
         self._groups[dep.name] = dep.group.number
 
     def merge(self, constraint):
@@ -69,7 +55,7 @@ class Constraint:
 
             spec = constraint._specs[name]
             if name in self._specs:
-                self._specs[name].update(spec)
+                self._specs[name] += spec
             else:
                 self._specs[name] = spec
 
@@ -84,8 +70,8 @@ class Constraint:
         """
         result = set()
         for release in releases:
-            for spec in chain(*self._specs.values()):
-                if spec and release not in spec:
+            for spec in self._specs.values():
+                if release not in spec:
                     break
             else:
                 result.add(release)
@@ -95,6 +81,6 @@ class Constraint:
         return deepcopy(self)
 
     def __str__(self):
-        specs = map(str, chain(*self._specs.values()))
+        specs = map(str, self._specs.values())
         specs = sorted(specs)
         return ','.join(specs)

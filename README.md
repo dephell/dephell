@@ -62,5 +62,5 @@ dumper.dump(reqs=reqs, path='requirements.txt')
 1. poetry lock
 1. Python version
 1. Zero release (compatible with any constraints)
-1. url defined release
-1. git based dependency
+1. extras
+1. right version to tag mapping for git

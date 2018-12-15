@@ -1,10 +1,7 @@
 # external
-# project
-# project
-# project
-# project
-# project
 import pytest
+
+# project
 from dephell.links import DirLink, FileLink, URLLink, VCSLink, parse_link
 
 

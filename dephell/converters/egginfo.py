@@ -1,15 +1,15 @@
 # built-in
 from email.parser import Parser
-from pathlib import Path
 from itertools import chain
+from pathlib import Path
 
 # external
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
-from ..models import Dependency, RootDependency, Author
-from .base import BaseConverter
 from ..archive import ArchivePath
+from ..models import Author, Dependency, RootDependency
+from .base import BaseConverter
 
 
 class EggInfoConverter(BaseConverter):

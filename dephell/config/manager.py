@@ -5,15 +5,13 @@ from typing import Optional
 
 # external
 import tomlkit
-from cerberus import Validator
-
-# project
 import yaml
+from cerberus import Validator
 
 # app
 from .defaults import DEFAULT
-from .scheme import SCHEME
 from .logging_config import LOGGING
+from .scheme import SCHEME
 
 
 class Config:

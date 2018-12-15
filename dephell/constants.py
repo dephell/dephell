@@ -10,11 +10,22 @@ class ReturnCodes(Enum):
     UNKNOWN_EXCEPTION = 3
 
 
+@unique
+class JoinTypes(Enum):
+    AND = 1
+    OR = 2
+
+
 FORMATS = (
-    'pip', 'piplock',
-    'pipfile', 'pipfilelock',
-    'poetry', 'poetrylock',
+    'egginfo',
+    'pip',
+    'pipfile',
+    'pipfilelock',
+    'piplock',
+    'poetry',
+    'pyproject',
     'setuppy',
+    'whell',
 )
 
 FILES = (
