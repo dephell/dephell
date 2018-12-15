@@ -3,6 +3,7 @@ from pathlib import Path
 # project
 from dephell.converters.poetry import PoetryConverter
 from dephell.models import Requirement
+from dephell.repositories.git.git import GitRepo
 
 
 def test_load():
@@ -13,6 +14,8 @@ def test_load():
     assert 'toml' in deps
 
     assert set(deps['requests'].extras) == {'security'}
+    assert deps['cleo'].link.rev == 'master'
+    assert isinstance(deps['cleo'].repo, GitRepo)
 
 
 def test_dump():

@@ -145,3 +145,24 @@ def test_caret(specv, version, ok):
 def test_tilda(specv, version, ok):
     spec = RangeSpecifier('~' + specv)
     assert (version in spec) is ok
+
+
+@pytest.mark.parametrize('version, ok', [
+    ('2.7',     True),
+    ('2.7.1',   True),
+    ('2.7.6',   True),
+
+    ('2.8',     False),
+    ('2.8.0',   False),
+    ('3.0',     False),
+
+    ('3.2',     True),
+    ('3.2.1',   True),
+    ('3.3',     True),
+    ('3.7',     True),
+
+    ('4.0',     False),
+])
+def test_or(version, ok):
+    spec = RangeSpecifier('~2.7 || ^3.2')
+    assert (version in spec) is ok

@@ -1,3 +1,4 @@
+from enum import Enum
 from packaging.version import LegacyVersion, parse
 from packaging.specifiers import InvalidSpecifier
 
@@ -5,10 +6,22 @@ from .specifier import Specifier
 from .git_specifier import GitSpecifier
 
 
+class JoinTypes(Enum):
+    AND = 1
+    OR = 2
+
+
 class RangeSpecifier:
+
     def __init__(self, spec=None):
         if spec is not None:
-            self._specs = self._parse(spec)
+            subspecs = str(spec).split('||')
+            if len(subspecs) > 1:
+                self._specs = {type(self)(subspec) for subspec in subspecs}
+                self.join_type = JoinTypes.OR
+            else:
+                self._specs = self._parse(spec)
+                self.join_type = JoinTypes.AND
 
     @staticmethod
     def _parse(spec) -> set:
@@ -62,7 +75,7 @@ class RangeSpecifier:
         return ok
 
     def __add__(self, other):
-        new = self.__class__()
+        new = type(self)()
         new._specs = self._specs.copy()
         attached = new._attach(other)
         if attached:
@@ -70,7 +83,7 @@ class RangeSpecifier:
         return NotImplemented
 
     def __radd__(self, other):
-        new = self.__class__()
+        new = type(self)()
         new._specs = self._specs.copy()
         attached = new._attach(other)
         if attached:
@@ -92,14 +105,13 @@ class RangeSpecifier:
             return True
         return False
 
-    def __contains__(self, release):
-        for specifier in self._specs:
-            if release not in specifier:
-                return False
-        return True
+    def __contains__(self, release) -> bool:
+        rule = all if self.join_type == JoinTypes.AND else any
+        return rule((release in specifier) for specifier in self._specs)
 
     def __str__(self):
-        return ','.join(sorted(map(str, self._specs)))
+        sep = ',' if self.join_type == JoinTypes.AND else ' || '
+        return sep.join(sorted(map(str, self._specs)))
 
     def __repr__(self):
         return '{name}({spec})'.format(
