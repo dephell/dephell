@@ -45,8 +45,7 @@ class PoetryLockConverter(BaseConverter):
 
         doc['metadata']['hashes'] = tomlkit.table()
         for req in reqs:
-            if req.hashes:
-                doc['metadata']['hashes'][req.name] = list(req.hashes)
+            doc['metadata']['hashes'][req.name] = list(req.hashes or [])
 
         return tomlkit.dumps(doc)
 

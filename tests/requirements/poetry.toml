@@ -24,7 +24,7 @@ requests = { version = "^2.13", extras = [ "security" ] }
 # Python specific dependencies with prereleases allowed
 pathlib2 = { version = "^2.2", python = "~2.7", allows-prereleases = true }
 # Git dependencies
-cleo = { git = "https://github.com/sdispater/cleo.git", branch = "master" }
+django = { git = "https://github.com/django/django.git", rev = "1.11.4" }
 
 # Optional dependencies (extras)
 pendulum = { version = "^1.4", optional = true }
