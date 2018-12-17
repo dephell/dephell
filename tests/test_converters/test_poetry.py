@@ -1,6 +1,8 @@
 # built-in
 from pathlib import Path
 
+import tomlkit
+
 # project
 from dephell.converters.poetry import PoetryConverter
 from dephell.models import Requirement
@@ -30,3 +32,11 @@ def test_dump():
     assert 'pathlib2 = "==2.*,>=2.2.0"' in content
 
     assert 'https://github.com/sdispater/cleo.git' in content
+
+    parsed = tomlkit.parse(content)['tool']['poetry']
+    assert '>=0.9' in parsed['dependencies']['toml']
+    assert '>=2.13' in parsed['dependencies']['requests']['version']
+    assert {'security'} == set(parsed['dependencies']['requests']['extras'])
+
+    assert parsed['dependencies']['cleo']['git'] == 'https://github.com/sdispater/cleo.git'
+    assert parsed['dependencies']['cleo']['rev'] == 'master'
