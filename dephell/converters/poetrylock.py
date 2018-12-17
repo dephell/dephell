@@ -84,7 +84,7 @@ class PoetryLockConverter(BaseConverter):
         # add link
         if req.link:
             result['source'] = tomlkit.table()
-            if req.link.git:
+            if req.git:
                 result['source']['type'] = 'git'
             elif isinstance(req.link, DirLink):
                 result['source']['type'] = 'directory'
