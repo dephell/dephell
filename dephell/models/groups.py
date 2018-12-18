@@ -5,6 +5,7 @@ import attr
 from .group import Group
 from ..config import config
 
+
 loop = asyncio.get_event_loop()
 
 
