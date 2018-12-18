@@ -4,6 +4,7 @@ from .pip import PIPConverter
 from .pipfile import PIPFileConverter
 from .pipfilelock import PIPFileLockConverter
 from .poetry import PoetryConverter
+from .poetrylock import PoetryLockConverter
 from .pyproject import PyProjectConverter
 from .setuppy import SetupPyConverter
 from .wheel import WheelConverter
@@ -19,6 +20,7 @@ CONVERTERS = dict(
     pipfilelock=PIPFileLockConverter(),
 
     poetry=PoetryConverter(),
+    poetrylock=PoetryLockConverter(),
 
     pyproject=PyProjectConverter(),
 

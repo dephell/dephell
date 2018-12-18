@@ -23,6 +23,7 @@ FORMATS = (
     'pipfilelock',
     'piplock',
     'poetry',
+    'poetrylock',
     'pyproject',
     'setuppy',
     'whell',
