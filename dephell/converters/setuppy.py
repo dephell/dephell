@@ -1,4 +1,5 @@
 # built-in
+from os.path import dirname
 from distutils.core import run_setup
 from itertools import chain
 
@@ -8,6 +9,7 @@ from packaging.requirements import Requirement
 # app
 from ..models import Author, Dependency, RootDependency
 from .base import BaseConverter
+from ..utils import chdir
 
 
 TEMPLATE = """
@@ -40,7 +42,8 @@ class SetupPyConverter(BaseConverter):
 
     @classmethod
     def load(cls, path) -> RootDependency:
-        info = run_setup(str(path))
+        with chdir(dirname(str(path))):
+            info = run_setup(str(path))
 
         root = RootDependency(
             raw_name=cls._get(info, 'name'),
@@ -124,9 +127,7 @@ class SetupPyConverter(BaseConverter):
         reqs_list = [self._format_req(req=req) for req in reqs]
         content.append(('install_requires', reqs_list))
 
-        content = ',\n    '.join(
-            '{}={!r}'.format(name, value) for name, value in content,
-        )
+        content = ',\n    '.join('{}={!r}'.format(name, value) for name, value in content)
         return TEMPLATE.format(kwargs=content)
 
     # private methods

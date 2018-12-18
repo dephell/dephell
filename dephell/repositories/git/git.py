@@ -134,7 +134,7 @@ class GitRepo(Interface):
                 stderr=subprocess.PIPE,
             )
         if result.returncode != 0:
-            print(result.stderr)
+            logger.error(result.stderr)
         return tuple(result.stdout.decode().strip().split('\n'))
 
     def _get_rev_time(self, rev: str):
