@@ -25,25 +25,57 @@ class Groups:
         releases = sorted(releases, reverse=reverse)
         return releases
 
-    async def _fetch_releases_deps(self):
-        tasks = []
-        releases = []
-        tasks_count = 0
-        for release in self.releases:
-            if 'dependencies' not in release.__dict__:
+    async def _fetch_releases_deps(self, releases=None):
+        if releases is None:
+            releases = self.releases
+
+        if len(releases) <= 4:
+            print('1' * 40)
+            tasks = []
+            not_loaded_releases = []
+            tasks_count = 0
+            for release in releases:
+                if 'dependencies' in release.__dict__:
+                    continue
                 task = asyncio.ensure_future(self.dep.repo.get_dependencies(
                     release.name,
                     release.version,
                 ))
                 tasks.append(task)
-                releases.append(release)
+                not_loaded_releases.append(release)
                 tasks_count += 1
                 if tasks_count >= self.chunk_size:
                     break
 
+            responses = await asyncio.gather(*tasks)
+            for release, response in zip(not_loaded_releases, responses):
+                release.dependencies = response
+            return
+
+        center = len(releases) // 2
+        edges = (releases[0], releases[center], releases[-1])
+        tasks = []
+        for release in edges:
+            task = asyncio.ensure_future(self.dep.repo.get_dependencies(
+                release.name,
+                release.version,
+            ))
+            tasks.append(task)
+
         responses = await asyncio.gather(*tasks)
-        for release, response in zip(releases, responses):
+        keys = set()
+        for release, response in zip(edges, responses):
             release.dependencies = response
+            keys.add('|'.join(sorted(map(str, release.dependencies))))
+
+        if len(keys) == 1:
+            response = responses[0]
+            for release in releases:
+                release.dependencies = response
+            return
+
+        await self._fetch_releases_deps(releases[1:center])
+        await self._fetch_releases_deps(releases[center:-1])
 
     def _load_release_deps(self, release) -> None:
         coroutine = self.dep.repo.get_dependencies(release.name, release.version)
