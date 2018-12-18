@@ -97,7 +97,7 @@ class Dependency:
     def all_releases(self) -> tuple:
         return self.groups.releases
 
-    @property
+    @cached_property
     def groups(self) -> tuple:
         return Groups(dep=self)
 
