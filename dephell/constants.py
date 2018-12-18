@@ -42,5 +42,9 @@ STRATEGIES = ('min', 'max')
 
 LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR')
 
-PYTHONS = ('2.7', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '4.0', '4.1')
-# ^ nobody uses 3.3
+PYTHONS = (
+    '2.7',                          # deprecated
+    '3.0', '3.1', '3.2', '3.3',     # very seldom
+    '3.4', '3.5', '3.6', '3.7',     # most popular
+    '3.8', '3.9', '4.0', '4.1',     # unreleased
+)
