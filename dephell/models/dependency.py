@@ -93,10 +93,6 @@ class Dependency:
     def name(self) -> str:
         return canonicalize_name(self.raw_name)
 
-    @property
-    def all_releases(self) -> tuple:
-        return self.groups.releases
-
     @cached_property
     def groups(self) -> tuple:
         return Groups(dep=self)
@@ -168,11 +164,10 @@ class Dependency:
             self.repo = dep.repo
 
         self.constraint.merge(dep.constraint)
-        self._actualize_groups(force=True)
+        self.groups.actualize()
 
     def unapply(self, name: str):
         self.constraint.unapply(name)
-        self._actualize_groups(force=True)
         if self.locked:
             self.unlock()
 
@@ -182,6 +177,3 @@ class Dependency:
         if obj.locked:
             obj.unlock()
         return obj
-
-    def _actualize_groups(self, *, force: bool = False) -> bool:
-        return self.groups.actualize()
