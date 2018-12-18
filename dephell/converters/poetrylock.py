@@ -92,11 +92,11 @@ class PoetryLockConverter(BaseConverter):
             if req.rev:
                 result['source']['reference'] = req.rev
 
-        # add dependencies
-        deps = req.dep.dependencies
-        if deps:
-            result['dependencies'] = tomlkit.table()
-            for dep in deps:
-                result['dependencies'][dep.name] = str(dep.constraint)
+        # # add dependencies
+        # deps = req.dep.dependencies
+        # if deps:
+        #     result['dependencies'] = tomlkit.table()
+        #     for dep in deps:
+        #         result['dependencies'][dep.name] = str(dep.constraint)
 
         return result

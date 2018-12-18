@@ -1,5 +1,5 @@
 # built-in
-from os.path import dirname
+from pathlib import Path
 from distutils.core import run_setup
 from itertools import chain
 
@@ -42,8 +42,9 @@ class SetupPyConverter(BaseConverter):
 
     @classmethod
     def load(cls, path) -> RootDependency:
-        with chdir(dirname(str(path))):
-            info = run_setup(str(path))
+        path = Path(str(path))
+        with chdir(path.parent):
+            info = run_setup(path.name)
 
         root = RootDependency(
             raw_name=cls._get(info, 'name'),
