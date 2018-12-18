@@ -1,7 +1,6 @@
 # built-in
 import asyncio
 import re
-from collections import defaultdict
 from copy import deepcopy
 
 # external
@@ -10,13 +9,12 @@ from cached_property import cached_property
 from packaging.utils import canonicalize_name
 
 # app
-from ..config import config
 from ..exceptions import MergeError
 from ..links import VCSLink, parse_link
 from ..repositories import GitRepo, get_repo
 from .constraint import Constraint
 from .git_specifier import GitSpecifier
-from .group import Group
+from .groups import Groups
 
 
 loop = asyncio.get_event_loop()
@@ -95,55 +93,19 @@ class Dependency:
     def name(self) -> str:
         return canonicalize_name(self.raw_name)
 
-    @cached_property
+    @property
     def all_releases(self) -> tuple:
-        return self.repo.get_releases(self)
+        return self.groups.releases
 
-    async def _fetch_releases_deps(self):
-        tasks = []
-        releases = []
-        for release in self.all_releases:
-            if 'dependencies' not in release.__dict__:
-                task = asyncio.ensure_future(self.repo.get_dependencies(
-                    release.name,
-                    release.version,
-                ))
-                tasks.append(task)
-                releases.append(release)
-        responses = await asyncio.gather(*tasks)
-        for release, response in zip(releases, responses):
-            release.dependencies = response
-
-    @cached_property
+    @property
     def groups(self) -> tuple:
-        # fetch releases
-        future = asyncio.ensure_future(self._fetch_releases_deps())
-        loop.run_until_complete(future)
-
-        # group releases by their dependencies
-        groups = defaultdict(set)
-        for release in self.all_releases:
-            key = '|'.join(sorted(map(str, release.dependencies)))
-            groups[key].add(release)
-
-        # sort groups by latest release
-        strategy = max if config['strategy'] == 'max' else min
-        reverse = True if config['strategy'] == 'max' else False
-        groups = sorted(groups.values(), key=strategy, reverse=reverse)
-
-        # convert every group to Group object
-        groups = tuple(
-            Group(releases=releases, number=number)
-            for number, releases in enumerate(groups)
-        )
-
-        self._actualize_groups(groups=groups)
-        return groups
+        return Groups(dep=self)
 
     @cached_property
     def group(self):
         """By first access choose and save best group
         """
+        self.groups.actualize()
         for group in self.groups:
             if not group.empty:
                 return group
@@ -198,7 +160,7 @@ class Dependency:
         # then prefer non-git repo, because it's more accurate and fast.
         if isinstance(self.link, GitRepo) and not isinstance(dep.link, GitRepo):
             if not self.link.rev:
-                if 'groups' not in self.__dict__:
+                if not self.groups._loaded_groups:
                     self.repo = dep.repo
 
         if not isinstance(self.link, GitRepo) and isinstance(dep.link, GitRepo):
@@ -221,13 +183,5 @@ class Dependency:
             obj.unlock()
         return obj
 
-    def _actualize_groups(self, *, force: bool = False, groups=None) -> bool:
-        if not groups:
-            if not force and 'groups' not in self.__dict__:
-                return False
-            groups = self.groups
-
-        filtrate = self.constraint.filter
-        for group in groups:
-            group.releases = filtrate(group.all_releases)
-        return True
+    def _actualize_groups(self, *, force: bool = False) -> bool:
+        return self.groups.actualize()
