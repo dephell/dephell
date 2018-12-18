@@ -15,7 +15,7 @@ class Groups:
     _loaded_groups = attr.ib(factory=list)
     _loaded_releases_count = attr.ib(default=0)
 
-    chunk_size = 10
+    chunk_size = 20
 
     @cached_property
     def releases(self) -> tuple:
@@ -37,7 +37,7 @@ class Groups:
                 tasks.append(task)
                 releases.append(release)
                 tasks_count += 1
-                if tasks_count == self.chunk_size:
+                if tasks_count >= self.chunk_size:
                     break
 
         responses = await asyncio.gather(*tasks)

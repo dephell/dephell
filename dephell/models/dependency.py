@@ -2,6 +2,7 @@
 import asyncio
 import re
 from copy import deepcopy
+from typing import Optional
 
 # external
 import attr
@@ -66,7 +67,9 @@ class Dependency:
         )
 
     @classmethod
-    def from_params(cls, *, raw_name, constraint, url=None, source=None, repo=None, **kwargs):
+    def from_params(cls, *, raw_name: str, constraint,
+                    url: Optional[str] = None, source: Optional['Dependency'] = None,
+                    repo=None, **kwargs):
         # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
