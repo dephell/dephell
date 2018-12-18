@@ -1,5 +1,6 @@
 # built-in
 import re
+from logging import getLogger
 import subprocess
 from collections import OrderedDict
 from pathlib import Path
@@ -21,6 +22,7 @@ except ImportError:
     from dateutil.parser import parse as isoparse
 
 
+logger = getLogger(__name__)
 rex_version = re.compile(r'(?:refs/tags/)?v?\.?\s*(.+)')
 
 
@@ -37,25 +39,14 @@ class GitRepo(Interface):
     def tags(self) -> OrderedDict:
         """
         From newest to oldest.
-        commit_hash -> tag
+        tag -> time
         """
         self._setup()
-        log = self._call('show-ref', '--tags')
-        result = [line.split() for line in log]
+        tags = self._call('tag')
+        result = [(tag, self._get_rev_time(tag)) for tag in tags]
         # show-ref returns tags in alphabet order, so we have to sort tags ourselves.
-        result.sort(key=lambda line: self.commits[line[0]], reverse=True)
+        result.sort(key=lambda line: line[1], reverse=True)
         return OrderedDict(result)
-
-    @cached_property
-    def commits(self) -> OrderedDict:
-        """
-        From newest to oldest.
-        commit_hash -> time
-        """
-        self._setup()
-        log = self._call('log', r'--format="%H %cI"')
-        result = (line.replace('"', '').split() for line in log)
-        return OrderedDict((rev, isoparse(time)) for rev, time in result)
 
     @cached_property
     def path(self):
@@ -84,13 +75,11 @@ class GitRepo(Interface):
     def get_releases(self, dep) -> tuple:
         releases = []
         # add tags to releases
-        # rev -- commit hash (2d6989d9bcb7fe250a7e55d8e367ac1e0c7d7f55)
-        # ref -- tag name (refs/tags/v0.1.0)
-        for rev, ref in reversed(self.tags.items()):
+        for tag, time in reversed(self.tags.items()):
             release = Release(
                 raw_name=dep.raw_name,
-                version=self._clean_tag(ref),
-                time=self.commits[rev],
+                version=self._clean_tag(tag),
+                time=time,
             )
             releases.append(release)
 
@@ -100,7 +89,7 @@ class GitRepo(Interface):
                 raw_name=dep.raw_name,
                 version=self.metaversion,
                 commit=self.link.rev,
-                time=self.commits[self.link.rev],
+                time=self._get_rev_time(self.link.rev),
             )
             releases.append(release)
         return tuple(releases)
@@ -115,7 +104,11 @@ class GitRepo(Interface):
         # sorry for that
         from ...converters import SetupPyConverter
 
-        root = SetupPyConverter().load(path)
+        try:
+            root = SetupPyConverter().load(path)
+        except BaseException:
+            logger.exception('cannot read setup.py')
+            return ()
         return tuple(root.dependencies)
 
     def get_nearest_version(self, ref: str):
@@ -126,7 +119,7 @@ class GitRepo(Interface):
             return self._clean_tag(result)
 
         # if this commit isn't released yet than return latest release
-        tag = next(iter(self.tags.values()))
+        tag = next(iter(self.tags))
         return self._clean_tag(tag)
 
     # PRIVATE METHODS
@@ -141,8 +134,16 @@ class GitRepo(Interface):
                 stderr=subprocess.PIPE,
             )
         if result.returncode != 0:
-            print(result.stderr)
+            logger.error(result.stderr)
         return tuple(result.stdout.decode().strip().split('\n'))
+
+    def _get_rev_time(self, rev: str):
+        data = self._call('show', '-s', r'--format="%cI"', rev)
+        return isoparse(data[-1].strip().strip('"'))
+
+    def _get_rev_hash(self, rev: str):
+        data = self._call('show', '-s', r'--format="%H"', rev)
+        return data[-1].strip().strip('"')
 
     @staticmethod
     def _clean_tag(tag):

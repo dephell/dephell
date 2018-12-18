@@ -20,10 +20,13 @@ class PatchedGitRepo(GitRepo):
         ('405ec5b9c6996bf4e5fba68a9bad76d17e146327', datetime(2018, 7, 25, 15, 41)),
     ])
     tags = OrderedDict([
-        ('e62f6e0968eb19a44198211b5398c5738db454c5', 'refs/tags/v1.11'),
-        ('f436c82637dafa3a9abbd65a3be77bf7ad431213', 'refs/tags/v.1.9'),
-        ('ec16588c27f7ea80d5ee3d5b19331ef9216e2530', 'refs/tags/1.7'),
+        ('refs/tags/v1.11', datetime(2018, 7, 28, 15, 41)),
+        ('refs/tags/v.1.9', datetime(2018, 7, 26, 15, 41)),
+        ('refs/tags/1.7', datetime(2018, 7, 25, 15, 41)),
     ])
+
+    def _get_rev_time(self, rev):
+        return self.commits[rev]
 
     def _setup(self):
         raise Exception('called _setup in PatchedGitRepo')

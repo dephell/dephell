@@ -25,7 +25,6 @@ def test_releases():
     releases = repo.get_releases(Dep)
     assert len(releases) >= 1
     assert len(releases) == len(repo.tags)
-    assert len(repo.commits) > len(repo.tags)
 
     assert releases[0].name == 'dephell'
     assert str(releases[0].version) == '0.1.0'
