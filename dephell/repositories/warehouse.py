@@ -50,10 +50,11 @@ class WareHouseRepo(Interface):
             dep.authors = tuple(dep.authors)
 
         if not dep.links:
-            dep.links = {k.lower(): v for k, v in data['project_urls'].items()}
-            if data['package_url'] not in dep.links.values():
+            if data['project_urls']:
+                dep.links = {k.lower(): v for k, v in data['project_urls'].items()}
+            if data['package_url'] and data['package_url'] not in dep.links.values():
                 dep.links['package'] = data['package_url']
-            if data['project_url'] not in dep.links.values():
+            if data['project_url'] and data['project_url'] not in dep.links.values():
                 dep.links['project'] = data['project_url']
 
         if not dep.classifiers:
