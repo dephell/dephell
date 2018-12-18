@@ -32,9 +32,7 @@ class PoetryLockConverter(BaseConverter):
         else:
             doc = tomlkit.document()
 
-        doc['package'] = tomlkit.aot()
-        for req in reqs:
-            doc['package'].append(self._format_req(req=req))
+        doc['package'] = [self._format_req(req=req) for req in reqs]
 
         doc['metadata'] = {
             # sha256 of tool.poetry section from pyproject.toml
