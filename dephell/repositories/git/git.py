@@ -7,13 +7,16 @@ from pathlib import Path
 
 # external
 from cached_property import cached_property
+from packaging.requirements import Requirement
 
 # app
 from ...config import config
 from ...models.git_release import GitRelease
 from ...models.release import Release
 from ...utils import chdir
+from ...cache import RequirementsCache
 from ..base import Interface
+from ..warehouse import WareHouseRepo
 
 
 try:
@@ -94,7 +97,13 @@ class GitRepo(Interface):
             releases.append(release)
         return tuple(releases)
 
-    async def get_dependencies(self, name: str, version: str) -> tuple:
+    async def get_dependencies(self, name: str, version) -> tuple:
+
+        cache = RequirementsCache('git_deps', name, str(version))
+        deps = cache.load()
+        if deps:
+            return deps
+
         self._setup()
         self._call('checkout', str(version))
         path = self.path / 'setup.py'
@@ -109,6 +118,8 @@ class GitRepo(Interface):
         except BaseException:
             logger.exception('cannot read setup.py')
             return ()
+
+        cache.dump(root=root)
         return tuple(root.dependencies)
 
     def get_nearest_version(self, ref: str):
