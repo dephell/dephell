@@ -9,6 +9,10 @@ from ..config import config
 loop = asyncio.get_event_loop()
 
 
+def get_key(release):
+    return '|'.join(sorted(map(str, release.dependencies)))
+
+
 @attr.s()
 class Groups:
     dep = attr.ib()
@@ -65,7 +69,7 @@ class Groups:
         keys = set()
         for release, response in zip(edges, responses):
             release.dependencies = response
-            keys.add('|'.join(sorted(map(str, release.dependencies))))
+            keys.add(get_key(release))
 
         if len(keys) == 1:
             response = responses[0]
@@ -94,14 +98,27 @@ class Groups:
                 missed.append(release)
                 continue
 
-            # if there is no gap -- continue
             if not missed:
+                left = release
                 continue
 
-            # fetch missed releases
-            tasks.append(asyncio.ensure_future(self._fetch_missed_deps(missed)))
+            right = release
+            if get_key(left) == get_key(right):
+                # fill missed deps by edge deps
+                for release in missed:
+                    release.dependencies = left.dependencies
+            else:
+                # fetch missed releases
+                tasks.append(
+                    asyncio.ensure_future(
+                        self._fetch_missed_deps(missed),
+                    ),
+                )
+            left = right
             missed = []
-        tasks.append(asyncio.ensure_future(self._fetch_missed_deps(missed)))
+
+        if missed:
+            tasks.append(asyncio.ensure_future(self._fetch_missed_deps(missed)))
         await asyncio.gather(*tasks)
 
     def _load_release_deps(self, release) -> None:
@@ -139,7 +156,7 @@ class Groups:
                 future = asyncio.ensure_future(self._fetch_releases_deps())
                 loop.run_until_complete(future)
 
-            key = '|'.join(sorted(map(str, release.dependencies)))
+            key = get_key(release)
             if prev_key is None:
                 prev_key = key
 
