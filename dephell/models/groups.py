@@ -25,31 +25,30 @@ class Groups:
         releases = sorted(releases, reverse=reverse)
         return releases
 
-    async def _fetch_releases_deps(self, releases=None):
-        if releases is None:
-            releases = self.releases
+    async def _fetch_all_deps(self, releases):
+        tasks = []
+        not_loaded_releases = []
+        tasks_count = 0
+        for release in releases:
+            if 'dependencies' in release.__dict__:
+                continue
+            task = asyncio.ensure_future(self.dep.repo.get_dependencies(
+                release.name,
+                release.version,
+            ))
+            tasks.append(task)
+            not_loaded_releases.append(release)
+            tasks_count += 1
+            if tasks_count >= self.chunk_size:
+                break
 
-        if len(releases) <= 4:
-            print('1' * 40)
-            tasks = []
-            not_loaded_releases = []
-            tasks_count = 0
-            for release in releases:
-                if 'dependencies' in release.__dict__:
-                    continue
-                task = asyncio.ensure_future(self.dep.repo.get_dependencies(
-                    release.name,
-                    release.version,
-                ))
-                tasks.append(task)
-                not_loaded_releases.append(release)
-                tasks_count += 1
-                if tasks_count >= self.chunk_size:
-                    break
+        responses = await asyncio.gather(*tasks)
+        for release, response in zip(not_loaded_releases, responses):
+            release.dependencies = response
 
-            responses = await asyncio.gather(*tasks)
-            for release, response in zip(not_loaded_releases, responses):
-                release.dependencies = response
+    async def _fetch_missed_deps(self, releases):
+        if len(releases) <= 3:
+            await self._fetch_all_deps(releases)
             return
 
         center = len(releases) // 2
@@ -74,8 +73,36 @@ class Groups:
                 release.dependencies = response
             return
 
-        await self._fetch_releases_deps(releases[1:center])
-        await self._fetch_releases_deps(releases[center:-1])
+        await asyncio.gather(
+            asyncio.ensure_future(self._fetch_missed_deps(releases[1:center])),
+            asyncio.ensure_future(self._fetch_missed_deps(releases[center:-1])),
+        )
+
+    async def _fetch_releases_deps(self, releases=None):
+        if releases is None:
+            releases = self.releases
+
+        if len(releases) <= 4:
+            await self._fetch_all_deps(releases)
+            return
+
+        tasks = []
+        missed = []
+        for release in releases:
+            # collect missed releases
+            if 'dependencies' not in release.__dict__:
+                missed.append(release)
+                continue
+
+            # if there is no gap -- continue
+            if not missed:
+                continue
+
+            # fetch missed releases
+            tasks.append(asyncio.ensure_future(self._fetch_missed_deps(missed)))
+            missed = []
+        tasks.append(asyncio.ensure_future(self._fetch_missed_deps(missed)))
+        await asyncio.gather(*tasks)
 
     def _load_release_deps(self, release) -> None:
         coroutine = self.dep.repo.get_dependencies(release.name, release.version)
