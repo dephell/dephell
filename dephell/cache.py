@@ -10,8 +10,12 @@ from .config import config
 
 
 class BaseCache:
+    ext = ''
+
     def __init__(self, *keys):
         self.path = Path(config['cache'], *keys)
+        if self.ext:
+            self.path = self.path.with_suffix(self.ext)
 
     def __str__(self):
         return str(self.path)
@@ -21,6 +25,8 @@ class BaseCache:
 
 
 class BinCache(BaseCache):
+    ext = '.bin'
+
     def load(self):
         if self.path.exists():
             with self.path.open('rb') as stream:
@@ -33,6 +39,8 @@ class BinCache(BaseCache):
 
 
 class TextCache(BaseCache):
+    ext = '.txt'
+
     def load(self):
         if self.path.exists():
             with self.path.open('r') as stream:
@@ -45,6 +53,8 @@ class TextCache(BaseCache):
 
 
 class JSONCache(BaseCache):
+    ext = '.json'
+
     def load(self):
         if self.path.exists():
             with self.path.open('r') as stream:
@@ -57,6 +67,7 @@ class JSONCache(BaseCache):
 
 
 class RequirementsCache(BaseCache):
+    ext = '.txt'
 
     @cached_property
     def converter(self):

@@ -13,5 +13,5 @@ DEFAULT = dict(
     nocolors=False,
 
     # other
-    cache='.dephell',
+    cache='.dephell_cache',
 )
