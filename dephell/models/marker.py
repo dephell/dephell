@@ -3,6 +3,8 @@ from typing import Union, Optional, Tuple
 # external
 from packaging import markers as packaging
 
+from .range_specifier import RangeSpecifier
+
 
 VARIABLES = dict(
     python_name=(
@@ -71,13 +73,13 @@ class Markers(packaging.Marker):
             return marker_name, marker_value
         return marker_name, None
 
-    def _get_variable(self, name: str, markers=None):
+    def _get_variable(self, name: str, markers=None) -> Optional[str]:
         if markers is None:
             markers = self._markers
 
         names = set()
         values = []
-        for marker in self._markers:
+        for marker in markers:
             if isinstance(marker, tuple):
                 lhs, op, rhs = marker
                 marker_name, marker_value = self._get_marker(lhs=lhs, rhs=rhs, name=name)
@@ -91,4 +93,11 @@ class Markers(packaging.Marker):
                 return ','.join(values)
             # if all markers is `or` and there is no any other vars
             if 'and' not in markers and len(names) == 1:
-                return ' || '.join(values)
+                if not any(type(m) is list for m in markers):
+                    return ' || '.join(values)
+
+    @property
+    def python_version(self) -> Optional[RangeSpecifier]:
+        value = self._get_variable('python_version')
+        if value is not None:
+            return RangeSpecifier(value)
