@@ -1,6 +1,6 @@
 # built-in
-from itertools import product
 from typing import Optional
+from ..utils import lazy_product
 
 
 class Mutator:
@@ -23,8 +23,8 @@ class Mutator:
     def get_mutations(self, deps):
         all_groups = []
         for dep in deps:
-            all_groups.append(tuple(group for group in dep.groups if not group.empty))
-        for groups in product(*all_groups):
+            all_groups.append(dep.groups)
+        for groups in lazy_product(*all_groups):
             yield groups
 
     @staticmethod
@@ -33,6 +33,9 @@ class Mutator:
         return tuple(snapshot)
 
     def check(self, groups):
+        for group in groups:
+            if group.empty:
+                return False
         return self._make_snapshot(groups) not in self._snapshots
 
     def remember(self, groups):
