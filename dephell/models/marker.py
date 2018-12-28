@@ -47,7 +47,14 @@ class Markers(packaging.Marker):
         if isinstance(markers, list):
             return markers
         if isinstance(markers, str):
-            return packaging._coerce_parse_result(packaging.MARKER.parseString(markers))
+            try:
+                return packaging._coerce_parse_result(packaging.MARKER.parseString(markers))
+            except packaging.ParseException as e:
+                err_str = "invalid marker: {0!r}, parse error at {1!r}".format(
+                    markers,
+                    markers[e.loc:e.loc + 8],
+                )
+                raise packaging.InvalidMarker(err_str)
         return markers._markers
 
     @staticmethod
@@ -73,7 +80,7 @@ class Markers(packaging.Marker):
         for marker in self._markers:
             if isinstance(marker, tuple):
                 lhs, op, rhs = marker
-                marker_name, marker_value = self._get_value(lhs=lhs, rhs=rhs, name=name)
+                marker_name, marker_value = self._get_marker(lhs=lhs, rhs=rhs, name=name)
                 names.add(marker_name)
                 if marker_value is not None:
                     values.append(op.value + marker_value)
