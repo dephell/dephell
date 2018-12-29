@@ -18,6 +18,21 @@ def test_specifier(op, val, expected):
     assert str(m.specifier) == expected
 
 
+@pytest.mark.parametrize('val, op, expected', [
+    ('1.3', '>=', '<=1.3'),
+    ('1.3', '>', '<1.3'),
+    ('1.3', '==', '==1.3'),
+    ('1.3', '===', '===1.3'),
+])
+def test_swap(op, val, expected):
+    m = VersionMarker(
+        lhs=Value(val),
+        op=Op(op),
+        rhs=Variable('python_version'),
+    )
+    assert str(m.specifier) == expected
+
+
 @pytest.mark.parametrize('left_op, left_val, right_op, right_val, result', [
     ('<', '1.2',    '<', '1.4',     '<1.2'),
     ('<=', '1.2',   '<', '1.4',     '<=1.2'),
