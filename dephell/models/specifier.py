@@ -2,6 +2,7 @@
 import operator
 
 # external
+from cached_property import cached_property
 from packaging import specifiers
 from packaging.version import LegacyVersion, parse
 
@@ -18,6 +19,29 @@ OPERATORS = {
 
     '<': operator.lt,
     '>': operator.gt,
+}
+
+OPERATORS_MERGE = {
+    # different
+    frozenset({'>', '<'}):      None,
+    frozenset({'>=', '<='}):    '==',
+
+    # equal
+    frozenset({'>', '=='}):     None,
+    frozenset({'<', '=='}):     None,
+    frozenset({'==', '=='}):    '==',
+    frozenset({'>=', '=='}):    '==',
+    frozenset({'<=', '=='}):    '==',
+
+    # greater than
+    frozenset({'>=', '>='}):    '>=',
+    frozenset({'>=', '>'}):     '>',
+    frozenset({'>', '>'}):      '>',
+
+    # less than
+    frozenset({'<=', '<='}):    '<=',
+    frozenset({'<=', '<'}):     '<',
+    frozenset({'<', '<'}):      '<',
 }
 
 
@@ -69,6 +93,10 @@ class Specifier:
     def operator(self):
         return OPERATORS.get(self._spec.operator)
 
+    @cached_property
+    def version(self):
+        return parse(self._spec.version)
+
     # magic methods
 
     def __contains__(self, release):
@@ -94,3 +122,39 @@ class Specifier:
             name=self.__class__.__name__,
             spec=str(self._spec),
         )
+
+    def __add__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        self_operator = self._spec.operator
+        other_operator = other._spec.operator
+        operators = frozenset({self_operator, other_operator})
+
+        # both versions are equal
+        if self.version == other.version:
+            operator = OPERATORS_MERGE[operators]
+            if operator is None:
+                return NotImplemented
+            return type(self)(operator + str(self.version))
+
+        # empty interval or closed interval
+        if self_operator in {'>', '>='} and other_operator in {'<', '<='}:
+            return NotImplemented
+        if other_operator in {'>', '>='} and self_operator in {'<', '<='}:
+            return NotImplemented
+
+        if self.version <= other.version:
+            left, right = self, other
+        else:
+            left, right = other, self
+        if '>' in left._spec.operator:
+            if '==' in right._spec.operator:
+                return right
+            return left
+        if '<' in right._spec.operator:
+            if '==' in left._spec.operator:
+                return left
+            return right
+
+        return NotImplemented

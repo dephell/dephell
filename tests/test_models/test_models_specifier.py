@@ -1,6 +1,8 @@
 # built-in
 from datetime import datetime
 
+import pytest
+
 # project
 from dephell.models.release import Release
 from dephell.models.specifier import Specifier
@@ -51,3 +53,55 @@ def test_time_compare():
     spec = Specifier('==1.2.3')
     spec.attach_time([release])
     assert release in spec
+
+
+@pytest.mark.parametrize('left, right, result', [
+    # right
+    ('<1.2',    '<1.4',     '<1.4'),
+    ('<1.2',    '<=1.4',    '<=1.4'),
+
+    # swap is not important
+    ('<1.4',    '<1.2',     '<1.4'),
+    ('<=1.4',   '<1.2',     '<=1.4'),
+
+    # left
+    ('>1.2',    '>1.4',     '>1.2'),
+    ('>=1.2',   '>1.4',     '>=1.2'),
+
+    # equal
+    ('==1.2',   '<1.4',     '==1.2'),
+    ('==1.2',   '<=1.4',    '==1.2'),
+    ('>=1.2',   '==1.4',    '==1.4'),
+    ('>1.2',    '==1.4',    '==1.4'),
+
+    # common version
+    ('==1.2',   '==1.2',    '==1.2'),
+    ('<=1.2',   '==1.2',    '==1.2'),
+    ('>=1.2',   '==1.2',    '==1.2'),
+    ('<=1.2',   '>=1.2',    '==1.2'),
+
+    # empty interval
+    ('<=1.2',   '>=1.4',    None),
+    ('<=1.2',   '>1.4',     None),
+    ('<1.2',    '>=1.4',    None),
+    ('==1.2',   '>=1.4',    None),
+    ('==1.2',   '>1.4',     None),
+    ('<=1.2',   '==1.4',    None),
+    ('<1.2',    '==1.4',    None),
+
+    # closed interval
+    ('>=1.2',   '<=1.4',    None),
+    ('>1.2',    '<1.4',     None),
+    ('>=1.2',   '<1.4',     None),
+    ('>1.2',    '<=1.4',    None),
+
+])
+def test_merge(left, right, result):
+    ls = Specifier(left)
+    rs = Specifier(right)
+    if result is None:
+        with pytest.raises(TypeError):
+            ls + rs
+    else:
+        merged = ls + rs
+        assert str(merged) == result
