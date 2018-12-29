@@ -42,7 +42,7 @@ ALIASES = {
     'platform.version': 'platform_version',
     'platform.machine': 'platform_machine',
     'platform.python_implementation': 'platform_python_implementation',
-    'python_implementation': 'python_implementation',
+    'python_implementation': 'platform_python_implementation',
 }
 
 
@@ -63,3 +63,42 @@ VERSION_VARIABLES = {
     'platform_release',     # '4.10.0-38-generic'
     'platform_version',     # '#42~16.04.1-Ubuntu SMP Tue Oct 10 16:32:20 UTC 2017'
 }
+
+
+KNOWN_VALUES = dict(
+    os_name=(
+        'posix',
+        'nt',
+        'java',
+    ),
+    sys_platform=(
+        'linux',
+        'win32',
+        'cygwin',
+        'darwin',
+        'freebsd',
+        'sunos',
+    ),
+    platform_system=(
+        'Windows',
+        'Linux',
+        'Java',
+    ),
+    platform_machine=(
+        'i386',
+        'aarch64',
+        'x86_64',
+    ),
+    platform_python_implementation=(
+        'CPython',
+        'IronPython',
+        'Jython',
+        'PyPy',
+    ),
+    implementation_name=(   # always lowercase
+        'cpython',
+        'ironpython',
+        'jython',
+        'pypy',
+    ),
+)
