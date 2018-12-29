@@ -152,12 +152,8 @@ class Specifier:
         else:
             left, right = other, self
         if '>' in left._spec.operator:
-            if '==' in right._spec.operator:
-                return right
-            return left
-        if '<' in right._spec.operator:
-            if '==' in left._spec.operator:
-                return left
             return right
+        if '<' in right._spec.operator:
+            return left
 
         return NotImplemented
