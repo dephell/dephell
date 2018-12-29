@@ -10,7 +10,7 @@ from packaging.version import LegacyVersion, parse
 from .release import Release
 
 
-OPERATORS = {
+OPERATIONS = {
     '==': operator.eq,
     '!=': operator.ne,
 
@@ -90,8 +90,12 @@ class Specifier:
         return False
 
     @property
-    def operator(self):
-        return OPERATORS.get(self._spec.operator)
+    def operator(self) -> str:
+        return self._spec.operator
+
+    @property
+    def operation(self):
+        return OPERATIONS.get(self._spec.operator)
 
     @cached_property
     def version(self):
@@ -107,9 +111,9 @@ class Specifier:
         # compare release by time
         if self.time is not None and release.time is not None:
             if '*' not in str(self._spec.version):
-                operator = self.operator
-                if operator is not None:
-                    return operator(release.time, self.time)
+                operation = self.operation
+                if operation is not None:
+                    return operation(release.time, self.time)
 
         # compare release by version
         return self._check_version(version=release.version)
@@ -127,9 +131,7 @@ class Specifier:
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        self_operator = self._spec.operator
-        other_operator = other._spec.operator
-        operators = frozenset({self_operator, other_operator})
+        operators = frozenset({self.operator, other.operator})
 
         # both versions are equal
         if self.version == other.version:
@@ -139,11 +141,12 @@ class Specifier:
             return type(self)(operator + str(self.version))
 
         # empty interval or closed interval
-        if self_operator in {'>', '>='} and other_operator in {'<', '<='}:
+        if self.operator in {'>', '>='} and other.operator in {'<', '<='}:
             return NotImplemented
-        if other_operator in {'>', '>='} and self_operator in {'<', '<='}:
+        if other.operator in {'>', '>='} and self.operator in {'<', '<='}:
             return NotImplemented
 
+        # open interval
         if self.version <= other.version:
             left, right = self, other
         else:
