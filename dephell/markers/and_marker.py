@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Set
 from .operation import Operation
 
 
@@ -10,7 +10,7 @@ class AndMarker(Operation):
         # braces is redundant for `and`
         return super().__str__()[1:-1]
 
-    def get_string(self, name: str) -> Optional[str]:
+    def _get_values(self, name: str) -> Optional[Set[str]]:
         values = set()
         for node in self.nodes:
             if isinstance(node, Operation):
@@ -20,5 +20,5 @@ class AndMarker(Operation):
             elif node.variable == name:
                 values.add(node.value)
         if values:
-            return self.sep.join(sorted(values))
+            return values
         return None

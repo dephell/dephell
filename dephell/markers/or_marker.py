@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Set
 from .operation import Operation
 
 
@@ -6,7 +6,7 @@ class OrMarker(Operation):
     op = 'or'
     sep = ' || '
 
-    def get_string(self, name: str) -> Optional[str]:
+    def _get_values(self, name: str) -> Optional[Set[str]]:
         values = set()
         for node in self.nodes:
             if isinstance(node, Operation):
@@ -20,5 +20,5 @@ class OrMarker(Operation):
             else:
                 return None
         if values:
-            return self.sep.join(sorted(values))
+            return values
         return None
