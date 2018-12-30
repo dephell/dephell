@@ -14,11 +14,11 @@ class AndMarker(Operation):
         values = set()
         for node in self.nodes:
             if isinstance(node, Operation):
-                value = node.get_string(name)
-                if value is not None:
-                    values.add(value)
+                subvalues = node._get_values(name)
+                if subvalues is not None:
+                    values.union(subvalues)
             elif node.variable == name:
-                values.add(node.value)
+                values.add((node.operator, node.value))
         if values:
             return values
         return None

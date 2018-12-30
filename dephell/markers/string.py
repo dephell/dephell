@@ -1,9 +1,22 @@
+from typing import Optional
+
 from packaging.markers import Value, Op
 
 from .base import BaseMarker
 
 
 class StringMarker(BaseMarker):
+
+    def get_string(self, name: str) -> Optional[str]:
+        if name != self.variable:
+            return None
+        if self.operator != '==':
+            return None
+        return self.value
+
+    def get_version(self, name: str) -> Optional[str]:
+        return None
+
     def __str__(self):
         if isinstance(self.lhs, Value):
             template = '"{lhs}" {op} {rhs}'

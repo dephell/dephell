@@ -12,8 +12,7 @@ from .version import VersionMarker
 from .constants import STRING_VARIABLES, VERSION_VARIABLES
 
 
-# https://github.com/pypa/packaging/blob/master/packaging/markers.py
-class Markers(packaging.Marker):
+class Markers:
     def __init__(self, markers: Union[list, str, 'Markers', packaging.Marker]):
         markers = self._parse(markers)
         if isinstance(markers, list):
@@ -27,6 +26,7 @@ class Markers(packaging.Marker):
             return markers
 
         if isinstance(markers, str):
+            # https://github.com/pypa/packaging/blob/master/packaging/markers.py
             try:
                 return packaging._coerce_parse_result(packaging.MARKER.parseString(markers))
             except packaging.ParseException as e:
@@ -77,16 +77,28 @@ class Markers(packaging.Marker):
 
             raise LookupError('invalid node type')
 
-        groups = [AndMarker(*group) for group in groups]
-        if len(groups) == 1:
-            return groups[0]
-        return OrMarker(*groups)
+        new_groups = []
+        for group in groups:
+            if len(group) == 1:
+                new_groups.append(group[0])
+            elif len(group) > 1:
+                new_groups.append(AndMarker(*group))
+
+        if len(new_groups) == 1:
+            return new_groups[0]
+        return OrMarker(*new_groups)
 
     def get_string(self, name: str) -> Optional[str]:
         return self._marker.get_string(name=name)
 
+    def get_version(self, name: str) -> Optional[str]:
+        return self._marker.get_version(name=name)
+
     @property
     def python_version(self) -> Optional[RangeSpecifier]:
-        value = self.get_string('python_version')
+        value = self.get_version('python_version')
         if value is not None:
             return RangeSpecifier(value)
+
+    def __repr__(self):
+        return '{}({!r})'.format(type(self).__name__, self._marker)

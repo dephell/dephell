@@ -10,13 +10,13 @@ class OrMarker(Operation):
         values = set()
         for node in self.nodes:
             if isinstance(node, Operation):
-                value = node.get_string(name)
-                if value is None:
+                subvalues = node._get_values(name)
+                if subvalues is None:
                     return None
                 else:
-                    values.add(value)
+                    values.union(subvalues)
             elif node.variable == name:
-                values.add(node.value)
+                values.add((node.operator, node.value))
             else:
                 return None
         if values:

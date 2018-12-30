@@ -23,15 +23,23 @@ class Operation:
         values = self._get_values(name=name)
         if values is None:
             return None
-        if len(set(values)) == 1:
-            return next(iter(values))
+
+        ops, vals = list(zip(*values))
+        if len(set(vals)) != 1:
+            return None
+
+        op, val = next(iter(values))
+        ops = set(ops)
+        if ops == {'=='}:
+            return val
+        # TODO: support `in` operations
         return None
 
     def get_version(self, name: str) -> Optional[str]:
         values = self._get_values(name=name)
         if values is None:
             return None
-        return self.sep.join(sorted(values))
+        return self.sep.join(sorted(op + val for op, val in values))
 
     def __str__(self):
         sep = ' ' + self.op + ' '

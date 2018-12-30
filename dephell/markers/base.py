@@ -28,6 +28,10 @@ class BaseMarker:
             return self.lhs.value
         return self.rhs.value
 
+    @property
+    def operator(self) -> str:
+        return self.op.value
+
     @cached_property
     def value(self) -> str:
         if isinstance(self.rhs, Value):
