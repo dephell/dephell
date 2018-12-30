@@ -94,6 +94,28 @@ class Markers:
     def get_version(self, name: str) -> Optional[str]:
         return self._marker.get_version(name=name)
 
+    def add(self, *, name, value, operator='=='):
+        if operator.value in {'in', 'not in'}:
+            msg = 'Unsupported operation: {}'
+            raise ValueError(msg.format(operator.value))
+
+        if name in STRING_VARIABLES:
+            marker_cls = StringMarker
+        elif name in VERSION_VARIABLES:
+            marker_cls = VersionMarker
+        marker = marker_cls(
+            lhs=packaging.Variable(name),
+            op=packaging.Op(operator),
+            rhs=packaging.Value(value),
+        )
+
+        if isinstance(self._marker, AndMarker):
+            self._marker.nodes.append(marker)
+            return marker
+
+        self._marker = AndMarker(marker, self._marker)
+        return marker
+
     @property
     def python_version(self) -> Optional[RangeSpecifier]:
         value = self.get_version('python_version')
