@@ -50,7 +50,7 @@ class Dependency:
     # constructors
 
     @classmethod
-    def from_requirement(cls, source, req, url=None, editable=False):
+    def from_requirement(cls, source, req, url=None, editable=False) -> 'Dependency':
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
         link = parse_link(url or req.url)
         # make constraint
@@ -75,7 +75,7 @@ class Dependency:
     @classmethod
     def from_params(cls, *, raw_name: str, constraint,
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
-                    repo=None, marker=None, **kwargs):
+                    repo=None, marker=None, **kwargs) -> 'Dependency':
         # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
@@ -106,7 +106,7 @@ class Dependency:
         return canonicalize_name(self.raw_name)
 
     @cached_property
-    def groups(self) -> tuple:
+    def groups(self) -> Groups:
         return Groups(dep=self)
 
     @cached_property
@@ -129,11 +129,33 @@ class Dependency:
         return tuple(deps)
 
     @property
-    def locked(self):
+    def locked(self) -> bool:
         return 'group' in self.__dict__
 
     @property
-    def compat(self):
+    def python_compat(self) -> bool:
+        if self.marker is None:
+            return True
+        needed = self.marker.python_version
+        if needed is None:
+            return True
+
+        if self.locked:
+            required = self.group.best_release.python
+            if required is None:
+                return True
+            return (needed + required).python_compat
+
+        for group in self.groups:
+            required = group.best_release.python
+            if required is None:
+                return True
+            if (needed + required).python_compat:
+                return True
+        return False
+
+    @property
+    def compat(self) -> bool:
         # if group has already choosed
         if self.locked:
             return not self.group.empty
@@ -151,12 +173,12 @@ class Dependency:
 
     # methods
 
-    def unlock(self):
+    def unlock(self) -> None:
         del self.__dict__['group']
         # if 'dependencies' in self.__dict__:
         #     del self.__dict__['dependencies']
 
-    def merge(self, dep):
+    def merge(self, dep: 'Dependency') -> None:
         # some checks when we merge two git based dep
         if isinstance(self.link, GitRepo) and isinstance(dep.link, GitRepo):
             if self.link.rev and dep.link.rev and self.link.rev != dep.link.rev:
@@ -183,12 +205,12 @@ class Dependency:
         self.constraint.merge(dep.constraint)
         self.groups.actualize()
 
-    def unapply(self, name: str):
+    def unapply(self, name: str) -> None:
         self.constraint.unapply(name)
         if self.locked:
             self.unlock()
 
-    def copy(self):
+    def copy(self) -> 'Dependency':
         obj = deepcopy(self)
         obj.constraint = self.constraint.copy()
         if obj.locked:

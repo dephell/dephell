@@ -3,7 +3,7 @@ from packaging.specifiers import InvalidSpecifier
 from packaging.version import LegacyVersion, parse
 
 # app
-from ..constants import JoinTypes
+from ..constants import JoinTypes, PYTHONS
 from .git_specifier import GitSpecifier
 from .specifier import Specifier
 
@@ -71,6 +71,13 @@ class RangeSpecifier:
                     ok = True
         return ok
 
+    @property
+    def python_compat(self) -> bool:
+        for version in PYTHONS:
+            if version in self:
+                return True
+        return False
+
     def __add__(self, other):
         new = type(self)()
         new._specs = self._specs.copy()
@@ -97,7 +104,7 @@ class RangeSpecifier:
         if isinstance(other, GitSpecifier):
             self._specs.add(other)
             return True
-        if isinstance(other, self.__class__):
+        if isinstance(other, type(self)):
             self._specs.update(other._specs)
             return True
         return False
