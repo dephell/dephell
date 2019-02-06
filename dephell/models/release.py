@@ -7,6 +7,8 @@ from cached_property import cached_property
 from packaging.utils import canonicalize_name
 from packaging.version import parse
 
+from .range_specifier import RangeSpecifier
+
 
 @attr.s(hash=False, cmp=True)
 class Release:
@@ -14,18 +16,22 @@ class Release:
 
     raw_name = attr.ib(cmp=False)
     version = attr.ib(converter=parse, cmp=True)
-    time = attr.ib(repr=False, hash=False)                              # upload_time
-    python_constraint = attr.ib(default=None, repr=False, cmp=False)    # requires_python
-    hashes = attr.ib(factory=tuple, repr=False, cmp=False)              # digests/sha256
+    time = attr.ib(repr=False, hash=False)                      # upload_time
+    python = attr.ib(default=None, repr=False, cmp=False)       # requires_python
+    hashes = attr.ib(factory=tuple, repr=False, cmp=False)      # digests/sha256
 
     @classmethod
     def from_response(cls, name, version, info):
         latest = info[-1]
+        python = latest['requires_python']
+        if python is not None:
+            python = RangeSpecifier(python)
+
         return cls(
             raw_name=name,
             version=version,
             time=datetime.strptime(latest['upload_time'], '%Y-%m-%dT%H:%M:%S'),
-            # python_constraint=latest['requires_python'],
+            python=python,
             hashes=tuple(rel['digests']['sha256'] for rel in info),
         )
 
