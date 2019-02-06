@@ -2,6 +2,7 @@
 import operator
 
 # external
+from cached_property import cached_property
 from packaging import specifiers
 from packaging.version import LegacyVersion, parse
 
@@ -9,7 +10,7 @@ from packaging.version import LegacyVersion, parse
 from .release import Release
 
 
-OPERATORS = {
+OPERATIONS = {
     '==': operator.eq,
     '!=': operator.ne,
 
@@ -18,6 +19,29 @@ OPERATORS = {
 
     '<': operator.lt,
     '>': operator.gt,
+}
+
+OPERATORS_MERGE = {
+    # different
+    frozenset({'>', '<'}):      None,
+    frozenset({'>=', '<='}):    '==',
+
+    # equal
+    frozenset({'>', '=='}):     None,
+    frozenset({'<', '=='}):     None,
+    frozenset({'==', '=='}):    '==',
+    frozenset({'>=', '=='}):    '==',
+    frozenset({'<=', '=='}):    '==',
+
+    # greater than
+    frozenset({'>=', '>='}):    '>=',
+    frozenset({'>=', '>'}):     '>',
+    frozenset({'>', '>'}):      '>',
+
+    # less than
+    frozenset({'<=', '<='}):    '<=',
+    frozenset({'<=', '<'}):     '<',
+    frozenset({'<', '<'}):      '<',
 }
 
 
@@ -66,8 +90,16 @@ class Specifier:
         return False
 
     @property
-    def operator(self):
-        return OPERATORS.get(self._spec.operator)
+    def operator(self) -> str:
+        return self._spec.operator
+
+    @property
+    def operation(self):
+        return OPERATIONS.get(self._spec.operator)
+
+    @cached_property
+    def version(self):
+        return parse(self._spec.version)
 
     # magic methods
 
@@ -79,9 +111,9 @@ class Specifier:
         # compare release by time
         if self.time is not None and release.time is not None:
             if '*' not in str(self._spec.version):
-                operator = self.operator
-                if operator is not None:
-                    return operator(release.time, self.time)
+                operation = self.operation
+                if operation is not None:
+                    return operation(release.time, self.time)
 
         # compare release by version
         return self._check_version(version=release.version)
@@ -94,3 +126,34 @@ class Specifier:
             name=self.__class__.__name__,
             spec=str(self._spec),
         )
+
+    def __add__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+
+        operators = frozenset({self.operator, other.operator})
+
+        # both versions are equal
+        if self.version == other.version:
+            operator = OPERATORS_MERGE[operators]
+            if operator is None:
+                return NotImplemented
+            return type(self)(operator + str(self.version))
+
+        # empty interval or closed interval
+        if self.operator in {'>', '>='} and other.operator in {'<', '<='}:
+            return NotImplemented
+        if other.operator in {'>', '>='} and self.operator in {'<', '<='}:
+            return NotImplemented
+
+        # open interval
+        if self.version <= other.version:
+            left, right = self, other
+        else:
+            left, right = other, self
+        if '>' in left._spec.operator:
+            return right
+        if '<' in right._spec.operator:
+            return left
+
+        return NotImplemented
