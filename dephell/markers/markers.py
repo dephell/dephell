@@ -94,10 +94,10 @@ class Markers:
     def get_version(self, name: str) -> Optional[str]:
         return self._marker.get_version(name=name)
 
-    def add(self, *, name, value, operator='=='):
-        if operator.value in {'in', 'not in'}:
+    def add(self, *, name: str, value, operator: str = '=='):
+        if operator in {'in', 'not in'}:
             msg = 'Unsupported operation: {}'
-            raise ValueError(msg.format(operator.value))
+            raise ValueError(msg.format(operator))
 
         if name in STRING_VARIABLES:
             marker_cls = StringMarker

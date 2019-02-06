@@ -42,3 +42,14 @@ def test_python_version():
     assert '2.5' in v
     assert '2.3' not in v
     assert '3.4' not in v
+
+
+def test_add_python_version():
+    m = Markers('python_version >= "2.4"')
+    assert '3.2' in m.python_version
+    m.add(name='python_version', operator='<=', value='2.7')
+    v = m.python_version
+    assert '2.4' in v
+    assert '2.5' in v
+    assert '2.3' not in v
+    assert '3.4' not in v
