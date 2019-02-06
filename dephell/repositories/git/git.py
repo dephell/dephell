@@ -7,7 +7,6 @@ from pathlib import Path
 
 # external
 from cached_property import cached_property
-from packaging.requirements import Requirement
 
 # app
 from ...config import config
@@ -16,7 +15,6 @@ from ...models.release import Release
 from ...utils import chdir
 from ...cache import RequirementsCache
 from ..base import Interface
-from ..warehouse import WareHouseRepo
 
 
 try:

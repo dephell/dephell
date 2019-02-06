@@ -111,8 +111,13 @@ class Dependency:
 
     @property
     def dependencies(self) -> tuple:
-        constructor = self.__class__.from_requirement
-        return tuple(constructor(self, req) for req in self.group.dependencies)
+        cls = type(self)
+        deps = []
+        for dep in self.group.dependencies:
+            if not isinstance(dep, cls):
+                dep = cls.from_requirement(self, dep)
+            deps.append(dep)
+        return tuple(deps)
 
     @property
     def locked(self):
