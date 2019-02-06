@@ -53,3 +53,26 @@ def test_add_python_version():
     assert '2.5' in v
     assert '2.3' not in v
     assert '3.4' not in v
+
+
+@pytest.mark.parametrize('given, expected', [
+    (
+        'python_version >= "2.4" and python_version <= "2.7"',
+        'python_version>=2.4 and python_version<=2.7',
+    ),
+    (
+        '(python_version >= "2.4" and python_version <= "2.7")',
+        'python_version>=2.4 and python_version<=2.7',
+    ),
+    (
+        '(python_version >= "2.4" or python_version <= "2.7") or os_name == "linux"',
+        'python_version>=2.4 or python_version<=2.7 or os_name == "linux"',
+    ),
+    (
+        '(python_version >= "2.4" and python_version <= "2.7") or os_name == "linux"',
+        'python_version>=2.4 and python_version<=2.7 or os_name == "linux"',
+    ),
+])
+def test_str(given, expected):
+    m = Markers(given)
+    assert str(m) == expected

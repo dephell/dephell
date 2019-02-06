@@ -124,3 +124,6 @@ class Markers:
 
     def __repr__(self):
         return '{}({!r})'.format(type(self).__name__, self._marker)
+
+    def __str__(self):
+        return str(self._marker).strip('()')
