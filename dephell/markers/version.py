@@ -34,7 +34,7 @@ class VersionMarker(BaseMarker):
         return Specifier(self.op.value + self.value)
 
     def __str__(self):
-        return '{lhs}{op}{rhs}'.format(
+        return '{lhs} {op} "{rhs}"'.format(
             lhs=self.lhs.value,
             op=self.op.value,
             rhs=self.rhs.value,

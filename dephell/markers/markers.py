@@ -60,7 +60,7 @@ class Markers:
                         raise ValueError(msg.format(var, op.value))
                     marker_cls = VersionMarker
                 else:
-                    raise LookupError('unknown marker: {}'.fromat(var))
+                    raise LookupError('unknown marker: {}'.format(var))
                 groups[-1].append(marker_cls(lhs=lhs, op=op, rhs=rhs))
                 continue
 

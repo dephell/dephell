@@ -53,6 +53,7 @@ STRING_VARIABLES = {
     'sys_platform',         # 'linux'
     'os_name',              # 'posix'
     'platform_machine',     # 'x86_64'
+    'extra',
 }
 
 

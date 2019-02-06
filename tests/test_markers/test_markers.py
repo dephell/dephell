@@ -58,19 +58,19 @@ def test_add_python_version():
 @pytest.mark.parametrize('given, expected', [
     (
         'python_version >= "2.4" and python_version <= "2.7"',
-        'python_version>=2.4 and python_version<=2.7',
+        'python_version >= "2.4" and python_version <= "2.7"',
     ),
     (
         '(python_version >= "2.4" and python_version <= "2.7")',
-        'python_version>=2.4 and python_version<=2.7',
+        'python_version >= "2.4" and python_version <= "2.7"',
     ),
     (
         '(python_version >= "2.4" or python_version <= "2.7") or os_name == "linux"',
-        'python_version>=2.4 or python_version<=2.7 or os_name == "linux"',
+        'python_version >= "2.4" or python_version <= "2.7" or os_name == "linux"',
     ),
     (
-        '(python_version >= "2.4" and python_version <= "2.7") or os_name == "linux"',
-        'python_version>=2.4 and python_version<=2.7 or os_name == "linux"',
+        '(python_version>="2.4" and python_version <= "2.7") or os_name == "linux"',
+        'python_version >= "2.4" and python_version <= "2.7" or os_name == "linux"',
     ),
 ])
 def test_str(given, expected):

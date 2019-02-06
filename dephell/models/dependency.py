@@ -16,6 +16,7 @@ from ..repositories import GitRepo, get_repo
 from .constraint import Constraint
 from .git_specifier import GitSpecifier
 from .groups import Groups
+from ..markers import Markers
 
 
 loop = asyncio.get_event_loop()
@@ -56,20 +57,25 @@ class Dependency:
         constraint = Constraint(source, req.specifier)
         if isinstance(link, VCSLink) and link.rev:
             constraint._specs[source.name] = GitSpecifier()
+        if req.marker is not None:
+            marker = Markers(req.marker)
+        else:
+            marker = None
+
         return cls(
             raw_name=req.name,
             constraint=constraint,
             repo=get_repo(link),
             link=link,
             extras=req.extras,
-            marker=req.marker,
+            marker=marker,
             editable=editable,
         )
 
     @classmethod
     def from_params(cls, *, raw_name: str, constraint,
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
-                    repo=None, **kwargs):
+                    repo=None, marker=None, **kwargs):
         # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
@@ -82,11 +88,14 @@ class Dependency:
         # make repo
         if repo is None:
             repo = get_repo(link)
+        if marker is not None:
+            marker = Markers(marker)
         return cls(
             link=link,
             repo=repo,
             raw_name=raw_name,
             constraint=constraint,
+            marker=marker,
             **kwargs,
         )
 
