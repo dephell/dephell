@@ -77,7 +77,7 @@ class RangeSpecifier:
 
     def to_marker(self, name: str, *, wrap: bool = False) -> str:
         sep = ' and ' if self.join_type == JoinTypes.AND else ' or '
-        marker = sep.join([spec.to_marker(name, wrap=True) for spec in self._specs])
+        marker = sep.join([spec.to_marker(name, wrap=True) for spec in sorted(self._specs)])
         if len(self._specs) == 1:
             wrap = False
         if wrap:
@@ -135,3 +135,8 @@ class RangeSpecifier:
             name=self.__class__.__name__,
             spec=str(self),
         )
+
+    def __lt__(self, other):
+        if isinstance(other, Specifier):
+            return False
+        return str(self) < str(other)

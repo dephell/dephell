@@ -162,3 +162,12 @@ class Specifier:
             return left
 
         return NotImplemented
+
+    def __lt__(self, other):
+        return self.version < other.version
+
+    def __eq__(self, other):
+        return self.version == other.version and self.operator == other.operator
+
+    def __hash__(self):
+        return hash(self._spec)
