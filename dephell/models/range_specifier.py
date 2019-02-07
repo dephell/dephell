@@ -11,14 +11,18 @@ from .specifier import Specifier
 class RangeSpecifier:
 
     def __init__(self, spec=None):
-        if spec is not None:
-            subspecs = str(spec).split('||')
-            if len(subspecs) > 1:
-                self._specs = {type(self)(subspec) for subspec in subspecs}
-                self.join_type = JoinTypes.OR
-            else:
-                self._specs = self._parse(spec)
-                self.join_type = JoinTypes.AND
+        if spec is None:
+            return
+
+        subspecs = str(spec).split('||')
+        if len(subspecs) > 1:
+            self._specs = {type(self)(subspec) for subspec in subspecs}
+            self.join_type = JoinTypes.OR
+            return
+
+        self._specs = self._parse(spec)
+        self.join_type = JoinTypes.AND
+        return
 
     @staticmethod
     def _parse(spec) -> set:
@@ -71,9 +75,14 @@ class RangeSpecifier:
                     ok = True
         return ok
 
-    def to_marker(self, name: str) -> str:
+    def to_marker(self, name: str, *, wrap: bool = False) -> str:
         sep = ' and ' if self.join_type == JoinTypes.AND else ' or '
-        return '(' + sep.join([spec.to_marker(name) for spec in self._specs]) + ')'
+        marker = sep.join([spec.to_marker(name, wrap=True) for spec in self._specs])
+        if len(self._specs) == 1:
+            wrap = False
+        if wrap:
+            marker = '(' + marker + ')'
+        return marker
 
     @property
     def python_compat(self) -> bool:

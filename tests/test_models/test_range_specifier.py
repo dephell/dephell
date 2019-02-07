@@ -168,3 +168,12 @@ def test_tilda(specv, version, ok):
 def test_or(version, ok):
     spec = RangeSpecifier('~2.7 || ^3.2')
     assert (version in spec) is ok
+
+
+@pytest.mark.parametrize('spec, marker', [
+    ('>=2.7',           'm >= "2.7"'),
+    ('>=2.7,<3.4',      'm >= "2.7" and m < "3.4"'),
+    ('>=2.7 || >=3.4',  'm >= "2.7" or m >= "3.4"'),
+])
+def test_to_marker(spec, marker):
+    assert RangeSpecifier(spec).to_marker('m') == marker
