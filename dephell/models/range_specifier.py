@@ -71,6 +71,10 @@ class RangeSpecifier:
                     ok = True
         return ok
 
+    def to_marker(self, name: str) -> str:
+        sep = ' and ' if self.join_type == JoinTypes.AND else ' or '
+        return '(' + sep.join([spec.to_marker(name) for spec in self._specs]) + ')'
+
     @property
     def python_compat(self) -> bool:
         for version in PYTHONS:

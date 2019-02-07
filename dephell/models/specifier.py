@@ -86,6 +86,9 @@ class Specifier:
         # lovely case, isn't it?
         return False
 
+    def to_marker(self, name: str) -> str:
+        return name + str(self)
+
     @property
     def operator(self) -> str:
         return self._spec.operator
