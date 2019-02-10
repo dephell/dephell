@@ -1,49 +1,32 @@
-
-{% if conflict %}
-    <div>
-        {{ conflict.name }}{{ conflict.constraint }}
-    </div>
-
-    <div>
-        <ul>
-            {% for name, spec in conflict.constraint.specs %}
-                <li>
-                    {{ spec }} goes from {{ graph.get(name).group }}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
-
 <div>
-    Locked nodes:
-    <ul>
-        {% for dep in graph %}
-            {% if dep.locked %}
-                <li>{{ dep.group }}</li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+  Locked nodes:
+  <ul>
+    {% for dep in graph %}
+      {% if dep.locked %}
+        <li>{{ dep.group }}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
 
-    Nodes with constraints:
-    <ul>
-        {% for dep in graph %}
-            {% if dep.constraint.sources %}
-                <li>{{ dep.name }}{{ dep.constraint }}</li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+  Nodes with constraints:
+  <ul>
+    {% for dep in graph %}
+      {% if dep.constraint.sources %}
+        <li>{{ dep.name }}{{ dep.constraint }}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
 
-    Free nodes:
-    <ul>
-        {% for dep in graph %}
-            {% if not dep.constraint.sources %}
-                <li>{{ dep.name }}</li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+  Free nodes:
+  <ul>
+    {% for dep in graph %}
+      {% if not dep.constraint.sources %}
+        <li>{{ dep.name }}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
 </div>
 
 <div>
-    Tried {{ mutator.mutations }} mutations.
+  Tried {{ mutator.mutations }} mutations.
 </div>

@@ -72,6 +72,10 @@ class RootDependency:
     def groups(self) -> Tuple[Group]:
         return (self.group, )
 
+    @property
+    def python_compat(self):
+        return True
+
     def attach_dependencies(self, dependencies):
         self.dependencies.extend(dependencies)
 

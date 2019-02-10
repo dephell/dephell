@@ -147,6 +147,8 @@ class Dependency:
             return (needed + required).python_compat
 
         for group in self.groups:
+            if group.empty:
+                continue
             required = group.best_release.python
             if required is None:
                 return True
