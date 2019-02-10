@@ -84,6 +84,12 @@ class RangeSpecifier:
             marker = '(' + marker + ')'
         return marker
 
+    def copy(self) -> 'RangeSpecifier':
+        new = type(self)()
+        new._specs = self._specs.copy()
+        new.join_type = self.join_type
+        return new
+
     @property
     def python_compat(self) -> bool:
         for version in PYTHONS:
@@ -92,16 +98,14 @@ class RangeSpecifier:
         return False
 
     def __add__(self, other):
-        new = type(self)()
-        new._specs = self._specs.copy()
+        new = self.copy()
         attached = new._attach(other)
         if attached:
             return new
         return NotImplemented
 
     def __radd__(self, other):
-        new = type(self)()
-        new._specs = self._specs.copy()
+        new = self.copy()
         attached = new._attach(other)
         if attached:
             return new
@@ -113,14 +117,35 @@ class RangeSpecifier:
             return self
         return NotImplemented
 
-    def _attach(self, other):
+    def _attach(self, other) -> bool:
         if isinstance(other, GitSpecifier):
             self._specs.add(other)
             return True
-        if isinstance(other, type(self)):
+        if not isinstance(other, type(self)):
+            return False
+
+        # and + and
+        if self.join_type == other.join_type == JoinTypes.AND:
             self._specs.update(other._specs)
             return True
-        return False
+
+        # and + or
+        if self.join_type == JoinTypes.AND:
+            self._specs.add(other)
+            return True
+
+        # or + and
+        if other.join_type == JoinTypes.AND:
+            new = self.copy()
+            self.join_type = JoinTypes.AND
+            self._specs = other._specs + {new}
+            return True
+
+        # or + or
+        new = type(self)()
+        self.join_type = JoinTypes.AND
+        self._specs = {new, other}
+        return True
 
     def __contains__(self, release) -> bool:
         rule = all if self.join_type == JoinTypes.AND else any
