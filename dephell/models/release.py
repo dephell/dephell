@@ -15,7 +15,7 @@ class Release:
     dependencies = None
 
     raw_name = attr.ib(cmp=False)
-    version = attr.ib(converter=parse, cmp=True)
+    version = attr.ib(converter=parse, cmp=True)  # typing: ignore
     time = attr.ib(repr=False, hash=False)                      # upload_time
     python = attr.ib(default=None, repr=False, cmp=False)       # requires_python
     hashes = attr.ib(factory=tuple, repr=False, cmp=False)      # digests/sha256
