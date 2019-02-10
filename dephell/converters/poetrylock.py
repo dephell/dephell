@@ -2,7 +2,7 @@
 import tomlkit
 
 # app
-from ..models import Constraint, Dependency, RootDependency
+from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
 from .base import BaseConverter
 from ..links import DirLink
 
@@ -59,11 +59,19 @@ class PoetryLockConverter(BaseConverter):
                 if 'reference' in content['source']:
                     url += '@' + content['source']['reference']
 
+        marker = content.get('marker', None)
+        if content.get('python-versions', '*') != '*':
+            python = RangeSpecifier(content['python-versions']).to_marker('python_version')
+            if marker is None:
+                marker = python
+            else:
+                marker = '({}) and {}'.format(marker, python)
+
         return Dependency.from_params(
             raw_name=content['name'],
             description=content['description'],
             constraint=Constraint(root, '==' + content['version']),
-            marker=content.get('marker', None),
+            marker=marker,
             url=url,
             editable=False,
         )

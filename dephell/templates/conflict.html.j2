@@ -1,0 +1,13 @@
+<div>
+  {{ conflict.name }}{{ conflict.constraint }}
+</div>
+
+<div>
+  <ul>
+    {% for name, spec in conflict.constraint.specs %}
+      <li>
+        {{ spec }} goes from {{ graph.get(name).group }}
+      </li>
+    {% endfor %}
+  </ul>
+</div>

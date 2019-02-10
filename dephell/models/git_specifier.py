@@ -1,10 +1,8 @@
-# app
-from .git_release import GitRelease
-
 
 class GitSpecifier:
     def __contains__(self, release):
-        return isinstance(release, GitRelease)
+        # check that this is GitRelease without imports
+        return hasattr(release, 'commit')
 
     def __iadd__(self, other):
         if hasattr(other, '_attach'):

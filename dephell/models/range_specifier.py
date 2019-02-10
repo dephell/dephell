@@ -3,7 +3,7 @@ from packaging.specifiers import InvalidSpecifier
 from packaging.version import LegacyVersion, parse
 
 # app
-from ..constants import JoinTypes
+from ..constants import JoinTypes, PYTHONS
 from .git_specifier import GitSpecifier
 from .specifier import Specifier
 
@@ -11,14 +11,18 @@ from .specifier import Specifier
 class RangeSpecifier:
 
     def __init__(self, spec=None):
-        if spec is not None:
-            subspecs = str(spec).split('||')
-            if len(subspecs) > 1:
-                self._specs = {type(self)(subspec) for subspec in subspecs}
-                self.join_type = JoinTypes.OR
-            else:
-                self._specs = self._parse(spec)
-                self.join_type = JoinTypes.AND
+        if spec is None:
+            return
+
+        subspecs = str(spec).split('||')
+        if len(subspecs) > 1:
+            self._specs = {type(self)(subspec) for subspec in subspecs}
+            self.join_type = JoinTypes.OR
+            return
+
+        self._specs = self._parse(spec)
+        self.join_type = JoinTypes.AND
+        return
 
     @staticmethod
     def _parse(spec) -> set:
@@ -71,17 +75,37 @@ class RangeSpecifier:
                     ok = True
         return ok
 
-    def __add__(self, other):
+    def to_marker(self, name: str, *, wrap: bool = False) -> str:
+        sep = ' and ' if self.join_type == JoinTypes.AND else ' or '
+        marker = sep.join([spec.to_marker(name, wrap=True) for spec in sorted(self._specs)])
+        if len(self._specs) == 1:
+            wrap = False
+        if wrap:
+            marker = '(' + marker + ')'
+        return marker
+
+    def copy(self) -> 'RangeSpecifier':
         new = type(self)()
         new._specs = self._specs.copy()
+        new.join_type = self.join_type
+        return new
+
+    @property
+    def python_compat(self) -> bool:
+        for version in PYTHONS:
+            if version in self:
+                return True
+        return False
+
+    def __add__(self, other):
+        new = self.copy()
         attached = new._attach(other)
         if attached:
             return new
         return NotImplemented
 
     def __radd__(self, other):
-        new = type(self)()
-        new._specs = self._specs.copy()
+        new = self.copy()
         attached = new._attach(other)
         if attached:
             return new
@@ -93,14 +117,35 @@ class RangeSpecifier:
             return self
         return NotImplemented
 
-    def _attach(self, other):
+    def _attach(self, other) -> bool:
         if isinstance(other, GitSpecifier):
             self._specs.add(other)
             return True
-        if isinstance(other, self.__class__):
+        if not isinstance(other, type(self)):
+            return False
+
+        # and + and
+        if self.join_type == other.join_type == JoinTypes.AND:
             self._specs.update(other._specs)
             return True
-        return False
+
+        # and + or
+        if self.join_type == JoinTypes.AND:
+            self._specs.add(other)
+            return True
+
+        # or + and
+        if other.join_type == JoinTypes.AND:
+            new = self.copy()
+            self.join_type = JoinTypes.AND
+            self._specs = other._specs + {new}
+            return True
+
+        # or + or
+        new = type(self)()
+        self.join_type = JoinTypes.AND
+        self._specs = {new, other}
+        return True
 
     def __contains__(self, release) -> bool:
         rule = all if self.join_type == JoinTypes.AND else any
@@ -115,3 +160,8 @@ class RangeSpecifier:
             name=self.__class__.__name__,
             spec=str(self),
         )
+
+    def __lt__(self, other):
+        if isinstance(other, Specifier):
+            return False
+        return str(self) < str(other)

@@ -2,7 +2,7 @@
 import tomlkit
 
 # app
-from ..models import Constraint, Dependency, RootDependency
+from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
 from ..repositories import get_repo
 from .base import BaseConverter
 
@@ -86,9 +86,9 @@ class PoetryConverter(BaseConverter):
         markers = []
         # https://www.python.org/dev/peps/pep-0496/
         if 'platform' in content:
-            markers.append('sys_platform == \'{}\' '.format(content['platform']))
+            markers.append('sys_platform == "{}" '.format(content['platform']))
         if 'python' in content:
-            markers.append('python_version == \'{}\' '.format(content['python']))
+            markers.append(RangeSpecifier(content['python']).to_marker('python_version'))
         ' and '.join(markers)
 
         return Dependency.from_params(

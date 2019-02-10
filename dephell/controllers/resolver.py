@@ -83,6 +83,12 @@ class Resolver:
                     print('\r')
                 return True
 
+            # check python version
+            for dep in deps:
+                if not dep.python_compat:
+                    self.graph.conflict = dep
+                    return False
+
             no_conflicts = self._apply_deps(deps, debug=debug)
             if no_conflicts:
                 continue
@@ -104,7 +110,7 @@ class Resolver:
                     self.unapply(dep)
                     dep.group = group
 
-    def _apply_deps(self, deps, debug=False):
+    def _apply_deps(self, deps, debug: bool = False) -> bool:
         if not config['silent']:
             packages_bar = _Progress(
                 total=len(deps),

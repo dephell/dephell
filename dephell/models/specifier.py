@@ -6,9 +6,6 @@ from cached_property import cached_property
 from packaging import specifiers
 from packaging.version import LegacyVersion, parse
 
-# app
-from .release import Release
-
 
 OPERATIONS = {
     '==': operator.eq,
@@ -89,6 +86,13 @@ class Specifier:
         # lovely case, isn't it?
         return False
 
+    def to_marker(self, name: str, wrap: bool = False) -> str:
+        return '{name} {operator} "{version}"'.format(
+            name=name,
+            operator=self.operator,
+            version=self.version,
+        )
+
     @property
     def operator(self) -> str:
         return self._spec.operator
@@ -105,7 +109,8 @@ class Specifier:
 
     def __contains__(self, release):
         # compare version
-        if not isinstance(release, Release):
+        # check that this is Release without imports
+        if not hasattr(release, 'time'):
             return self._check_version(version=release)
 
         # compare release by time
@@ -157,3 +162,12 @@ class Specifier:
             return left
 
         return NotImplemented
+
+    def __lt__(self, other):
+        return self.version < other.version
+
+    def __eq__(self, other):
+        return self.version == other.version and self.operator == other.operator
+
+    def __hash__(self):
+        return hash(self._spec)
