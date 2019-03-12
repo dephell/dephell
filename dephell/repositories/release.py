@@ -4,6 +4,7 @@ from datetime import datetime
 # app
 from ..models.release import Release
 from .base import Interface
+from typing import Optional
 
 
 class ReleaseRepo(Interface):
@@ -26,7 +27,9 @@ class ReleaseRepo(Interface):
         )
         return (release, )
 
-    async def get_dependencies(self, name: str, version: str) -> tuple:
-        if self.deps:
-            return self.deps.get(name, {}).get(str(version), ())
-        return ()
+    async def get_dependencies(self, name: str, version: str, extra: Optional[str] = None) -> tuple:
+        if self.deps is None:
+            return ()
+        if extra is not None:
+            name += '[' + extra + ']'
+        return self.deps.get(name, {}).get(str(version), ())
