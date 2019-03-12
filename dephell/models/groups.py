@@ -130,6 +130,7 @@ class Groups:
         group = Group(
             releases=releases,
             number=len(self._loaded_groups),
+            dep=self.dep,
         )
         self._loaded_groups.append(group)
         self.actualize(group=group)

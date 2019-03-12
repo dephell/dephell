@@ -55,6 +55,10 @@ class Group:
 
     @cached_property
     def metadependency(self):
+        """MetaDependency is a dependency on the parent for extra.
+
+        For example, `requests[security]` extra depends on `requests` Dependency.
+        """
         if self.extra is None:
             raise ValueError('metadependency available only for group of extras')
         if self.dep is None:
