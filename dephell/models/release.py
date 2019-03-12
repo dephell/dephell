@@ -1,5 +1,6 @@
 # built-in
 from datetime import datetime
+from typing import Optional
 
 # external
 import attr
@@ -12,13 +13,15 @@ from .range_specifier import RangeSpecifier
 
 @attr.s(hash=False, cmp=True)
 class Release:
-    dependencies = None
+    dependencies = None  # type: tuple
 
     raw_name = attr.ib(type=str, cmp=False)
     version = attr.ib(converter=parse, cmp=True)  # typing: ignore
     time = attr.ib(repr=False, hash=False)                      # upload_time
     python = attr.ib(default=None, repr=False, cmp=False)       # requires_python
     hashes = attr.ib(factory=tuple, repr=False, cmp=False)      # digests/sha256
+
+    extra = attr.ib(type=Optional[str], default=None)
 
     @classmethod
     def from_response(cls, name, version, info):

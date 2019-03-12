@@ -1,5 +1,6 @@
 # built-in
 from operator import attrgetter
+from typing import Optional
 
 # external
 from cached_property import cached_property
@@ -9,12 +10,15 @@ from ..config import config
 
 
 class Group:
-    def __init__(self, number, releases):
+    def __init__(self, number: int, releases: set, dep=None):
         """
         releases (set)
         """
         self.all_releases = self.releases = releases
         self.number = number
+        self.dep = dep
+
+    # BEST RELEASE PROPERTIES
 
     @property
     def best_release(self):
@@ -24,6 +28,12 @@ class Group:
         if len(best_releases) == 1:
             return best_releases[0]
         return strategy(self.releases, key=attrgetter('version'))
+
+    @property
+    def time(self):
+        return self.best_release.time
+
+    # RANDOM RELEASE PROPERTIES
 
     @cached_property
     def random(self):
@@ -38,16 +48,42 @@ class Group:
         return self.random.name
 
     @property
+    def extra(self) -> Optional[str]:
+        return self.random.extra
+
+    # OTHER PROPERTIES
+
+    @cached_property
+    def metadependency(self):
+        if self.extra is None:
+            raise ValueError('metadependency available only for group of extras')
+        if self.dep is None:
+            raise ValueError('dep required for group of extras')
+        min_version = min(self.versions)
+        max_version = max(self.versions)
+        return type(self.dep).from_requirement(
+            source=self.dep,
+            req='{name}>={min_version},<={max_version}'.format(
+                name=self.raw_name,
+                min_version=min_version,
+                max_version=max_version,
+            )
+        )
+
+    @property
     def dependencies(self) -> tuple:
-        return self.random.dependencies
+        deps = self.random.dependencies
+        if self.extra is not None:
+            deps += (self.metadependency, )
+        return deps
+
+    @cached_property
+    def versions(self) -> set:
+        return {release.version for release in self.all_releases}
 
     @property
     def empty(self) -> bool:
         return not bool(self.releases)
-
-    @property
-    def time(self):
-        return self.best_release.time
 
     def __str__(self):
         versions = sorted(release.version for release in self.releases)
