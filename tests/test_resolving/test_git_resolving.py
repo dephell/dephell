@@ -101,7 +101,7 @@ def test_no_rev_two_constraints():
         constraint='<=1.9',
         source=RootDependency(),
     )
-    dep.merge(dep2)
+    dep += dep2
     assert isinstance(dep.link, VCSLink)
 
     releases = set()
@@ -130,13 +130,13 @@ def test_with_rev_two_constraints():
         constraint='<=1.11',
         source=RootDependency(),
     )
-    dep.merge(dep2)
+    dep += dep2
     dep3 = Dependency.from_params(
         raw_name='Django',
         constraint='>=1.7',
         source=RootDependency(),
     )
-    dep.merge(dep3)
+    dep += dep3
     assert isinstance(dep.link, VCSLink)
 
     releases = set()
@@ -165,7 +165,7 @@ def test_with_rev_two_constraints_unresolved():
         constraint='<=1.9',
         source=RootDependency(),
     )
-    dep.merge(dep2)
+    dep += dep2
     for group in dep.groups:
         assert group.empty
     assert not dep.compat

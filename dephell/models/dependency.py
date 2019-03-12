@@ -10,7 +10,6 @@ from cached_property import cached_property
 from packaging.utils import canonicalize_name
 
 # app
-from ..exceptions import MergeError
 from ..links import VCSLink, parse_link
 from ..repositories import GitRepo, get_repo
 from .constraint import Constraint
@@ -180,13 +179,18 @@ class Dependency:
         # if 'dependencies' in self.__dict__:
         #     del self.__dict__['dependencies']
 
-    def merge(self, dep: 'Dependency') -> None:
+    def __iadd__(self, dep: 'Dependency') -> 'Dependency':
+        if not isinstance(dep, type(self)):
+            return NotImplemented
+
         # some checks when we merge two git based dep
         if isinstance(self.link, GitRepo) and isinstance(dep.link, GitRepo):
+            # links point to different revisions
             if self.link.rev and dep.link.rev and self.link.rev != dep.link.rev:
-                raise MergeError('links point to different revisions')
+                return NotImplemented
+            # links point to different servers
             if self.link.server != dep.link.server:
-                raise MergeError('links point to different servers')
+                return NotImplemented
             ...
 
         # if ...
@@ -206,6 +210,12 @@ class Dependency:
 
         self.constraint.merge(dep.constraint)
         self.groups.actualize()
+        return self
+
+    def __add__(self, dep: 'Dependency') -> 'Dependency':
+        new = type(self)(**attr.asdict(self, recurse=False))
+        new += dep
+        return dep
 
     def unapply(self, name: str) -> None:
         self.constraint.unapply(name)
