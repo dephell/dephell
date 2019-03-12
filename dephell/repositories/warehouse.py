@@ -1,5 +1,6 @@
 # built-in
 from urllib.parse import urlparse
+from typing import Optional
 
 # external
 import attr
@@ -13,6 +14,7 @@ from ..config import config
 from ..models.author import Author
 from ..models.release import Release
 from .base import Interface
+from ..markers import Markers
 
 
 def _process_url(url: str) -> str:
@@ -88,7 +90,7 @@ class WareHouseRepo(Interface):
         releases.sort(reverse=True)
         return tuple(releases)
 
-    async def get_dependencies(self, name: str, version: str) -> tuple:
+    async def get_dependencies(self, name: str, version: str, extra: Optional[str] = None) -> tuple:
         cache = TextCache('deps', name, str(version))
         deps = cache.load()
         if deps is None:
@@ -101,9 +103,26 @@ class WareHouseRepo(Interface):
                 async with session.get(url) as response:
                     response = await response.json()
             deps = response['info']['requires_dist'] or []
-            # TODO: select right extras
-            deps = [dep for dep in deps if 'extra ==' not in dep]
             cache.dump(deps)
         elif deps == ['']:
             return ()
-        return tuple(Requirement(dep) for dep in deps)
+
+        # filter result
+        result = []
+        for dep in deps:
+            req = Requirement(dep)
+            dep_extra = req.marker and Markers(req.marker).extra
+            # it's not extra and we want not extra too
+            if dep_extra is None and extra is None:
+                result.append(req)
+                continue
+            # it's extra, but we want not the extra
+            # or it's not the extra, but we want extra.
+            if dep_extra is None or extra is None:
+                continue
+            # it's extra and we want this extra
+            elif dep_extra == extra:
+                result.append(req)
+                continue
+
+        return tuple(result)

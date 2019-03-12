@@ -122,6 +122,10 @@ class Markers:
         if value is not None:
             return RangeSpecifier(value)
 
+    @property
+    def extra(self) -> Optional[str]:
+        return self.get_string('extra')
+
     def __repr__(self):
         return '{}({!r})'.format(type(self).__name__, self._marker)
 

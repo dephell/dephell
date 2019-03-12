@@ -4,6 +4,7 @@ from .constraint import Constraint
 from .dependency import Dependency
 from .git_release import GitRelease
 from .group import Group
+from .groups import Groups
 from .range_specifier import RangeSpecifier
 from .release import Release
 from .requirement import Requirement
@@ -17,6 +18,7 @@ __all__ = [
     'Dependency',
     'GitRelease',
     'Group',
+    'Groups',
     'RangeSpecifier',
     'Release',
     'Requirement',

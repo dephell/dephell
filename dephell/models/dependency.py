@@ -27,25 +27,25 @@ rex_hash = re.compile(r'[a-f0-9]{7}')
 
 @attr.s()
 class Dependency:
-    raw_name = attr.ib()
-    constraint = attr.ib(repr=False)
+    raw_name = attr.ib(type=str)
+    constraint = attr.ib(type=Constraint, repr=False)
     repo = attr.ib(repr=False)
     link = attr.ib(default=None, repr=False)
 
     # flags
-    applied = attr.ib(default=False, repr=False)
+    applied = attr.ib(type=bool, default=False, repr=False)
 
     # optional info
-    description = attr.ib(default='', repr=False)       # summary
-    authors = attr.ib(factory=tuple, repr=False)        # author, author_email, maintainer, maintainer_email
-    links = attr.ib(factory=dict, repr=False)           # project_url, project_urls, package_url
-    classifiers = attr.ib(factory=tuple, repr=False)    # classifiers
+    description = attr.ib(type=str, default='', repr=False)     # summary
+    authors = attr.ib(factory=tuple, repr=False)                # author{,_email}, maintainer{,_email}
+    links = attr.ib(factory=dict, repr=False)                   # project_url{,s}, package_url
+    classifiers = attr.ib(factory=tuple, repr=False)            # classifiers
 
     # info from requirements file
-    editable = attr.ib(default=False, repr=False)
+    editable = attr.ib(type=bool, default=False, repr=False)
     extras = attr.ib(factory=set, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
-    marker = attr.ib(default=None, repr=False)
+    marker = attr.ib(type=Optional[Markers], default=None, repr=False)
 
     # constructors
 

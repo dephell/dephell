@@ -1,5 +1,6 @@
 # built-in
 import abc
+from typing import Optional
 
 
 class Interface(metaclass=abc.ABCMeta):
@@ -8,5 +9,5 @@ class Interface(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    async def get_dependencies(self, name: str, version: str) -> tuple:
+    async def get_dependencies(self, name: str, version: str, extra: Optional[str] = None) -> tuple:
         pass
