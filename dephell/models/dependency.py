@@ -46,6 +46,8 @@ class Dependency:
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(type=Optional[Markers], default=None, repr=False)
 
+    extra = None
+
     # constructors
 
     @classmethod
@@ -213,7 +215,7 @@ class Dependency:
         return self
 
     def __add__(self, dep: 'Dependency') -> 'Dependency':
-        new = type(self)(**attr.asdict(self, recurse=False))
+        new = self.copy()
         new += dep
         return dep
 

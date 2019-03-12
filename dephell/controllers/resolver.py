@@ -40,7 +40,7 @@ class Resolver:
                 # merge deps
                 try:
                     other_dep += new_dep
-                except TypeError:   # conflict happend
+                except TypeError:   # conflict happened
                     return other_dep
             # check
             if not other_dep.compat:
