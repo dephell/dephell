@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 from cached_property import cached_property
 import attr
 
@@ -16,6 +17,7 @@ def get_key(release):
 @attr.s()
 class Groups:
     dep = attr.ib()
+    extra = attr.ib(type=Optional[str], default=None)
 
     _loaded_groups = attr.ib(factory=list)
     _loaded_releases_count = attr.ib(default=0)
@@ -25,8 +27,13 @@ class Groups:
     @cached_property
     def releases(self) -> tuple:
         releases = self.dep.repo.get_releases(self.dep)
+        # sort
         reverse = True if config['strategy'] == 'max' else False
         releases = sorted(releases, reverse=reverse)
+        # attach extra
+        if self.extra is not None:
+            for release in releases:
+                release.extra = self.extra
         return releases
 
     async def _fetch_all_deps(self, releases):
@@ -37,8 +44,9 @@ class Groups:
             if 'dependencies' in release.__dict__:
                 continue
             task = asyncio.ensure_future(self.dep.repo.get_dependencies(
-                release.name,
-                release.version,
+                name=release.name,
+                version=release.version,
+                extra=self.extra,
             ))
             tasks.append(task)
             not_loaded_releases.append(release)
@@ -60,8 +68,9 @@ class Groups:
         tasks = []
         for release in edges:
             task = asyncio.ensure_future(self.dep.repo.get_dependencies(
-                release.name,
-                release.version,
+                name=release.name,
+                version=release.version,
+                extra=self.extra,
             ))
             tasks.append(task)
 

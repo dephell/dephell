@@ -31,7 +31,7 @@ class PatchedGitRepo(GitRepo):
     def _setup(self):
         raise Exception('called _setup in PatchedGitRepo')
 
-    async def get_dependencies(self, name: str, version: str) -> tuple:
+    async def get_dependencies(self, name: str, version: str, extra=None) -> tuple:
         return tuple()
 
     def get_nearest_version(self, rev):
