@@ -72,7 +72,7 @@ class Group:
                 min_version=min_version,
                 max_version=max_version,
             )
-        )
+        )[0]
 
     @property
     def dependencies(self) -> tuple:

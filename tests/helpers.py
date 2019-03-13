@@ -20,6 +20,12 @@ class Fake:
         self.version = version
         self.deps = deps
 
+    def __repr__(self):
+        return 'Fake(version={version}, deps={deps})'.format(
+            version=self.version,
+            deps=self.deps,
+        )
+
 
 def make_root(root, **releases) -> RootDependency:
     release_objects = []
@@ -43,12 +49,13 @@ def make_root(root, **releases) -> RootDependency:
     root_dep = RootDependency(raw_name=''.join(sorted(releases)))
     root_dep.repo = repo
     for constr in root.deps:
-        dep = Dependency.from_requirement(
+        subdeps = Dependency.from_requirement(
             req=PackagingRequirement(constr),
             source=root_dep,
         )
-        dep.repo = repo
-        deps.append(dep)
+        for dep in subdeps:
+            dep.repo = repo
+        deps.extend(subdeps)
     root_dep.attach_dependencies(deps)
     return root_dep
 

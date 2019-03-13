@@ -22,7 +22,7 @@ class PIPFileLockConverter(PIPFileConverter):
         deps = []
         root = RootDependency(raw_name=self._get_name(content=content))
         for name, content in doc['default'].items():
-            deps.append(self._make_dep(root, name, content))
+            deps.extend(self._make_deps(root, name, content))
         root.attach_dependencies(deps)
         return root
 

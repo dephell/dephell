@@ -41,7 +41,7 @@ class PIPConverter(BaseConverter):
 
         for req in reqs:
             # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py
-            deps.append(Dependency.from_requirement(
+            deps.extend(Dependency.from_requirement(
                 source=root,
                 req=req.req,
                 url=req.link and req.link.url,

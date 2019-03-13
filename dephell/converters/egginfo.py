@@ -153,7 +153,7 @@ class EggInfoConverter(BaseConverter):
         )
         for req in reqs:
             req = PackagingRequirement(req)
-            deps.append(Dependency.from_requirement(source=root, req=req))
+            deps.extend(Dependency.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
         return root
 
@@ -163,7 +163,7 @@ class EggInfoConverter(BaseConverter):
         deps = []
         for req in content.split():
             req = PackagingRequirement(req)
-            deps.append(Dependency.from_requirement(source=root, req=req))
+            deps.extend(Dependency.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
         return root
 

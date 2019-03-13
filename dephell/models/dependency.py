@@ -2,7 +2,7 @@
 import asyncio
 import re
 from copy import deepcopy
-from typing import Optional
+from typing import Optional, List, Iterable
 
 # external
 import attr
@@ -42,7 +42,6 @@ class Dependency:
 
     # info from requirements file
     editable = attr.ib(type=bool, default=False, repr=False)
-    extras = attr.ib(factory=set, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(type=Optional[Markers], default=None, repr=False)
 
@@ -51,7 +50,7 @@ class Dependency:
     # constructors
 
     @classmethod
-    def from_requirement(cls, source, req, url=None, editable=False) -> 'Dependency':
+    def from_requirement(cls, source, req, url=None, editable=False) -> List['Dependency']:
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
         link = parse_link(url or req.url)
         # make constraint
@@ -63,20 +62,25 @@ class Dependency:
         else:
             marker = None
 
-        return cls(
+        base_dep = cls(
             raw_name=req.name,
             constraint=constraint,
             repo=get_repo(link),
             link=link,
-            extras=req.extras,
             marker=marker,
             editable=editable,
         )
+        deps = [base_dep]
+        if req.extras:
+            from .extra_dependency import ExtraDependency
+            for extra in req.extras:
+                deps.append(ExtraDependency.from_dep(dep=base_dep, extra=extra))
+        return deps
 
     @classmethod
     def from_params(cls, *, raw_name: str, constraint,
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
-                    repo=None, marker=None, **kwargs) -> 'Dependency':
+                    repo=None, marker=None, extras: Optional[List[str]] = None, **kwargs) -> List['Dependency']:
         # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
@@ -91,7 +95,7 @@ class Dependency:
             repo = get_repo(link)
         if marker is not None:
             marker = Markers(marker)
-        return cls(
+        base_dep = cls(
             link=link,
             repo=repo,
             raw_name=raw_name,
@@ -99,6 +103,12 @@ class Dependency:
             marker=marker,
             **kwargs,
         )
+        deps = [base_dep]
+        if extras:
+            from .extra_dependency import ExtraDependency
+            for extra in extras:
+                deps.append(ExtraDependency.from_dep(dep=base_dep, extra=extra))
+        return deps
 
     # properties
 
@@ -124,9 +134,12 @@ class Dependency:
         cls = type(self)
         deps = []
         for dep in self.group.dependencies:
-            if not isinstance(dep, cls):
-                dep = cls.from_requirement(self, dep)
-            deps.append(dep)
+            if isinstance(dep, cls):
+                deps.append(dep)
+            elif isinstance(dep, Iterable):
+                deps.append(dep)
+            else:
+                deps.extend(cls.from_requirement(self, dep))
         return tuple(deps)
 
     @property

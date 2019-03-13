@@ -44,7 +44,7 @@ def test_no_rev_one_constraint():
         constraint='',
         source=RootDependency(),
         url='https://github.com/django/django.git',
-    )
+    )[0]
     assert isinstance(dep.link, VCSLink)
     assert isinstance(dep.repo, GitRepo)
     dep.repo = PatchedGitRepo(dep.link)
@@ -66,7 +66,7 @@ def test_with_rev_one_constraint():
         constraint='',
         source=RootDependency(),
         url='https://github.com/django/django.git@' + commit,
-    )
+    )[0]
     assert isinstance(dep.link, VCSLink)
     assert isinstance(dep.repo, GitRepo)
     dep.repo = PatchedGitRepo(dep.link)
@@ -91,7 +91,7 @@ def test_no_rev_two_constraints():
         constraint='',
         source=RootDependency(),
         url='https://github.com/django/django.git',
-    )
+    )[0]
     assert isinstance(dep.link, VCSLink)
     assert isinstance(dep.repo, GitRepo)
     dep.repo = PatchedGitRepo(dep.link)
@@ -100,7 +100,7 @@ def test_no_rev_two_constraints():
         raw_name='Django',
         constraint='<=1.9',
         source=RootDependency(),
-    )
+    )[0]
     dep += dep2
     assert isinstance(dep.link, VCSLink)
 
@@ -120,7 +120,7 @@ def test_with_rev_two_constraints():
         constraint='',
         source=RootDependency(),
         url='https://github.com/django/django.git@' + commit,
-    )
+    )[0]
     assert isinstance(dep.link, VCSLink)
     assert isinstance(dep.repo, GitRepo)
     dep.repo = PatchedGitRepo(dep.link)
@@ -129,13 +129,13 @@ def test_with_rev_two_constraints():
         raw_name='Django',
         constraint='<=1.11',
         source=RootDependency(),
-    )
+    )[0]
     dep += dep2
     dep3 = Dependency.from_params(
         raw_name='Django',
         constraint='>=1.7',
         source=RootDependency(),
-    )
+    )[0]
     dep += dep3
     assert isinstance(dep.link, VCSLink)
 
@@ -155,7 +155,7 @@ def test_with_rev_two_constraints_unresolved():
         constraint='',
         source=RootDependency(),
         url='https://github.com/django/django.git@' + commit,
-    )
+    )[0]
     assert isinstance(dep.link, VCSLink)
     assert isinstance(dep.repo, GitRepo)
     dep.repo = PatchedGitRepo(dep.link)
@@ -164,7 +164,7 @@ def test_with_rev_two_constraints_unresolved():
         raw_name='Django',
         constraint='<=1.9',
         source=RootDependency(),
-    )
+    )[0]
     dep += dep2
     for group in dep.groups:
         assert group.empty

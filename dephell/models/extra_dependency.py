@@ -19,8 +19,12 @@ class ExtraDependency(Dependency):
         return Groups(dep=self, extra=self.extra)
 
     @cached_property
+    def base_name(self) -> str:
+        return canonicalize_name(self.raw_name)
+
+    @cached_property
     def name(self) -> str:
         return '{name}[{extra}]'.format(
-            name=canonicalize_name(self.raw_name),
+            name=self.base_name,
             extra=self.extra,
         )

@@ -1,5 +1,6 @@
 # built-in
-from typing import Optional
+from collections import defaultdict, OrderedDict
+from typing import Optional, Tuple
 
 # external
 from cached_property import cached_property
@@ -15,21 +16,35 @@ class Requirement:
     def __init__(self, dep, lock: bool):
         self.dep = dep
         self.lock = lock
+        self.extra_deps = tuple()
 
     @classmethod
-    def from_graph(cls, graph, *, lock: bool) -> tuple:
-        result = []
+    def from_graph(cls, graph, *, lock: bool) -> Tuple['Requirement', ...]:
+        result = OrderedDict()
+        extras = defaultdict(list)
         applied = graph.applied
+
+        # if roots wasn't applied then apply them
         if len(graph._layers) == 1:
             for root in graph._layers[0]:
                 for dep in root.dependencies:
                     graph.add(dep)
+
+        # get all nodes
         for layer in reversed(graph._layers[1:]):  # skip roots
             for dep in sorted(layer):
-                if not applied or dep.applied:
+                if applied and not dep.applied:
+                    continue
+                if dep.extra is None:
                     req = cls(dep=dep, lock=lock)
-                    result.append(req)
-        return tuple(result)
+                    result[dep.name] = req
+                else:
+                    extras[dep.base_name].append(dep)
+
+        # add extras
+        for name, deps in extras.items():
+            result[name].extra_deps = tuple(sorted(deps, key=lambda dep: dep.extra))
+        return tuple(result.values())
 
     @cached_property
     def release(self):
@@ -73,8 +88,8 @@ class Requirement:
         return str(self.dep.constraint)
 
     @cached_property
-    def extras(self) -> tuple:
-        return tuple(sorted(self.dep.extras))
+    def extras(self) -> Tuple[str, ...]:
+        return tuple(dep.extra for dep in self.extra_deps)
 
     @property
     def markers(self) -> Optional[str]:

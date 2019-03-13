@@ -23,7 +23,7 @@ def get_deps():
     root = RootDependency()
     response = requests.get(URL)
     for info in response.json()['rows']:
-        yield Dependency.from_requirement(
+        yield from Dependency.from_requirement(
             source=root,
             req=Requirement(info['project']),
         )

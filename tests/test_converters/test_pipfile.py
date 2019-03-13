@@ -46,12 +46,12 @@ def test_dump():
 
 
 def test_format_req():
-    dep = Dependency.from_params(
+    deps = Dependency.from_params(
         raw_name='Django',
         constraint='>=1.9',
         source=RootDependency(),
     )
-    content = PIPFileConverter()._format_req(Requirement(dep, lock=False))
+    content = PIPFileConverter()._format_req(Requirement(deps[0], lock=False))
     assert content == '>=1.9'
 
 
