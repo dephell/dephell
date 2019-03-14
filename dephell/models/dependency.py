@@ -1,6 +1,6 @@
 # built-in
 from copy import deepcopy
-from typing import Optional, List, Iterable
+from typing import Optional, Iterable
 
 # external
 import attr
@@ -36,12 +36,6 @@ class Dependency:
     marker = attr.ib(type=Optional[Markers], default=None, repr=False)
 
     extra = None
-    _is_extra_dep = False
-
-    @classmethod
-    def from_params(cls, *args, **kwargs) -> List['Dependency']:
-        from ..controllers import DependencyMaker
-        return DependencyMaker.from_params(*args, **kwargs)
 
     # properties
 

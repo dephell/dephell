@@ -3,8 +3,9 @@ from collections import OrderedDict
 from datetime import datetime
 
 # project
+from dephell.controllers import DependencyMaker
 from dephell.links import VCSLink
-from dephell.models import Dependency, GitRelease, RootDependency
+from dephell.models import GitRelease, RootDependency
 from dephell.repositories.git.git import GitRepo
 
 
@@ -39,7 +40,7 @@ class PatchedGitRepo(GitRepo):
 
 
 def test_no_rev_one_constraint():
-    dep = Dependency.from_params(
+    dep = DependencyMaker.from_params(
         raw_name='Django',
         constraint='',
         source=RootDependency(),
@@ -61,7 +62,7 @@ def test_no_rev_one_constraint():
 
 def test_with_rev_one_constraint():
     commit = '0cf85e6b074794ac91857aa097f0b3dc3e6d9468'
-    dep = Dependency.from_params(
+    dep = DependencyMaker.from_params(
         raw_name='Django',
         constraint='',
         source=RootDependency(),
@@ -86,7 +87,7 @@ def test_with_rev_one_constraint():
 
 
 def test_no_rev_two_constraints():
-    dep = Dependency.from_params(
+    dep = DependencyMaker.from_params(
         raw_name='Django',
         constraint='',
         source=RootDependency(),
@@ -96,7 +97,7 @@ def test_no_rev_two_constraints():
     assert isinstance(dep.repo, GitRepo)
     dep.repo = PatchedGitRepo(dep.link)
 
-    dep2 = Dependency.from_params(
+    dep2 = DependencyMaker.from_params(
         raw_name='Django',
         constraint='<=1.9',
         source=RootDependency(),
@@ -115,7 +116,7 @@ def test_no_rev_two_constraints():
 
 def test_with_rev_two_constraints():
     commit = '0cf85e6b074794ac91857aa097f0b3dc3e6d9468'
-    dep = Dependency.from_params(
+    dep = DependencyMaker.from_params(
         raw_name='Django',
         constraint='',
         source=RootDependency(),
@@ -125,13 +126,13 @@ def test_with_rev_two_constraints():
     assert isinstance(dep.repo, GitRepo)
     dep.repo = PatchedGitRepo(dep.link)
 
-    dep2 = Dependency.from_params(
+    dep2 = DependencyMaker.from_params(
         raw_name='Django',
         constraint='<=1.11',
         source=RootDependency(),
     )[0]
     dep += dep2
-    dep3 = Dependency.from_params(
+    dep3 = DependencyMaker.from_params(
         raw_name='Django',
         constraint='>=1.7',
         source=RootDependency(),
@@ -150,7 +151,7 @@ def test_with_rev_two_constraints():
 
 def test_with_rev_two_constraints_unresolved():
     commit = '0cf85e6b074794ac91857aa097f0b3dc3e6d9468'
-    dep = Dependency.from_params(
+    dep = DependencyMaker.from_params(
         raw_name='Django',
         constraint='',
         source=RootDependency(),
@@ -160,7 +161,7 @@ def test_with_rev_two_constraints_unresolved():
     assert isinstance(dep.repo, GitRepo)
     dep.repo = PatchedGitRepo(dep.link)
 
-    dep2 = Dependency.from_params(
+    dep2 = DependencyMaker.from_params(
         raw_name='Django',
         constraint='<=1.9',
         source=RootDependency(),

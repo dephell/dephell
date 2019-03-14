@@ -2,9 +2,10 @@
 from pathlib import Path
 
 # project
+from dephell.controllers import DependencyMaker
 from dephell.converters import PIPFileConverter
 from dephell.links import VCSLink
-from dephell.models import Dependency, Requirement, RootDependency
+from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
 
 
@@ -46,7 +47,7 @@ def test_dump():
 
 
 def test_format_req():
-    deps = Dependency.from_params(
+    deps = DependencyMaker.from_params(
         raw_name='Django',
         constraint='>=1.9',
         source=RootDependency(),

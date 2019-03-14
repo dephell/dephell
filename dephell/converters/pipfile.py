@@ -6,6 +6,7 @@ from typing import List
 import tomlkit
 
 # app
+from ..controllers import DependencyMaker
 from ..models import Constraint, Dependency, RootDependency
 from ..repositories import WareHouseRepo, get_repo
 from .base import BaseConverter
@@ -110,7 +111,7 @@ class PIPFileConverter(BaseConverter):
 
         # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/requirements.py
         # https://github.com/pypa/pipenv/blob/master/pipenv/project.py
-        return Dependency.from_params(
+        return DependencyMaker.from_params(
             raw_name=name,
             # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
             constraint=Constraint(root, content.get('version', '')),

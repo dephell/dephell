@@ -9,7 +9,6 @@ from .groups import Groups
 @attr.s(cmp=False)
 class ExtraDependency(Dependency):
     extra = attr.ib(type=str, default='')
-    _is_extra_dep = True
 
     def __attrs_post_init__(self):
         assert self.extra != ''

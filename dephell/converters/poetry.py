@@ -4,6 +4,7 @@ from typing import List
 import tomlkit
 
 # app
+from ..controllers import DependencyMaker
 from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
 from ..repositories import get_repo
 from .base import BaseConverter
@@ -93,7 +94,7 @@ class PoetryConverter(BaseConverter):
             markers.append(RangeSpecifier(content['python']).to_marker('python_version'))
         ' and '.join(markers)
 
-        return Dependency.from_params(
+        return DependencyMaker.from_params(
             raw_name=name,
             constraint=Constraint(root, content.get('version', '')),
             extras=set(content.get('extras', [])),

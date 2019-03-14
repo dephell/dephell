@@ -4,6 +4,7 @@ from typing import List
 import tomlkit
 
 # app
+from ..controllers import DependencyMaker
 from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
 from .base import BaseConverter
 from ..links import DirLink
@@ -69,7 +70,7 @@ class PoetryLockConverter(BaseConverter):
             else:
                 marker = '({}) and {}'.format(marker, python)
 
-        return Dependency.from_params(
+        return DependencyMaker.from_params(
             raw_name=content['name'],
             description=content['description'],
             constraint=Constraint(root, '==' + content['version']),
