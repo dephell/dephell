@@ -2,6 +2,7 @@
 from .author import Author
 from .constraint import Constraint
 from .dependency import Dependency
+from .extra_dependency import ExtraDependency
 from .git_release import GitRelease
 from .group import Group
 from .groups import Groups
@@ -16,6 +17,7 @@ __all__ = [
     'Author',
     'Constraint',
     'Dependency',
+    'ExtraDependency',
     'GitRelease',
     'Group',
     'Groups',

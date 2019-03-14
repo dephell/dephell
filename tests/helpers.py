@@ -77,7 +77,7 @@ def check(root, resolved=True, missed=None, **deps):
         mutator=Mutator(),
     )
     with patch(
-        target='dephell.models.dependency.get_repo',
+        target='dephell.controllers.dependency.get_repo',
         return_value=resolver.graph._roots[0].repo,
     ):
         result = resolver.resolve(debug=True)
