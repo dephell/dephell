@@ -8,7 +8,8 @@ from pip._internal.req import parse_requirements
 
 # app
 from ..config import config
-from ..models import Dependency, RootDependency
+from ..controllers import DependencyMaker
+from ..models import RootDependency
 from ..repositories import WareHouseRepo
 from .base import BaseConverter
 
@@ -41,7 +42,7 @@ class PIPConverter(BaseConverter):
 
         for req in reqs:
             # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py
-            deps.append(Dependency.from_requirement(
+            deps.extend(DependencyMaker.from_requirement(
                 source=root,
                 req=req.req,
                 url=req.link and req.link.url,

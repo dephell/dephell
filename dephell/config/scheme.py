@@ -4,7 +4,6 @@ from ..constants import ENVS, FORMATS, LOG_LEVELS, STRATEGIES
 
 _TARGET = dict(
     type='dict',
-    required=True,
     schema={
         'format': dict(
             type='string',
@@ -26,11 +25,11 @@ _TARGET = dict(
 
 
 SCHEME = {
-    'from': _TARGET,
-    'to': _TARGET,
+    'from': dict(required=True, **_TARGET),
+    'to': dict(required=False, **_TARGET),
     'and': dict(
         type='list',
-        schema=_TARGET,
+        schema=dict(required=True, **_TARGET),
         required=False,
         empty=True,
     ),

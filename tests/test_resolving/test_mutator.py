@@ -14,7 +14,7 @@ def check(root, conflict, mutations):
         mutator=Mutator(),
     )
     with patch(
-        target='dephell.models.dependency.get_repo',
+        target='dephell.controllers.dependency.get_repo',
         return_value=resolver.graph._roots[0].repo,
     ):
         resolver.resolve(debug=True)

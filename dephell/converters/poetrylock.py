@@ -1,7 +1,10 @@
+from typing import List
+
 # external
 import tomlkit
 
 # app
+from ..controllers import DependencyMaker
 from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
 from .base import BaseConverter
 from ..links import DirLink
@@ -22,7 +25,7 @@ class PoetryLockConverter(BaseConverter):
         root = RootDependency()
         if 'package' in doc:
             for content in doc['package']:
-                deps.append(self._make_dep(root=root, content=content))
+                deps.extend(self._make_deps(root=root, content=content))
         root.attach_dependencies(deps)
         return root
 
@@ -49,7 +52,7 @@ class PoetryLockConverter(BaseConverter):
 
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod
-    def _make_dep(root, content) -> Dependency:
+    def _make_deps(root, content) -> List[Dependency]:
         # get link
         url = None
         if 'source' in content:
@@ -67,7 +70,7 @@ class PoetryLockConverter(BaseConverter):
             else:
                 marker = '({}) and {}'.format(marker, python)
 
-        return Dependency.from_params(
+        return DependencyMaker.from_params(
             raw_name=content['name'],
             description=content['description'],
             constraint=Constraint(root, '==' + content['version']),

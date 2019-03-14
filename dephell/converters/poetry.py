@@ -1,7 +1,10 @@
+from typing import List
+
 # external
 import tomlkit
 
 # app
+from ..controllers import DependencyMaker
 from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
 from ..repositories import get_repo
 from .base import BaseConverter
@@ -30,7 +33,7 @@ class PoetryConverter(BaseConverter):
             for name, content in section['dependencies'].items():
                 if name == 'python':
                     continue
-                deps.append(self._make_dep(root, name, content))
+                deps.extend(self._make_deps(root, name, content))
         root.attach_dependencies(deps)
         return root
 
@@ -66,13 +69,13 @@ class PoetryConverter(BaseConverter):
 
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
     @staticmethod
-    def _make_dep(root, name: str, content) -> Dependency:
+    def _make_deps(root, name: str, content) -> List[Dependency]:
         if isinstance(content, str):
-            return Dependency(
+            return [Dependency(
                 raw_name=name,
                 constraint=Constraint(root, content),
                 repo=get_repo(),
-            )
+            )]
 
         # get link
         url = content.get('file') or content.get('path')
@@ -91,7 +94,7 @@ class PoetryConverter(BaseConverter):
             markers.append(RangeSpecifier(content['python']).to_marker('python_version'))
         ' and '.join(markers)
 
-        return Dependency.from_params(
+        return DependencyMaker.from_params(
             raw_name=name,
             constraint=Constraint(root, content.get('version', '')),
             extras=set(content.get('extras', [])),

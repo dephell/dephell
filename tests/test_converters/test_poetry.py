@@ -15,8 +15,8 @@ def test_load():
     deps = {dep.name: dep for dep in root.dependencies}
     assert 'requests' in deps
     assert 'toml' in deps
+    assert 'requests[security]' in deps
 
-    assert set(deps['requests'].extras) == {'security'}
     assert deps['django'].link.rev == '1.11.4'
     assert isinstance(deps['django'].repo, GitRepo)
 

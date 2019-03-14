@@ -1,10 +1,12 @@
 # built-in
 from collections import OrderedDict
+from typing import List
 
 # external
 import tomlkit
 
 # app
+from ..controllers import DependencyMaker
 from ..models import Constraint, Dependency, RootDependency
 from ..repositories import WareHouseRepo, get_repo
 from .base import BaseConverter
@@ -34,14 +36,15 @@ class PIPFileConverter(BaseConverter):
 
         if 'packages' in doc:
             for name, content in doc['packages'].items():
-                dep = self._make_dep(root, name, content)
+                subdeps = self._make_deps(root, name, content)
                 if 'index' in content:
                     repo_name = content.get('index')
-                    dep.repo = WareHouseRepo(
-                        name=repo_name,
-                        url=repos[repo_name],
-                    )
-                deps.append(dep)
+                    for dep in subdeps:
+                        dep.repo = WareHouseRepo(
+                            name=repo_name,
+                            url=repos[repo_name],
+                        )
+                deps.extend(subdeps)
         root.attach_dependencies(deps)
         return root
 
@@ -88,13 +91,13 @@ class PIPFileConverter(BaseConverter):
 
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
     @staticmethod
-    def _make_dep(root, name: str, content) -> Dependency:
+    def _make_deps(root, name: str, content) -> List[Dependency]:
         if isinstance(content, str):
-            return Dependency(
+            return [Dependency(
                 raw_name=name,
                 constraint=Constraint(root, content),
                 repo=get_repo(),
-            )
+            )]
 
         # get link
         url = content.get('file') or content.get('path') or content.get('vcs')
@@ -108,7 +111,7 @@ class PIPFileConverter(BaseConverter):
 
         # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/requirements.py
         # https://github.com/pypa/pipenv/blob/master/pipenv/project.py
-        return Dependency.from_params(
+        return DependencyMaker.from_params(
             raw_name=name,
             # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
             constraint=Constraint(root, content.get('version', '')),

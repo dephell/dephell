@@ -4,6 +4,7 @@ from logging import getLogger
 import subprocess
 from collections import OrderedDict
 from pathlib import Path
+from typing import Optional
 
 # external
 from cached_property import cached_property
@@ -95,7 +96,10 @@ class GitRepo(Interface):
             releases.append(release)
         return tuple(releases)
 
-    async def get_dependencies(self, name: str, version) -> tuple:
+    async def get_dependencies(self, name: str, version, extra: Optional[str] = None) -> tuple:
+        # TODO: exta support for git
+        if extra is not None:
+            return ()
 
         cache = RequirementsCache('git_deps', name, str(version))
         deps = cache.load()

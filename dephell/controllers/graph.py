@@ -218,3 +218,10 @@ class Graph:
         if isinstance(dep, str):
             return dep in self.names
         return dep in self.deps
+
+    def __repr__(self):
+        roots = [str(root) for root in self._roots]
+        return '{name}({roots})'.format(
+            name=type(self).__name__,
+            roots=', '.join(roots),
+        )

@@ -7,7 +7,8 @@ from itertools import chain
 from packaging.requirements import Requirement
 
 # app
-from ..models import Author, Dependency, RootDependency
+from ..controllers import DependencyMaker
+from ..models import Author, RootDependency
 from .base import BaseConverter
 from ..utils import chdir
 
@@ -81,7 +82,7 @@ class SetupPyConverter(BaseConverter):
         deps = []
         for req in reqs:
             req = Requirement(req)
-            deps.append(Dependency.from_requirement(source=root, req=req))
+            deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
         return root
 

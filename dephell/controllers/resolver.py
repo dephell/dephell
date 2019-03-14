@@ -8,7 +8,6 @@ from tqdm import tqdm
 
 # app
 from ..config import config
-from ..exceptions import MergeError
 from .conflict import analize_conflict
 
 
@@ -40,8 +39,8 @@ class Resolver:
             else:
                 # merge deps
                 try:
-                    other_dep.merge(new_dep)
-                except MergeError:
+                    other_dep += new_dep
+                except TypeError:   # conflict happened
                     return other_dep
             # check
             if not other_dep.compat:
