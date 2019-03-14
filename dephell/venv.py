@@ -59,7 +59,7 @@ class VEnv:
         return bool(self.bin_path)
 
     def create(self, python_path) -> int:
-        command = [python_path, '-m', 'virtualenv', str(self.path)]
+        command = [python_path, '-m', 'virtualenv', str(self.path), '--prompt', self.name]
         result = subprocess.run(command)
         return result.returncode
 
