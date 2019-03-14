@@ -16,9 +16,10 @@ DEFAULT_TIME = datetime(1970, 1, 1, 0, 0)
 
 
 class Fake:
-    def __init__(self, version, *deps):
+    def __init__(self, version, *deps, extras=None):
         self.version = version
         self.deps = deps
+        self.extras = extras or dict()
 
     def __repr__(self):
         return 'Fake(version={version}, deps={deps})'.format(
@@ -37,11 +38,21 @@ def make_root(root, **releases) -> RootDependency:
                 time=DEFAULT_TIME,
             )
             release_objects.append(release)
+            for extra in fake.extras:
+                release = Release(
+                    raw_name=name,
+                    extra=extra,
+                    version=str(fake.version),
+                    time=DEFAULT_TIME,
+                )
 
     constraints = defaultdict(dict)
     for name, fakes in releases.items():
         for fake in fakes:
             constraints[name][fake.version] = tuple(PackagingRequirement(dep) for dep in fake.deps)
+            for extra, deps in fake.extras.items():
+                cname = '{}[{}]'.format(name, extra)
+                constraints[cname][fake.version] = tuple(PackagingRequirement(dep) for dep in deps)
 
     repo = ReleaseRepo(*release_objects, deps=constraints)
 
@@ -84,6 +95,8 @@ def check(root, resolved=True, missed=None, **deps):
     assert resolver.graph.applied
 
     for name in sorted(deps.keys()):
+        if name not in reqs:
+            raise AssertionError('Dep not in graph: ' + name)
         print(name, reqs[name].version)
 
     for name, version in deps.items():

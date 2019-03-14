@@ -8,6 +8,7 @@ from typing import Optional, List, Iterable
 import attr
 from cached_property import cached_property
 from packaging.utils import canonicalize_name
+from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..links import VCSLink, parse_link
@@ -24,7 +25,7 @@ loop = asyncio.get_event_loop()
 rex_hash = re.compile(r'[a-f0-9]{7}')
 
 
-@attr.s()
+@attr.s(cmp=False)
 class Dependency:
     raw_name = attr.ib(type=str)
     constraint = attr.ib(type=Constraint, repr=False)
@@ -46,11 +47,17 @@ class Dependency:
     marker = attr.ib(type=Optional[Markers], default=None, repr=False)
 
     extra = None
+    _is_extra_dep = False
 
     # constructors
 
     @classmethod
     def from_requirement(cls, source, req, url=None, editable=False) -> List['Dependency']:
+        # for ExtraDependency we have to use Dependency.from_requirement
+        if cls._is_extra_dep:
+            cls = Dependency
+        if type(req) is str:
+            req = PackagingRequirement(req)
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
         link = parse_link(url or req.url)
         # make constraint
@@ -135,7 +142,9 @@ class Dependency:
 
     @property
     def dependencies(self) -> tuple:
-        cls = type(self)
+        # for ExtraDependency we have to use Dependency.from_requirement
+        cls = Dependency if self._is_extra_dep else type(self)
+
         deps = []
         for dep in self.group.dependencies:
             if isinstance(dep, cls):
@@ -235,6 +244,9 @@ class Dependency:
         new = self.copy()
         new += dep
         return dep
+
+    def __lt__(self, other):
+        return self.name < other.name
 
     def unapply(self, name: str) -> None:
         self.constraint.unapply(name)
