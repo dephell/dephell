@@ -26,7 +26,7 @@ FORMATS = (
     'poetrylock',
     'pyproject',
     'setuppy',
-    'whell',
+    'wheel',
 )
 
 FILES = (

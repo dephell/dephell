@@ -26,5 +26,5 @@ CONVERTERS = dict(
 
     setuppy=SetupPyConverter(),
 
-    whell=WheelConverter(),
+    wheel=WheelConverter(),
 )

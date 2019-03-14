@@ -1,3 +1,6 @@
 [tool.dephell.main]
 from = {format = "pip", path = "requirements.txt"}
 to = {format = "pipfilelock", path = "Pipfile.lock"}
+
+[tool.dephell.flake]
+from = {format = "pip", path = "requirements-flake.txt"}
