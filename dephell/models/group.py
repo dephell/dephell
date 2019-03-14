@@ -65,8 +65,8 @@ class Group:
             raise ValueError('dep required for group of extras')
         min_version = min(self.versions)
         max_version = max(self.versions)
-        from .dependency import Dependency
-        return Dependency.from_requirement(
+        from ..controllers import DependencyMaker
+        return DependencyMaker.from_requirement(
             source=self.dep,
             req='{name}>={min_version},<={max_version}'.format(
                 name=self.raw_name,

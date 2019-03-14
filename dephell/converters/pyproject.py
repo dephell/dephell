@@ -3,7 +3,8 @@ from packaging.requirements import Requirement
 from tomlkit import document, dumps, parse
 
 # app
-from ..models import Dependency, RootDependency
+from ..controllers import DependencyMaker
+from ..models import RootDependency
 from .base import BaseConverter
 
 
@@ -16,7 +17,7 @@ class PyProjectConverter(BaseConverter):
         root = RootDependency(raw_name=self._get_name(content=content))
         for req in doc['build-system']['requires']:
             req = Requirement(req)
-            deps.extend(Dependency.from_requirement(source=root, req=req))
+            deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
         return root
 

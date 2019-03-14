@@ -8,7 +8,8 @@ from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..archive import ArchivePath
-from ..models import Author, Dependency, RootDependency
+from ..controllers import DependencyMaker
+from ..models import Author, RootDependency
 from .base import BaseConverter
 
 
@@ -153,7 +154,7 @@ class EggInfoConverter(BaseConverter):
         )
         for req in reqs:
             req = PackagingRequirement(req)
-            deps.extend(Dependency.from_requirement(source=root, req=req))
+            deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
         return root
 
@@ -163,7 +164,7 @@ class EggInfoConverter(BaseConverter):
         deps = []
         for req in content.split():
             req = PackagingRequirement(req)
-            deps.extend(Dependency.from_requirement(source=root, req=req))
+            deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
         return root
 

@@ -1,6 +1,6 @@
 # built-in
 import re
-from typing import List, Optional
+from typing import List, Optional, Union
 
 # external
 from packaging.requirements import Requirement as PackagingRequirement
@@ -22,7 +22,8 @@ class DependencyMaker:
     extra_class = ExtraDependency
 
     @classmethod
-    def from_requirement(cls, source, req, *, url=None, editable=False) -> List['Dependency']:
+    def from_requirement(cls, source, req, *, url=None,
+                         editable=False) -> List[Union[Dependency, ExtraDependency]]:
         if type(req) is str:
             req = PackagingRequirement(req)
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
@@ -54,7 +55,7 @@ class DependencyMaker:
     def from_params(cls, *, raw_name: str, constraint,
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
                     repo=None, marker=None, extras: Optional[List[str]] = None,
-                    **kwargs) -> List['Dependency']:
+                    **kwargs) -> List[Union[Dependency, ExtraDependency]]:
         # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):

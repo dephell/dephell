@@ -2,9 +2,10 @@
 from packaging.requirements import Requirement as PackagingRequirement
 
 # project
+from dephell.controllers import DependencyMaker
 from dephell.converters.pip import PIPConverter
 from dephell.links import VCSLink
-from dephell.models import Dependency, Requirement, RootDependency
+from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
 
 
@@ -16,7 +17,7 @@ def test_format():
         'platform_python_implementation == "CPython"'
     )
     req = PackagingRequirement(text)
-    deps = Dependency.from_requirement(root, req)
+    deps = DependencyMaker.from_requirement(root, req)
 
     # test dep
     assert deps[0].name == 'hypothesis'

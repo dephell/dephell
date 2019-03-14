@@ -7,8 +7,8 @@ from unittest.mock import patch
 from packaging.requirements import Requirement as PackagingRequirement
 
 # project
-from dephell.controllers import Graph, Mutator, Resolver, analize_conflict
-from dephell.models import Dependency, Release, Requirement, RootDependency
+from dephell.controllers import Graph, Mutator, Resolver, DependencyMaker, analize_conflict
+from dephell.models import Release, Requirement, RootDependency
 from dephell.repositories import ReleaseRepo
 
 
@@ -60,7 +60,7 @@ def make_root(root, **releases) -> RootDependency:
     root_dep = RootDependency(raw_name=''.join(sorted(releases)))
     root_dep.repo = repo
     for constr in root.deps:
-        subdeps = Dependency.from_requirement(
+        subdeps = DependencyMaker.from_requirement(
             req=PackagingRequirement(constr),
             source=root_dep,
         )
