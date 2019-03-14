@@ -64,13 +64,13 @@ class WareHouseRepo(Interface):
 
     def get_releases(self, dep) -> tuple:
         # retrieve data
-        cache = JSONCache('releases', dep.name)
+        cache = JSONCache('releases', dep.base_name)
         data = cache.load()
         if data is None:
-            url = '{url}{name}/json'.format(url=self.url, name=dep.name)
+            url = '{url}{name}/json'.format(url=self.url, name=dep.base_name)
             response = requests.get(url)
             if response.status_code == 404:
-                raise KeyError('project {name} is not found'.format(name=dep.name))
+                raise KeyError('project {name} is not found'.format(name=dep.base_name))
             data = response.json()
             cache.dump(data)
         elif isinstance(data, str) and data == '':

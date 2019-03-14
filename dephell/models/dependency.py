@@ -116,6 +116,10 @@ class Dependency:
     def name(self) -> str:
         return canonicalize_name(self.raw_name)
 
+    @property
+    def base_name(self) -> str:
+        return self.name
+
     @cached_property
     def groups(self) -> Groups:
         return Groups(dep=self)

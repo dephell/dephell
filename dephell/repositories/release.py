@@ -17,10 +17,10 @@ class ReleaseRepo(Interface):
 
     def get_releases(self, dep) -> tuple:
         if self.releases:
-            return tuple(release for release in self.releases if release.name == dep.name)
+            return tuple(release for release in self.releases if release.name == dep.base_name)
 
         release = Release(
-            raw_name=dep.name,
+            raw_name=dep.raw_name,
             version='1.0',
             time=datetime(1970, 1, 1, 0, 0),
             hashes=getattr(self._link, 'hashes', ()),
