@@ -15,7 +15,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='dephell',
-    version='0.2.0',
+    version='0.3.0',
     description='Dependency resolution for Python',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -24,10 +24,21 @@ setup(
 
     packages=['dephell'],
     install_requires=[
+        'aiohttp',
         'attrs',
-        'cached_property',
+        'cached-property',
+        'cerberus',
+        'graphviz',
+        'html2text',
+        'huepy',
+        'jinja2',
         'packaging',
+        'pip',
+        'python-dateutil',
+        'pyyaml',
         'requests',
+        'tomlkit',
+        'tqdm',
     ],
     entry_points={
         'console_scripts': ['dephell = dephell.cli:main'],
