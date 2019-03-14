@@ -24,10 +24,21 @@ setup(
 
     packages=['dephell'],
     install_requires=[
+        'aiohttp',
         'attrs',
-        'cached_property',
+        'cached-property',
+        'cerberus',
+        'graphviz',
+        'html2text',
+        'huepy',
+        'jinja2',
         'packaging',
+        'pip',
+        'python-dateutil',
+        'pyyaml',
         'requests',
+        'tomlkit',
+        'tqdm',
     ],
     entry_points={
         'console_scripts': ['dephell = dephell.cli:main'],
