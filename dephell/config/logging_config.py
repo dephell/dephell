@@ -10,7 +10,7 @@ LOGGING = {
     'root': {
         'handlers': ['stderr', 'stdout'],
         'disabled': False,
-        'level': 'DEBUG',
+        'level': 'WARNING',
         'propagate': False,
     },
     'loggers': {
