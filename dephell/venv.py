@@ -1,6 +1,5 @@
 from typing import Iterator, Optional
 import os
-import platform
 from itertools import chain
 from pathlib import Path
 from hashlib import md5
@@ -12,14 +11,7 @@ import attr
 from cached_property import cached_property
 
 from .constants import PYTHONS
-
-
-def is_windows() -> bool:
-    if os.name == 'nt':
-        return True
-    if platform.system() == 'Windows':
-        return True
-    return False
+from .utils import is_windows
 
 
 @attr.s()

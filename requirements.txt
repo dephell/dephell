@@ -7,9 +7,11 @@ html2text
 huepy
 jinja2
 packaging
+pexpect
 pip
 python-dateutil
 pyyaml
 requests
+shellingham
 tomlkit
 tqdm
