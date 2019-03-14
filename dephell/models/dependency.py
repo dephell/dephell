@@ -38,13 +38,6 @@ class Dependency:
     extra = None
     _is_extra_dep = False
 
-    # constructors
-
-    @classmethod
-    def from_requirement(cls, *args, **kwargs) -> List['Dependency']:
-        from ..controllers import DependencyMaker
-        return DependencyMaker.from_requirement(*args, **kwargs)
-
     @classmethod
     def from_params(cls, *args, **kwargs) -> List['Dependency']:
         from ..controllers import DependencyMaker
@@ -75,17 +68,15 @@ class Dependency:
 
     @property
     def dependencies(self) -> tuple:
-        # for ExtraDependency we have to use Dependency.from_requirement
-        cls = Dependency if self._is_extra_dep else type(self)
-
+        from ..controllers import DependencyMaker
         deps = []
         for dep in self.group.dependencies:
-            if isinstance(dep, cls):
+            if isinstance(dep, Dependency):
                 deps.append(dep)
             elif isinstance(dep, Iterable):
                 deps.append(dep)
             else:
-                deps.extend(cls.from_requirement(self, dep))
+                deps.extend(DependencyMaker.from_requirement(self, dep))
         return tuple(deps)
 
     @property
