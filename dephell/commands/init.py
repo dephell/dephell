@@ -1,5 +1,6 @@
 # built-in
 from pathlib import Path
+from argparse import ArgumentParser
 
 # external
 import huepy
@@ -7,11 +8,21 @@ import tomlkit
 
 # app
 from ..config import Config
+from ..config import builders
 from ..rules import EXAMPLE_RULE, RULES
 from .base import BaseCommand
 
 
 class InitCommand(BaseCommand):
+    @classmethod
+    def get_parser(cls):
+        parser = ArgumentParser(
+            prog='python3 -m dephell init',
+            description='Create config file for dephell',
+        )
+        builders.build_config(parser)
+        return parser
+
     @classmethod
     def get_config(cls, args):
         config = Config()

@@ -3,15 +3,13 @@ import os.path
 from logging import getLogger
 
 # app
-from ..config import config, parser
+from ..config import config
 
 
 logger = getLogger(__name__)
 
 
 class BaseCommand:
-    parser = parser
-
     def __init__(self, argv):
         parser = self.get_parser()
         self.args = parser.parse_args(argv)

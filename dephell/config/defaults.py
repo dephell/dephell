@@ -1,3 +1,10 @@
+from pathlib import Path
+
+from appdirs import user_data_dir
+
+
+data_dir = Path(user_data_dir('dephell'))
+
 
 DEFAULT = dict(
     # resolver
@@ -13,5 +20,5 @@ DEFAULT = dict(
     nocolors=False,
 
     # other
-    cache='.dephell_cache',
+    cache=str(data_dir / 'cache'),
 )

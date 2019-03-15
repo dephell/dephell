@@ -1,4 +1,5 @@
 aiohttp
+appdirs
 attrs
 cached_property
 cerberus

@@ -25,6 +25,7 @@ setup(
     packages=['dephell'],
     install_requires=[
         'aiohttp',
+        'appdirs',
         'attrs',
         'cached-property',
         'cerberus',
