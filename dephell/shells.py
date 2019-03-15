@@ -83,6 +83,7 @@ class BaseShell:
     def args(self):
         return ['-i']
 
+    # https://github.com/ofek/hatch/blob/master/hatch/shells.py
     def run(self) -> int:
         if not self.interactive:
             result = subprocess.run(self.command, shell=is_windows())
