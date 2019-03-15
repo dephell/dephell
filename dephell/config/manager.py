@@ -91,6 +91,6 @@ class Config:
 
     def __repr__(self):
         return '{cls}({data})'.format(
-            cls=self.__class__.__name__,
+            cls=type(self).__name__,
             data=repr(self._data),
         )

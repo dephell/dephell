@@ -63,4 +63,14 @@ SCHEME = {
         type='boolean',
         required=True,  # because represented in default config
     ),
+    'venv': dict(
+        type='dict',
+        required=True,  # because represented in default config
+        schema={
+            'path': dict(
+                type='string',
+                required=True,
+            ),
+        },
+    ),
 }

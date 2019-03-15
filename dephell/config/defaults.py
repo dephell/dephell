@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from appdirs import user_data_dir
@@ -21,4 +22,8 @@ DEFAULT = dict(
 
     # other
     cache=str(data_dir / 'cache'),
+    venv=dict(
+        path=str(data_dir / 'venvs' / '{project}'),
+        python=sys.executable,
+    ),
 )
