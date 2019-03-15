@@ -71,6 +71,10 @@ SCHEME = {
                 type='string',
                 required=True,
             ),
+            'python': dict(
+                type='string',
+                required=True,
+            ),
         },
     ),
 }
