@@ -3,11 +3,10 @@ from pathlib import Path
 from argparse import ArgumentParser
 
 # external
-import huepy
 import tomlkit
 
 # app
-from ..config import Config
+from ..config import config
 from ..config import builders
 from ..rules import EXAMPLE_RULE, RULES
 from .base import BaseCommand
@@ -21,11 +20,16 @@ class InitCommand(BaseCommand):
             description='Create config file for dephell',
         )
         builders.build_config(parser)
+        builders.build_output(parser)
         return parser
 
     @classmethod
     def get_config(cls, args):
-        config = Config()
+        config.setup_logging()
+        config.attach_cli(args)
+        config.setup_logging()
+        if 'config' not in config._data:
+            config._data['config'] = 'pyproject.toml'
         return config
 
     def validate(self):
@@ -48,7 +52,7 @@ class InitCommand(BaseCommand):
         return table
 
     def __call__(self):
-        config_path = Path(self.args.config)
+        config_path = Path(self.config['config'])
         exists = config_path.exists()
         if exists:
             # read
@@ -64,9 +68,8 @@ class InitCommand(BaseCommand):
             doc['tool'].add('dephell', tomlkit.table())
 
         # detect requirements files
-        path = Path(self.args.config).parent
         for rule in RULES:
-            if (path / rule.from_path).exists():
+            if (config_path.parent / rule.from_path).exists():
                 if rule.from_format not in doc['tool']['dephell']:
                     doc['tool']['dephell'].add(
                         rule.from_format,
@@ -85,7 +88,7 @@ class InitCommand(BaseCommand):
             stream.write(tomlkit.dumps(doc))
 
         if exists:
-            print(huepy.good('pyproject.toml updated'))
+            self.good('pyproject.toml updated')
         else:
-            print(huepy.good('pyproject.toml created'))
+            self.good('pyproject.toml created')
         return True

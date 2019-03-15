@@ -1,8 +1,5 @@
 from argparse import ArgumentParser
 
-# external
-import huepy
-
 # app
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
@@ -47,20 +44,20 @@ class ConvertCommand(BaseCommand):
                 resolved = resolver.resolve(level=1)
                 if not resolved:
                     conflict = analize_conflict(resolver=resolver)
-                    print(huepy.bad('Conflict has found:'))
+                    self.bad('Conflict has found:')
                     print(conflict)
                     return False
-                print(huepy.good('Merged!'))
+                self.good('Merged!')
 
         # resolve (and merge)
         if should_be_resolved:
             resolved = resolver.resolve()
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
-                print(huepy.bad('Conflict has found:'))
+                self.bad('Conflict has found:')
                 print(conflict)
                 return False
-            print(huepy.good('Resolved!'))
+            self.good('Resolved!')
 
         # dump
         dumper.dump(
