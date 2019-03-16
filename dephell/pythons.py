@@ -1,11 +1,14 @@
 import sys
+import os
 from platform import python_version, python_implementation
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Iterator, Optional, Union
 
 import attr
-from packaging.version import Version
+from packaging.version import Version, InvalidVersion
 from pythonfinder import Finder
+
+from .models import Constraint
 
 
 __all__ = ['Python', 'Pythons']
@@ -28,14 +31,80 @@ class Pythons:
     @property
     def current(self):
         return Python(
-            path=sys.executable,
+            path=Path(sys.executable),
             version=Version(python_version()),
             implementation=python_implementation(),
         )
 
+    def get_best(self, prefer: Union[None, Path, Version, Constraint] = None) -> Python:
+        # no preferentions
+        if not prefer:
+            return self.current
+
+        # given version
+        if isinstance(prefer, Version):
+            python = self.get_by_version(prefer)
+            if python is None:
+                msg = 'cannot find interpreter for given python version: '
+                raise FileNotFoundError(msg + str(prefer))
+            return python
+
+        # given path
+        if isinstance(prefer, Path):
+            python = self.get_by_path(prefer)
+            if python is None:
+                msg = 'cannot find binary by given path: '
+                raise FileNotFoundError(msg + str(prefer))
+            return python
+
+        # given constraint
+        if isinstance(prefer, Constraint):
+            python = self.get_by_constraint(prefer)
+            if python is None:
+                msg = 'cannot find interpreter for given constraint: '
+                raise FileNotFoundError(msg + str(prefer))
+            return python
+
+        if not isinstance(prefer, str):
+            raise TypeError('invalid python preferention type: ' + str(type(prefer)))
+
+        # looks like a path
+        path = Path(prefer)
+        if os.path.sep in prefer and not path.exists():
+            msg = 'cannot find binary by given path: '
+            raise FileNotFoundError(msg + str(prefer))
+        if path.exists():
+            python = self.get_by_path(path)
+            if python is not None:
+                return python
+
+        # looks like constraint
+        if set(prefer) & {'<', '>', '='}:
+            python = self.get_by_constraint(Constraint(prefer))
+            if python is not None:
+                return python
+
+        # ok, let's try it like a version
+        try:
+            version = Version(prefer)
+        except InvalidVersion:
+            pass
+        else:
+            python = self.get_by_name(version)
+            if python is not None:
+                return python
+
+        # ok, let's try it like a name
+        python = self.get_by_name(prefer)
+        if python is not None:
+            return python
+
+        # no success
+        raise FileNotFoundError('cannot find interpretor: ' + str(prefer))
+
     # PUBLIC METHODS
 
-    def get_best(self, constraint) -> Python:
+    def get_by_constraint(self, constraint: Constraint) -> Python:
         for python in self:
             if python.version in constraint:
                 return python

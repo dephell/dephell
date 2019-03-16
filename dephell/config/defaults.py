@@ -25,6 +25,5 @@ DEFAULT = dict(
     project=str(Path('.').resolve()),
     venv=dict(
         path=str(data_dir / 'venvs' / '{project}'),
-        python=sys.executable,
     ),
 )

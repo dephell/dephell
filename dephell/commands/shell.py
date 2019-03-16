@@ -6,6 +6,7 @@ from .base import BaseCommand
 from ..config import builders
 from ..venvs import VEnvs
 from ..shells import Shells
+from ..pythons import Pythons
 
 
 class ShellCommand(BaseCommand):
@@ -26,7 +27,9 @@ class ShellCommand(BaseCommand):
         venv = venvs.get(Path(self.config['project']))
         if not venv.exists():
             self.good('Creating venv for project...')
-            venv.create(python_path=venvs.python_path)
+            python = Pythons().get_best(self.config['venv'].get('python'))
+            self.good('Choosen python: {}'.format(python.version))
+            venv.create(python_path=python.path)
 
         shells = Shells(bin_path=venv.bin_path)
         shells.run()

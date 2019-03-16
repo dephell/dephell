@@ -3,7 +3,6 @@ import os
 from itertools import chain
 from pathlib import Path
 from hashlib import md5
-import sys
 import shutil
 from venv import EnvBuilder as EnvBuilder
 
@@ -100,10 +99,6 @@ class VEnvs:
     @cached_property
     def is_venv(self) -> bool:
         return bool({'VIRTUAL_ENV', 'CONDA_PREFIX'} & set(os.environ))
-
-    @cached_property
-    def python_path(self) -> Path:
-        return Path(sys.executable)
 
     def _get_path(self, project_path: Path) -> Path:
         if not project_path.exists():

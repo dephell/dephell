@@ -77,7 +77,7 @@ SCHEME = {
             ),
             'python': dict(
                 type='string',
-                required=True,
+                required=False,
             ),
         },
     ),
