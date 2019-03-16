@@ -70,7 +70,7 @@ class BaseConverter:
         if path is not None:
             path = Path(str(path))
             file_name = path.name
-            project_name = path.name
+            project_name = path.parent.name
 
             if file_name in FILES:
                 return project_name

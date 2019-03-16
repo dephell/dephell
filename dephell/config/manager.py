@@ -15,7 +15,7 @@ from .scheme import SCHEME
 
 
 class Config:
-    _skip = ('config', 'env')
+    _skip = ('config', 'env', 'key')
 
     def __init__(self, data: Optional[dict] = None):
         self._data = data or DEFAULT
@@ -62,6 +62,8 @@ class Config:
     def attach_cli(self, args, sep: str = '_') -> dict:
         data = defaultdict(dict)
         for name, value in args._get_kwargs():
+            if value is None:
+                continue
             parsed = name.split(sep, maxsplit=1)
             if len(parsed) == 1:
                 data[name] = value
@@ -91,6 +93,6 @@ class Config:
 
     def __repr__(self):
         return '{cls}({data})'.format(
-            cls=self.__class__.__name__,
+            cls=type(self).__name__,
             data=repr(self._data),
         )

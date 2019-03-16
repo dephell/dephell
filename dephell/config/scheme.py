@@ -45,6 +45,10 @@ SCHEME = {
         type='string',
         required=True,  # because represented in default config
     ),
+    'project': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
     'bitbucket': dict(
         type='string',
         required=True,  # because represented in default config
@@ -62,5 +66,19 @@ SCHEME = {
     'nocolors': dict(
         type='boolean',
         required=True,  # because represented in default config
+    ),
+    'venv': dict(
+        type='dict',
+        required=True,  # because represented in default config
+        schema={
+            'path': dict(
+                type='string',
+                required=True,
+            ),
+            'python': dict(
+                type='string',
+                required=True,
+            ),
+        },
     ),
 }

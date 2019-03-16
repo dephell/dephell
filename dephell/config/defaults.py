@@ -1,3 +1,11 @@
+import sys
+from pathlib import Path
+
+from appdirs import user_data_dir
+
+
+data_dir = Path(user_data_dir('dephell'))
+
 
 DEFAULT = dict(
     # resolver
@@ -13,5 +21,10 @@ DEFAULT = dict(
     nocolors=False,
 
     # other
-    cache='.dephell_cache',
+    cache=str(data_dir / 'cache'),
+    project=str(Path('.').resolve()),
+    venv=dict(
+        path=str(data_dir / 'venvs' / '{project}'),
+        python=sys.executable,
+    ),
 )

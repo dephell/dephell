@@ -2,16 +2,16 @@
 import os.path
 from logging import getLogger
 
+import huepy
+
 # app
-from ..config import config, parser
+from ..config import config
 
 
 logger = getLogger(__name__)
 
 
 class BaseCommand:
-    parser = parser
-
     def __init__(self, argv):
         parser = self.get_parser()
         self.args = parser.parse_args(argv)
@@ -39,3 +39,15 @@ class BaseCommand:
         if not is_valid:
             print(self.config.format_errors())
         return is_valid
+
+    def good(self, *messages, sep=' ') -> None:
+        text = sep.join(messages)
+        if not self.config['nocolors']:
+            text = huepy.good(text)
+        print(text)
+
+    def bad(self, *messages, sep=' ') -> None:
+        text = sep.join(messages)
+        if not self.config['nocolors']:
+            text = huepy.bad(text)
+        print(text)

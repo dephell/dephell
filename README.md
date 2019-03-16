@@ -61,4 +61,3 @@ dumper.dump(reqs=reqs, path='requirements.txt')
 1. Python version
 1. Hashes load
 1. Zero release (compatible with any constraints)
-1. right version to tag mapping for git

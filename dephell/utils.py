@@ -1,5 +1,6 @@
 # built-in
 import os
+import platform
 from contextlib import contextmanager
 from itertools import product
 
@@ -42,3 +43,11 @@ def lazy_product(*all_groups):
                 if el is not None and group == el:
                     yield groups
                     break
+
+
+def is_windows() -> bool:
+    if os.name == 'nt':
+        return True
+    if platform.system() == 'Windows':
+        return True
+    return False
