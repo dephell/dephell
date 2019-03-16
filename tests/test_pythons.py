@@ -1,4 +1,6 @@
+import pytest
 from dephell.pythons import Pythons
+from packaging.version import Version
 
 
 def test_abstract():
@@ -8,3 +10,17 @@ def test_abstract():
     assert pythons['2.6'].abstract is True
     assert pythons['3.0'].abstract is True
     assert not all(p.abstract for p in manager)
+
+
+@pytest.mark.parametrize('version', [
+    '2.7',
+    '3.0',
+    '3.4',
+    '3.5',
+    '3.6',
+    '3.7',
+])
+def test_get_by_version(version):
+    manager = Pythons(abstract=True)
+    python = manager.get_by_version(Version(version))
+    assert str(python.version).startswith(version)
