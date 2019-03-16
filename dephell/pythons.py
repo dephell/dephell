@@ -9,7 +9,7 @@ from packaging.version import Version, InvalidVersion
 from pythonfinder import Finder
 
 from .constants import PYTHONS
-from .models import Constraint
+from .models import RangeSpecifier
 
 
 __all__ = ['Python', 'Pythons']
@@ -42,7 +42,7 @@ class Pythons:
 
     # PUBLIC METHODS
 
-    def get_best(self, prefer: Union[None, Path, Version, Constraint] = None) -> Python:
+    def get_best(self, prefer: Union[None, Path, Version, RangeSpecifier] = None) -> Python:
         # no preferentions
         if not prefer:
             return self.current
@@ -64,8 +64,8 @@ class Pythons:
             return python
 
         # given constraint
-        if isinstance(prefer, Constraint):
-            python = self.get_by_constraint(prefer)
+        if isinstance(prefer, RangeSpecifier):
+            python = self.get_by_spec(prefer)
             if python is None:
                 msg = 'cannot find interpreter for given constraint: '
                 raise FileNotFoundError(msg + str(prefer))
@@ -86,7 +86,7 @@ class Pythons:
 
         # looks like constraint
         if set(prefer) & {'<', '>', '='}:
-            python = self.get_by_constraint(Constraint(prefer))
+            python = self.get_by_spec(RangeSpecifier(prefer))
             if python is not None:
                 return python
 
@@ -108,9 +108,9 @@ class Pythons:
         # no success
         raise FileNotFoundError('cannot find interpretor: ' + str(prefer))
 
-    def get_by_constraint(self, constraint: Constraint) -> Python:
+    def get_by_spec(self, specifier: RangeSpecifier) -> Python:
         for python in self:
-            if python.version in constraint:
+            if python.version in specifier:
                 return python
         return self.current
 
