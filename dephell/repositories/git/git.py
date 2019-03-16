@@ -107,7 +107,7 @@ class GitRepo(Interface):
             return deps
 
         self._setup()
-        self._call('checkout', str(version))
+        self._call('checkout', self._version_to_rev(version))
         path = self.path / 'setup.py'
         if not path.exists():
             return ()
@@ -161,6 +161,19 @@ class GitRepo(Interface):
     @staticmethod
     def _clean_tag(tag):
         return rex_version.fullmatch(tag).groups()[0]
+
+    def _version_to_rev(self, version) -> str:
+        version = str(version)
+        if version in self.tags:
+            return version
+        for tag in self.tags:
+            if tag.endswith(version):
+                chars = set(tag[:-len(version)])
+                if not (chars - {'v', 'V', '.', ' '}):
+                    return tag
+        # TODO: look for version in setup.py and other places
+        ...
+        raise LookupError('cannot find tag for version ' + version)
 
     def _setup(self, *, force: bool = False) -> None:
         if self._ready and not force:
