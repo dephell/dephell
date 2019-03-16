@@ -67,7 +67,6 @@ class PoetryConverter(BaseConverter):
 
         return tomlkit.dumps(doc)
 
-    # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
     @staticmethod
     def _make_deps(root, name: str, content) -> List[Dependency]:
         if isinstance(content, str):
