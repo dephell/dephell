@@ -35,6 +35,7 @@ class Pythons:
     def current(self):
         return Python(
             path=Path(sys.executable),
+            name=Path(sys.executable).name,
             version=Version(python_version()),
             implementation=python_implementation(),
         )
@@ -120,10 +121,10 @@ class Pythons:
                 return python
 
         # base version (3.7 -> 3.7.1)
-        base_version = version.release[:2]
-        for python in self:
-            if python.version.release[:2] == base_version:
-                return python
+        for base_version in (version.release[:3], version.release[:2]):
+            for python in self:
+                if python.version.release[:2] == base_version:
+                    return python
         return None
 
     def get_by_name(self, name: str) -> Optional[Python]:
@@ -146,6 +147,7 @@ class Pythons:
     def _entry_to_python(entry) -> Python:
         return Python(
             path=entry.path,
+            name=entry.name,
             version=entry.py_version.version,
             # TODO: detect implementation (How? From path?)
             implementation=python_implementation(),
@@ -159,19 +161,25 @@ class Pythons:
                 yield self._entry_to_python(entry)
             return
 
+        # return non-abstract pythons
+        returned = set()
         non_abstract = type(self)(abstract=False)
         for version in PYTHONS:
-            parsed_version = Version(version)
-            # return non-abstract python if possible
-            python = non_abstract.get_by_version(parsed_version)
+            python = non_abstract.get_by_version(Version(version))
             if python is not None:
+                returned.add(version)
                 yield python
-            else:
-                # otherwise return abstract python
-                path = self.current.path
-                yield Python(
-                    path=path.parent / 'python' + version + path.suffix,
-                    version=version,
-                    implementation=self.current.implementation,
-                    abstract=True,
-                )
+
+        # return abstract pythons for all python versions not in this system
+        for version in PYTHONS:
+            if version in returned:
+                continue
+            path = self.current.path
+            name = 'python' + version
+            yield Python(
+                path=path.parent / (name + path.suffix),
+                version=Version(version),
+                name=name,
+                implementation=self.current.implementation,
+                abstract=True,
+            )
