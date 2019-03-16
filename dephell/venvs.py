@@ -75,9 +75,15 @@ class VEnv:
     def exists(self) -> bool:
         return bool(self.bin_path)
 
-    def create(self, python_path) -> int:
+    def create(self, python_path) -> None:
         builder = VEnvBuilder(python=str(python_path))
         builder.create(str(self.path))
+
+        # clear cache
+        if 'bin_path' in self.__dict__:
+            del self.__dict__['bin_path']
+        if 'python_path' in self.__dict__:
+            del self.__dict__['python_path']
 
     def clone(self, path: Path) -> 'VEnv':
         shutil.copytree(str(self.path), str(path), copy_function=shutil.copy)
@@ -104,9 +110,9 @@ class VEnvs:
             raise FileNotFoundError('Project directory does not exist')
         if not project_path.is_dir():
             raise IOError('Project path is not directory')
-        digest = md5(str(project_path)).hexdigest()[:8]
-        name = project_path.name + '_' + digest
-        return self.path / name
+        digest = md5(str(project_path).encode('utf-8')).hexdigest()[:8]
+        name = project_path.name + '-' + digest
+        return str(self.path).format(project=name)
 
     def get(self, project_path: Path) -> VEnv:
         path = self._get_path(project_path)

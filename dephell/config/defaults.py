@@ -22,6 +22,7 @@ DEFAULT = dict(
 
     # other
     cache=str(data_dir / 'cache'),
+    project=str(Path('.').resolve()),
     venv=dict(
         path=str(data_dir / 'venvs' / '{project}'),
         python=sys.executable,

@@ -45,6 +45,10 @@ SCHEME = {
         type='string',
         required=True,  # because represented in default config
     ),
+    'project': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
     'bitbucket': dict(
         type='string',
         required=True,  # because represented in default config
