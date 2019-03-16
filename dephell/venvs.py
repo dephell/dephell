@@ -62,7 +62,7 @@ class VEnv:
     def python_path(self) -> Optional[Path]:
         if self.bin_path is None:
             return None
-        for suffix in chain(reversed(PYTHONS), ['']):
+        for suffix in chain(PYTHONS, ['']):
             for ext in ('', '.exe'):
                 path = self.bin_path / ('python' + suffix)
                 if ext:
