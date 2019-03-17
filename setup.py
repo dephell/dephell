@@ -35,6 +35,7 @@ setup(
         'packaging',
         'pexpect',
         'pip',
+        'pythonfinder',
         'pyyaml',
         'requests',
         'shellingham',

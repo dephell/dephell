@@ -8,6 +8,7 @@ jinja2
 packaging
 pexpect
 pip
+pythonfinder
 pyyaml
 requests
 shellingham
