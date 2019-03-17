@@ -51,13 +51,16 @@ class Shells:
     def shell_path(self) -> Path:
         return self._shell_info[-1]
 
-    def run(self) -> int:
+    @property
+    def current(self) -> 'BaseShell':
         shell_class = self.shells.get(self.shell_name)
-        shell = shell_class(
+        return shell_class(
             bin_path=self.bin_path,
             shell_path=self.shell_path,
         )
-        return shell.run()
+
+    def run(self) -> int:
+        return self.current.run()
 
 
 @attr.s()

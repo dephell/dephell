@@ -66,7 +66,7 @@ class VEnv:
             for ext in ('', '.exe'):
                 path = self.bin_path / ('python' + suffix)
                 if ext:
-                    path = Path.with_suffix()
+                    path = path.with_suffix(ext)
                 if path.exists():
                     return path
         return None

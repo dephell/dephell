@@ -1,6 +1,9 @@
 # built-in
+import json
 import os.path
+from functools import reduce
 from logging import getLogger
+from operator import getitem
 
 import huepy
 
@@ -51,3 +54,18 @@ class BaseCommand:
         if not self.config['nocolors']:
             text = huepy.bad(text)
         print(text)
+
+    @staticmethod
+    def get_value(data, key):
+        # print all config
+        if not key:
+            return json.dumps(data, indent=2, sort_keys=True)
+
+        keys = key.split('-')
+        value = reduce(getitem, keys, data)
+        # print config section
+        if type(value) is dict:
+            return json.dumps(value, indent=2, sort_keys=True)
+
+        # print one value
+        return value
