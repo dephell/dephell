@@ -51,8 +51,8 @@ class PoetryLockConverter(BaseConverter):
         return tomlkit.dumps(doc)
 
     # https://github.com/sdispater/poetry/blob/master/poetry.lock
-    @staticmethod
-    def _make_deps(root, content) -> List[Dependency]:
+    @classmethod
+    def _make_deps(cls, root, content) -> List[Dependency]:
         # get link
         url = None
         if 'source' in content:
@@ -78,7 +78,32 @@ class PoetryLockConverter(BaseConverter):
             url=url,
             editable=False,
         )
-        deps[0].dependencies = content.get('dependencies', tuple())
+
+        subdeps = []
+        for subname, subcontent in content.get('dependencies', dict()).items():
+            if isinstance(subcontent, list):
+                subcontent = ','.join(set(subcontent))
+            if isinstance(subcontent, str):
+                subdeps.extend(DependencyMaker.from_params(
+                    raw_name=subname,
+                    constraint=Constraint(root, '==' + subcontent),
+                ))
+                continue
+
+            if 'python' in subcontent:
+                marker = RangeSpecifier(subcontent['python']).to_marker('python_version')
+            else:
+                marker = None
+
+            if isinstance(subcontent['version'], list):
+                subcontent['version'] = ','.join(set(subcontent['version']))
+            subdeps.extend(DependencyMaker.from_params(
+                raw_name=subname,
+                constraint=Constraint(root, subcontent['version']),
+                marker=marker,
+            ))
+        deps[0].dependencies = tuple(subdeps)
+
         return deps
 
     def _format_req(self, req):
@@ -105,11 +130,11 @@ class PoetryLockConverter(BaseConverter):
             if req.rev:
                 result['source']['reference'] = req.rev
 
-        # # add dependencies
-        # deps = req.dep.dependencies
-        # if deps:
-        #     result['dependencies'] = tomlkit.table()
-        #     for dep in deps:
-        #         result['dependencies'][dep.name] = str(dep.constraint)
+        # add dependencies
+        deps = req.dep.dependencies
+        if deps:
+            result['dependencies'] = tomlkit.table()
+            for dep in deps:
+                result['dependencies'][dep.name] = str(dep.constraint)
 
         return result

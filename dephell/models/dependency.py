@@ -62,6 +62,10 @@ class Dependency:
 
     @property
     def dependencies(self) -> tuple:
+        deps = self.__dict__.get('dependencies')
+        if deps is not None:
+            return deps
+
         from ..controllers import DependencyMaker
         deps = []
         for dep in self.group.dependencies:
