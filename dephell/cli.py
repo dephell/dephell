@@ -1,9 +1,13 @@
 # built-in
 from argparse import Action, ArgumentParser
+from logging import getLogger
 
 # app
 from .commands import commands
 from .constants import ReturnCodes
+
+
+logger = getLogger('dephell.cli')
 
 
 class PatchedParser(ArgumentParser):
@@ -45,7 +49,11 @@ def main(argv):
     if not is_valid:
         return ReturnCodes.INVALID_CONFIG.value
 
-    result = task()
+    try:
+        result = task()
+    except Exception as e:
+        logger.exception('{}: {}'.format(type(e).__name__, e))
+        return ReturnCodes.UNKNOWN_EXCEPTION.value
     if not result:
         return ReturnCodes.COMMAND_ERROR.value
     return ReturnCodes.OK.value

@@ -31,7 +31,6 @@ setup(
         'cerberus',
         'graphviz',
         'html2text',
-        'huepy',
         'jinja2',
         'packaging',
         'pexpect',

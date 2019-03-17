@@ -25,25 +25,32 @@ LOGGING = {
         'stderr': {
             'stream': 'ext://sys.stderr',
             'level': 'WARNING',  # write to stderr only WARNING and higher
-            'formatter': 'simple',
+            'formatter': 'short',
             'class': 'logging.StreamHandler',
         },
         'stdout': {
             'stream': 'ext://sys.stdout',
             'filters': ['level'],  # write to stdout only DEBUG and INFO
             'level': 'DEBUG',
-            'formatter': 'simple',
+            'formatter': 'short',
             'class': 'logging.StreamHandler',
         },
     },
     'formatters': {
-        'simple': {
+        'full': {
             'datefmt': '%Y-%m-%d %H:%M:%S',
             'extras': True,
             '()': 'dephell.logging_helpers.ColoredFormatter',
             'style': '{',
             'colors': True,
             'format': '{levelname:8} {asctime} {message} {extras}',
+        },
+        'short': {
+            'extras': True,
+            '()': 'dephell.logging_helpers.ColoredFormatter',
+            'style': '{',
+            'colors': True,
+            'format': '{levelname:8} {message} {extras}',
         },
     },
 }

@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS, LOG_LEVELS, STRATEGIES
+from ..constants import ENVS, FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES
 
 
 env_help = (
@@ -46,6 +46,7 @@ def build_output(parser):
     output_group = parser.add_argument_group('Console output')
     output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
     output_group.add_argument('--level', choices=LOG_LEVELS, help='minimal level for log messages.')
+    output_group.add_argument('--format', choices=LOG_FORMATTERS, help='output format.')
     output_group.add_argument('--nocolors', action='store_true', help='don\'t color output.')
 
 

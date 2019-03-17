@@ -45,9 +45,9 @@ class ShellCommand(BaseCommand):
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']))
         if not venv.exists():
-            self.good('Creating venv for project...')
+            self.logger.info('Creating venv for project...')
             python = self._get_python()
-            self.good('Choosen python: {}'.format(python.version))
+            self.logger.debug('choosen python', extra=dict(version=python.version))
             venv.create(python_path=python.path)
 
         shells = Shells(bin_path=venv.bin_path)

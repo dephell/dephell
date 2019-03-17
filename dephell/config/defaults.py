@@ -21,6 +21,7 @@ DEFAULT = dict(
     silent=False,
     level='INFO',
     nocolors=False,
+    format='short',
 
     # venv
     venv=str(data_dir / 'venvs' / '{project}'),

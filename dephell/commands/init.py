@@ -87,7 +87,7 @@ class InitCommand(BaseCommand):
             stream.write(tomlkit.dumps(doc))
 
         if exists:
-            self.good('pyproject.toml updated')
+            self.logger.info('pyproject.toml updated')
         else:
-            self.good('pyproject.toml created')
+            self.logger.info('pyproject.toml created')
         return True

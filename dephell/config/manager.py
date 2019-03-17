@@ -27,7 +27,10 @@ class Config:
             data = LOGGING
             if self._data:
                 data['loggers']['dephell']['level'] = self['level']
-                data['formatters']['simple']['colors'] = not self['nocolors']
+                for formatter in data['formatters'].values():
+                    formatter['colors'] = not self['nocolors']
+                for handler in data['handlers'].values():
+                    handler['formatter'] = self['format']
         dictConfig(LOGGING)
 
     def attach(self, data: dict, container: Optional[dict] = None) -> None:

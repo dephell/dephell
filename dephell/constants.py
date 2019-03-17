@@ -40,7 +40,8 @@ ENVS = ('main', 'dev', 'main-opt', 'dev-opt')
 
 STRATEGIES = ('min', 'max')
 
-LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR')
+LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'EXCEPTION')
+LOG_FORMATTERS = ('short', 'full')
 
 PYTHONS_DEPRECATED = ('2.6', '2.7', '3.0', '3.1', '3.2', '3.3', '3.4')
 PYTHONS_POPULAR = ('3.5', '3.6', '3.7')
