@@ -50,7 +50,7 @@ class PoetryLockConverter(BaseConverter):
 
         return tomlkit.dumps(doc)
 
-    # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
+    # https://github.com/sdispater/poetry/blob/master/poetry.lock
     @staticmethod
     def _make_deps(root, content) -> List[Dependency]:
         # get link
@@ -70,7 +70,7 @@ class PoetryLockConverter(BaseConverter):
             else:
                 marker = '({}) and {}'.format(marker, python)
 
-        return DependencyMaker.from_params(
+        deps = DependencyMaker.from_params(
             raw_name=content['name'],
             description=content['description'],
             constraint=Constraint(root, '==' + content['version']),
@@ -78,6 +78,8 @@ class PoetryLockConverter(BaseConverter):
             url=url,
             editable=False,
         )
+        deps[0].dependencies = content.get('dependencies', tuple())
+        return deps
 
     def _format_req(self, req):
         result = tomlkit.table()
@@ -103,11 +105,11 @@ class PoetryLockConverter(BaseConverter):
             if req.rev:
                 result['source']['reference'] = req.rev
 
-        # add dependencies
-        deps = req.dep.dependencies
-        if deps:
-            result['dependencies'] = tomlkit.table()
-            for dep in deps:
-                result['dependencies'][dep.name] = str(dep.constraint)
+        # # add dependencies
+        # deps = req.dep.dependencies
+        # if deps:
+        #     result['dependencies'] = tomlkit.table()
+        #     for dep in deps:
+        #         result['dependencies'][dep.name] = str(dep.constraint)
 
         return result

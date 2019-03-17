@@ -73,6 +73,13 @@ class Dependency:
                 deps.extend(DependencyMaker.from_requirement(self, dep))
         return tuple(deps)
 
+    @dependencies.setter
+    def dependencies(self, dependencies: tuple) -> None:
+        constraint = str(self.constraint)
+        if not constraint.startswith('==') or ',' in constraint or '||' in constraint:
+            raise ValueError('cannot set deps for non-locked dependency')
+        self.__dict__['dependencies'] = dependencies
+
     @property
     def locked(self) -> bool:
         return 'group' in self.__dict__

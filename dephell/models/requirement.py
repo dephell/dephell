@@ -51,6 +51,11 @@ class Requirement:
         if self.lock:
             return self.dep.group.best_release
 
+    @cached_property
+    def dependencies(self) -> tuple:
+        extra_deps = sum([dep.dependencies for dep in self.extra_deps], tuple())
+        return self.dep.dependencies + extra_deps
+
     @property
     def editable(self) -> Optional[bool]:
         if self.dep.editable:

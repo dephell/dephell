@@ -69,6 +69,7 @@ class PoetryConverter(BaseConverter):
 
         return tomlkit.dumps(doc)
 
+    # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod
     def _make_deps(root, name: str, content) -> List[Dependency]:
         if isinstance(content, str):

@@ -1,11 +1,11 @@
 # built-in
 from pathlib import Path
 
-# import tomlkit
+import tomlkit
 
 # project
 from dephell.converters.poetrylock import PoetryLockConverter
-# from dephell.models import Requirement
+from dephell.models import Requirement
 from dephell.repositories.git.git import GitRepo
 
 
@@ -22,14 +22,14 @@ def test_load():
     assert isinstance(deps['django'].repo, GitRepo)
 
 
-# def test_dump():
-#     converter = PoetryLockConverter()
-#     resolver = converter.load_resolver(Path('tests') / 'requirements' / 'poetry.lock.toml')
-#     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
-#     assert len(reqs) > 2
-#     content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
-#     assert 'name = "enum34"' in content
-#     assert 'Python 3.4 Enum backported' in content
-#
-#     parsed = tomlkit.parse(content)['package']
-#     parsed = {dep['name']: dep for dep in parsed}
+def test_dump():
+    converter = PoetryLockConverter()
+    resolver = converter.load_resolver(Path('tests') / 'requirements' / 'poetry.lock.toml')
+    reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
+    assert len(reqs) > 2
+    content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
+    assert 'name = "enum34"' in content
+    assert 'Python 3.4 Enum backported' in content
+
+    parsed = tomlkit.parse(content)['package']
+    parsed = {dep['name']: dep for dep in parsed}
