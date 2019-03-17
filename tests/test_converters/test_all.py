@@ -17,7 +17,7 @@ from dephell.repositories import WareHouseRepo
     (converters.PIPFileLockConverter(), './tests/requirements/pipfile.lock.json'),
 
     (converters.PoetryConverter(), './tests/requirements/poetry.toml'),
-    # (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml'),
+    (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml'),
 
     (converters.SetupPyConverter(), './tests/requirements/setup.py'),
     (converters.EggInfoConverter(), './tests/requirements/sdist.tar.gz'),

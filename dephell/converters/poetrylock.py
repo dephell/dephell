@@ -116,6 +116,8 @@ class PoetryLockConverter(BaseConverter):
         if 'version' not in result:
             result['version'] = '*'
         result['version'] = result['version'].lstrip('=')
+        if req.markers:
+            result['marker'] = req.markers
 
         # add link
         if req.link:
