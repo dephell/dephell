@@ -96,7 +96,7 @@ class Pythons:
         except InvalidVersion:
             pass
         else:
-            python = self.get_by_name(version)
+            python = self.get_by_version(version)
             if python is not None:
                 return python
 

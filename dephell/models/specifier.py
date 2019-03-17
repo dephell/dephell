@@ -52,7 +52,7 @@ class Specifier:
         except specifiers.InvalidSpecifier:
             self._legacy = None
         try:
-            self._spec = self._semver = specifiers.Specifier(str(constr))
+            self._spec = self._semver = specifiers.Specifier(str(constr), prereleases=True)
         except specifiers.InvalidSpecifier:
             self._semver = None
         if self._spec is None:

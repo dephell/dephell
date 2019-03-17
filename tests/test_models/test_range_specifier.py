@@ -20,6 +20,23 @@ def test_simple(operator, mask):
         assert (version in spec) == ok
 
 
+@pytest.mark.parametrize('version, spec, ok', [
+    ('2.7',         '<=3.4',    True),
+    ('2.7.1',       '<=3.4',    True),
+    ('2.7.1rc1',    '<=3.4',    True),
+    ('2.7.15',      '<=3.4',    True),
+    ('2.7.15rc1',   '<=3.4',    True),
+
+    ('2.7',         '>=3.4',    False),
+    ('2.7.1',       '>=3.4',    False),
+    ('2.7.1rc1',    '>=3.4',    False),
+    ('2.7.15',      '>=3.4',    False),
+    ('2.7.15rc1',   '>=3.4',    False),
+])
+def test_cases(version, spec, ok):
+    assert (version in RangeSpecifier(spec)) is ok
+
+
 @pytest.mark.parametrize('op1, op2, mask', [
     # left
     ('<',   '<',    [1, 0, 0, 0, 0]),

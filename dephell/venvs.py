@@ -1,9 +1,10 @@
-from typing import Iterator, Optional
 import os
+import shutil
+from base64 import b64encode
+from typing import Iterator, Optional
 from itertools import chain
 from pathlib import Path
 from hashlib import md5
-import shutil
 from venv import EnvBuilder as EnvBuilder
 
 import attr
@@ -100,12 +101,18 @@ class VEnvs:
     def is_venv(self) -> bool:
         return bool({'VIRTUAL_ENV', 'CONDA_PREFIX'} & set(os.environ))
 
+    @staticmethod
+    def _encode(text: str) -> str:
+        digest_bin = md5(text.encode('utf-8')).digest()
+        digest_str = b64encode(digest_bin).decode()
+        return digest_str.replace('+', '').replace('/', '')[:4]
+
     def _get_path(self, project_path: Path) -> Path:
         if not project_path.exists():
             raise FileNotFoundError('Project directory does not exist')
         if not project_path.is_dir():
             raise IOError('Project path is not directory')
-        digest = md5(str(project_path).encode('utf-8')).hexdigest()[:8]
+        digest = self._encode(str(project_path))
         name = project_path.name + '-' + digest
         return str(self.path).format(project=name)
 

@@ -1,5 +1,6 @@
 # built-in
 from collections import defaultdict
+from logging import captureWarnings
 from logging.config import dictConfig
 from typing import Optional
 
@@ -21,6 +22,7 @@ class Config:
         self._data = data or DEFAULT
 
     def setup_logging(self, data: Optional[dict] = None) -> None:
+        captureWarnings(True)
         if data is None:
             data = LOGGING
             if self._data:

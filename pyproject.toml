@@ -4,3 +4,6 @@ to = {format = "pipfilelock", path = "Pipfile.lock"}
 
 [tool.dephell.flake]
 from = {format = "pip", path = "requirements-flake.txt"}
+
+[tool.dephell.setup]
+from = {format = "setuppy", path = "setup.py"}
