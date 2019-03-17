@@ -4,6 +4,7 @@ from logging import getLogger
 import subprocess
 from collections import OrderedDict
 from pathlib import Path
+from datetime import datetime
 from typing import Optional
 
 # external
@@ -16,12 +17,6 @@ from ...models.release import Release
 from ...utils import chdir
 from ...cache import RequirementsCache
 from ..base import Interface
-
-
-try:
-    from dateutil.parser import isoparse
-except ImportError:
-    from dateutil.parser import parse as isoparse
 
 
 logger = getLogger(__name__)
@@ -150,9 +145,10 @@ class GitRepo(Interface):
             logger.error(result.stderr)
         return tuple(result.stdout.decode().strip().split('\n'))
 
-    def _get_rev_time(self, rev: str):
+    def _get_rev_time(self, rev: str) -> datetime:
         data = self._call('show', '-s', r'--format="%cI"', rev)
-        return isoparse(data[-1].strip().strip('"'))
+        date = data[-1].strip().strip('"')  # '2018-09-03T13:51:53+03:00'
+        return datetime.strptime(date, '%Y-%m-%dT%H:%M:%S%z')
 
     def _get_rev_hash(self, rev: str):
         data = self._call('show', '-s', r'--format="%H"', rev)

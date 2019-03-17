@@ -37,7 +37,6 @@ setup(
         'packaging',
         'pexpect',
         'pip',
-        'python-dateutil',
         'pyyaml',
         'requests',
         'shellingham',
