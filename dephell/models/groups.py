@@ -1,6 +1,6 @@
 import asyncio
 from typing import Optional
-from cached_property import cached_property
+from ..utils import cached_property
 import attr
 
 from .group import Group

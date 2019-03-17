@@ -1,7 +1,6 @@
 aiohttp
 appdirs
 attrs
-cached_property
 cerberus
 graphviz
 html2text

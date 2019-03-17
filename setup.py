@@ -28,7 +28,6 @@ setup(
         'aiohttp',
         'appdirs',
         'attrs',
-        'cached-property',
         'cerberus',
         'graphviz',
         'html2text',

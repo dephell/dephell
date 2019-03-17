@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 # external
 import requests
-from cached_property import cached_property
+from ..utils import cached_property
 
 # app
 from .base import BaseRepo

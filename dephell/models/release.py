@@ -4,7 +4,7 @@ from typing import Optional
 
 # external
 import attr
-from cached_property import cached_property
+from ..utils import cached_property
 from packaging.utils import canonicalize_name
 from packaging.version import parse
 

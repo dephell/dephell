@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Optional
 
 # external
-from cached_property import cached_property
+from ...utils import cached_property
 
 # app
 from ...config import config

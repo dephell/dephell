@@ -8,7 +8,7 @@ from hashlib import md5
 from venv import EnvBuilder as EnvBuilder
 
 import attr
-from cached_property import cached_property
+from .utils import cached_property
 
 from .constants import PYTHONS
 from .utils import is_windows

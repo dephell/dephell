@@ -3,7 +3,7 @@ from collections import defaultdict, OrderedDict
 from typing import Optional, Tuple
 
 # external
-from cached_property import cached_property
+from ..utils import cached_property
 
 
 class Requirement:

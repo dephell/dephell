@@ -1,6 +1,6 @@
 from typing import Optional
 
-from cached_property import cached_property
+from ..utils import cached_property
 from packaging.version import parse
 from packaging.markers import Value, Op
 

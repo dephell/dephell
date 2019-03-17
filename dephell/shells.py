@@ -7,7 +7,7 @@ from typing import List, Tuple
 
 import attr
 import pexpect
-from cached_property import cached_property
+from .utils import cached_property
 from shellingham import detect_shell, ShellDetectionFailure
 
 from .utils import is_windows

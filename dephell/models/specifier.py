@@ -2,7 +2,7 @@
 import operator
 
 # external
-from cached_property import cached_property
+from ..utils import cached_property
 from packaging import specifiers
 from packaging.version import LegacyVersion, parse
 
