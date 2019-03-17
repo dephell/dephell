@@ -23,6 +23,7 @@ setup(
     author='orsinium',
 
     packages=['dephell'],
+    python_requires='>=3.5',
     install_requires=[
         'aiohttp',
         'appdirs',

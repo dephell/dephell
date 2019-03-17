@@ -23,6 +23,10 @@ class Python:
     implementation = attr.ib(type=str)
     abstract = attr.ib(type=bool, default=False)
 
+    def get_short_version(self, size=2) -> Version:
+        numbers = map(str, self.version.release[:size])
+        return Version('.'.join(numbers))
+
 
 @attr.s(slots=True)
 class Pythons:
@@ -111,6 +115,12 @@ class Pythons:
     def get_by_spec(self, specifier: RangeSpecifier) -> Python:
         for python in self:
             if python.version in specifier:
+                return python
+        for python in self:
+            if python.get_short_version(size=3) in specifier:
+                return python
+        for python in self:
+            if python.get_short_version(size=2) in specifier:
                 return python
         return self.current
 

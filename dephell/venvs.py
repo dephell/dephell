@@ -73,6 +73,10 @@ class VEnv:
         return None
 
     def exists(self) -> bool:
+        """Returns true if venv already created and valid.
+
+        It's a method like in `Path`.
+        """
         return bool(self.bin_path)
 
     def create(self, python_path) -> None:

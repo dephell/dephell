@@ -47,7 +47,6 @@ class ShellCommand(BaseCommand):
             self.good('Creating venv for project...')
             python = self._get_python()
             self.good('Choosen python: {}'.format(python.version))
-            return False
             venv.create(python_path=python.path)
 
         shells = Shells(bin_path=venv.bin_path)
