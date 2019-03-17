@@ -3,18 +3,25 @@ import pytest
 
 # project
 from dephell.controllers import Graph
-from dephell.converters import PIPConverter, PIPFileConverter, PIPFileLockConverter
+from dephell import converters
 from dephell.models import Requirement
 from dephell.repositories import WareHouseRepo
 
 
 @pytest.mark.parametrize('converter, path', [
-    (PIPConverter(lock=False), './tests/requirements/attrs-requests.txt'),
-    (PIPConverter(lock=False), './tests/requirements/django-deal.txt'),
-    (PIPConverter(lock=False), './tests/requirements/scipy-pandas-numpy.txt'),
-    # (PIPConverter(lock=False), './tests/requirements/django-django.txt'),
-    (PIPFileConverter(), './tests/requirements/pipfile.toml'),
-    (PIPFileLockConverter(), './tests/requirements/pipfile.lock.json'),
+    (converters.PIPConverter(lock=False), './tests/requirements/attrs-requests.txt'),
+    (converters.PIPConverter(lock=False), './tests/requirements/django-deal.txt'),
+    (converters.PIPConverter(lock=False), './tests/requirements/scipy-pandas-numpy.txt'),
+
+    (converters.PIPFileConverter(), './tests/requirements/pipfile.toml'),
+    (converters.PIPFileLockConverter(), './tests/requirements/pipfile.lock.json'),
+
+    (converters.PoetryConverter(), './tests/requirements/poetry.toml'),
+    # (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml'),
+
+    (converters.SetupPyConverter(), './tests/requirements/setup.py'),
+    (converters.EggInfoConverter(), './tests/requirements/sdist.tar.gz'),
+    (converters.WheelConverter(), './tests/requirements/wheel.whl'),
 ])
 def test_load_dump_load(converter, path):
     root1 = converter.load(path)
