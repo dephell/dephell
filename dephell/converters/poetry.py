@@ -32,6 +32,7 @@ class PoetryConverter(BaseConverter):
         if 'dependencies' in section:
             for name, content in section['dependencies'].items():
                 if name == 'python':
+                    root.python = RangeSpecifier(content)
                     continue
                 deps.extend(self._make_deps(root, name, content))
         root.attach_dependencies(deps)
@@ -61,6 +62,7 @@ class PoetryConverter(BaseConverter):
         else:
             dependencies = tomlkit.table()
 
+        dependencies['python'] = str(project.python)
         for req in reqs:
             dependencies[req.name] = self._format_req(req=req)
         section['dependencies'] = dependencies
