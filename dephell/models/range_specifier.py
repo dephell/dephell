@@ -3,7 +3,7 @@ from packaging.specifiers import InvalidSpecifier
 from packaging.version import LegacyVersion, parse
 
 # app
-from ..constants import JoinTypes, PYTHONS
+from ..constants import PYTHONS, JoinTypes
 from .git_specifier import GitSpecifier
 from .specifier import Specifier
 

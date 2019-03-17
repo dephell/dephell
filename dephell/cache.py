@@ -3,10 +3,9 @@ import json
 import pickle
 from pathlib import Path
 
-from .utils import cached_property
-
 # app
 from .config import config
+from .utils import cached_property
 
 
 class BaseCache:

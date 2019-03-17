@@ -1,21 +1,18 @@
 # built-in
 import re
-from logging import getLogger
 import subprocess
 from collections import OrderedDict
-from pathlib import Path
 from datetime import datetime
+from logging import getLogger
+from pathlib import Path
 from typing import Optional
 
-# external
-from ...utils import cached_property
-
 # app
+from ...cache import RequirementsCache
 from ...config import config
 from ...models.git_release import GitRelease
 from ...models.release import Release
-from ...utils import chdir
-from ...cache import RequirementsCache
+from ...utils import cached_property, chdir
 from ..base import Interface
 
 

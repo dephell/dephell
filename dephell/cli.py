@@ -1,5 +1,5 @@
 # built-in
-from argparse import ArgumentParser, Action
+from argparse import Action, ArgumentParser
 
 # app
 from .commands import commands

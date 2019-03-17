@@ -7,10 +7,10 @@ import tomlkit
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
+from ..models import Constraint, Dependency, RangeSpecifier, RootDependency
+from ..pythons import Pythons
 from ..repositories import WareHouseRepo, get_repo
 from .base import BaseConverter
-from ..pythons import Pythons
 
 
 VCS_LIST = ('git', 'svn', 'hg', 'bzr')

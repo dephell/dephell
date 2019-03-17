@@ -2,11 +2,9 @@
 from operator import attrgetter
 from typing import Optional
 
-# external
-from ..utils import cached_property
-
 # app
 from ..config import config
+from ..utils import cached_property
 
 
 class Group:

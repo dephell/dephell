@@ -5,6 +5,7 @@ from functools import reduce
 from logging import getLogger
 from operator import getitem
 
+# external
 import huepy
 
 # app

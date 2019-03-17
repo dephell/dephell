@@ -1,8 +1,9 @@
+# built-in
 from argparse import ArgumentParser
 
 # app
-from .base import BaseCommand
 from ..config import builders
+from .base import BaseCommand
 
 
 class ConfigCommand(BaseCommand):

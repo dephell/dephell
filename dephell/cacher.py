@@ -5,12 +5,15 @@
     subprocess.Popen(['python3', '-m', 'dephell.cacher'])
     ```
 """
-from itertools import islice
+# built-in
 import asyncio
+from itertools import islice
 
+# external
 import requests
 from packaging.requirements import Requirement
 
+# project
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
 from dephell.repositories import WareHouseRepo

@@ -1,13 +1,12 @@
 # built-in
-from pathlib import Path
 from argparse import ArgumentParser
+from pathlib import Path
 
 # external
 import tomlkit
 
 # app
-from ..config import config
-from ..config import builders
+from ..config import builders, config
 from ..rules import EXAMPLE_RULE, RULES
 from .base import BaseCommand
 

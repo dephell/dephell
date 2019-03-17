@@ -4,9 +4,9 @@ from collections import OrderedDict
 from hashlib import sha256
 
 # app
-from ..models import RootDependency, RangeSpecifier
-from .pipfile import PIPFileConverter
+from ..models import RangeSpecifier, RootDependency
 from ..pythons import Pythons
+from .pipfile import PIPFileConverter
 
 
 # https://stackoverflow.com/a/23820416

@@ -1,7 +1,10 @@
+# built-in
 from typing import Optional
 
-from packaging.markers import Value, Op
+# external
+from packaging.markers import Op, Value
 
+# app
 from .base import BaseMarker
 
 

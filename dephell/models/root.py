@@ -4,10 +4,10 @@ from typing import Tuple
 
 # external
 import attr
-from ..utils import cached_property
 from packaging.utils import canonicalize_name
 
 # app
+from ..utils import cached_property
 from .group import Group
 from .range_specifier import RangeSpecifier
 

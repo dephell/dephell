@@ -1,15 +1,16 @@
-from typing import Union, Optional
+# built-in
+from typing import Optional, Union
 
 # external
 from packaging import markers as packaging
 from packaging.markers import Variable
 
-from ..models.range_specifier import RangeSpecifier
+# app
 from .and_marker import AndMarker
+from .constants import STRING_VARIABLES, VERSION_VARIABLES
 from .or_marker import OrMarker
 from .string import StringMarker
 from .version import VersionMarker
-from .constants import STRING_VARIABLES, VERSION_VARIABLES
 
 
 class Markers:
@@ -117,7 +118,8 @@ class Markers:
         return marker
 
     @property
-    def python_version(self) -> Optional[RangeSpecifier]:
+    def python_version(self):
+        from ..models.range_specifier import RangeSpecifier
         value = self.get_version('python_version')
         if value is not None:
             return RangeSpecifier(value)

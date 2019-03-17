@@ -1,11 +1,12 @@
+# built-in
 from argparse import ArgumentParser
 
 # app
+from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
-from ..config import builders
 
 
 class ConvertCommand(BaseCommand):

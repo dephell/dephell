@@ -1,16 +1,16 @@
 # built-in
-from pathlib import Path
 from distutils.core import run_setup
 from itertools import chain
+from pathlib import Path
 
 # external
 from packaging.requirements import Requirement
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Author, RootDependency, RangeSpecifier
-from .base import BaseConverter
+from ..models import Author, RangeSpecifier, RootDependency
 from ..utils import chdir
+from .base import BaseConverter
 
 
 TEMPLATE = """

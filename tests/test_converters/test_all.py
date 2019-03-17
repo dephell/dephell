@@ -2,8 +2,8 @@
 import pytest
 
 # project
-from dephell.controllers import Graph
 from dephell import converters
+from dephell.controllers import Graph
 from dephell.models import Requirement
 from dephell.repositories import WareHouseRepo
 

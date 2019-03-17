@@ -1,6 +1,9 @@
+# external
 import pytest
-from dephell.pythons import Pythons
 from packaging.version import Version
+
+# project
+from dephell.pythons import Pythons
 
 
 def test_abstract():

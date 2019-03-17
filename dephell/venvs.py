@@ -1,17 +1,19 @@
+# built-in
 import os
 import shutil
 from base64 import b64encode
-from typing import Iterator, Optional
+from hashlib import md5
 from itertools import chain
 from pathlib import Path
-from hashlib import md5
+from typing import Iterator, Optional
 from venv import EnvBuilder as EnvBuilder
 
+# external
 import attr
-from .utils import cached_property
 
+# app
 from .constants import PYTHONS
-from .utils import is_windows
+from .utils import cached_property, is_windows
 
 
 __all__ = ['VEnvBuilder', 'VEnv', 'VEnvs']

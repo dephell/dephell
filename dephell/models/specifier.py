@@ -2,9 +2,11 @@
 import operator
 
 # external
-from ..utils import cached_property
 from packaging import specifiers
 from packaging.version import LegacyVersion, parse
+
+# app
+from ..utils import cached_property
 
 
 OPERATIONS = {

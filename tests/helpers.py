@@ -7,7 +7,7 @@ from unittest.mock import patch
 from packaging.requirements import Requirement as PackagingRequirement
 
 # project
-from dephell.controllers import Graph, Mutator, Resolver, DependencyMaker, analize_conflict
+from dephell.controllers import DependencyMaker, Graph, Mutator, Resolver, analize_conflict
 from dephell.models import Release, Requirement, RootDependency
 from dephell.repositories import ReleaseRepo
 

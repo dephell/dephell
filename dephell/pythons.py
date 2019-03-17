@@ -1,13 +1,16 @@
-import sys
+# built-in
 import os
-from platform import python_version, python_implementation
+import sys
 from pathlib import Path
+from platform import python_implementation, python_version
 from typing import Iterator, Optional, Union
 
+# external
 import attr
-from packaging.version import Version, InvalidVersion
+from packaging.version import InvalidVersion, Version
 from pythonfinder import Finder
 
+# app
 from .constants import PYTHONS
 from .models import RangeSpecifier
 

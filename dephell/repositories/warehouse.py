@@ -1,6 +1,6 @@
 # built-in
-from urllib.parse import urlparse
 from typing import Optional
+from urllib.parse import urlparse
 
 # external
 import attr
@@ -11,10 +11,10 @@ from packaging.requirements import Requirement
 # app
 from ..cache import JSONCache, TextCache
 from ..config import config
+from ..markers import Markers
 from ..models.author import Author
 from ..models.release import Release
 from .base import Interface
-from ..markers import Markers
 
 
 def _process_url(url: str) -> str:

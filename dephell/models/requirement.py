@@ -1,8 +1,8 @@
 # built-in
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 from typing import Optional, Tuple
 
-# external
+# app
 from ..utils import cached_property
 
 

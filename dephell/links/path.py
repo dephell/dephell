@@ -3,7 +3,7 @@ import os.path
 from hashlib import sha256
 from urllib.parse import unquote
 
-# external
+# app
 from ..utils import cached_property
 
 

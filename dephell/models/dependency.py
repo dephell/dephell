@@ -1,17 +1,17 @@
 # built-in
 from copy import deepcopy
-from typing import Optional, Iterable
+from typing import Iterable, Optional
 
 # external
 import attr
-from ..utils import cached_property
 from packaging.utils import canonicalize_name
 
 # app
+from ..markers import Markers
 from ..repositories import GitRepo
+from ..utils import cached_property
 from .constraint import Constraint
 from .groups import Groups
-from ..markers import Markers
 
 
 @attr.s(cmp=False)
