@@ -6,7 +6,7 @@ import tomlkit
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Constraint, Dependency, RangeSpecifier, RootDependency
+from ..models import Constraint, Dependency, EntryPoint, RangeSpecifier, RootDependency
 from ..repositories import get_repo
 from .base import BaseConverter
 

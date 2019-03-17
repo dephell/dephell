@@ -43,6 +43,6 @@ setup(
         'tqdm',
     ],
     entry_points={
-        'console_scripts': ['dephell = dephell.cli:main'],
+        'console_scripts': ['dephell = dephell.cli:entrypoint'],
     },
 )

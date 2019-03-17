@@ -1,6 +1,7 @@
 # built-in
 from argparse import Action, ArgumentParser
 from logging import getLogger
+from sys import argv
 
 # app
 from .commands import commands
@@ -57,3 +58,7 @@ def main(argv):
     if not result:
         return ReturnCodes.COMMAND_ERROR.value
     return ReturnCodes.OK.value
+
+
+def entrypoint():
+    exit(main(argv[1:]))
