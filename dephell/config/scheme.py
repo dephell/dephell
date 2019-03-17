@@ -73,17 +73,11 @@ SCHEME = {
         required=True,  # because represented in default config
     ),
     'venv': dict(
-        type='dict',
+        type='string',
         required=True,  # because represented in default config
-        schema={
-            'path': dict(
-                type='string',
-                required=True,  # because represented in default config
-            ),
-            'python': dict(
-                type='string',
-                required=False,
-            ),
-        },
+    ),
+    'python': dict(
+        type='string',
+        required=False,
     ),
 }

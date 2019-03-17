@@ -51,8 +51,8 @@ def build_output(parser):
 
 def build_venv(parser):
     venv_group = parser.add_argument_group('Virtual environment')
-    venv_group.add_argument('--venv-path', help='path to venv directory for project.')
-    venv_group.add_argument('--venv-python', help='python version for venv.')
+    venv_group.add_argument('--venv', help='path to venv directory for project.')
+    venv_group.add_argument('--python', help='python version for venv.')
 
 
 def build_other(parser):

@@ -28,7 +28,7 @@ class ShellCommand(BaseCommand):
         pythons = Pythons()
 
         # defined in config
-        python = self.config['venv'].get('python')
+        python = self.config.get('python')
         if python:
             return pythons.get_best(python)
 
@@ -41,7 +41,7 @@ class ShellCommand(BaseCommand):
         return pythons.current
 
     def __call__(self):
-        venvs = VEnvs(path=self.config['venv']['path'])
+        venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']))
         if not venv.exists():
             self.good('Creating venv for project...')

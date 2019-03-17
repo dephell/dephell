@@ -21,9 +21,7 @@ DEFAULT = dict(
     nocolors=False,
 
     # venv
-    venv=dict(
-        path=str(data_dir / 'venvs' / '{project}'),
-    ),
+    venv=str(data_dir / 'venvs' / '{project}'),
 
     # other
     cache=str(data_dir / 'cache'),

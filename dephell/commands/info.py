@@ -23,7 +23,7 @@ class InfoCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        venvs = VEnvs(path=self.config['venv']['path'])
+        venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']))
         shells = Shells(bin_path=venv.bin_path)
 
