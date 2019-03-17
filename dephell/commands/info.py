@@ -26,11 +26,17 @@ class InfoCommand(BaseCommand):
         venvs = VEnvs(path=self.config['venv']['path'])
         venv = venvs.get(Path(self.config['project']))
         shells = Shells(bin_path=venv.bin_path)
+
         data = dict(
-            bin=str(venv.bin_path),
-            python=str(venv.python_path),
             exists=venv.exists(),
-            activate=str(venv.bin_path / shells.current.activate),
+            venv=str(venv.path),
             project=self.config['project'],
         )
+
+        if venv.exists():
+            data.update(dict(
+                activate=str(venv.bin_path / shells.current.activate),
+                bin=str(venv.bin_path),
+                python=str(venv.python_path),
+            ))
         print(self.get_value(data=data, key=self.args.key))
