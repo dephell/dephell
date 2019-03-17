@@ -10,7 +10,7 @@ class ConfigCommand(BaseCommand):
     def get_parser(cls):
         parser = ArgumentParser(
             prog='python3 -m dephell config',
-            description='Convert dependencies between formats',
+            description='Show current config',
         )
         builders.build_config(parser)
         builders.build_from(parser)
