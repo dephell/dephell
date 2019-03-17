@@ -29,6 +29,7 @@ class Config:
                 data['loggers']['dephell']['level'] = self['level']
                 for formatter in data['formatters'].values():
                     formatter['colors'] = not self['nocolors']
+                    formatter['traceback'] = self['traceback']
                 for handler in data['handlers'].values():
                     handler['formatter'] = self['format']
         dictConfig(LOGGING)

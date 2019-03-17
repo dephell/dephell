@@ -76,6 +76,10 @@ SCHEME = {
         type='boolean',
         required=True,  # because represented in default config
     ),
+    'traceback': dict(
+        type='boolean',
+        required=True,  # because represented in default config
+    ),
     'venv': dict(
         type='string',
         required=True,  # because represented in default config

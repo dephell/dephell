@@ -44,10 +44,12 @@ def build_api(parser):
 
 def build_output(parser):
     output_group = parser.add_argument_group('Console output')
-    output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
-    output_group.add_argument('--level', choices=LOG_LEVELS, help='minimal level for log messages.')
     output_group.add_argument('--format', choices=LOG_FORMATTERS, help='output format.')
+    output_group.add_argument('--level', choices=LOG_LEVELS, help='minimal level for log messages.')
+
     output_group.add_argument('--nocolors', action='store_true', help='don\'t color output.')
+    output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
+    output_group.add_argument('--traceback', action='store_true', help='show traceback for exceptions.')
 
 
 def build_venv(parser):

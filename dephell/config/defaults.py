@@ -10,18 +10,19 @@ data_dir = Path(user_data_dir('dephell'))
 
 DEFAULT = dict(
     # resolver
-    strategy='max',
     prereleases=False,
+    strategy='max',
 
     # api
-    warehouse='https://pypi.org/pypi/',
     bitbucket='https://api.bitbucket.org/2.0',
+    warehouse='https://pypi.org/pypi/',
 
     # output
-    silent=False,
+    format='short',
     level='INFO',
     nocolors=False,
-    format='short',
+    silent=False,
+    traceback=False,
 
     # venv
     venv=str(data_dir / 'venvs' / '{project}'),

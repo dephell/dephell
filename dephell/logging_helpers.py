@@ -83,10 +83,11 @@ def merge_record_extra(record, target, reserved):
 
 # https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
 class ColoredFormatter(logging.Formatter):
-    def __init__(self, *args, colors=True, extras=True, **kwargs):
+    def __init__(self, *args, colors=True, extras=True, traceback=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.colors = colors
         self.extras = extras
+        self.traceback = traceback
 
     def format(self, record):
         # add color
@@ -101,6 +102,12 @@ class ColoredFormatter(logging.Formatter):
             record.extras = ', '.join('{}={}'.format(k, v) for k, v in extras.items())
             if record.extras:
                 record.extras = Fore.MAGENTA + '({})'.format(record.extras) + Fore.RESET
+
+        # hide traceback
+        if not self.traceback:
+            record.exc_text = None
+            record.exc_info = None
+            record.stack_info = None
 
         return super().format(record)
 

@@ -38,19 +38,23 @@ LOGGING = {
     },
     'formatters': {
         'full': {
-            'datefmt': '%Y-%m-%d %H:%M:%S',
-            'extras': True,
             '()': 'dephell.logging_helpers.ColoredFormatter',
-            'style': '{',
-            'colors': True,
+            'datefmt': '%Y-%m-%d %H:%M:%S',
             'format': '{levelname:8} {asctime} {message} {extras}',
+            'style': '{',
+
+            'colors': True,
+            'extras': True,
+            'traceback': False,
         },
         'short': {
-            'extras': True,
             '()': 'dephell.logging_helpers.ColoredFormatter',
-            'style': '{',
-            'colors': True,
             'format': '{levelname:8} {message} {extras}',
+            'style': '{',
+
+            'colors': True,
+            'extras': True,
+            'traceback': False,
         },
     },
 }
