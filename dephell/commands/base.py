@@ -1,17 +1,17 @@
 # built-in
+import json
 import os.path
+from functools import reduce
 from logging import getLogger
-
-import huepy
+from operator import getitem
 
 # app
 from ..config import config
 
 
-logger = getLogger(__name__)
-
-
 class BaseCommand:
+    logger = getLogger('dephell.commands')
+
     def __init__(self, argv):
         parser = self.get_parser()
         self.args = parser.parse_args(argv)
@@ -29,7 +29,7 @@ class BaseCommand:
         elif os.path.exists('pyproject.toml'):
             config.attach_file(path='pyproject.toml', env=args.env)
         else:
-            logger.warning('cannot find config file')
+            cls.logger.warning('cannot find config file')
         config.attach_cli(args)
         config.setup_logging()
         return config
@@ -40,14 +40,17 @@ class BaseCommand:
             print(self.config.format_errors())
         return is_valid
 
-    def good(self, *messages, sep=' ') -> None:
-        text = sep.join(messages)
-        if not self.config['nocolors']:
-            text = huepy.good(text)
-        print(text)
+    @staticmethod
+    def get_value(data, key):
+        # print all config
+        if not key:
+            return json.dumps(data, indent=2, sort_keys=True)
 
-    def bad(self, *messages, sep=' ') -> None:
-        text = sep.join(messages)
-        if not self.config['nocolors']:
-            text = huepy.bad(text)
-        print(text)
+        keys = key.split('-')
+        value = reduce(getitem, keys, data)
+        # print config section
+        if type(value) is dict:
+            return json.dumps(value, indent=2, sort_keys=True)
+
+        # print one value
+        return value

@@ -1,12 +1,14 @@
+# built-in
 from typing import Optional
 
-from cached_property import cached_property
+# external
+from packaging.markers import Op, Value
 from packaging.version import parse
-from packaging.markers import Value, Op
 
+# app
+from ..utils import cached_property
 from .base import BaseMarker
 from .constants import REVERSED_OPERATIONS
-from ..models.specifier import Specifier
 
 
 class VersionMarker(BaseMarker):
@@ -30,7 +32,8 @@ class VersionMarker(BaseMarker):
         return parse(self.value)
 
     @cached_property
-    def specifier(self) -> Specifier:
+    def specifier(self):
+        from ..models.specifier import Specifier
         return Specifier(self.op.value + self.value)
 
     def __str__(self):

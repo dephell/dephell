@@ -1,16 +1,18 @@
+# built-in
 import os
 import shutil
-import subprocess
 import signal
+import subprocess
 from pathlib import Path
 from typing import List, Tuple
 
+# external
 import attr
 import pexpect
-from cached_property import cached_property
-from shellingham import detect_shell, ShellDetectionFailure
+from shellingham import ShellDetectionFailure, detect_shell
 
-from .utils import is_windows
+# app
+from .utils import cached_property, is_windows
 
 
 @attr.s()
@@ -51,13 +53,16 @@ class Shells:
     def shell_path(self) -> Path:
         return self._shell_info[-1]
 
-    def run(self) -> int:
+    @property
+    def current(self) -> 'BaseShell':
         shell_class = self.shells.get(self.shell_name)
-        shell = shell_class(
+        return shell_class(
             bin_path=self.bin_path,
             shell_path=self.shell_path,
         )
-        return shell.run()
+
+    def run(self) -> int:
+        return self.current.run()
 
 
 @attr.s()

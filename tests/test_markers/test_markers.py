@@ -1,5 +1,7 @@
+# external
 import pytest
 
+# project
 from dephell.markers import Markers
 
 

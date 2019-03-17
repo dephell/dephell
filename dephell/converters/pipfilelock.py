@@ -4,8 +4,8 @@ from collections import OrderedDict
 from hashlib import sha256
 
 # app
-from ..models import RootDependency
-# from .base import BaseConverter
+from ..models import RangeSpecifier, RootDependency
+from ..pythons import Pythons
 from .pipfile import PIPFileConverter
 
 
@@ -21,6 +21,11 @@ class PIPFileLockConverter(PIPFileConverter):
         doc = json.loads(content, object_pairs_hook=OrderedDict)
         deps = []
         root = RootDependency(raw_name=self._get_name(content=content))
+
+        python = doc.get('requires', {}).get('python_version', '')
+        if python not in {'', '*'}:
+            root.python = RangeSpecifier('==' + python)
+
         for name, content in doc['default'].items():
             deps.extend(self._make_deps(root, name, content))
         root.attach_dependencies(deps)
@@ -31,6 +36,7 @@ class PIPFileLockConverter(PIPFileConverter):
         for req in reqs:
             packages[req.name] = dict(self._format_req(req=req))
 
+        python = Pythons(abstract=True).get_by_spec(project.python)
         data = OrderedDict([
             ('_meta', OrderedDict([
                 ('sources', [OrderedDict([
@@ -38,7 +44,7 @@ class PIPFileLockConverter(PIPFileConverter):
                     ('verify_ssl', True),
                     ('name', 'pypi'),
                 ])]),
-                ('requires', {'python_version': '2.7'}),
+                ('requires', {'python_version': str(python.version)}),
             ])),
             ('default', packages),
             ('develop', OrderedDict()),

@@ -4,11 +4,12 @@ from typing import Tuple
 
 # external
 import attr
-from cached_property import cached_property
 from packaging.utils import canonicalize_name
 
 # app
+from ..utils import cached_property
 from .group import Group
+from .range_specifier import RangeSpecifier
 
 
 @attr.s()
@@ -39,11 +40,12 @@ class RootDependency:
     long_description = attr.ib(default='', repr=False)  # Description
 
     # additional info lists
-    links = attr.ib(factory=dict, repr=False)           # Home-page, Download-URL
-    authors = attr.ib(factory=tuple, repr=False)        # Author, Author-email
-    keywords = attr.ib(factory=tuple, repr=False)       # Keywords
-    classifiers = attr.ib(factory=tuple, repr=False)    # Classifier
-    platforms = attr.ib(factory=tuple, repr=False)      # Platform
+    links = attr.ib(factory=dict, repr=False)               # Home-page, Download-URL
+    authors = attr.ib(factory=tuple, repr=False)            # Author, Author-email
+    keywords = attr.ib(factory=tuple, repr=False)           # Keywords
+    classifiers = attr.ib(factory=tuple, repr=False)        # Classifier
+    platforms = attr.ib(factory=tuple, repr=False)          # Platform
+    python = attr.ib(default=RangeSpecifier(), repr=False)  # Requires-Python
 
     repo = None
     applied = False

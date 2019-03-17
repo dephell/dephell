@@ -1,5 +1,6 @@
 # built-in
 from collections import defaultdict
+from logging import captureWarnings
 from logging.config import dictConfig
 from typing import Optional
 
@@ -21,11 +22,16 @@ class Config:
         self._data = data or DEFAULT
 
     def setup_logging(self, data: Optional[dict] = None) -> None:
+        captureWarnings(True)
         if data is None:
             data = LOGGING
             if self._data:
                 data['loggers']['dephell']['level'] = self['level']
-                data['formatters']['simple']['colors'] = not self['nocolors']
+                for formatter in data['formatters'].values():
+                    formatter['colors'] = not self['nocolors']
+                    formatter['traceback'] = self['traceback']
+                for handler in data['handlers'].values():
+                    handler['formatter'] = self['format']
         dictConfig(LOGGING)
 
     def attach(self, data: dict, container: Optional[dict] = None) -> None:

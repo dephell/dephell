@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS, LOG_LEVELS, STRATEGIES
+from ..constants import ENVS, FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES
 
 
 _TARGET = dict(
@@ -58,27 +58,34 @@ SCHEME = {
         required=True,  # because represented in default config
         allowed=STRATEGIES,
     ),
+    'prereleases': dict(
+        type='boolean',
+        required=True,  # because represented in default config
+    ),
     'level': dict(
         type='string',
         required=True,  # because represented in default config
         allowed=LOG_LEVELS,
     ),
+    'format': dict(
+        type='string',
+        required=True,  # because represented in default config
+        allowed=LOG_FORMATTERS,
+    ),
     'nocolors': dict(
         type='boolean',
         required=True,  # because represented in default config
     ),
-    'venv': dict(
-        type='dict',
+    'traceback': dict(
+        type='boolean',
         required=True,  # because represented in default config
-        schema={
-            'path': dict(
-                type='string',
-                required=True,
-            ),
-            'python': dict(
-                type='string',
-                required=True,
-            ),
-        },
+    ),
+    'venv': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
+    'python': dict(
+        type='string',
+        required=False,
     ),
 }

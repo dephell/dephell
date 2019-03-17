@@ -1,11 +1,12 @@
+# built-in
 from argparse import ArgumentParser
 
 # app
+from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
-from ..config import builders
 
 
 class ConvertCommand(BaseCommand):
@@ -44,20 +45,20 @@ class ConvertCommand(BaseCommand):
                 resolved = resolver.resolve(level=1)
                 if not resolved:
                     conflict = analize_conflict(resolver=resolver)
-                    self.bad('Conflict has found:')
+                    self.logger.warning('conflict was found')
                     print(conflict)
                     return False
-                self.good('Merged!')
+                self.logger.info('merged')
 
         # resolve (and merge)
         if should_be_resolved:
             resolved = resolver.resolve()
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
-                self.bad('Conflict has found:')
+                self.logger.warning('conflict was found')
                 print(conflict)
                 return False
-            self.good('Resolved!')
+            self.logger.info('resolved')
 
         # dump
         dumper.dump(

@@ -1,5 +1,8 @@
+# external
 import pytest
-from packaging.markers import Variable, Op, Value
+from packaging.markers import Op, Value, Variable
+
+# project
 from dephell.markers.version import VersionMarker
 
 

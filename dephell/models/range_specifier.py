@@ -3,7 +3,7 @@ from packaging.specifiers import InvalidSpecifier
 from packaging.version import LegacyVersion, parse
 
 # app
-from ..constants import JoinTypes, PYTHONS
+from ..constants import PYTHONS, JoinTypes
 from .git_specifier import GitSpecifier
 from .specifier import Specifier
 
@@ -11,7 +11,9 @@ from .specifier import Specifier
 class RangeSpecifier:
 
     def __init__(self, spec=None):
-        if spec is None:
+        if not spec:
+            self._specs = set()
+            self.join_type = JoinTypes.AND
             return
 
         subspecs = str(spec).split('||')
@@ -152,6 +154,8 @@ class RangeSpecifier:
         return rule((release in specifier) for specifier in self._specs)
 
     def __str__(self):
+        if not self._specs:
+            return ''
         sep = ',' if self.join_type == JoinTypes.AND else ' || '
         return sep.join(sorted(map(str, self._specs)))
 
@@ -160,6 +164,9 @@ class RangeSpecifier:
             name=self.__class__.__name__,
             spec=str(self),
         )
+
+    def __bool__(self):
+        return bool(self._specs)
 
     def __lt__(self, other):
         if isinstance(other, Specifier):

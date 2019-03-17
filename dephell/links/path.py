@@ -3,8 +3,8 @@ import os.path
 from hashlib import sha256
 from urllib.parse import unquote
 
-# external
-from cached_property import cached_property
+# app
+from ..utils import cached_property
 
 
 class _PathLink:

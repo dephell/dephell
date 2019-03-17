@@ -1,11 +1,9 @@
-import json
+# built-in
 from argparse import ArgumentParser
-from functools import reduce
-from operator import getitem
 
 # app
-from .base import BaseCommand
 from ..config import builders
+from .base import BaseCommand
 
 
 class ConfigCommand(BaseCommand):
@@ -13,7 +11,7 @@ class ConfigCommand(BaseCommand):
     def get_parser(cls):
         parser = ArgumentParser(
             prog='python3 -m dephell config',
-            description='Convert dependencies between formats',
+            description='Show current config',
         )
         builders.build_config(parser)
         builders.build_from(parser)
@@ -27,18 +25,4 @@ class ConfigCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        # print all config
-        if not self.args.key:
-            print(json.dumps(self.config._data, indent=2, sort_keys=True))
-            return True
-
-        keys = self.args.key.split('-')
-        value = reduce(getitem, keys, self.config)
-        # print config section
-        if type(value) is dict:
-            print(json.dumps(value, indent=2, sort_keys=True))
-            return True
-
-        # print one value
-        print(value)
-        return True
+        print(self.get_value(data=self.config._data, key=self.args.key))

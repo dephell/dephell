@@ -1,10 +1,14 @@
+# built-in
 import asyncio
 from typing import Optional
-from cached_property import cached_property
+
+# external
 import attr
 
-from .group import Group
+# app
 from ..config import config
+from ..utils import cached_property
+from .group import Group
 
 
 loop = asyncio.get_event_loop()

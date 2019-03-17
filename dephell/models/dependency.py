@@ -1,17 +1,17 @@
 # built-in
 from copy import deepcopy
-from typing import Optional, Iterable
+from typing import Iterable, Optional
 
 # external
 import attr
-from cached_property import cached_property
 from packaging.utils import canonicalize_name
 
 # app
+from ..markers import Markers
 from ..repositories import GitRepo
+from ..utils import cached_property
 from .constraint import Constraint
 from .groups import Groups
-from ..markers import Markers
 
 
 @attr.s(cmp=False)
@@ -62,6 +62,10 @@ class Dependency:
 
     @property
     def dependencies(self) -> tuple:
+        deps = self.__dict__.get('dependencies')
+        if deps is not None:
+            return deps
+
         from ..controllers import DependencyMaker
         deps = []
         for dep in self.group.dependencies:
@@ -72,6 +76,13 @@ class Dependency:
             else:
                 deps.extend(DependencyMaker.from_requirement(self, dep))
         return tuple(deps)
+
+    @dependencies.setter
+    def dependencies(self, dependencies: tuple) -> None:
+        constraint = str(self.constraint)
+        if not constraint.startswith('==') or ',' in constraint or '||' in constraint:
+            raise ValueError('cannot set deps for non-locked dependency')
+        self.__dict__['dependencies'] = dependencies
 
     @property
     def locked(self) -> bool:

@@ -1,9 +1,9 @@
 # built-in
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 from typing import Optional, Tuple
 
-# external
-from cached_property import cached_property
+# app
+from ..utils import cached_property
 
 
 class Requirement:
@@ -50,6 +50,11 @@ class Requirement:
     def release(self):
         if self.lock:
             return self.dep.group.best_release
+
+    @cached_property
+    def dependencies(self) -> tuple:
+        extra_deps = sum([dep.dependencies for dep in self.extra_deps], tuple())
+        return self.dep.dependencies + extra_deps
 
     @property
     def editable(self) -> Optional[bool]:

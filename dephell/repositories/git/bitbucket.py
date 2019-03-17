@@ -3,10 +3,10 @@ import re
 
 # external
 import requests
-from cached_property import cached_property
 
 # app
 from ...config import config
+from ...utils import cached_property
 from .base import BaseRepo
 
 

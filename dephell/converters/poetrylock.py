@@ -1,3 +1,4 @@
+# built-in
 from typing import List
 
 # external
@@ -5,9 +6,9 @@ import tomlkit
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
-from .base import BaseConverter
 from ..links import DirLink
+from ..models import Constraint, Dependency, RangeSpecifier, RootDependency
+from .base import BaseConverter
 
 
 class PoetryLockConverter(BaseConverter):
@@ -50,9 +51,9 @@ class PoetryLockConverter(BaseConverter):
 
         return tomlkit.dumps(doc)
 
-    # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
-    @staticmethod
-    def _make_deps(root, content) -> List[Dependency]:
+    # https://github.com/sdispater/poetry/blob/master/poetry.lock
+    @classmethod
+    def _make_deps(cls, root, content) -> List[Dependency]:
         # get link
         url = None
         if 'source' in content:
@@ -70,7 +71,7 @@ class PoetryLockConverter(BaseConverter):
             else:
                 marker = '({}) and {}'.format(marker, python)
 
-        return DependencyMaker.from_params(
+        deps = DependencyMaker.from_params(
             raw_name=content['name'],
             description=content['description'],
             constraint=Constraint(root, '==' + content['version']),
@@ -78,6 +79,33 @@ class PoetryLockConverter(BaseConverter):
             url=url,
             editable=False,
         )
+
+        subdeps = []
+        for subname, subcontent in content.get('dependencies', dict()).items():
+            if isinstance(subcontent, list):
+                subcontent = ','.join(set(subcontent))
+            if isinstance(subcontent, str):
+                subdeps.extend(DependencyMaker.from_params(
+                    raw_name=subname,
+                    constraint=Constraint(root, '==' + subcontent),
+                ))
+                continue
+
+            if 'python' in subcontent:
+                marker = RangeSpecifier(subcontent['python']).to_marker('python_version')
+            else:
+                marker = None
+
+            if isinstance(subcontent['version'], list):
+                subcontent['version'] = ','.join(set(subcontent['version']))
+            subdeps.extend(DependencyMaker.from_params(
+                raw_name=subname,
+                constraint=Constraint(root, subcontent['version']),
+                marker=marker,
+            ))
+        deps[0].dependencies = tuple(subdeps)
+
+        return deps
 
     def _format_req(self, req):
         result = tomlkit.table()
@@ -89,6 +117,8 @@ class PoetryLockConverter(BaseConverter):
         if 'version' not in result:
             result['version'] = '*'
         result['version'] = result['version'].lstrip('=')
+        if req.markers:
+            result['marker'] = req.markers
 
         # add link
         if req.link:

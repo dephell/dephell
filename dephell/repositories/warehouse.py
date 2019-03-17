@@ -1,6 +1,6 @@
 # built-in
-from urllib.parse import urlparse
 from typing import Optional
+from urllib.parse import urlparse
 
 # external
 import attr
@@ -11,10 +11,10 @@ from packaging.requirements import Requirement
 # app
 from ..cache import JSONCache, TextCache
 from ..config import config
+from ..markers import Markers
 from ..models.author import Author
 from ..models.release import Release
 from .base import Interface
-from ..markers import Markers
 
 
 def _process_url(url: str) -> str:
@@ -33,7 +33,8 @@ def _process_url(url: str) -> str:
 @attr.s()
 class WareHouseRepo(Interface):
     name = attr.ib(default='pypi')
-    url = attr.ib(factory=lambda: config['warehouse'], converter=_process_url)
+    url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
+    prereleases = attr.ib(type=bool, default=False)  # allow prereleases
 
     hash = None
     link = None
@@ -86,6 +87,9 @@ class WareHouseRepo(Interface):
             if not info:
                 continue
             release = Release.from_response(dep.name, version, info)
+            # filter prereleases if needed
+            if release.version.is_prerelease and not self.prereleases:
+                continue
             releases.append(release)
         releases.sort(reverse=True)
         return tuple(releases)

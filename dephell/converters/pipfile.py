@@ -7,7 +7,8 @@ import tomlkit
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Constraint, Dependency, RootDependency
+from ..models import Constraint, Dependency, RangeSpecifier, RootDependency
+from ..pythons import Pythons
 from ..repositories import WareHouseRepo, get_repo
 from .base import BaseConverter
 
@@ -33,6 +34,10 @@ class PIPFileConverter(BaseConverter):
         if 'source' in doc:
             for repo in doc['source']:
                 repos[repo['name']] = repo['url']
+
+        python = doc.get('requires', {}).get('python_version', '')
+        if python not in {'', '*'}:
+            root.python = RangeSpecifier('==' + python)
 
         if 'packages' in doc:
             for name, content in doc['packages'].items():
@@ -69,6 +74,10 @@ class PIPFileConverter(BaseConverter):
                 ('url', req.dep.repo.url),
                 ('verify_ssl', True),
             ]))
+
+        if project.python:
+            python = Pythons(abstract=True).get_by_spec(project.python)
+            doc.setdefault('requires', tomlkit.table())['python_version'] = str(python.version)
 
         if 'packages' in doc:
             # clean packages from old packages

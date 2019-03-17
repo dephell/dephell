@@ -1,3 +1,4 @@
+# built-in
 from typing import List
 
 # external
@@ -5,7 +6,7 @@ import tomlkit
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Constraint, Dependency, RootDependency, RangeSpecifier
+from ..models import Constraint, Dependency, RangeSpecifier, RootDependency
 from ..repositories import get_repo
 from .base import BaseConverter
 
@@ -32,6 +33,7 @@ class PoetryConverter(BaseConverter):
         if 'dependencies' in section:
             for name, content in section['dependencies'].items():
                 if name == 'python':
+                    root.python = RangeSpecifier(content)
                     continue
                 deps.extend(self._make_deps(root, name, content))
         root.attach_dependencies(deps)
@@ -61,13 +63,14 @@ class PoetryConverter(BaseConverter):
         else:
             dependencies = tomlkit.table()
 
+        dependencies['python'] = str(project.python)
         for req in reqs:
             dependencies[req.name] = self._format_req(req=req)
         section['dependencies'] = dependencies
 
         return tomlkit.dumps(doc)
 
-    # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
+    # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod
     def _make_deps(root, name: str, content) -> List[Dependency]:
         if isinstance(content, str):

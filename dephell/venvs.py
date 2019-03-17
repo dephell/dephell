@@ -1,17 +1,19 @@
-from typing import Iterator, Optional
+# built-in
 import os
+import shutil
+from base64 import b64encode
+from hashlib import md5
 from itertools import chain
 from pathlib import Path
-from hashlib import md5
-import sys
-import shutil
+from typing import Iterator, Optional
 from venv import EnvBuilder as EnvBuilder
 
+# external
 import attr
-from cached_property import cached_property
 
+# app
 from .constants import PYTHONS
-from .utils import is_windows
+from .utils import cached_property, is_windows
 
 
 __all__ = ['VEnvBuilder', 'VEnv', 'VEnvs']
@@ -63,16 +65,20 @@ class VEnv:
     def python_path(self) -> Optional[Path]:
         if self.bin_path is None:
             return None
-        for suffix in chain(reversed(PYTHONS), ['']):
+        for suffix in chain(PYTHONS, ['']):
             for ext in ('', '.exe'):
                 path = self.bin_path / ('python' + suffix)
                 if ext:
-                    path = Path.with_suffix()
+                    path = path.with_suffix(ext)
                 if path.exists():
                     return path
         return None
 
     def exists(self) -> bool:
+        """Returns true if venv already created and valid.
+
+        It's a method like in `Path`.
+        """
         return bool(self.bin_path)
 
     def create(self, python_path) -> None:
@@ -101,16 +107,18 @@ class VEnvs:
     def is_venv(self) -> bool:
         return bool({'VIRTUAL_ENV', 'CONDA_PREFIX'} & set(os.environ))
 
-    @cached_property
-    def python_path(self) -> Path:
-        return Path(sys.executable)
+    @staticmethod
+    def _encode(text: str) -> str:
+        digest_bin = md5(text.encode('utf-8')).digest()
+        digest_str = b64encode(digest_bin).decode()
+        return digest_str.replace('+', '').replace('/', '')[:4]
 
     def _get_path(self, project_path: Path) -> Path:
         if not project_path.exists():
             raise FileNotFoundError('Project directory does not exist')
         if not project_path.is_dir():
             raise IOError('Project path is not directory')
-        digest = md5(str(project_path).encode('utf-8')).hexdigest()[:8]
+        digest = self._encode(str(project_path))
         name = project_path.name + '-' + digest
         return str(self.path).format(project=name)
 

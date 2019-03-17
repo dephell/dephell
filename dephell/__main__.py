@@ -5,4 +5,4 @@ from sys import argv
 from .cli import main
 
 
-main(argv[1:])
+exit(main(argv[1:]))

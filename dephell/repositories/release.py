@@ -1,10 +1,10 @@
 # built-in
 from datetime import datetime
+from typing import Optional
 
 # app
 from ..models.release import Release
 from .base import Interface
-from typing import Optional
 
 
 class ReleaseRepo(Interface):

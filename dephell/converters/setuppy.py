@@ -1,16 +1,16 @@
 # built-in
-from pathlib import Path
 from distutils.core import run_setup
 from itertools import chain
+from pathlib import Path
 
 # external
 from packaging.requirements import Requirement
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Author, RootDependency
-from .base import BaseConverter
+from ..models import Author, RangeSpecifier, RootDependency
 from ..utils import chdir
+from .base import BaseConverter
 
 
 TEMPLATE = """
@@ -50,6 +50,7 @@ class SetupPyConverter(BaseConverter):
         root = RootDependency(
             raw_name=cls._get(info, 'name'),
             version=cls._get(info, 'version') or '0.0.0',
+            python=RangeSpecifier(cls._get(info, 'python_requires')),
 
             description=cls._get(info, 'summary'),
             license=cls._get(info, 'license'),
@@ -95,6 +96,8 @@ class SetupPyConverter(BaseConverter):
         content.append(('version', project.version))
         if project.description:
             content.append(('description', project.description))
+        if project.python:
+            content.append(('python_requires', str(project.python)))
 
         # links
         fields = (

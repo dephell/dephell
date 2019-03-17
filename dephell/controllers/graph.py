@@ -24,9 +24,17 @@ class Layer:
         return self._mapping.get(name)
 
     def add(self, dep) -> None:
-        if dep.name in self._mapping:
-            raise KeyError('Dependency already added in layer')
-        self._mapping[dep.name] = dep
+        if dep.name not in self._mapping:
+            self._mapping[dep.name] = dep
+            return
+
+        # if it is the first layer (requiements.txt) try to merge these deps
+        if self.level == 1:
+            self._mapping[dep.name] += dep
+            if not self._mapping[dep.name].compat:
+                raise ValueError('Cannot resolve root dependency: ' + dep.name)
+
+        raise KeyError('Dependency already added in layer')
 
     def clear(self) -> None:
         self._mapping = {name: dep for name, dep in self._mapping.items() if dep.used}

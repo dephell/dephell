@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS, LOG_LEVELS, STRATEGIES
+from ..constants import ENVS, FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES
 
 
 env_help = (
@@ -33,6 +33,7 @@ def build_to(parser):
 def build_resolver(parser):
     resolver_group = parser.add_argument_group('Resolver rules')
     resolver_group.add_argument('--strategy', choices=STRATEGIES, help='Algorithm to select best release.')
+    resolver_group.add_argument('--prereleases', action='store_true', help='Allow prereleases')
 
 
 def build_api(parser):
@@ -43,15 +44,18 @@ def build_api(parser):
 
 def build_output(parser):
     output_group = parser.add_argument_group('Console output')
-    output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
+    output_group.add_argument('--format', choices=LOG_FORMATTERS, help='output format.')
     output_group.add_argument('--level', choices=LOG_LEVELS, help='minimal level for log messages.')
+
     output_group.add_argument('--nocolors', action='store_true', help='don\'t color output.')
+    output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
+    output_group.add_argument('--traceback', action='store_true', help='show traceback for exceptions.')
 
 
 def build_venv(parser):
     venv_group = parser.add_argument_group('Virtual environment')
-    venv_group.add_argument('--venv-path', help='path to venv directory for project.')
-    venv_group.add_argument('--venv-python', help='python version for venv.')
+    venv_group.add_argument('--venv', help='path to venv directory for project.')
+    venv_group.add_argument('--python', help='python version for venv.')
 
 
 def build_other(parser):

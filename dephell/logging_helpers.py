@@ -1,21 +1,59 @@
 # built-in
+import os
 import logging
 
 
 __all__ = ['ColoredFormatter', 'LevelFilter']
 
 
-BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(30, 38)
-RESET_SEQ = "\033[0m"
-COLOR_SEQ = "\033[1;{:d}m"
-BOLD_SEQ = "\033[1m"
+try:
+    from colorama import Fore, init
+    init()
+except ImportError:
+    Fore = None
+
+
+class _ForeAnsi:
+    _f = '\x1b[{}m'.format
+
+    BLACK = _f(30)
+    RED = _f(31)
+    GREEN = _f(32)
+    YELLOW = _f(33)
+    BLUE = _f(34)
+    MAGENTA = _f(35)
+    CYAN = _f(36)
+    WHITE = _f(37)
+    RESET = _f(39)
+
+
+class _ForeWin:
+    _f = '\x1b[{}m'.format
+
+    BLACK = _f(30)
+    RED = _f(31)
+    GREEN = _f(32)
+    YELLOW = _f(33)
+    BLUE = _f(34)
+    MAGENTA = _f(35)
+    CYAN = _f(36)
+    WHITE = _f(37)
+    RESET = _f(39)
+
+
+if Fore is None:
+    if os.name == 'nt':
+        Fore = _ForeAnsi
+    else:
+        Fore = _ForeWin
+
 
 COLORS = {
-    'DEBUG': BLUE,
-    'INFO': GREEN,
-    'WARNING': YELLOW,
-    'ERROR': RED,
-    'CRITICAL': CYAN,
+    'DEBUG': Fore.BLUE,
+    'INFO': Fore.GREEN,
+    'WARNING': Fore.YELLOW,
+    'ERROR': Fore.RED,
+    'CRITICAL': Fore.CYAN,
 }
 
 # http://docs.python.org/library/logging.html#logrecord-attributes
@@ -45,24 +83,31 @@ def merge_record_extra(record, target, reserved):
 
 # https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
 class ColoredFormatter(logging.Formatter):
-    def __init__(self, *args, colors=True, extras=True, **kwargs):
+    def __init__(self, *args, colors=True, extras=True, traceback=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.colors = colors
         self.extras = extras
+        self.traceback = traceback
 
     def format(self, record):
         # add color
         if self.colors and record.levelname in COLORS:
-            start = COLOR_SEQ.format(COLORS[record.levelname])
-            record.levelname = start + record.levelname + RESET_SEQ
-            record.msg = COLOR_SEQ.format(WHITE) + record.msg + RESET_SEQ
+            start = COLORS[record.levelname]
+            record.levelname = start + record.levelname + Fore.RESET
+            record.msg = Fore.WHITE + record.msg + Fore.RESET
 
         # add extras
         if self.extras:
             extras = merge_record_extra(record=record, target=dict(), reserved=RESERVED_ATTRS)
             record.extras = ', '.join('{}={}'.format(k, v) for k, v in extras.items())
             if record.extras:
-                record.extras = COLOR_SEQ.format(MAGENTA) + '({})'.format(record.extras) + RESET_SEQ
+                record.extras = Fore.MAGENTA + '({})'.format(record.extras) + Fore.RESET
+
+        # hide traceback
+        if not self.traceback:
+            record.exc_text = None
+            record.exc_info = None
+            record.stack_info = None
 
         return super().format(record)
 
