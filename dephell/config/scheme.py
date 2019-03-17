@@ -58,6 +58,11 @@ SCHEME = {
         required=True,  # because represented in default config
         allowed=STRATEGIES,
     ),
+    'prereleases': dict(
+        type='boolean',
+        required=True,  # because represented in default config
+        allowed=STRATEGIES,
+    ),
     'level': dict(
         type='string',
         required=True,  # because represented in default config
@@ -73,7 +78,7 @@ SCHEME = {
         schema={
             'path': dict(
                 type='string',
-                required=True,
+                required=True,  # because represented in default config
             ),
             'python': dict(
                 type='string',

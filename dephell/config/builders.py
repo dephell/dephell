@@ -33,6 +33,7 @@ def build_to(parser):
 def build_resolver(parser):
     resolver_group = parser.add_argument_group('Resolver rules')
     resolver_group.add_argument('--strategy', choices=STRATEGIES, help='Algorithm to select best release.')
+    resolver_group.add_argument('--prereleases', action='store_true', help='Allow prereleases')
 
 
 def build_api(parser):
