@@ -1,4 +1,5 @@
 # built-in
+from collections import defaultdict
 from typing import List
 
 # external
@@ -19,6 +20,7 @@ class PoetryConverter(BaseConverter):
         'git', 'branch', 'tag', 'rev',
         'file', 'path',
     )
+    _metafields = ('version', 'description', 'license', 'keywords', 'classifiers')
 
     def loads(self, content) -> RootDependency:
         doc = tomlkit.parse(content)
@@ -30,11 +32,17 @@ class PoetryConverter(BaseConverter):
         root = RootDependency()
 
         # read metainfo
-        ...
+        root.raw_name = section.get('name') or self._get_name(content=content)
+        for field in self._metafields:
+            if field in section:
+                value = section[field]
+                if isinstance(value, list):
+                    value = tuple(value)
+                setattr(root, field, value)
 
         # read entrypoints
         root.entrypoints = []
-        for name, content in section.get("scripts", {}).items():
+        for name, content in section.get('scripts', {}).items():
             if isinstance(content, str):
                 entrypoint = EntryPoint(name=name, path=content)
             else:
@@ -44,6 +52,9 @@ class PoetryConverter(BaseConverter):
                     extras=content['extras'],
                 )
             root.entrypoints.append(entrypoint)
+        for group_name, group_content in section.get('plugins', {}).items():
+            for name, path in sorted(group_content.items()):
+                root.entrypoints.append(EntryPoint(name=name, path=path, group=group_name))
         root.entrypoints = tuple(root.entrypoints)
 
         # read dependencies
@@ -68,6 +79,16 @@ class PoetryConverter(BaseConverter):
             doc['tool']['poetry'] = tomlkit.table()
         section = doc['tool']['poetry']
 
+        # metainfo
+        section['name'] = project.raw_name
+        for field in self._metafields:
+            value = getattr(project, field)
+            if isinstance(value, tuple):
+                value = list(value)
+            section[field] = value
+        self._add_entrypoints(section=section, entrypoints=project.entrypoints)
+
+        # dependencies
         if 'dependencies' in section:
             # clean dependencies from old dependencies
             names = {req.name for req in reqs}
@@ -81,12 +102,60 @@ class PoetryConverter(BaseConverter):
         else:
             dependencies = tomlkit.table()
 
+        # python version
         dependencies['python'] = str(project.python)
         for req in reqs:
             dependencies[req.name] = self._format_req(req=req)
         section['dependencies'] = dependencies
 
         return tomlkit.dumps(doc)
+
+    @staticmethod
+    def _add_entrypoints(section, entrypoints):
+        # drop old console_scripts
+        if 'scripts' in section:
+            scripts = {e.name for e in entrypoints if e.group == 'console_scripts'}
+            for script_name in section['scripts']:
+                if script_name not in scripts:
+                    del section['scripts'][script_name]
+
+        # add console_scripts
+        for entrypoint in entrypoints:
+            if entrypoint.group != 'console_scripts':
+                continue
+            if 'scripts' not in section:
+                section['scripts'] = tomlkit.table()
+            if entrypoint.extras:
+                content = tomlkit.inline_table()
+                content['callable'] = entrypoint.path
+                content['extras'] = entrypoint.extras
+            else:
+                content = entrypoint.path
+            section['scripts'][entrypoint.name] = content
+
+        # drop old plugins
+        if 'plugins' in section:
+            groups = defaultdict(set)
+            for entrypoint in entrypoints:
+                if entrypoint.group != 'console_scripts':
+                    groups[entrypoint.group].add(entrypoint.name)
+            for group_name, group_content in dict(section['plugins']):
+                if group_name not in groups:
+                    del section['plugins'][group_name]
+                    continue
+                for script_name in group_content:
+                    if script_name not in groups[group_name]:
+                        del section['plugins'][group_name][script_name]
+
+        # add plugins
+        for entrypoint in entrypoints:
+            if entrypoint.group == 'console_scripts':
+                continue
+            if 'plugins' not in section:
+                section['plugins'] = tomlkit.table()
+            if entrypoint.group not in section['plugins']:
+                section['plugins'][entrypoint.group] = tomlkit.table()
+            section['plugins'][entrypoint.group][entrypoint.name] = entrypoint.path
 
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod

@@ -54,9 +54,9 @@ def test_load_dump_load_deps(converter, path):
 
 @pytest.mark.parametrize('converter, path, exclude', [
     (converters.PIPFileConverter(), './tests/requirements/pipfile.toml', ['raw_name']),
-    # (converters.PIPFileLockConverter(), './tests/requirements/pipfile.lock.json'),
-    #
-    # (converters.PoetryConverter(), './tests/requirements/poetry.toml'),
+    (converters.PIPFileLockConverter(), './tests/requirements/pipfile.lock.json', ['raw_name']),
+
+    (converters.PoetryConverter(), './tests/requirements/poetry.toml', []),
     # (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml'),
     #
     # (converters.SetupPyConverter(), './tests/requirements/setup.py'),
