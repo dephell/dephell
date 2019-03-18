@@ -116,11 +116,13 @@ class SetupPyConverter(BaseConverter):
         if project.authors:
             author = project.authors[0]
             content.append(('author', author.name))
-            content.append(('author_email', author.mail))
+            if author.mail:
+                content.append(('author_email', author.mail))
         if len(project.authors) > 1:
             author = project.authors[1]
             content.append(('maintainer', author.name))
-            content.append(('maintainer_email', author.mail))
+            if author.mail:
+                content.append(('maintainer_email', author.mail))
 
         if project.license:
             content.append(('license', project.license))

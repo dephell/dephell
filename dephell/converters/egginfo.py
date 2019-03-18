@@ -69,11 +69,13 @@ class EggInfoConverter(BaseConverter):
         if project.authors:
             author = project.authors[0]
             content.append(('Author', author.name))
-            content.append(('Author-email', author.mail))
+            if author.mail:
+                content.append(('Author-email', author.mail))
         if len(project.authors) > 1:
             author = project.authors[1]
             content.append(('Maintainer', author.name))
-            content.append(('Maintainer-email', author.mail))
+            if author.mail:
+                content.append(('Maintainer-email', author.mail))
 
         if project.license:
             content.append(('License', project.license))
