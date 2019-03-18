@@ -100,23 +100,18 @@ class PoetryConverter(BaseConverter):
         # dependencies
         if 'dependencies' in section:
             # clean dependencies from old dependencies
-            names = {req.name for req in reqs}
-            section['dependencies'] = {
-                name: info
-                for name, info in section['dependencies'].items()
-                if name in names
-            }
-            # write new dependencies to this table
-            dependencies = section['dependencies']
+            names = {req.name for req in reqs} | {'python'}
+            for name in dict(section['dependencies']):
+                if name not in names:
+                    del section['dependencies'][name]
         else:
-            dependencies = tomlkit.table()
+            section['dependencies'] = tomlkit.table()
 
         # python version
-        dependencies['python'] = str(project.python)
-        for req in reqs:
-            dependencies[req.name] = self._format_req(req=req)
-        section['dependencies'] = dependencies
+        section['dependencies']['python'] = str(project.python)
 
+        for req in reqs:
+            section['dependencies'][req.name] = self._format_req(req=req)
         return tomlkit.dumps(doc)
 
     @staticmethod

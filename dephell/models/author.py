@@ -20,7 +20,7 @@ class Author:
             return cls(**match.groupdict())
         return cls(name=text)
 
-    def __str__(self):
-        if self.mail is None:
+    def __str__(self) -> str:
+        if not self.mail:
             return self.name
         return '{name} <{mail}>'.format(name=self.name, mail=self.mail)
