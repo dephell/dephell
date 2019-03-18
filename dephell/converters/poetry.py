@@ -7,7 +7,7 @@ import tomlkit
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Constraint, Dependency, EntryPoint, RangeSpecifier, RootDependency
+from ..models import Constraint, Dependency, EntryPoint, RangeSpecifier, RootDependency, Author
 from ..repositories import get_repo
 from .base import BaseConverter
 
@@ -39,6 +39,8 @@ class PoetryConverter(BaseConverter):
                 if isinstance(value, list):
                     value = tuple(value)
                 setattr(root, field, value)
+        if 'authors' in section:
+            root.authors = tuple(Author.parse(author) for author in section['authors'])
 
         # read entrypoints
         root.entrypoints = []
@@ -85,7 +87,14 @@ class PoetryConverter(BaseConverter):
             value = getattr(project, field)
             if isinstance(value, tuple):
                 value = list(value)
-            section[field] = value
+            if value:
+                section[field] = value
+            elif field in section:
+                del section[field]
+        if project.authors:
+            section['authors'] = [str(author) for author in project.authors]
+        elif 'authors' in section:
+            del section['authors']
         self._add_entrypoints(section=section, entrypoints=project.entrypoints)
 
         # dependencies
