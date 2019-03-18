@@ -27,9 +27,27 @@ class PoetryConverter(BaseConverter):
         elif 'poetry' not in doc['tool']:
             doc['tool']['poetry'] = tomlkit.table()
         section = doc['tool']['poetry']
-
-        deps = []
         root = RootDependency()
+
+        # read metainfo
+        ...
+
+        # read entrypoints
+        root.entrypoints = []
+        for name, content in section.get("scripts", {}).items():
+            if isinstance(content, str):
+                entrypoint = EntryPoint(name=name, path=content)
+            else:
+                entrypoint = EntryPoint(
+                    name=name,
+                    path=content['callable'],
+                    extras=content['extras'],
+                )
+            root.entrypoints.append(entrypoint)
+        root.entrypoints = tuple(root.entrypoints)
+
+        # read dependencies
+        deps = []
         if 'dependencies' in section:
             for name, content in section['dependencies'].items():
                 if name == 'python':

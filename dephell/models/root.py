@@ -41,11 +41,12 @@ class RootDependency:
 
     # additional info lists
     links = attr.ib(factory=dict, repr=False)               # Home-page, Download-URL
-    authors = attr.ib(factory=tuple, repr=False)            # Author, Author-email
-    keywords = attr.ib(factory=tuple, repr=False)           # Keywords
-    classifiers = attr.ib(factory=tuple, repr=False)        # Classifier
-    platforms = attr.ib(factory=tuple, repr=False)          # Platform
-    python = attr.ib(default=RangeSpecifier(), repr=False)  # Requires-Python
+    authors = attr.ib(default=tuple(), repr=False)          # Author, Author-email
+    keywords = attr.ib(default=tuple(), repr=False)         # Keywords
+    classifiers = attr.ib(default=tuple(), repr=False)      # Classifier
+    platforms = attr.ib(default=tuple(), repr=False)        # Platform
+    python = attr.ib(default=tuple(), repr=False)           # Requires-Python
+    entrypoints = attr.ib(default=tuple(), repr=False)      # entry_points
 
     repo = None
     applied = False
