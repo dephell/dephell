@@ -1,4 +1,5 @@
 # external
+import attr
 import pytest
 
 # project
@@ -23,7 +24,7 @@ from dephell.repositories import WareHouseRepo
     (converters.EggInfoConverter(), './tests/requirements/sdist.tar.gz'),
     (converters.WheelConverter(), './tests/requirements/wheel.whl'),
 ])
-def test_load_dump_load(converter, path):
+def test_load_dump_load_deps(converter, path):
     root1 = converter.load(path)
     reqs1 = Requirement.from_graph(graph=Graph(root1), lock=False)
 
@@ -49,3 +50,29 @@ def test_load_dump_load(converter, path):
         if isinstance(req1.dep.repo, WareHouseRepo):
             assert req1.dep.repo.name == req2.dep.repo.name
             assert req1.dep.repo.url == req2.dep.repo.url
+
+
+@pytest.mark.parametrize('converter, path, exclude', [
+    (converters.PIPFileConverter(), './tests/requirements/pipfile.toml', ['raw_name']),
+    # (converters.PIPFileLockConverter(), './tests/requirements/pipfile.lock.json'),
+    #
+    # (converters.PoetryConverter(), './tests/requirements/poetry.toml'),
+    # (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml'),
+    #
+    # (converters.SetupPyConverter(), './tests/requirements/setup.py'),
+    # (converters.EggInfoConverter(), './tests/requirements/sdist.tar.gz'),
+    # (converters.WheelConverter(), './tests/requirements/wheel.whl'),
+])
+def test_load_dump_load_metainfo(converter, path, exclude):
+    root1 = converter.load(path)
+    reqs1 = Requirement.from_graph(graph=Graph(root1), lock=False)
+
+    content = converter.dumps(reqs1, project=root1)
+    root2 = converter.loads(content)
+
+    root1.dependencies = None
+    root2.dependencies = None
+    for field in exclude:
+        setattr(root1, field, None)
+        setattr(root2, field, None)
+    assert attr.asdict(root1) == attr.asdict(root2)
