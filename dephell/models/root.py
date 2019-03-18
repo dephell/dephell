@@ -45,7 +45,7 @@ class RootDependency:
     keywords = attr.ib(default=tuple(), repr=False)         # Keywords
     classifiers = attr.ib(default=tuple(), repr=False)      # Classifier
     platforms = attr.ib(default=tuple(), repr=False)        # Platform
-    python = attr.ib(default=tuple(), repr=False)           # Requires-Python
+    python = attr.ib(default=RangeSpecifier(), repr=False)  # Requires-Python
     entrypoints = attr.ib(default=tuple(), repr=False)      # entry_points
 
     repo = None

@@ -30,4 +30,7 @@ setup(
         'packaging',
         'requests',
     ],
+    entry_points={
+        'console_scripts': ['dephell = dephell.cli:entrypoint'],
+    },
 )

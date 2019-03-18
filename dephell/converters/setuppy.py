@@ -1,4 +1,5 @@
 # built-in
+from collections import defaultdict
 from distutils.core import run_setup
 from itertools import chain
 from pathlib import Path
@@ -8,7 +9,7 @@ from packaging.requirements import Requirement
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Author, RangeSpecifier, RootDependency
+from ..models import Author, RangeSpecifier, RootDependency, EntryPoint
 from ..utils import chdir
 from .base import BaseConverter
 
@@ -76,6 +77,13 @@ class SetupPyConverter(BaseConverter):
                     Author(name=author, mail=cls._get(info, name + '_email')),
                 )
 
+        # entrypoints
+        entrypoints = []
+        for group, content in getattr(info, 'entry_points', {}).items():
+            for entrypoint in content:
+                entrypoints.append(EntryPoint.parse(text=entrypoint, group=group))
+        root.entrypoints = tuple(entrypoints)
+
         reqs = chain(
             cls._get_list(info, 'requires'),
             cls._get_list(info, 'install_requires'),
@@ -132,6 +140,11 @@ class SetupPyConverter(BaseConverter):
             content.append(('classifiers', project.classifiers))
         if project.platforms:
             content.append(('platforms', project.platforms))
+        if project.entrypoints:
+            entrypoints = defaultdict(list)
+            for entrypoint in project.entrypoints:
+                entrypoints[entrypoint.group].append(str(entrypoint))
+            content.append(('entry_points', dict(entrypoints)))
 
         reqs_list = [self._format_req(req=req) for req in reqs]
         content.append(('install_requires', reqs_list))
