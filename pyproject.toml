@@ -12,6 +12,7 @@ from = {format = "setuppy", path = "setup.py"}
 name = "dephell"
 version = "0.3.0"
 authors = ["orsinium"]
+description = "Dependency resolution for Python"
 
 [tool.poetry.scripts]
 dephell = "dephell.cli:entrypoint"

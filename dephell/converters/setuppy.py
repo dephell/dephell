@@ -53,9 +53,9 @@ class SetupPyConverter(BaseConverter):
             version=cls._get(info, 'version') or '0.0.0',
             python=RangeSpecifier(cls._get(info, 'python_requires')),
 
-            description=cls._get(info, 'summary'),
+            description=cls._get(info, 'description'),
             license=cls._get(info, 'license'),
-            long_description=cls._get(info, 'description'),
+            # long_description=cls._get(info, 'long_description'),
 
             # keywords=cls._get(info, 'keywords').split(','),
             keywords=cls._get_list(info, 'keywords'),
@@ -103,9 +103,9 @@ class SetupPyConverter(BaseConverter):
         content.append(('name', project.raw_name))
         content.append(('version', project.version))
         if project.description:
-            content.append(('summary', project.summary))
-        if project.long_description:
-            content.append(('description', project.long_description))
+            content.append(('description', project.description))
+        # if project.long_description:
+        #     content.append(('long_description', project.long_description))
         if project.python:
             content.append(('python_requires', str(project.python)))
 
