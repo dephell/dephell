@@ -57,11 +57,11 @@ def test_load_dump_load_deps(converter, path):
     (converters.PIPFileLockConverter(), './tests/requirements/pipfile.lock.json', ['raw_name']),
 
     (converters.PoetryConverter(), './tests/requirements/poetry.toml', []),
-    # (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml'),
-    #
-    # (converters.SetupPyConverter(), './tests/requirements/setup.py'),
-    # (converters.EggInfoConverter(), './tests/requirements/sdist.tar.gz'),
-    # (converters.WheelConverter(), './tests/requirements/wheel.whl'),
+    (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml', []),
+
+    (converters.SetupPyConverter(), './tests/requirements/setup.py', []),
+    (converters.EggInfoConverter(), './tests/requirements/sdist.tar.gz', []),
+    (converters.WheelConverter(), './tests/requirements/wheel.whl', []),
 ])
 def test_load_dump_load_metainfo(converter, path, exclude):
     root1 = converter.load(path)

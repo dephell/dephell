@@ -89,13 +89,15 @@ class SetupPyConverter(BaseConverter):
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         """
-        https://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=long_description#metadata
+        https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
         """
         content = []
         content.append(('name', project.raw_name))
         content.append(('version', project.version))
         if project.description:
-            content.append(('description', project.description))
+            content.append(('summary', project.summary))
+        if project.long_description:
+            content.append(('description', project.long_description))
         if project.python:
             content.append(('python_requires', str(project.python)))
 
