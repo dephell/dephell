@@ -32,6 +32,7 @@ setup(
         'graphviz',
         'html2text',
         'jinja2',
+        'm2r',
         'packaging',
         'pexpect',
         'pip',
