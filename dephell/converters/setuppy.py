@@ -6,6 +6,8 @@ from pathlib import Path
 
 # external
 from packaging.requirements import Requirement
+from yapf.yapflib.style import CreateGoogleStyle
+from yapf.yapflib.yapf_api import FormatCode
 
 # app
 from ..controllers import DependencyMaker, Readme
@@ -164,7 +166,10 @@ class SetupPyConverter(BaseConverter):
             readme = "readme = ''"
 
         content = ',\n    '.join('{}={!r}'.format(name, value) for name, value in content)
-        return TEMPLATE.format(kwargs=content, readme=readme)
+        content = TEMPLATE.format(kwargs=content, readme=readme)
+
+        content, _changed = FormatCode(content, style_config=CreateGoogleStyle())
+        return content
 
     # private methods
 

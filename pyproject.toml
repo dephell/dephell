@@ -1,12 +1,9 @@
 [tool.dephell.main]
-from = {format = "pip", path = "requirements.txt"}
-to = {format = "pipfilelock", path = "Pipfile.lock"}
+from = {format = "poetry", path = "pyproject.toml"}
+to = {format = "setuppy", path = "setup.py"}
 
 [tool.dephell.flake]
 from = {format = "pip", path = "requirements-flake.txt"}
-
-[tool.dephell.setup]
-from = {format = "setuppy", path = "setup.py"}
 
 [tool.poetry]
 name = "dephell"
@@ -37,3 +34,4 @@ requests = "*"
 shellingham = "*"
 tomlkit = "*"
 tqdm = "*"
+yapf = "*"
