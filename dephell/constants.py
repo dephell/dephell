@@ -51,7 +51,7 @@ PYTHONS_UNRELEASED = ('3.8', '4.0')
 PYTHONS = PYTHONS_POPULAR + PYTHONS_DEPRECATED + PYTHONS_UNRELEASED
 
 # https://github.com/github/markup
-EXTENSIONS = MappingProxyType(OrderedDict(
+EXTENSIONS = MappingProxyType(OrderedDict([
     ('rst',         'rst'),
 
     ('md',          'md'),
@@ -62,4 +62,4 @@ EXTENSIONS = MappingProxyType(OrderedDict(
 
     ('txt',         'txt'),
     ('',            'txt'),
-))
+]))
