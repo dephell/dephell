@@ -5,11 +5,13 @@ from typing import List, Optional
 
 # external
 import tomlkit
+
+# project
 from dephell_specifier import RangeSpecifier
 
 # app
 from ..controllers import DependencyMaker, Readme
-from ..models import Constraint, Dependency, EntryPoint, RootDependency, Author
+from ..models import Author, Constraint, Dependency, EntryPoint, RootDependency
 from ..repositories import get_repo
 from .base import BaseConverter
 

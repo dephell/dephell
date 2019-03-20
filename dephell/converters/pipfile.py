@@ -3,8 +3,10 @@ from collections import OrderedDict
 from typing import List
 
 # external
-from dephell_specifier import RangeSpecifier
 import tomlkit
+
+# project
+from dephell_specifier import RangeSpecifier
 
 # app
 from ..controllers import DependencyMaker

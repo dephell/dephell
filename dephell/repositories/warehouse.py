@@ -8,10 +8,12 @@ import requests
 from aiohttp import ClientSession
 from packaging.requirements import Requirement
 
+# project
+from dephell_markers import Markers
+
 # app
 from ..cache import JSONCache, TextCache
 from ..config import config
-from dephell_markers import Markers
 from ..models.author import Author
 from ..models.release import Release
 from .base import Interface

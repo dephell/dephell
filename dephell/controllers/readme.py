@@ -1,12 +1,15 @@
+# built-in
 import re
 from pathlib import Path
-from typing import Optional
 from string import Template
+from typing import Optional
 
+# external
 import attr
-from m2r import convert
 from cached_property import cached_property
+from m2r import convert
 
+# app
 from ..constants import EXTENSIONS
 
 

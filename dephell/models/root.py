@@ -6,10 +6,12 @@ from typing import Tuple
 import attr
 from packaging.utils import canonicalize_name
 
+# project
+from dephell_specifier import RangeSpecifier
+
 # app
 from ..utils import cached_property
 from .group import Group
-from dephell_specifier import RangeSpecifier
 
 
 @attr.s()

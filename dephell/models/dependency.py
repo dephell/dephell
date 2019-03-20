@@ -6,8 +6,10 @@ from typing import Iterable, Optional
 import attr
 from packaging.utils import canonicalize_name
 
-# app
+# project
 from dephell_markers import Markers
+
+# app
 from ..repositories import GitRepo
 from ..utils import cached_property
 from .constraint import Constraint

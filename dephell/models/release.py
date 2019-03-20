@@ -7,9 +7,11 @@ import attr
 from packaging.utils import canonicalize_name
 from packaging.version import parse
 
+# project
+from dephell_specifier import RangeSpecifier
+
 # app
 from ..utils import cached_property
-from dephell_specifier import RangeSpecifier
 
 
 @attr.s(hash=False, cmp=True)

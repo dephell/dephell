@@ -2,8 +2,10 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-# app
+# project
 from dephell_archive import ArchivePath
+
+# app
 from ..models import RootDependency
 from .base import BaseConverter
 from .egginfo import EggInfoConverter

@@ -10,9 +10,11 @@ import attr
 from packaging.version import InvalidVersion, Version
 from pythonfinder import Finder
 
+# project
+from dephell_specifier import RangeSpecifier
+
 # app
 from .constants import PYTHONS
-from dephell_specifier import RangeSpecifier
 
 
 __all__ = ['Python', 'Pythons']

@@ -5,13 +5,15 @@ from typing import List, Optional, Union
 # external
 from packaging.requirements import Requirement as PackagingRequirement
 
+# project
+from dephell_markers import Markers
+from dephell_specifier import GitSpecifier
+
 # app
 from ..links import VCSLink, parse_link
-from dephell_markers import Markers
 from ..models.constraint import Constraint
 from ..models.dependency import Dependency
 from ..models.extra_dependency import ExtraDependency
-from dephell_specifier import GitSpecifier
 from ..repositories import get_repo
 
 

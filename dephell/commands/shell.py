@@ -2,11 +2,13 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+# project
+from dephell_shells import Shells
+
 # app
 from ..config import builders
 from ..converters import CONVERTERS
 from ..pythons import Python, Pythons
-from dephell_shells import Shells
 from ..venvs import VEnvs
 from .base import BaseCommand
 

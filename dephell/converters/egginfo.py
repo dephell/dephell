@@ -7,8 +7,10 @@ from tempfile import TemporaryDirectory
 # external
 from packaging.requirements import Requirement as PackagingRequirement
 
-# app
+# project
 from dephell_archive import ArchivePath
+
+# app
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, RootDependency
 from .base import BaseConverter

@@ -3,8 +3,10 @@ import json
 from collections import OrderedDict
 from hashlib import sha256
 
-# app
+# project
 from dephell_specifier import RangeSpecifier
+
+# app
 from ..models import RootDependency
 from ..pythons import Pythons
 from .pipfile import PIPFileConverter

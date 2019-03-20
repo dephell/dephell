@@ -1,4 +1,7 @@
+# built-in
 from typing import Optional
+
+# external
 import attr
 
 
