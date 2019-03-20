@@ -8,7 +8,7 @@ from dephell_specifier import RangeSpecifier
 
 # app
 from ..models import RootDependency
-from ..pythons import Pythons
+from dephell_pythons import Pythons
 from .pipfile import PIPFileConverter
 
 

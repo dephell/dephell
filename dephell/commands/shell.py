@@ -8,7 +8,7 @@ from dephell_shells import Shells
 # app
 from ..config import builders
 from ..converters import CONVERTERS
-from ..pythons import Python, Pythons
+from dephell_pythons import Python, Pythons
 from ..venvs import VEnvs
 from .base import BaseCommand
 
