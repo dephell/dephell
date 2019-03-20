@@ -41,3 +41,6 @@ def test_dump():
     content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     content = json.loads(content)
     assert content['default']['chardet']['version'] == '==3.0.4'
+
+    assert 'nose' not in content['default']
+    assert 'nose' in content['develop']

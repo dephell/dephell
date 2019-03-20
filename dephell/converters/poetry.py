@@ -1,7 +1,7 @@
 # built-in
 from collections import defaultdict
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 # external
 import tomlkit
@@ -64,6 +64,13 @@ class PoetryConverter(BaseConverter):
                 root.entrypoints.append(EntryPoint(name=name, path=path, group=group_name))
         root.entrypoints = tuple(root.entrypoints)
 
+        # get extras for deps
+        extras = defaultdict(set)
+        if 'extras' in section:
+            for extra, deps in section['extras'].items():
+                for dep in deps:
+                    extras[dep].add(extra)
+
         # read dependencies
         deps = []
         if 'dependencies' in section:
@@ -71,7 +78,12 @@ class PoetryConverter(BaseConverter):
                 if name == 'python':
                     root.python = RangeSpecifier(content)
                     continue
-                deps.extend(self._make_deps(root, name, content))
+                deps.extend(self._make_deps(
+                    root=root,
+                    name=name,
+                    content=content,
+                    extras=extras.get(name),
+                ))
         root.attach_dependencies(deps)
         return root
 
@@ -122,8 +134,32 @@ class PoetryConverter(BaseConverter):
         # python version
         section['dependencies']['python'] = str(project.python)
 
+        # write dependencies
         for req in reqs:
             section['dependencies'][req.name] = self._format_req(req=req)
+
+        # extras
+        extras = defaultdict(list)
+        for req in reqs:
+            for extra in req.envs:
+                extras[extra].append(req.name)
+        print(extras)
+        if extras:
+            if 'extras' in section:
+                # drop old extras
+                for extra in section['extras']:
+                    if extra not in extras:
+                        del section['extras'][extra]
+            else:
+                # create section if doesn't exist
+                section['extras'] = tomlkit.table()
+            # add new extras
+            for extra, deps in extras.items():
+                section['extras'][extra] = deps
+        elif 'extras' in section:
+            # deop all old extras if there are no new extras
+            del section['extras']
+
         return tomlkit.dumps(doc)
 
     @staticmethod
@@ -175,13 +211,17 @@ class PoetryConverter(BaseConverter):
 
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod
-    def _make_deps(root, name: str, content) -> List[Dependency]:
+    def _make_deps(root, name: str, content, extras: Optional[set] = None) -> List[Dependency]:
         if isinstance(content, str):
-            return [Dependency(
+            deps = [Dependency(
                 raw_name=name,
                 constraint=Constraint(root, content),
                 repo=get_repo(),
             )]
+            if extras:
+                for dep in deps:
+                    dep.envs = extras
+            return deps
 
         # get link
         url = content.get('file') or content.get('path')
@@ -200,7 +240,7 @@ class PoetryConverter(BaseConverter):
             markers.append(RangeSpecifier(content['python']).to_marker('python_version'))
         ' and '.join(markers)
 
-        return DependencyMaker.from_params(
+        deps = DependencyMaker.from_params(
             raw_name=name,
             constraint=Constraint(root, content.get('version', '')),
             extras=set(content.get('extras', [])),
@@ -208,6 +248,10 @@ class PoetryConverter(BaseConverter):
             url=url,
             editable=content.get('develop', False),
         )
+        if extras:
+            for dep in deps:
+                dep.envs = extras
+        return deps
 
     def _format_req(self, req):
         result = tomlkit.inline_table()

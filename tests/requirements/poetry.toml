@@ -29,6 +29,15 @@ django = { git = "https://github.com/django/django.git", rev = "1.11.4" }
 # Optional dependencies (extras)
 pendulum = { version = "^1.4", optional = true }
 
+# A list of all of the optional dependencies, some of which are included in the
+# below `extras`. They can be opted into by apps.
+psycopg2 = { version = "^2.7", optional = true }
+mysqlclient = { version = "^1.3", optional = true }
+
+[tool.poetry.extras]
+mysql = ["mysqlclient"]
+pgsql = ["psycopg2"]
+
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
 pytest-cov = "^2.4"

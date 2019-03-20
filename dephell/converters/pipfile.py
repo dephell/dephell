@@ -39,8 +39,8 @@ class PIPFileConverter(BaseConverter):
         if python not in {'', '*'}:
             root.python = RangeSpecifier('==' + python)
 
-        if 'packages' in doc:
-            for name, content in doc['packages'].items():
+        for section, is_dev in [('packages', False), ('dev-packages', True)]:
+            for name, content in doc.get(section, {}).items():
                 subdeps = self._make_deps(root, name, content)
                 if 'index' in content:
                     repo_name = content.get('index')
@@ -49,6 +49,9 @@ class PIPFileConverter(BaseConverter):
                             name=repo_name,
                             url=repos[repo_name],
                         )
+                if is_dev:
+                    for dep in subdeps:
+                        dep.envs = {'dev'}
                 deps.extend(subdeps)
         root.attach_dependencies(deps)
         return root
@@ -81,22 +84,23 @@ class PIPFileConverter(BaseConverter):
                 doc['requires'] = tomlkit.table()
             doc['requires']['python_version'] = str(python.get_short_version())
 
-        if 'packages' in doc:
-            # clean packages from old packages
-            names = {req.name for req in reqs}
-            doc['packages'] = {
-                name: info
-                for name, info in doc['packages'].items()
-                if name in names
-            }
-            # write new packages to this table
-            packages = doc['packages']
-        else:
-            packages = tomlkit.table()
+        for section, is_dev in [('packages', False), ('dev-packages', True)]:
+            # create section if doesn't exist
+            if section not in doc:
+                doc[section] = tomlkit.table()
+                continue
 
-        for req in reqs:
-            packages[req.name] = self._format_req(req=req)
-        doc['packages'] = packages
+            # clean packages from old packages
+            names = {req.name for req in reqs if is_dev is req.optional}
+            for name in doc[section]:
+                if name not in names:
+                    del doc[section][name]
+
+        # write new packages
+        for section, is_dev in [('packages', False), ('dev-packages', True)]:
+            for req in reqs:
+                if is_dev is req.optional:
+                    doc[section][req.name] = self._format_req(req=req)
 
         return tomlkit.dumps(doc)
 

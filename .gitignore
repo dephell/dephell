@@ -13,3 +13,6 @@ Pipfile.lock
 
 .dephell_cache/
 .dephell_report/
+
+README.rst
+setup.py

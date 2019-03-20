@@ -26,15 +26,20 @@ class PIPFileLockConverter(PIPFileConverter):
         if python not in {'', '*'}:
             root.python = RangeSpecifier('==' + python)
 
-        for name, content in doc['default'].items():
-            deps.extend(self._make_deps(root, name, content))
+        for section, is_dev in [('default', False), ('develop', True)]:
+            for name, content in doc.get(section, {}).items():
+                subdeps = self._make_deps(root, name, content)
+                if is_dev:
+                    for dep in subdeps:
+                        dep.envs = {'dev'}
+                deps.extend(subdeps)
         root.attach_dependencies(deps)
         return root
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
-        packages = OrderedDict()
+        packages = {True: OrderedDict(), False: OrderedDict()}
         for req in reqs:
-            packages[req.name] = dict(self._format_req(req=req))
+            packages[req.optional][req.name] = dict(self._format_req(req=req))
 
         python = Pythons(abstract=True).get_by_spec(project.python)
         data = OrderedDict([
@@ -46,8 +51,8 @@ class PIPFileLockConverter(PIPFileConverter):
                 ])]),
                 ('requires', {'python_version': str(python.version)}),
             ])),
-            ('default', packages),
-            ('develop', OrderedDict()),
+            ('default', packages[False]),
+            ('develop', packages[True]),
         ])
         data['_meta']['hash'] = {'sha256': self._get_hash(data)}
         data['_meta']['pipfile-spec'] = 6
