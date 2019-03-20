@@ -38,3 +38,4 @@ yapf = "*"
 
 # dephell ecosystem
 dephell_archive = "*"  # https://github.com/dephell/dephell_archive
+dephell_shells = "*"  # https://github.com/dephell/dephell_shells

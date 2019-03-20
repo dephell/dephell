@@ -4,7 +4,7 @@ from pathlib import Path
 
 # app
 from ..config import builders
-from ..shells import Shells
+from dephell_shells import Shells
 from ..venvs import VEnvs
 from .base import BaseCommand
 
