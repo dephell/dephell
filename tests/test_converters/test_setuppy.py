@@ -10,7 +10,7 @@ def test_load_deps():
     path = Path('tests') / 'requirements' / 'setup.py'
     root = SetupPyConverter().load(path)
 
-    needed = {'attrs', 'cached-property', 'packaging', 'requests'}
+    needed = {'attrs', 'cached-property', 'packaging', 'requests', 'colorama'}
     assert set(dep.name for dep in root.dependencies) == needed
 
 
@@ -34,5 +34,5 @@ def test_dumps_deps():
     content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     print(content)
     root = SetupPyConverter().loads(content)
-    needed = {'attrs', 'cached-property', 'packaging', 'requests'}
+    needed = {'attrs', 'cached-property', 'packaging', 'requests', 'colorama'}
     assert set(dep.name for dep in root.dependencies) == needed

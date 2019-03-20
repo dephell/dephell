@@ -76,6 +76,7 @@ class SetupPyConverter(BaseConverter):
                 entrypoints.append(EntryPoint.parse(text=entrypoint, group=group))
         root.entrypoints = tuple(entrypoints)
 
+        # dependencies
         reqs = chain(
             cls._get_list(info, 'requires'),
             cls._get_list(info, 'install_requires'),
@@ -85,6 +86,16 @@ class SetupPyConverter(BaseConverter):
             req = Requirement(req)
             deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
+
+        # extras
+        for extra, reqs in getattr(info, 'extras_require', {}).items():
+            for req in reqs:
+                req = Requirement(req)
+                deps = DependencyMaker.from_requirement(source=root, req=req)
+                for dep in deps:
+                    dep.envs = {extra}
+                root.attach_dependencies(deps)
+
         return root
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
@@ -138,6 +149,14 @@ class SetupPyConverter(BaseConverter):
 
         reqs_list = [self._format_req(req=req) for req in reqs]
         content.append(('install_requires', reqs_list))
+
+        extras = defaultdict(list)
+        for req in reqs:
+            formatted = self._format_req(req=req)
+            for env in req.envs:
+                extras[env].append(formatted)
+        if extras:
+            content.append(('extras_require', dict(extras)))
 
         if project.readme is not None:
             readme = project.readme.to_rst().as_code()

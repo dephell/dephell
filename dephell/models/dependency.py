@@ -168,6 +168,7 @@ class Dependency:
 
         self.constraint.merge(dep.constraint)
         self.groups.actualize()
+        self.envs.update(dep.envs)
         return self
 
     def __add__(self, dep: 'Dependency') -> 'Dependency':

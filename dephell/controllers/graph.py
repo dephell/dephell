@@ -33,8 +33,9 @@ class Layer:
             self._mapping[dep.name] += dep
             if not self._mapping[dep.name].compat:
                 raise ValueError('Cannot resolve root dependency: ' + dep.name)
+            return
 
-        raise KeyError('Dependency already added in layer')
+        raise KeyError('Dependency already added in layer: ' + dep.name)
 
     def clear(self) -> None:
         self._mapping = {name: dep for name, dep in self._mapping.items() if dep.used}
