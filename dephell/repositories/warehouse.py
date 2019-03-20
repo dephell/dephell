@@ -11,7 +11,7 @@ from packaging.requirements import Requirement
 # app
 from ..cache import JSONCache, TextCache
 from ..config import config
-from ..markers import Markers
+from dephell_markers import Markers
 from ..models.author import Author
 from ..models.release import Release
 from .base import Interface

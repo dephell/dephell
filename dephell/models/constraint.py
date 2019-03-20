@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 # app
-from .range_specifier import RangeSpecifier
+from dephell_specifier import RangeSpecifier
 
 
 class Constraint:

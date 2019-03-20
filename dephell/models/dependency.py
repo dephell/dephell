@@ -7,7 +7,7 @@ import attr
 from packaging.utils import canonicalize_name
 
 # app
-from ..markers import Markers
+from dephell_markers import Markers
 from ..repositories import GitRepo
 from ..utils import cached_property
 from .constraint import Constraint

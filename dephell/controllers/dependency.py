@@ -7,11 +7,11 @@ from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..links import VCSLink, parse_link
-from ..markers import Markers
+from dephell_markers import Markers
 from ..models.constraint import Constraint
 from ..models.dependency import Dependency
 from ..models.extra_dependency import ExtraDependency
-from ..models.git_specifier import GitSpecifier
+from dephell_specifier import GitSpecifier
 from ..repositories import get_repo
 
 

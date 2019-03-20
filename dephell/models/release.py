@@ -9,7 +9,7 @@ from packaging.version import parse
 
 # app
 from ..utils import cached_property
-from .range_specifier import RangeSpecifier
+from dephell_specifier import RangeSpecifier
 
 
 @attr.s(hash=False, cmp=True)

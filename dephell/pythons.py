@@ -12,7 +12,7 @@ from pythonfinder import Finder
 
 # app
 from .constants import PYTHONS
-from .models import RangeSpecifier
+from dephell_specifier import RangeSpecifier
 
 
 __all__ = ['Python', 'Pythons']

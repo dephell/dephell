@@ -5,13 +5,14 @@ from itertools import chain
 from pathlib import Path
 
 # external
+from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 from yapf.yapflib.style import CreateGoogleStyle
 from yapf.yapflib.yapf_api import FormatCode
 
 # app
 from ..controllers import DependencyMaker, Readme
-from ..models import Author, RangeSpecifier, RootDependency, EntryPoint
+from ..models import Author, RootDependency, EntryPoint
 from ..utils import chdir
 from .base import BaseConverter
 

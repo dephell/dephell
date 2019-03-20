@@ -3,11 +3,12 @@ from collections import OrderedDict
 from typing import List
 
 # external
+from dephell_specifier import RangeSpecifier
 import tomlkit
 
 # app
 from ..controllers import DependencyMaker
-from ..models import Constraint, Dependency, RangeSpecifier, RootDependency
+from ..models import Constraint, Dependency, RootDependency
 from ..pythons import Pythons
 from ..repositories import WareHouseRepo, get_repo
 from .base import BaseConverter

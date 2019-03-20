@@ -4,7 +4,8 @@ from collections import OrderedDict
 from hashlib import sha256
 
 # app
-from ..models import RangeSpecifier, RootDependency
+from dephell_specifier import RangeSpecifier
+from ..models import RootDependency
 from ..pythons import Pythons
 from .pipfile import PIPFileConverter
 
