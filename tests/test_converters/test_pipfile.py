@@ -16,10 +16,14 @@ def test_load():
     assert 'requests' in deps
     assert 'records' in deps
     assert 'django' in deps
+    assert 'nose' in deps
     assert str(deps['records'].constraint) == '>0.5.0'
 
     assert deps['django'].editable is True
     assert deps['requests'].editable is False
+
+    assert 'dev' in deps['nose'].envs
+    assert 'dev' not in deps['requests'].envs
 
 
 def test_load_git_based_dep():
