@@ -4,10 +4,13 @@ from typing import List
 # external
 import tomlkit
 
+# project
+from dephell_specifier import RangeSpecifier
+
 # app
 from ..controllers import DependencyMaker
 from ..links import DirLink
-from ..models import Constraint, Dependency, RangeSpecifier, RootDependency
+from ..models import Constraint, Dependency, RootDependency
 from .base import BaseConverter
 
 

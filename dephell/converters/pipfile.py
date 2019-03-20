@@ -5,10 +5,13 @@ from typing import List
 # external
 import tomlkit
 
+# project
+from dephell_specifier import RangeSpecifier
+
 # app
 from ..controllers import DependencyMaker
-from ..models import Constraint, Dependency, RangeSpecifier, RootDependency
-from ..pythons import Pythons
+from ..models import Constraint, Dependency, RootDependency
+from dephell_pythons import Pythons
 from ..repositories import WareHouseRepo, get_repo
 from .base import BaseConverter
 

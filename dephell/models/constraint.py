@@ -1,8 +1,8 @@
 # built-in
 from copy import deepcopy
 
-# app
-from .range_specifier import RangeSpecifier
+# project
+from dephell_specifier import RangeSpecifier
 
 
 class Constraint:
