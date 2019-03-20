@@ -35,3 +35,6 @@ shellingham = "*"
 tomlkit = "*"
 tqdm = "*"
 yapf = "*"
+
+# dephell ecosystem
+dephell_archive = "*"  # https://github.com/dephell/dephell_archive

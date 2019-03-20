@@ -2,12 +2,13 @@
 from email.parser import Parser
 from itertools import chain
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 # external
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
-from ..archive import ArchivePath
+from dephell_archive import ArchivePath
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, RootDependency
 from .base import BaseConverter
@@ -32,11 +33,12 @@ class EggInfoConverter(BaseConverter):
 
         # load from archive
         if path.suffix in ('.zip', '.gz', '.tar'):
-            archive = ArchivePath(path)
-            paths = list(archive.glob('**/*.egg-info'))
-            root = self._load_dir(*paths)
-            root.readme = Readme.discover(path=archive)
-            return root
+            with TemporaryDirectory() as cache:
+                archive = ArchivePath(archive_path=path, cache_path=Path(cache))
+                paths = list(archive.glob('**/*.egg-info'))
+                root = self._load_dir(*paths)
+                root.readme = Readme.discover(path=archive)
+                return root
 
         # load from file (requires.txt or PKG-INFO)
         with path.open('r') as stream:

@@ -1,8 +1,9 @@
 # built-in
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 # app
-from ..archive import ArchivePath
+from dephell_archive import ArchivePath
 from ..models import RootDependency
 from .base import BaseConverter
 from .egginfo import EggInfoConverter
@@ -26,29 +27,31 @@ class WheelConverter(BaseConverter):
         path = Path(str(path))
         paths = None
 
-        # passed .whl archive
-        if path.is_file() and path.suffix == '.whl':
-            archive = ArchivePath(path)
-            paths = list(archive.glob('*.dist-info/METADATA'))
+        with TemporaryDirectory() as cache:
+            # passed .whl archive
+            if path.is_file() and path.suffix == '.whl':
+                archive = ArchivePath(archive_path=path, cache_path=Path(cache))
+                paths = list(archive.glob('*.dist-info/METADATA'))
 
-        # passed extracted .whl
-        if path.is_dir():
-            paths = [path / 'METADATA']
-            if not path.exists():
-                paths = list(path.glob('*.dist-info/METADATA'))
+            # passed extracted .whl
+            if path.is_dir():
+                paths = [path / 'METADATA']
+                if not path.exists():
+                    paths = list(path.glob('*.dist-info/METADATA'))
 
-        # passed METADATA file
-        if paths is None:
-            paths = [path]
+            # passed METADATA file
+            if paths is None:
+                paths = [path]
 
-        if not paths:
-            raise FileNotFoundError('cannot find METADATA in dir', str(path))
-        # maybe it's possible, so we will have to process it
-        if len(paths) > 1:
-            raise FileExistsError('too many METADATA in dir')
+            if not paths:
+                raise FileNotFoundError('cannot find METADATA in dir', str(path))
+            # maybe it's possible, so we will have to process it
+            if len(paths) > 1:
+                raise FileExistsError('too many METADATA in dir')
 
-        with paths[0].open('r') as stream:
-            content = stream.read()
+            with paths[0].open('r') as stream:
+                content = stream.read()
+
         return self.loads(content)
 
     def loads(self, content: str) -> RootDependency:
