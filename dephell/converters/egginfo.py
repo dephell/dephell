@@ -8,7 +8,7 @@ from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..archive import ArchivePath
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, Readme
 from ..models import Author, RootDependency
 from .base import BaseConverter
 
@@ -34,7 +34,9 @@ class EggInfoConverter(BaseConverter):
         if path.suffix in ('.zip', '.gz', '.tar'):
             archive = ArchivePath(path)
             paths = list(archive.glob('**/*.egg-info'))
-            return self._load_dir(*paths)
+            root = self._load_dir(*paths)
+            root.readme = Readme.discover(path=archive)
+            return root
 
         # load from file (requires.txt or PKG-INFO)
         with path.open('r') as stream:
@@ -89,8 +91,8 @@ class EggInfoConverter(BaseConverter):
             content.append(('Requires', self._format_req(req=req)))
 
         content = '\n'.join(map(': '.join, content))
-        if project.long_description:
-            content += '\n\n' + project.long_description
+        if project.readme:
+            content += '\n\n' + project.readme.as_rst()
         return content
 
     # helpers
@@ -122,7 +124,6 @@ class EggInfoConverter(BaseConverter):
 
             description=cls._get(info, 'Summary'),
             license=cls._get(info, 'License'),
-            long_description=cls._get(info, 'Description') or info.get_payload(),
 
             keywords=cls._get(info, 'Keywords').split(','),
             classifiers=cls._get_list(info, 'Classifier'),

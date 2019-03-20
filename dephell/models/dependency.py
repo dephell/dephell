@@ -34,6 +34,7 @@ class Dependency:
     editable = attr.ib(type=bool, default=False, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(type=Optional[Markers], default=None, repr=False)
+    envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
 
     extra = None
 

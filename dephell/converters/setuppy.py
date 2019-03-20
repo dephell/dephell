@@ -8,7 +8,7 @@ from pathlib import Path
 from packaging.requirements import Requirement
 
 # app
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, Readme
 from ..models import Author, RangeSpecifier, RootDependency, EntryPoint
 from ..utils import chdir
 from .base import BaseConverter
@@ -22,18 +22,10 @@ TEMPLATE = """
 # https://github.com/orsinium/dephell
 
 from distutils.core import setup
-import os.path
-
-
-long_description = ''
-for name in ('README.rst', 'README.md'):
-    if os.path.exists(name):
-        with open(name, encoding='utf8') as stream:
-            long_description = stream.read()
-        break
+{readme}
 
 setup(
-    long_description=long_description,
+    long_description=readme,
     {kwargs},
 )
 """
@@ -51,16 +43,16 @@ class SetupPyConverter(BaseConverter):
         root = RootDependency(
             raw_name=cls._get(info, 'name'),
             version=cls._get(info, 'version') or '0.0.0',
-            python=RangeSpecifier(cls._get(info, 'python_requires')),
 
             description=cls._get(info, 'description'),
             license=cls._get(info, 'license'),
-            # long_description=cls._get(info, 'long_description'),
 
-            # keywords=cls._get(info, 'keywords').split(','),
             keywords=cls._get_list(info, 'keywords'),
             classifiers=cls._get_list(info, 'classifiers'),
             platforms=cls._get_list(info, 'platforms'),
+
+            python=RangeSpecifier(cls._get(info, 'python_requires')),
+            readme=Readme.from_code(path=path),
         )
 
         # links
@@ -104,8 +96,6 @@ class SetupPyConverter(BaseConverter):
         content.append(('version', project.version))
         if project.description:
             content.append(('description', project.description))
-        # if project.long_description:
-        #     content.append(('long_description', project.long_description))
         if project.python:
             content.append(('python_requires', str(project.python)))
 
@@ -149,8 +139,13 @@ class SetupPyConverter(BaseConverter):
         reqs_list = [self._format_req(req=req) for req in reqs]
         content.append(('install_requires', reqs_list))
 
+        if project.readme is not None:
+            readme = project.readme.to_rst().as_code()
+        else:
+            readme = "readme = ''"
+
         content = ',\n    '.join('{}={!r}'.format(name, value) for name, value in content)
-        return TEMPLATE.format(kwargs=content)
+        return TEMPLATE.format(kwargs=content, readme=readme)
 
     # private methods
 

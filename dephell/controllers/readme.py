@@ -11,11 +11,12 @@ from ..constants import EXTENSIONS
 
 
 CODE = """
-import os
+import os.path
 
+readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, '${fname}'), encoding='utf-8') as stream:
-    long_description = stream.read()
+    readme = stream.read()
 """
 
 REX_README_NAME = re.compile(r'(README\.[a-z]+)')
@@ -29,24 +30,31 @@ class Readme:
     def discover(cls, path: Path) -> Optional['Readme']:
         for name in ('README', 'Readme', 'readme', 'ReadMe'):
             for ext in EXTENSIONS:
+                if ext:
+                    ext = '.' + ext
                 fpath = (path / name).with_suffix(ext)
                 if fpath.exists():
                     return cls(path=fpath)
         return None
 
     @classmethod
-    def from_code(cls, path, content: str) -> Optional['Readme']:
+    def from_code(cls, path: Path, content: Optional[str] = None) -> Optional['Readme']:
+        if content is None:
+            content = path.read_text()
         match = REX_README_NAME.search(content)
-        if match is not None:
-            return cls(path=path / match.groups()[0])
-        return None
+        if match is None:
+            return None
+        new_path = path.parent / match.groups()[0]
+        if not new_path.exists():
+            return None
+        return cls(path=new_path)
 
     @cached_property
     def markup(self) -> str:
         try:
-            return EXTENSIONS[self.path.suffix()]
+            return EXTENSIONS[self.path.suffix.replace('.', '')]
         except KeyError as e:
-            raise ValueError('invalid readme extension: *.' + self.path.suffix()) from e
+            raise ValueError('invalid readme extension: *' + self.path.suffix) from e
 
     @property
     def content_type(self) -> str:
@@ -68,7 +76,7 @@ class Readme:
     def to_rst(self) -> 'Readme':
         if self.markup in ('txt', 'rst'):
             return self
-        new_path = self.path.with_name(self.path.stem).with_suffix('rst')
+        new_path = self.path.with_name(self.path.stem).with_suffix('.rst')
         new_path.write_text(self.as_rst())
         return type(self)(path=new_path)
 
