@@ -1,6 +1,6 @@
 # built-in
 from collections import OrderedDict, defaultdict
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Set
 
 # app
 from ..utils import cached_property
@@ -10,7 +10,7 @@ class Requirement:
     _properties = (
         'name', 'release', 'version', 'extras', 'markers',
         'hashes', 'sources', 'editable', 'git', 'rev',
-        'description',
+        'description', 'optional',
     )
 
     def __init__(self, dep, lock: bool):
@@ -65,6 +65,14 @@ class Requirement:
     @property
     def link(self):
         return self.dep.link
+
+    @property
+    def envs(self) -> Set[str]:
+        return self.dep.envs
+
+    @property
+    def optional(self) -> bool:
+        return bool(self.dep.envs)
 
     @property
     def git(self) -> Optional[str]:

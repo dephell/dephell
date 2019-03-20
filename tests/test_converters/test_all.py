@@ -51,6 +51,11 @@ def test_load_dump_load_deps(converter, path):
             assert req1.dep.repo.name == req2.dep.repo.name
             assert req1.dep.repo.url == req2.dep.repo.url
 
+    # check envs (extras)
+    for name, req1 in map1.items():
+        req2 = map2[name]
+        assert req1.envs == req2.envs
+
 
 @pytest.mark.parametrize('converter, path, exclude', [
     (converters.PIPFileConverter(), './tests/requirements/pipfile.toml', ['raw_name']),
