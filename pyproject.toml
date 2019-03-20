@@ -13,6 +13,7 @@ name = "dephell"
 version = "0.3.0"
 authors = ["orsinium"]
 description = "Dependency resolution for Python"
+readme = "README.md"
 
 [tool.poetry.scripts]
 dephell = "dephell.cli:entrypoint"

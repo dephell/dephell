@@ -1,12 +1,13 @@
 # built-in
 from collections import defaultdict
+from pathlib import Path
 from typing import List
 
 # external
 import tomlkit
 
 # app
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, Readme
 from ..models import Constraint, Dependency, EntryPoint, RangeSpecifier, RootDependency, Author
 from ..repositories import get_repo
 from .base import BaseConverter
@@ -41,6 +42,10 @@ class PoetryConverter(BaseConverter):
                 setattr(root, field, value)
         if 'authors' in section:
             root.authors = tuple(Author.parse(author) for author in section['authors'])
+        if 'readme' in section:
+            path = Path(section['readme'])
+            if path.exists():
+                root.readme = Readme(path=path)
 
         # read entrypoints
         root.entrypoints = []
@@ -91,10 +96,17 @@ class PoetryConverter(BaseConverter):
                 section[field] = value
             elif field in section:
                 del section[field]
+
         if project.authors:
             section['authors'] = [str(author) for author in project.authors]
         elif 'authors' in section:
             del section['authors']
+
+        if project.readme:
+            section['readme'] = project.readme.path.name
+        elif 'readme' in section:
+            del section['readme']
+
         self._add_entrypoints(section=section, entrypoints=project.entrypoints)
 
         # dependencies
