@@ -1,4 +1,5 @@
 # built-in
+from collections import defaultdict
 from distutils.core import run_setup
 from itertools import chain
 from pathlib import Path
@@ -7,8 +8,8 @@ from pathlib import Path
 from packaging.requirements import Requirement
 
 # app
-from ..controllers import DependencyMaker
-from ..models import Author, RangeSpecifier, RootDependency
+from ..controllers import DependencyMaker, Readme
+from ..models import Author, RangeSpecifier, RootDependency, EntryPoint
 from ..utils import chdir
 from .base import BaseConverter
 
@@ -21,18 +22,10 @@ TEMPLATE = """
 # https://github.com/orsinium/dephell
 
 from distutils.core import setup
-import os.path
-
-
-long_description = ''
-for name in ('README.rst', 'README.md'):
-    if os.path.exists(name):
-        with open(name, encoding='utf8') as stream:
-            long_description = stream.read()
-        break
+{readme}
 
 setup(
-    long_description=long_description,
+    long_description=readme,
     {kwargs},
 )
 """
@@ -50,16 +43,16 @@ class SetupPyConverter(BaseConverter):
         root = RootDependency(
             raw_name=cls._get(info, 'name'),
             version=cls._get(info, 'version') or '0.0.0',
-            python=RangeSpecifier(cls._get(info, 'python_requires')),
 
-            description=cls._get(info, 'summary'),
+            description=cls._get(info, 'description'),
             license=cls._get(info, 'license'),
-            long_description=cls._get(info, 'description'),
 
-            # keywords=cls._get(info, 'keywords').split(','),
             keywords=cls._get_list(info, 'keywords'),
             classifiers=cls._get_list(info, 'classifiers'),
             platforms=cls._get_list(info, 'platforms'),
+
+            python=RangeSpecifier(cls._get(info, 'python_requires')),
+            readme=Readme.from_code(path=path),
         )
 
         # links
@@ -76,6 +69,13 @@ class SetupPyConverter(BaseConverter):
                     Author(name=author, mail=cls._get(info, name + '_email')),
                 )
 
+        # entrypoints
+        entrypoints = []
+        for group, content in getattr(info, 'entry_points', {}).items():
+            for entrypoint in content:
+                entrypoints.append(EntryPoint.parse(text=entrypoint, group=group))
+        root.entrypoints = tuple(entrypoints)
+
         reqs = chain(
             cls._get_list(info, 'requires'),
             cls._get_list(info, 'install_requires'),
@@ -89,7 +89,7 @@ class SetupPyConverter(BaseConverter):
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         """
-        https://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=long_description#metadata
+        https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
         """
         content = []
         content.append(('name', project.raw_name))
@@ -114,11 +114,13 @@ class SetupPyConverter(BaseConverter):
         if project.authors:
             author = project.authors[0]
             content.append(('author', author.name))
-            content.append(('author_email', author.mail))
+            if author.mail:
+                content.append(('author_email', author.mail))
         if len(project.authors) > 1:
             author = project.authors[1]
             content.append(('maintainer', author.name))
-            content.append(('maintainer_email', author.mail))
+            if author.mail:
+                content.append(('maintainer_email', author.mail))
 
         if project.license:
             content.append(('license', project.license))
@@ -128,12 +130,22 @@ class SetupPyConverter(BaseConverter):
             content.append(('classifiers', project.classifiers))
         if project.platforms:
             content.append(('platforms', project.platforms))
+        if project.entrypoints:
+            entrypoints = defaultdict(list)
+            for entrypoint in project.entrypoints:
+                entrypoints[entrypoint.group].append(str(entrypoint))
+            content.append(('entry_points', dict(entrypoints)))
 
         reqs_list = [self._format_req(req=req) for req in reqs]
         content.append(('install_requires', reqs_list))
 
+        if project.readme is not None:
+            readme = project.readme.to_rst().as_code()
+        else:
+            readme = "readme = ''"
+
         content = ',\n    '.join('{}={!r}'.format(name, value) for name, value in content)
-        return TEMPLATE.format(kwargs=content)
+        return TEMPLATE.format(kwargs=content, readme=readme)
 
     # private methods
 

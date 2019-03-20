@@ -77,7 +77,9 @@ class PIPFileConverter(BaseConverter):
 
         if project.python:
             python = Pythons(abstract=True).get_by_spec(project.python)
-            doc.setdefault('requires', tomlkit.table())['python_version'] = str(python.version)
+            if 'requires' not in doc:
+                doc['requires'] = tomlkit.table()
+            doc['requires']['python_version'] = str(python.get_short_version())
 
         if 'packages' in doc:
             # clean packages from old packages

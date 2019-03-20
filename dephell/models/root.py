@@ -37,15 +37,18 @@ class RootDependency:
     version = attr.ib(default='0.0.0', repr=False)      # Version
     description = attr.ib(default='', repr=False)       # Summary
     license = attr.ib(default='', repr=False)           # License
-    long_description = attr.ib(default='', repr=False)  # Description
 
     # additional info lists
     links = attr.ib(factory=dict, repr=False)               # Home-page, Download-URL
-    authors = attr.ib(factory=tuple, repr=False)            # Author, Author-email
-    keywords = attr.ib(factory=tuple, repr=False)           # Keywords
-    classifiers = attr.ib(factory=tuple, repr=False)        # Classifier
-    platforms = attr.ib(factory=tuple, repr=False)          # Platform
+    authors = attr.ib(default=tuple(), repr=False)          # Author, Author-email
+    keywords = attr.ib(default=tuple(), repr=False)         # Keywords
+    classifiers = attr.ib(default=tuple(), repr=False)      # Classifier
+    platforms = attr.ib(default=tuple(), repr=False)        # Platform
+    entrypoints = attr.ib(default=tuple(), repr=False)      # entry_points
+
+    # additional info objects
     python = attr.ib(default=RangeSpecifier(), repr=False)  # Requires-Python
+    readme = attr.ib(default=None, repr=False)              # Description
 
     repo = None
     applied = False

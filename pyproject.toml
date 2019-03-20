@@ -7,3 +7,33 @@ from = {format = "pip", path = "requirements-flake.txt"}
 
 [tool.dephell.setup]
 from = {format = "setuppy", path = "setup.py"}
+
+[tool.poetry]
+name = "dephell"
+version = "0.3.0"
+authors = ["orsinium"]
+description = "Dependency resolution for Python"
+readme = "README.md"
+
+[tool.poetry.scripts]
+dephell = "dephell.cli:entrypoint"
+
+[tool.poetry.dependencies]
+python = ">=3.5"
+aiohttp = "*"
+appdirs = "*"
+attrs = "*"
+cerberus = "*"
+graphviz = "*"
+html2text = "*"
+jinja2 = "*"
+m2r = "*"
+packaging = "*"
+pexpect = "*"
+pip = "*"
+pythonfinder = "*"
+pyyaml = "*"
+requests = "*"
+shellingham = "*"
+tomlkit = "*"
+tqdm = "*"

@@ -1,8 +1,5 @@
-# built-in
-from sys import argv
-
 # app
-from .cli import main
+from .cli import entrypoint
 
 
-exit(main(argv[1:]))
+entrypoint()

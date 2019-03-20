@@ -32,9 +32,11 @@ setup(
         'graphviz',
         'html2text',
         'jinja2',
+        'm2r',
         'packaging',
         'pexpect',
         'pip',
+        'pythonfinder',
         'pyyaml',
         'requests',
         'shellingham',
@@ -42,6 +44,6 @@ setup(
         'tqdm',
     ],
     entry_points={
-        'console_scripts': ['dephell = dephell.cli:main'],
+        'console_scripts': ['dephell = dephell.cli:entrypoint'],
     },
 )

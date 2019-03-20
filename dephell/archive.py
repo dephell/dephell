@@ -51,6 +51,19 @@ class ArchiveStream:
     member_path = attr.ib()
     mode = attr.ib()
 
+    def exists(self):
+        if hasattr(self.descriptor, 'getmember'):
+            # tar
+            try:
+                self.descriptor.getmember(str(self.member_path))
+            except KeyError:
+                return False
+            return True
+        else:
+            # zip
+            member = self.descriptor.getinfo(str(self.member_path))  # i'm not sure
+            return bool(member)
+
     def read(self):
         path = self.cache_path / self.member_path
         if path.exists():
@@ -127,7 +140,16 @@ class ArchivePath:
 
     # methods
 
-    def iterdir(self, recursive=False):
+    def copy(self, **kwargs) -> 'ArchivePath':
+        params = attr.asdict(self, recurse=False)
+        params.update(kwargs)
+        if '_descriptor' in params:
+            del params['_descriptor']
+        new = type(self)(**params)
+        new._descriptor = self._descriptor
+        return new
+
+    def iterdir(self, recursive=False) -> 'ArchivePath':
         with self.get_descriptor() as descriptor:
             if hasattr(descriptor, 'getmembers'):
                 members = descriptor.getmembers()   # tar
@@ -137,13 +159,7 @@ class ArchivePath:
             # get files
             for member in members:
                 name = getattr(member, 'name', None) or member.filename
-                obj = self.__class__(
-                    archive_path=self.archive_path,
-                    cache_path=self.cache_path,
-                    member_path=PurePath(name),
-                )
-                obj._descriptor = self._descriptor
-                yield obj
+                yield self.copy(member_path=PurePath(name))
 
             # get dirs
             names = set()
@@ -156,18 +172,25 @@ class ArchivePath:
                 if path in dirs or path in names:
                     continue
                 dirs.add(path)
-                obj = self.__class__(
-                    archive_path=self.archive_path,
-                    cache_path=self.cache_path,
-                    member_path=PurePath(path),
-                )
-                obj._descriptor = self._descriptor
-                yield obj
+                yield self.copy(member_path=PurePath(path))
 
     def glob(self, pattern):
         for path in self.iterdir(recursive=True):
             if glob_path(path=str(path), pattern=pattern):
                 yield path
+
+    def exists(self) -> bool:
+        path = self.cache_path / self.member_path
+        if path.exists():
+            return True
+        with self.open() as stream:
+            return stream.exists()
+
+    def with_suffix(self, suffix) -> 'ArchivePath':
+        return self.copy(member_path=self.member_path.with_suffix(suffix))
+
+    def with_name(self, name) -> 'ArchivePath':
+        return self.copy(member_path=self.member_path.with_name(name))
 
     # magic methods
 

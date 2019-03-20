@@ -30,4 +30,10 @@ setup(
         'packaging',
         'requests',
     ],
+    extras_require=dict(
+        windows=['colorama'],
+    ),
+    entry_points={
+        'console_scripts': ['dephell = dephell.cli:entrypoint'],
+    },
 )

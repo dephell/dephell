@@ -169,6 +169,14 @@ class RangeSpecifier:
         return bool(self._specs)
 
     def __lt__(self, other):
-        if isinstance(other, Specifier):
+        if not isinstance(other, type(self)):
             return False
         return str(self) < str(other)
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return False
+        return str(self) == str(other)
+
+    def __hash__(self):
+        return hash(str(self))

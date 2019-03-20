@@ -47,9 +47,15 @@ class WareHouseRepo(Interface):
         if not dep.authors:
             dep.authors = []
             if data['author']:
-                dep.authors.append(Author(name=data['author'], mail=data['author_email']))
+                dep.authors.append(Author(
+                    name=data['author'],
+                    mail=data.get('author_email') or None,
+                ))
             if data['maintainer']:
-                dep.authors.append(Author(name=data['maintainer'], mail=data['maintainer_email']))
+                dep.authors.append(Author(
+                    name=data['maintainer'],
+                    mail=data.get('maintainer_email') or None,
+                ))
             dep.authors = tuple(dep.authors)
 
         if not dep.links:
