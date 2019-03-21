@@ -27,6 +27,7 @@ FORMATS = (
     'poetry',
     'poetrylock',
     'pyproject',
+    'sdist',
     'setuppy',
     'wheel',
 )

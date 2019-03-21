@@ -146,7 +146,7 @@ class _Writer:
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
         if isinstance(path, str):
             path = Path(path)
-        if not path.suffix == '.egg-info':
+        if path.suffix != '.egg-info':
             path /= project.name + '.egg-info'
         path.mkdir(exist_ok=True, parents=True)
         (path / 'dependency_links.txt').touch()
