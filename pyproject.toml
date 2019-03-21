@@ -2,8 +2,13 @@
 from = {format = "poetry", path = "pyproject.toml"}
 to = {format = "setuppy", path = "setup.py"}
 
+[tool.dephell.build]
+from = {format = "setuppy", path = "setup.py"}
+to = {format = "egginfo", path = "."}
+
 [tool.dephell.flake]
 from = {format = "pip", path = "requirements-flake.txt"}
+
 
 [tool.poetry]
 name = "dephell"

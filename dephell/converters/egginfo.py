@@ -144,8 +144,11 @@ class _Reader:
 # https://setuptools.readthedocs.io/en/latest/formats.html
 class _Writer:
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
+        if isinstance(path, str):
+            path = Path(path)
         if not path.suffix == '.egg-info':
             path /= project.name + '.egg-info'
+        path.mkdir(exist_ok=True, parents=True)
         (path / 'dependency_links.txt').touch()
         (path / 'entry_points.txt').write_text(self.make_entrypoints(project=project))
         (path / 'PKG-INFO').write_text(self.make_info(reqs=reqs, project=project))
@@ -189,6 +192,8 @@ class _Writer:
 
         if project.license:
             content.append(('License', project.license))
+        if project.python:
+            content.append(('Requires-Python', str(project.python)))
         if project.keywords:
             content.append(('Keywords', ','.join(project.keywords)))
         for classifier in project.classifiers:
@@ -231,12 +236,12 @@ class _Writer:
     def make_entrypoints(project: RootDependency) -> str:
         points = defaultdict(set)
         for point in project.entrypoints:
-            points[point.group] = str(point)
+            points[point.group].add(str(point))
         content = []
         for group, subpoints in sorted(points.items()):
             content.append('\n[{}]'.format(group))
             content.extend(sorted(subpoints))
-        return '\n'.join(content)
+        return '\n'.join(content).strip()
 
     @staticmethod
     def make_sources(project: RootDependency) -> str:
