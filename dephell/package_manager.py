@@ -22,8 +22,10 @@ class PackageManager:
         converter = PIPConverter(lock=True)
         with TemporaryDirectory() as path:
             path = Path(path) / 'requiements.txt'
-            converter.dump(reqs=reqs, path=path)
-            return self.run('install', '-r', str(path))
+            if path.exists():
+                path.unlink()
+            converter.dump(reqs=reqs, path=path, project=None)
+            return self.run('install', '--no-deps', '-r', str(path))
 
     def run(self, *args) -> int:
         command_pip = [str(self.executable), '-m', 'pip'] + list(args)

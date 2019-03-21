@@ -63,8 +63,7 @@ class InstallCommand(BaseCommand):
 
         # install
         self.logger.info('installation...')
-        return False
-        reqs = Requirement.from_graph(graph=resolver.graph)
+        reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
         PackageManager(executable=executable).install(reqs=reqs)
 
         return True
