@@ -26,8 +26,11 @@ class Release:
 
     extra = attr.ib(type=Optional[str], default=None)
 
+    def __attrs_post_init__(self):
+        assert '[' not in self.raw_name, self.raw_name
+
     @classmethod
-    def from_response(cls, name, version, info):
+    def from_response(cls, name, version, info, extra=None):
         latest = info[-1]
         python = latest['requires_python']
         if python is not None:
@@ -39,6 +42,7 @@ class Release:
             time=datetime.strptime(latest['upload_time'], '%Y-%m-%dT%H:%M:%S'),
             python=python,
             hashes=tuple(rel['digests']['sha256'] for rel in info),
+            extra=extra,
         )
 
     @cached_property

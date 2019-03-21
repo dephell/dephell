@@ -30,12 +30,9 @@ class InstallCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        PackageManager(executable=sys.executable).run('install', 'django')
-        return False
-
         loader_config = self.config.get('to', self.config['from'])
         loader = CONVERTERS[loader_config['format']]
-        resolver = loader.load_resolver(path=self.config['from']['path'])
+        resolver = loader.load_resolver(path=loader_config['path'])
 
         # attach
         if self.config.get('and'):
@@ -60,12 +57,13 @@ class InstallCommand(BaseCommand):
         if venv is not None:
             executable = venv.python_path
         else:
-            venv = venvs.get(path=Path(self.config['project']))
+            venv = venvs.get(Path(self.config['project']))
             if venv.exists():
                 executable = venv.python_path
 
         # install
         self.logger.info('installation...')
+        return False
         reqs = Requirement.from_graph(graph=resolver.graph)
         PackageManager(executable=executable).install(reqs=reqs)
 
