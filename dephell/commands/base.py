@@ -37,6 +37,7 @@ class BaseCommand:
     def validate(self):
         is_valid = self.config.validate()
         if not is_valid:
+            self.logger.error('invalid config')
             print(self.config.format_errors())
         return is_valid
 

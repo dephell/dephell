@@ -1,5 +1,5 @@
 [tool.dephell.main]
-from = {format = "poetry", path = "pyproject.toml"}
+from = {format = "poetrya", path = "pyproject.toml"}
 to = {format = "setuppy", path = "setup.py"}
 
 [tool.dephell.flake]
@@ -27,7 +27,6 @@ jinja2 = "*"
 m2r = "*"
 packaging = "*"
 pip = "*"
-pyyaml = "*"
 requests = "*"
 tomlkit = "*"
 tqdm = "*"
