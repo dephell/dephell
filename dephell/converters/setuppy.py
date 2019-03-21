@@ -156,6 +156,14 @@ class SetupPyConverter(BaseConverter):
                 entrypoints[entrypoint.group].append(str(entrypoint))
             content.append(('entry_points', dict(entrypoints)))
 
+        # packages, package_data
+        content.append(('packages', sorted(str(p) for p in project.package.packages)))
+        data = defaultdict(list)
+        for rule in project.package.data:
+            data[rule.module].append(rule.relative)
+        data = {package: sorted(paths) for package, paths in data.items()}
+        content.append(('package_data', data))
+
         reqs_list = [self._format_req(req=req) for req in reqs]
         content.append(('install_requires', reqs_list))
 
