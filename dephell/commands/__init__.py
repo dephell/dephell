@@ -3,6 +3,7 @@ from .config import ConfigCommand
 from .convert import ConvertCommand
 from .info import InfoCommand
 from .init import InitCommand
+from .install import InstallCommand
 from .shell import ShellCommand
 
 
@@ -12,6 +13,7 @@ __all__ = [
     'ConvertCommand',
     'InfoCommand',
     'InitCommand',
+    'InstallCommand',
     'ShellCommand',
 ]
 
@@ -21,5 +23,6 @@ commands = dict(
     convert=ConvertCommand,
     info=InfoCommand,
     init=InitCommand,
+    install=InstallCommand,
     shell=ShellCommand,
 )
