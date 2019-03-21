@@ -23,7 +23,7 @@ class SDistConverter(BaseConverter):
         with TemporaryDirectory() as cache:
             archive = ArchivePath(archive_path=path, cache_path=Path(cache))
             paths = list(archive.glob('**/*.egg-info'))
-            root = EggInfoConverter()._load_dir(*paths)
+            root = EggInfoConverter().load_dir(*paths)
             root.readme = Readme.discover(path=archive)
             return root
 

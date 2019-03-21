@@ -61,7 +61,7 @@ class WheelConverter(BaseConverter):
         """
         # "METADATA is the package metadata, the same format as PKG-INFO"
         # (c) PEP-0427
-        return EggInfoConverter()._parse_info(content)
+        return EggInfoConverter().parse_info(content)
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         return EggInfoConverter().dumps(reqs=reqs, project=project, content=content)

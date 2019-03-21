@@ -65,7 +65,7 @@ def test_load_dump_load_deps(converter, path):
     (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml', []),
 
     (converters.SetupPyConverter(), './tests/requirements/setup.py', []),
-    (converters.EggInfoConverter(), './tests/requirements/egg-info/', []),
+    (converters.EggInfoConverter(), './tests/requirements/egg-info/', ['package']),
     (converters.WheelConverter(), './tests/requirements/wheel.whl', []),
 ])
 def test_load_dump_load_metainfo(converter, path, exclude):
