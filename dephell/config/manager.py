@@ -94,6 +94,9 @@ class Config:
     def __getitem__(self, name: str):
         return self._data[name]
 
+    def __contains__(self, name: str):
+        return name in self._data
+
     def __repr__(self):
         return '{cls}({data})'.format(
             cls=type(self).__name__,

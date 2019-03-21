@@ -94,7 +94,12 @@ class WareHouseRepo(Interface):
             # ignore version if no files for release
             if not info:
                 continue
-            release = Release.from_response(dep.name, version, info)
+            release = Release.from_response(
+                name=dep.base_name,
+                version=version,
+                info=info,
+                extra=dep.extra,
+            )
             # filter prereleases if needed
             if release.version.is_prerelease and not self.prereleases:
                 continue
@@ -113,6 +118,10 @@ class WareHouseRepo(Interface):
             )
             async with ClientSession() as session:
                 async with session.get(url) as response:
+                    if response.status != 200:
+                        raise ValueError('invalid response: {} {} ({})'.format(
+                            response.status, response.reason, url,
+                        ))
                     response = await response.json()
             deps = response['info']['requires_dist'] or []
             cache.dump(deps)

@@ -108,7 +108,7 @@ class PIPConverter(BaseConverter):
         if req.hashes:
             for digest in req.hashes:
                 # https://github.com/jazzband/pip-tools/blob/master/piptools/writer.py
-                line += '{sep}--hash sha256:{hash}'.format(
+                line += '{sep}--hash {hash}'.format(
                     sep=self.sep,
                     hash=digest,
                 )

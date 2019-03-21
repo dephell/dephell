@@ -135,7 +135,11 @@ class Groups:
         await asyncio.gather(*tasks)
 
     def _load_release_deps(self, release) -> None:
-        coroutine = self.dep.repo.get_dependencies(release.name, release.version)
+        coroutine = self.dep.repo.get_dependencies(
+            name=release.name,
+            version=release.version,
+            extra=self.extra,
+        )
         gathered = asyncio.gather(coroutine)
         release.dependencies = loop.run_until_complete(gathered)[0]
 
