@@ -2,13 +2,9 @@
 from email.parser import Parser
 from itertools import chain
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 # external
 from packaging.requirements import Requirement as PackagingRequirement
-
-# project
-from dephell_archive import ArchivePath
 
 # app
 from ..controllers import DependencyMaker, Readme
@@ -33,17 +29,14 @@ class EggInfoConverter(BaseConverter):
             paths = list(path.glob('**/*.egg-info'))
             return self._load_dir(*paths)
 
-        # load from archive
         if path.suffix in ('.zip', '.gz', '.tar'):
-            with TemporaryDirectory() as cache:
-                archive = ArchivePath(archive_path=path, cache_path=Path(cache))
-                paths = list(archive.glob('**/*.egg-info'))
-                root = self._load_dir(*paths)
-                root.readme = Readme.discover(path=archive)
-                return root
+            raise ValueError('Please, use SDistConverter for archives')
+
+        if path.suffix == '.whl':
+            raise ValueError('Please, use WheelConverter for *.whl archives')
 
         # load from file (requires.txt or PKG-INFO)
-        with path.open('r') as stream:
+        with path.open('r', encoding='utf-8') as stream:
             return self.loads(stream.read())
 
     def loads(self, content: str) -> RootDependency:
@@ -51,6 +44,9 @@ class EggInfoConverter(BaseConverter):
             return self._parse_info(content)
         else:
             return self._parse_requires(content)
+
+    def dump(self, reqs, path, project: RootDependency) -> None:
+        ...
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         # distutils.dist.DistributionMetadata.write_pkg_file
@@ -109,14 +105,19 @@ class EggInfoConverter(BaseConverter):
             raise FileExistsError('too many egg-info')
         path = paths[0]
 
+        # pkg-info
         with (path / 'PKG-INFO').open('r') as stream:
             content = stream.read()
         root = self._parse_info(content)
-        path = path / 'requires.txt'
+
+        # requires.txt
         if not root.dependencies:
-            with path.open('r') as stream:
+            with (path / 'requires.txt').open('r') as stream:
                 content = stream.read()
             root = self._parse_requires(content, root=root)
+
+        # readme
+        root.readme = Readme.discover(path=path)
         return root
 
     @classmethod

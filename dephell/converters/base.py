@@ -30,7 +30,7 @@ class BaseConverter:
     def dumps(self, reqs, project: RootDependency, content: Optional[str] = None) -> str:
         raise NotImplementedError
 
-    def dump(self, reqs, path, project: RootDependency):
+    def dump(self, reqs, path, project: RootDependency) -> None:
         # read
         path = Path(str(path))
         if path.exists():
