@@ -82,7 +82,7 @@ class VEnv:
         return bool(self.bin_path)
 
     def create(self, python_path) -> None:
-        builder = VEnvBuilder(python=str(python_path))
+        builder = VEnvBuilder(python=str(python_path), with_pip=True)
         builder.create(str(self.path))
 
         # clear cache

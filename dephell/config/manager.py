@@ -1,4 +1,5 @@
 # built-in
+import json
 from collections import defaultdict
 from logging import captureWarnings
 from logging.config import dictConfig
@@ -6,7 +7,6 @@ from typing import Optional
 
 # external
 import tomlkit
-import yaml
 from cerberus import Validator
 
 # app
@@ -86,10 +86,7 @@ class Config:
         return result
 
     def format_errors(self) -> str:
-        return yaml.dump(
-            self.errors,
-            default_flow_style=False,
-        ).replace('-', ' ')
+        return json.dumps(self.errors, indent=2, sort_keys=True)
 
     def __getattr__(self, name):
         return getattr(self._data, name)

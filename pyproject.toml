@@ -2,8 +2,17 @@
 from = {format = "poetry", path = "pyproject.toml"}
 to = {format = "setuppy", path = "setup.py"}
 
+[tool.dephell.egg]
+from = {format = "setuppy", path = "setup.py"}
+to = {format = "egginfo", path = "."}
+
+[tool.dephell.sdist]
+from = {format = "setuppy", path = "setup.py"}
+to = {format = "sdist", path = "dist"}
+
 [tool.dephell.flake]
 from = {format = "pip", path = "requirements-flake.txt"}
+
 
 [tool.poetry]
 name = "dephell"
@@ -26,18 +35,15 @@ html2text = "*"
 jinja2 = "*"
 m2r = "*"
 packaging = "*"
-pexpect = "*"
 pip = "*"
-pythonfinder = "*"
-pyyaml = "*"
 requests = "*"
-shellingham = "*"
 tomlkit = "*"
 tqdm = "*"
 yapf = "*"
 
 # dephell ecosystem
 dephell_archive = "*"     # https://github.com/dephell/dephell_archive
+dephell_discover = "*"    # https://github.com/dephell/dephell_discover
 dephell_markers = "*"     # https://github.com/dephell/dephell_markers
 dephell_pythons = "*"     # https://github.com/dephell/dephell_pythons
 dephell_shells = "*"      # https://github.com/dephell/dephell_shells
