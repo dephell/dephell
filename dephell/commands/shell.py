@@ -4,11 +4,11 @@ from pathlib import Path
 
 # project
 from dephell_shells import Shells
+from dephell_pythons import Python, Pythons
 
 # app
 from ..config import builders
 from ..converters import CONVERTERS
-from dephell_pythons import Python, Pythons
 from ..venvs import VEnvs
 from .base import BaseCommand
 
@@ -43,7 +43,7 @@ class ShellCommand(BaseCommand):
 
         return pythons.current
 
-    def __call__(self):
+    def __call__(self) -> bool:
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']))
         if not venv.exists():

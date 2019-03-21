@@ -1,5 +1,6 @@
 # built-in
 from urllib.parse import urlparse
+from typing import Optional
 
 # external
 from pip._internal.download import PipSession
@@ -61,7 +62,8 @@ class PIPConverter(BaseConverter):
         root.attach_dependencies(deps)
         return root
 
-    def dumps(self, reqs, project: RootDependency, content=None) -> str:
+    def dumps(self, reqs, project: Optional[RootDependency] = None,
+              content: Optional[str] = None) -> str:
         lines = []
 
         # get repos urls

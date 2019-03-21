@@ -7,7 +7,10 @@ __all__ = ['ColoredFormatter', 'LevelFilter']
 
 
 try:
-    from colorama import Fore, init
+    try:
+        from colorama import Fore, init
+    except ImportError:
+        from pip._vendor.colorama import Fore, init
     init()
 except ImportError:
     Fore = None

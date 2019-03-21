@@ -104,8 +104,11 @@ class VEnvs:
     path = attr.ib(type=Path, convert=Path)
 
     @cached_property
-    def is_venv(self) -> bool:
-        return bool({'VIRTUAL_ENV', 'CONDA_PREFIX'} & set(os.environ))
+    def current(self) -> Optional[VEnv]:
+        if 'VIRTUAL_ENV' in os.environ:
+            return VEnv(path=os.environ['VIRTUAL_ENV'])
+        # TODO: CONDA_PREFIX?
+        return None
 
     @staticmethod
     def _encode(text: str) -> str:
