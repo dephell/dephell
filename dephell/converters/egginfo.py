@@ -1,7 +1,9 @@
 # built-in
+from collections import defaultdict
 from email.parser import Parser
 from itertools import chain
 from pathlib import Path
+from typing import Optional
 
 # external
 from dephell_discover import Root as PackageRoot
@@ -139,13 +141,22 @@ class _Reader:
         return tuple(value.strip() for value in values if value.strip() != 'UNKNOWN')
 
 
+# https://setuptools.readthedocs.io/en/latest/formats.html
 class _Writer:
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
         if not path.suffix == '.egg-info':
             path /= project.name + '.egg-info'
-        ...
+        (path / 'dependency_links.txt').touch()
+        (path / 'entry_points.txt').write_text(self.make_entrypoints(project=project))
+        (path / 'PKG-INFO').write_text(self.make_info(reqs=reqs, project=project))
+        (path / 'requires.txt').write_text(self.make_requires(reqs=reqs))
+        (path / 'SOURCES.txt').write_text(self.make_sources(project=project))
+        (path / 'top_level.txt').write_text(self.make_top_level(project=project))
 
-    def dumps(self, reqs, project: RootDependency, content=None) -> str:
+    def dumps(self, reqs, project: RootDependency, content: Optional[str] = None) -> str:
+        return self.make_info(reqs=reqs, project=project)
+
+    def make_info(self, reqs, project: RootDependency) -> str:
         # distutils.dist.DistributionMetadata.write_pkg_file
         content = []
         content.append(('Metadata-Version', '2.1'))
@@ -187,13 +198,73 @@ class _Writer:
         for req in reqs:
             content.append(('Requires', self._format_req(req=req)))
 
+        extras = set()
+        for req in reqs:
+            extras.update(req.envs)
+        for extra in sorted(extras):
+            content.append(('Provides-Extra', extra))
+
         content = '\n'.join(map(': '.join, content))
         if project.readme:
             content += '\n\n' + project.readme.as_rst()
         return content
 
+    def make_requires(self, reqs) -> str:
+        content = []
+        extras = defaultdict(list)
+        for req in reqs:
+            if req.optional:
+                for env in req.envs:
+                    extras[env].append(req)
+            else:
+                content.append(self._format_req(req=req))
+
+        # write extra deps
+        for extra, reqs in sorted(extras.items()):
+            content.append('\n[{}]'.format(extra))
+            for req in sorted(reqs):
+                content.append(self._format_req(req=req))
+
+        return '\n'.join(content)
+
     @staticmethod
-    def _format_req(req):
+    def make_entrypoints(project: RootDependency) -> str:
+        points = defaultdict(set)
+        for point in project.entrypoints:
+            points[point.group] = str(point)
+        content = []
+        for group, subpoints in sorted(points.items()):
+            content.append('\n[{}]'.format(group))
+            content.extend(sorted(subpoints))
+        return '\n'.join(content)
+
+    @staticmethod
+    def make_sources(project: RootDependency) -> str:
+        content = []
+        if project.readme:
+            content.append(project.readme.path.name)
+            if project.readme.markup != 'rst':
+                content.append(project.readme.to_rst().path.name)
+
+        path = project.package.path
+        for fname in ('setup.cfg', 'setup.py'):
+            if (path / fname).exists():
+                content.append(fname)
+
+        for package in chain(project.package.packages, project.package.data):
+            for fpath in package:
+                fpath = fpath.relative_to(project.package.path)
+                content.append('/'.join(fpath.parts))
+
+        return '\n'.join(content)
+
+    @staticmethod
+    def make_top_level(project: RootDependency) -> str:
+        content = {p.module.split('.', maxsplit=1)[0] for p in project.package.packages}
+        return '\n'.join(sorted(content))
+
+    @staticmethod
+    def _format_req(req) -> str:
         line = req.name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))
