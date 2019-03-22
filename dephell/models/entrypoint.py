@@ -1,6 +1,3 @@
-# built-in
-from typing import Optional
-
 # external
 import attr
 
@@ -14,7 +11,7 @@ class EntryPoint:
     group = attr.ib(type=str, default='console_scripts')
 
     @classmethod
-    def parse(cls, text: str, group: Optional[str] = None) -> 'EntryPoint':
+    def parse(cls, text: str, group: str = 'console_scripts') -> 'EntryPoint':
         name, path = text.split('=', maxsplit=1)
         name = name.strip()
         path = path.strip()

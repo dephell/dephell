@@ -41,14 +41,6 @@ SCHEME = {
         type='string',
         required=True,  # because represented in default config
     ),
-    'cache': dict(
-        type='string',
-        required=True,  # because represented in default config
-    ),
-    'project': dict(
-        type='string',
-        required=True,  # because represented in default config
-    ),
     'bitbucket': dict(
         type='string',
         required=True,  # because represented in default config
@@ -80,6 +72,8 @@ SCHEME = {
         type='boolean',
         required=True,  # because represented in default config
     ),
+
+    # venv
     'venv': dict(
         type='string',
         required=True,  # because represented in default config
@@ -87,5 +81,19 @@ SCHEME = {
     'python': dict(
         type='string',
         required=False,
+    ),
+
+    # other
+    'cache': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
+    'project': dict(
+        type='string',
+        required=True,  # because represented in default config
+    ),
+    'bin': dict(
+        type='string',
+        required=True,  # because represented in default config
     ),
 }

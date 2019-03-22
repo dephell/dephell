@@ -29,5 +29,6 @@ DEFAULT = dict(
 
     # other
     cache=str(data_dir / 'cache'),
+    bin=str(Path.home() / '.local' / 'bin'),
     project=str(Path('.').resolve()),
 )
