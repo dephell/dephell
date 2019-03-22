@@ -72,4 +72,5 @@ class ConvertCommand(BaseCommand):
             reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),
             project=resolver.graph.metainfo,
         )
+        self.logger.info('converted')
         return True
