@@ -18,6 +18,7 @@ from .scheme import SCHEME
 
 
 class Config:
+    env = ''
     _skip = ('config', 'env', 'key')
 
     def __init__(self, data: Optional[dict] = None):
@@ -92,6 +93,7 @@ class Config:
         data = data[env]
 
         self.attach(data)
+        self.env = env
         return data
 
     def attach_cli(self, args, sep: str = '_') -> dict:

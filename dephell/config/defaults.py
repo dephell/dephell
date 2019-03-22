@@ -25,7 +25,7 @@ DEFAULT = dict(
     traceback=False,
 
     # venv
-    venv=str(data_dir / 'venvs' / '{project}'),
+    venv=str(data_dir / 'venvs' / '{project}' / '{env}'),
 
     # other
     cache=str(data_dir / 'cache'),

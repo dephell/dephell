@@ -26,7 +26,7 @@ class ShellCommand(CreateCommand):
         return parser
 
     def __call__(self) -> bool:
-        venvs = VEnvs(path=self.config['venv'])
+        venvs = VEnvs(path=self.config['venv'], env=self.config.env)
         venv = venvs.get(Path(self.config['project']))
         if not venv.exists():
             self.logger.info('Creating venv for project...')

@@ -102,6 +102,7 @@ class VEnv:
 @attr.s()
 class VEnvs:
     path = attr.ib(type=Path, convert=Path)
+    env = attr.ib(type=str, default='')
 
     @cached_property
     def current(self) -> Optional[VEnv]:
@@ -123,7 +124,8 @@ class VEnvs:
             raise IOError('Project path is not directory')
         digest = self._encode(str(project_path))
         name = project_path.name + '-' + digest
-        return str(self.path).format(project=name)
+        formatted = str(self.path).format(project=name, env=self.env)
+        return Path(formatted.replace(os.path.sep + os.path.sep, os.path.sep))
 
     def get(self, project_path: Path) -> VEnv:
         path = self._get_path(project_path)
