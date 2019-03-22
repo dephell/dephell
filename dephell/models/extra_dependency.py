@@ -1,8 +1,11 @@
 
 
 
-import attr
+# external
 from packaging.utils import canonicalize_name
+
+# project
+import attr
 
 # app
 from ..utils import cached_property

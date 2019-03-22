@@ -1,4 +1,5 @@
 
+# built-in
 from io import BytesIO
 from itertools import chain
 from pathlib import Path
@@ -6,7 +7,7 @@ from tarfile import TarFile, TarInfo
 from tempfile import TemporaryDirectory
 from typing import Optional
 
-
+# external
 from dephell_archive import ArchivePath
 
 # app

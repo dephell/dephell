@@ -1,9 +1,12 @@
 
 
 
+# external
+from packaging.requirements import Requirement
+
+# project
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
-from packaging.requirements import Requirement
 
 
 def test_from_requirement():

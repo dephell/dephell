@@ -1,8 +1,9 @@
 
+# built-in
 import re
 from typing import List, Optional, Union
 
-
+# external
 from dephell_markers import Markers
 from dephell_specifier import GitSpecifier
 from packaging.requirements import Requirement as PackagingRequirement

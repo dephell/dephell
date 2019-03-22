@@ -1,19 +1,20 @@
 
+# built-in
 import asyncio
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Iterable, List, Optional, Tuple
 from urllib.parse import urlparse
 
-
-import requests
-
-
+# external
 import aiofiles
-import attr
+import requests
 from aiohttp import ClientSession
 from dephell_markers import Markers
 from packaging.requirements import Requirement
+
+# project
+import attr
 
 # app
 from ..cache import JSONCache, TextCache

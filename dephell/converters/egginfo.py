@@ -1,11 +1,12 @@
 
+# built-in
 from collections import defaultdict
 from email.parser import Parser
 from itertools import chain
 from pathlib import Path
 from typing import Optional
 
-
+# external
 from dephell_discover import Root as PackageRoot
 from packaging.requirements import Requirement as PackagingRequirement
 

@@ -1,12 +1,15 @@
 
 
 
+# external
+from packaging.requirements import Requirement as PackagingRequirement
+
+# project
 from dephell.controllers import DependencyMaker
 from dephell.converters.pip import PIPConverter
 from dephell.links import VCSLink
 from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
-from packaging.requirements import Requirement as PackagingRequirement
 
 
 def test_format():

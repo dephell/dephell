@@ -1,11 +1,14 @@
 
+# built-in
 from copy import deepcopy
 from typing import Iterable, Optional
 
-
-import attr
+# external
 from dephell_markers import Markers
 from packaging.utils import canonicalize_name
+
+# project
+import attr
 
 # app
 from ..repositories import GitRepo

@@ -1,7 +1,8 @@
 
+# built-in
 from copy import deepcopy
 
-
+# external
 from dephell_specifier import RangeSpecifier
 
 
