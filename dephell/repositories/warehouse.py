@@ -1,8 +1,12 @@
 # built-in
-from typing import Optional
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Optional, Tuple, List, Iterable
 from urllib.parse import urlparse
 
 # external
+import aiofiles
+import asyncio
 import attr
 import requests
 from aiohttp import ClientSession
@@ -41,36 +45,6 @@ class WareHouseRepo(Interface):
     hash = None
     link = None
 
-    @staticmethod
-    def _update_dep_from_data(dep, data):
-        if not dep.description:
-            dep.description = data['summary']
-
-        if not dep.authors:
-            dep.authors = []
-            if data['author']:
-                dep.authors.append(Author(
-                    name=data['author'],
-                    mail=data.get('author_email') or None,
-                ))
-            if data['maintainer']:
-                dep.authors.append(Author(
-                    name=data['maintainer'],
-                    mail=data.get('maintainer_email') or None,
-                ))
-            dep.authors = tuple(dep.authors)
-
-        if not dep.links:
-            if data['project_urls']:
-                dep.links = {k.lower(): v for k, v in data['project_urls'].items()}
-            if data['package_url'] and data['package_url'] not in dep.links.values():
-                dep.links['package'] = data['package_url']
-            if data['project_url'] and data['project_url'] not in dep.links.values():
-                dep.links['project'] = data['project_url']
-
-        if not dep.classifiers:
-            dep.classifiers = tuple(data['classifiers'])
-
     def get_releases(self, dep) -> tuple:
         # retrieve data
         cache = JSONCache('releases', dep.base_name)
@@ -107,23 +81,14 @@ class WareHouseRepo(Interface):
         releases.sort(reverse=True)
         return tuple(releases)
 
-    async def get_dependencies(self, name: str, version: str, extra: Optional[str] = None) -> tuple:
+    async def get_dependencies(self, name: str, version: str,
+                               extra: Optional[str] = None) -> Tuple[Requirement, ...]:
         cache = TextCache('deps', name, str(version))
         deps = cache.load()
         if deps is None:
-            url = '{url}{name}/{version}/json'.format(
-                url=self.url,
-                name=name,
-                version=version,
-            )
-            async with ClientSession() as session:
-                async with session.get(url) as response:
-                    if response.status != 200:
-                        raise ValueError('invalid response: {} {} ({})'.format(
-                            response.status, response.reason, url,
-                        ))
-                    response = await response.json()
-            deps = response['info']['requires_dist'] or []
+            task = self._get_from_json(name=name, version=version)
+            deps = await asyncio.gather(asyncio.ensure_future(task))
+            deps = deps[0]
             cache.dump(deps)
         elif deps == ['']:
             return ()
@@ -147,3 +112,98 @@ class WareHouseRepo(Interface):
                 continue
 
         return tuple(result)
+
+    # private methods
+
+    @staticmethod
+    def _update_dep_from_data(dep, data):
+        """Updates metadata for dependency from json response
+        """
+        if not dep.description:
+            dep.description = data['summary']
+
+        if not dep.authors:
+            dep.authors = []
+            if data['author']:
+                dep.authors.append(Author(
+                    name=data['author'],
+                    mail=data.get('author_email') or None,
+                ))
+            if data['maintainer']:
+                dep.authors.append(Author(
+                    name=data['maintainer'],
+                    mail=data.get('maintainer_email') or None,
+                ))
+            dep.authors = tuple(dep.authors)
+
+        if not dep.links:
+            if data['project_urls']:
+                dep.links = {k.lower(): v for k, v in data['project_urls'].items()}
+            if data['package_url'] and data['package_url'] not in dep.links.values():
+                dep.links['package'] = data['package_url']
+            if data['project_url'] and data['project_url'] not in dep.links.values():
+                dep.links['project'] = data['project_url']
+
+        if not dep.classifiers:
+            dep.classifiers = tuple(data['classifiers'])
+
+    async def _get_from_json(self, *, name, version):
+        url = '{url}{name}/{version}/json'.format(
+            url=self.url,
+            name=name,
+            version=version,
+        )
+        async with ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status != 200:
+                    raise ValueError('invalid response: {} {} ({})'.format(
+                        response.status, response.reason, url,
+                    ))
+                response = await response.json()
+        dist = response['info']['requires_dist'] or []
+        if dist:
+            return dist
+
+        # If no requires_dist then package metadata can be broken.
+        # Let's check distribution files.
+        return await self._get_from_files(response['urls'])
+
+    async def _get_from_files(self, files_info: List[dict]) -> Tuple[str, ...]:
+        if not files_info:
+            return ()
+
+        from ..converters import SDistConverter, WheelConverter
+
+        sdist = SDistConverter()
+        wheel = WheelConverter()
+        rules = (
+            (wheel, lambda info: info['packagetype'] == 'bdist_wheel'),
+            (sdist, lambda info: info['packagetype'] == 'sdist'),
+            (wheel, lambda info: info['url'].endswith('.whl')),
+            (sdist, lambda info: info['url'].endswith('.tar.gz')),
+            (sdist, lambda info: info['url'].endswith('.zip')),
+        )
+
+        for converer, checker in rules:
+            for file_info in files_info:
+                if checker(file_info):
+                    return await self._download_and_parse(url=file_info['url'], converter=converer)
+        return ()
+
+    async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
+        with TemporaryDirectory() as tmp:
+            async with ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        raise ValueError('invalid response: {} {} ({})'.format(
+                            response.status, response.reason, url,
+                        ))
+                    path = Path(tmp) / url.rsplit('/', maxsplit=1)[-1]
+                    async with aiofiles.open(str(path), mode='wb') as stream:
+                        while True:
+                            chunk = await response.content.read(1024)
+                            if not chunk:
+                                break
+                            await stream.write(chunk)
+            root = converter.load(path)
+            return tuple(str(dep) for dep in root.dependencies)

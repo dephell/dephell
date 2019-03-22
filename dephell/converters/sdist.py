@@ -22,13 +22,35 @@ class SDistConverter(BaseConverter):
         path = Path(str(path))
         if path.suffix not in ('.zip', '.gz', '.tar'):
             raise ValueError('invalid file extension: ' + path.suffix)
-
+        root = None
+        converter = EggInfoConverter()
         with TemporaryDirectory() as cache:
             archive = ArchivePath(archive_path=path, cache_path=Path(cache))
+
+            # read *.egg-info
             paths = list(archive.glob('**/*.egg-info'))
-            root = EggInfoConverter().load_dir(*paths)
-            root.readme = Readme.discover(path=archive)
-            return root
+            if paths:
+                root = converter.load_dir(*paths)
+                root.readme = Readme.discover(path=archive)
+                return root
+
+            # read metainfo from PKG-INFO
+            paths = list(archive.glob('**/PKG-INFO'))
+            if paths:
+                with paths[0].open('r') as stream:
+                    root = converter.parse_info(content=stream.read())
+
+            # read dependencies from requires.txt
+            if root is None or not root.dependencies:
+                paths = list(archive.glob('**/requires.txt'))
+                if paths:
+                    with paths[0].open('r') as stream:
+                        root = converter.parse_requires(content=stream.read(), root=root)
+
+        if root is None:
+            msg = 'cannot find any metainfo in the archive: '
+            raise FileNotFoundError(msg + str(archive.archive_path))
+        return root
 
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
         if isinstance(path, str):

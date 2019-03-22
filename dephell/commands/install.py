@@ -31,6 +31,10 @@ class InstallCommand(BaseCommand):
 
     def __call__(self) -> bool:
         loader_config = self.config.get('to', self.config['from'])
+        self.logger.info('get dependencies', extra=dict(
+            format=loader_config['format'],
+            path=loader_config['path'],
+        ))
         loader = CONVERTERS[loader_config['format']]
         resolver = loader.load_resolver(path=loader_config['path'])
 
@@ -62,8 +66,12 @@ class InstallCommand(BaseCommand):
                 executable = venv.python_path
 
         # install
-        self.logger.info('installation...')
         reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
+        self.logger.info('installation...', extra=dict(
+            executable=executable,
+            packages=len(reqs),
+        ))
         PackageManager(executable=executable).install(reqs=reqs)
+        self.logger.info('installed')
 
         return True
