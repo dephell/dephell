@@ -1,6 +1,6 @@
 # built-in
-from itertools import chain
 from io import BytesIO
+from itertools import chain
 from pathlib import Path
 from tarfile import TarFile, TarInfo
 from tempfile import TemporaryDirectory

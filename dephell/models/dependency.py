@@ -2,12 +2,10 @@
 from copy import deepcopy
 from typing import Iterable, Optional
 
-# external
-import attr
-from packaging.utils import canonicalize_name
-
 # project
+import attr
 from dephell_markers import Markers
+from packaging.utils import canonicalize_name
 
 # app
 from ..repositories import GitRepo

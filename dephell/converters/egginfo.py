@@ -5,13 +5,13 @@ from itertools import chain
 from pathlib import Path
 from typing import Optional
 
-# external
+# project
 from dephell_discover import Root as PackageRoot
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..controllers import DependencyMaker, Readme
-from ..models import Author, RootDependency, EntryPoint
+from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
 
 

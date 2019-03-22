@@ -9,14 +9,12 @@
 import asyncio
 from itertools import islice
 
-# external
-import requests
-from packaging.requirements import Requirement
-
 # project
+import requests
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
 from dephell.repositories import WareHouseRepo
+from packaging.requirements import Requirement
 
 
 loop = asyncio.get_event_loop()

@@ -2,7 +2,7 @@
 import re
 from typing import Optional
 
-# external
+# project
 import attr
 
 

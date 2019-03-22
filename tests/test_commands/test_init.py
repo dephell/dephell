@@ -1,7 +1,6 @@
 # external
-import tomlkit
-
 # project
+import tomlkit
 from dephell.commands import InitCommand
 
 

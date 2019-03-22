@@ -1,10 +1,8 @@
 # built-in
 from pathlib import Path
 
-# external
-import tomlkit
-
 # project
+import tomlkit
 from dephell.converters.poetrylock import PoetryLockConverter
 from dephell.models import Requirement
 from dephell.repositories.git.git import GitRepo

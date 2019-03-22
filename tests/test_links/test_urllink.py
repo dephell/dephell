@@ -1,7 +1,6 @@
 # external
-import pytest
-
 # project
+import pytest
 from dephell.links import URLLink
 
 

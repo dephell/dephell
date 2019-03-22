@@ -1,7 +1,7 @@
 # built-in
 import re
 
-# external
+# project
 import requests
 
 # app

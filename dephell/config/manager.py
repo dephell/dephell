@@ -3,10 +3,10 @@ import json
 from collections import defaultdict
 from logging import captureWarnings
 from logging.config import dictConfig
-from typing import Optional, Dict
 from pathlib import Path
+from typing import Dict, Optional
 
-# external
+# project
 import tomlkit
 from cerberus import Validator
 

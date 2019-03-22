@@ -8,10 +8,10 @@ from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import EggInfoConverter, PIPConverter
 from ..models import Requirement
-from .create import CreateCommand
-from ..venvs import VEnvs
 from ..package_manager import PackageManager
 from ..utils import is_windows
+from ..venvs import VEnvs
+from .create import CreateCommand
 
 
 class GetCommand(CreateCommand):

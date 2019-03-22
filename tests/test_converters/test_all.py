@@ -1,8 +1,7 @@
 # external
+# project
 import attr
 import pytest
-
-# project
 from dephell import converters
 from dephell.controllers import Graph
 from dephell.models import Requirement

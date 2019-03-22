@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Iterator, Optional
 from venv import EnvBuilder as EnvBuilder
 
-# external
+# project
 import attr
 
 # app

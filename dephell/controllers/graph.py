@@ -3,7 +3,7 @@ from collections import ChainMap
 from logging import getLogger
 from typing import Optional
 
-# external
+# project
 from graphviz import Digraph
 
 # app

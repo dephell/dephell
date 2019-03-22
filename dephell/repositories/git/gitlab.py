@@ -2,7 +2,7 @@
 import re
 from urllib.parse import urlencode
 
-# external
+# project
 import requests
 
 # app

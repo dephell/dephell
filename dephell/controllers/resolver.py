@@ -3,7 +3,7 @@ from contextlib import suppress
 from logging import getLogger
 from typing import Optional
 
-# external
+# project
 from tqdm import tqdm
 
 # app

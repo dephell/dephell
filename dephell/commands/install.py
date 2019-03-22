@@ -8,9 +8,9 @@ from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
-from .base import BaseCommand
-from ..venvs import VEnvs
 from ..package_manager import PackageManager
+from ..venvs import VEnvs
+from .base import BaseCommand
 
 
 class InstallCommand(BaseCommand):

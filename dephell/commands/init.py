@@ -3,13 +3,13 @@ from argparse import ArgumentParser
 from collections import defaultdict
 from pathlib import Path
 
-# external
+# project
 import tomlkit
 
 # app
 from ..config import builders, config
-from ..converters import CONVERTERS
 from ..constants import PAIRS, SUFFIXES
+from ..converters import CONVERTERS
 from .base import BaseCommand
 
 
