@@ -91,7 +91,7 @@ class GetCommand(CreateCommand):
 
     @staticmethod
     def _publish_script(src: Path, dst: Path):
-        if dst.exists():
+        if dst.exists() or dst.is_symlink():
             dst.unlink()
         if is_windows():
             shutil.copy(str(src), str(dst))
