@@ -39,6 +39,17 @@ FILES = (
     'setup.py',
 )
 
+SUFFIXES = ('.txt', '.in', '.lock', '.toml', '.egg-info', '.py', '.json')
+
+PAIRS = (
+    ('pip',     'piplock'),
+    ('pipfile', 'pipfilelock'),
+    ('poetry',  'poetrylock'),
+    ('poetry',  'setuppy'),
+    ('setuppy', 'sdist'),
+    ('setuppy', 'wheel'),
+)
+
 ENVS = ('main', 'dev', 'main-opt', 'dev-opt')
 
 STRATEGIES = ('min', 'max')

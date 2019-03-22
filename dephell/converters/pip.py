@@ -22,7 +22,18 @@ class PIPConverter(BaseConverter):
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if isinstance(path, str):
             path = Path(path)
-        return (path.name in ('requirements.txt', 'requirements.in'))
+
+        if path.name == 'requirements.txt':
+            if path.with_name('requirements.in').exists():
+                return (self.lock is True)
+            if path.with_name('requirements.lock').exists():
+                return (self.lock is False)
+            return True
+
+        if self.lock:
+            return (path.name == 'requirements.lock')
+        else:
+            return (path.name == 'requirements.in')
 
     def __init__(self, lock):
         self.lock = lock

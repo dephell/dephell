@@ -28,6 +28,12 @@ class ConvertCommand(BaseCommand):
     def __call__(self):
         loader = CONVERTERS[self.config['from']['format']]
         dumper = CONVERTERS[self.config['to']['format']]
+        self.logger.info('converting...', extra={
+            'from-format':  self.config['from']['format'],
+            'from-path':    self.config['from']['path'],
+            'to-format':    self.config['to']['format'],
+            'to-path':      self.config['to']['path'],
+        })
 
         # load
         resolver = loader.load_resolver(path=self.config['from']['path'])
@@ -66,4 +72,5 @@ class ConvertCommand(BaseCommand):
             reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),
             project=resolver.graph.metainfo,
         )
+        self.logger.info('converted')
         return True
