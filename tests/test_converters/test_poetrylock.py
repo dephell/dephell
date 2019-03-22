@@ -1,7 +1,7 @@
-# built-in
+
 from pathlib import Path
 
-# project
+
 import tomlkit
 from dephell.converters.poetrylock import PoetryLockConverter
 from dephell.models import Requirement

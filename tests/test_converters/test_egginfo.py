@@ -1,8 +1,8 @@
-# built-in
+
 from email.parser import Parser
 from pathlib import Path
 
-# project
+
 from dephell.converters import EggInfoConverter, SDistConverter
 from dephell.models import Requirement
 

@@ -1,8 +1,8 @@
-# built-in
+
 from copy import deepcopy
 from typing import Iterable, Optional
 
-# project
+
 import attr
 from dephell_markers import Markers
 from packaging.utils import canonicalize_name

@@ -1,7 +1,7 @@
-# built-in
+
 import json
 
-# project
+
 from dephell.converters import PIPFileLockConverter
 from dephell.links import VCSLink
 from dephell.models import Requirement

@@ -1,9 +1,9 @@
-# built-in
+
 from collections import defaultdict
 from datetime import datetime
 from unittest.mock import patch
 
-# project
+
 from dephell.controllers import DependencyMaker, Graph, Mutator, Resolver, analize_conflict
 from dephell.models import Release, Requirement, RootDependency
 from dephell.repositories import ReleaseRepo

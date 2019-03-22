@@ -1,7 +1,7 @@
-# built-in
+
 from copy import deepcopy
 
-# project
+
 from dephell_specifier import RangeSpecifier
 
 

@@ -1,4 +1,4 @@
-# built-in
+
 import json
 from collections import defaultdict
 from logging import captureWarnings
@@ -6,7 +6,7 @@ from logging.config import dictConfig
 from pathlib import Path
 from typing import Dict, Optional
 
-# project
+
 import tomlkit
 from cerberus import Validator
 

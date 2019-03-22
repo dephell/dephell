@@ -1,9 +1,9 @@
-# built-in
+
 from collections import ChainMap
 from logging import getLogger
 from typing import Optional
 
-# project
+
 from graphviz import Digraph
 
 # app

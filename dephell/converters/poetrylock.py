@@ -1,8 +1,8 @@
-# built-in
+
 from pathlib import Path
 from typing import List, Optional
 
-# project
+
 import tomlkit
 from dephell_specifier import RangeSpecifier
 

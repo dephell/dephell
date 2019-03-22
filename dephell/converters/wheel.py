@@ -1,9 +1,9 @@
-# built-in
+
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
 
-# project
+
 from dephell_archive import ArchivePath
 
 # app

@@ -1,7 +1,7 @@
-# built-in
+
 from pathlib import Path
 
-# project
+
 from appdirs import user_data_dir
 
 

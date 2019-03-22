@@ -1,7 +1,7 @@
-# built-in
+
 from pathlib import Path
 
-# project
+
 import tomlkit
 from dephell.converters.poetry import PoetryConverter
 from dephell.models import Requirement

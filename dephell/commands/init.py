@@ -1,9 +1,9 @@
-# built-in
+
 from argparse import ArgumentParser
 from collections import defaultdict
 from pathlib import Path
 
-# project
+
 import tomlkit
 
 # app

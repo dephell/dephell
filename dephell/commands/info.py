@@ -1,8 +1,8 @@
-# built-in
+
 from argparse import ArgumentParser
 from pathlib import Path
 
-# project
+
 from dephell_shells import Shells
 
 # app

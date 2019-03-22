@@ -1,11 +1,11 @@
-# built-in
+
 from collections import defaultdict
 from distutils.core import run_setup
 from itertools import chain
 from pathlib import Path
 from typing import Optional
 
-# project
+
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 from yapf.yapflib.style import CreateGoogleStyle

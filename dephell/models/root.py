@@ -1,9 +1,9 @@
-# built-in
+
 from contextlib import suppress
 from pathlib import Path
 from typing import Tuple
 
-# project
+
 import attr
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier

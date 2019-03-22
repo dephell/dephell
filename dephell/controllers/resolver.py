@@ -1,9 +1,9 @@
-# built-in
+
 from contextlib import suppress
 from logging import getLogger
 from typing import Optional
 
-# project
+
 from tqdm import tqdm
 
 # app
