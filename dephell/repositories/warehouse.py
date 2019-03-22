@@ -89,7 +89,6 @@ class WareHouseRepo(Interface):
             task = self._get_from_json(name=name, version=version)
             deps = await asyncio.gather(asyncio.ensure_future(task))
             deps = deps[0]
-            print(deps)
             cache.dump(deps)
         elif deps == ['']:
             return ()
