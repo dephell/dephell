@@ -26,6 +26,7 @@ dephell = "dephell.cli:entrypoint"
 
 [tool.poetry.dependencies]
 python = ">=3.5"
+aiofiles = "*"
 aiohttp = "*"
 appdirs = "*"
 attrs = "*"
