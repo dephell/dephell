@@ -43,8 +43,8 @@ class CreateCommand(BaseCommand):
         return pythons.current
 
     def __call__(self) -> bool:
-        venvs = VEnvs(path=self.config['venv'], env=self.config.env)
-        venv = venvs.get(Path(self.config['project']))
+        venvs = VEnvs(path=self.config['venv'])
+        venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if venv.exists():
             self.logger.warning('venv already exists', extra=dict(path=venv.path))
             return False

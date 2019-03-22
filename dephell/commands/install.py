@@ -56,12 +56,12 @@ class InstallCommand(BaseCommand):
 
         # get executable
         executable = Path(sys.executable)
-        venvs = VEnvs(path=self.config['venv'], env=self.config.env)
+        venvs = VEnvs(path=self.config['venv'])
         venv = venvs.current
         if venv is not None:
             executable = venv.python_path
         else:
-            venv = venvs.get(Path(self.config['project']))
+            venv = venvs.get(Path(self.config['project']), env=self.config.env)
             if venv.exists():
                 executable = venv.python_path
 

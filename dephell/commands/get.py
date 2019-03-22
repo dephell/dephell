@@ -42,8 +42,8 @@ class GetCommand(CreateCommand):
             return False
 
         # get executable
-        venvs = VEnvs(path=self.config['venv'], env=self.config.env)
-        venv = venvs.get(Path(name), is_project=False)
+        venvs = VEnvs(path=self.config['venv'])
+        venv = venvs.get_by_name(name)
         if venv.exists():
             self.logger.warning('remove installed version', extra=dict(package=name))
             shutil.rmtree(venv.path)
