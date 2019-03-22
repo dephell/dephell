@@ -130,7 +130,7 @@ class PIPConverter(BaseConverter):
                     sep=self.sep,
                     hash=digest,
                 )
-        if req.sources:
+        if self.lock and req.sources:
             line += '{sep}# ^ from {sources}'.format(
                 sep=self.sep,
                 sources=', '.join(req.sources),
