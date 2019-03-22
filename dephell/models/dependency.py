@@ -139,6 +139,30 @@ class Dependency:
         # if 'dependencies' in self.__dict__:
         #     del self.__dict__['dependencies']
 
+    def unapply(self, name: str) -> None:
+        self.constraint.unapply(name)
+        if self.locked:
+            self.unlock()
+
+    def copy(self) -> 'Dependency':
+        obj = deepcopy(self)
+        obj.constraint = self.constraint.copy()
+        if obj.locked:
+            obj.unlock()
+        return obj
+
+    # magic methods
+
+    def __str__(self) -> str:
+        result = self.name
+        if self.extra:
+            result += '[{}]'.format(self.extra)
+        if self.constraint:
+            result += str(self.constraint)
+        if self.marker:
+            result += '; ' + str(self.marker)
+        return result
+
     def __iadd__(self, dep: 'Dependency') -> 'Dependency':
         if not isinstance(dep, type(self)):
             return NotImplemented
@@ -180,15 +204,3 @@ class Dependency:
 
     def __lt__(self, other):
         return self.name < other.name
-
-    def unapply(self, name: str) -> None:
-        self.constraint.unapply(name)
-        if self.locked:
-            self.unlock()
-
-    def copy(self) -> 'Dependency':
-        obj = deepcopy(self)
-        obj.constraint = self.constraint.copy()
-        if obj.locked:
-            obj.unlock()
-        return obj
