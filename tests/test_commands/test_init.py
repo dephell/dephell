@@ -20,14 +20,15 @@ def test_create(tmpdir):
     assert parsed['from']['format'] == 'pip'
     assert parsed['from']['path'] == 'requirements.in'
     assert parsed['to']['format'] == 'piplock'
-    assert parsed['to']['path'] == 'requirements.txt'
+    assert parsed['to']['path'] == 'requirements.lock'
 
 
 def test_detect(tmpdir):
+    tmpdir.join('requirements.in').write('Django>=1.9\n')
     tmpdir.join('requirements.txt').write('Django>=1.9\n')
 
     config = tmpdir.join('pyproject.toml')
-    task = InitCommand(['--config', str(config)])
+    task = InitCommand(['--config', str(config), '--project', str(tmpdir)])
     result = task()
     assert result is True
     assert config.check(file=1, exists=1)
@@ -38,5 +39,6 @@ def test_detect(tmpdir):
 
     parsed = parsed['tool']['dephell']['pip']
     assert parsed['from']['format'] == 'pip'
-    assert parsed['from']['path'] == 'requirements.txt'
+    assert parsed['from']['path'] == 'requirements.in'
     assert parsed['to']['format'] == 'piplock'
+    assert parsed['to']['path'] == 'requirements.txt'

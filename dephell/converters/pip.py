@@ -23,6 +23,7 @@ class PIPConverter(BaseConverter):
         if isinstance(path, str):
             path = Path(path)
 
+        print(path)
         if path.name == 'requirements.txt':
             if path.with_name('requirements.in').exists():
                 return (self.lock is True)

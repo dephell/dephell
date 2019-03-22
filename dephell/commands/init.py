@@ -22,6 +22,7 @@ class InitCommand(BaseCommand):
         )
         builders.build_config(parser)
         builders.build_output(parser)
+        builders.build_other(parser)
         return parser
 
     @classmethod
@@ -67,8 +68,7 @@ class InitCommand(BaseCommand):
             doc['tool'].add('dephell', tomlkit.table())
 
         # detect requirements files
-        project_path = Path(self.config['config'])
-
+        project_path = Path(self.config['project'])
         parsable_files = defaultdict(list)
         for file_path in project_path.iterdir():
             if file_path.suffix not in SUFFIXES:
@@ -77,14 +77,14 @@ class InitCommand(BaseCommand):
             for converter_name, converter in CONVERTERS.items():
                 if converter.can_parse(path=file_path, content=content):
                     parsable_files[converter_name].append(file_path.name)
-            for from_format, to_format in PAIRS:
-                for from_path in parsable_files[from_format]:
-                    for to_path in parsable_files[to_format]:
-                        if from_format not in doc['tool']['dephell']:
-                            doc['tool']['dephell'].add(
-                                from_format,
-                                self._make_env(from_format, from_path, to_format, to_path),
-                            )
+        for from_format, to_format in PAIRS:
+            for from_path in parsable_files[from_format]:
+                for to_path in parsable_files[to_format]:
+                    if from_format not in doc['tool']['dephell']:
+                        doc['tool']['dephell'].add(
+                            from_format,
+                            self._make_env(from_format, from_path, to_format, to_path),
+                        )
 
         if not doc['tool']['dephell'].value:
             if 'example' not in doc['tool']['dephell']:

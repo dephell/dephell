@@ -39,7 +39,7 @@ FILES = (
     'setup.py',
 )
 
-SUFFIXES = ('.txt', '.lock', '.toml', '.egg-info', '.py', '.json')
+SUFFIXES = ('.txt', '.in', '.lock', '.toml', '.egg-info', '.py', '.json')
 
 PAIRS = (
     ('pip',     'piplock'),
