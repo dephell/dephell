@@ -18,6 +18,7 @@ def build_config(parser):
 
 def build_from(parser):
     from_group = parser.add_argument_group('Input file')
+    from_group.add_argument('--from', help='path or format for reading requirements.')
     from_group.add_argument('--from-format', choices=FORMATS, help='format for reading requirements.')
     from_group.add_argument('--from-path', help='path to input file.')
     from_group.add_argument('--from-env', action='append', dest='from_envs', choices=ENVS, help=env_help)
@@ -25,6 +26,7 @@ def build_from(parser):
 
 def build_to(parser):
     to_group = parser.add_argument_group('Output file')
+    to_group.add_argument('--to', help='path or format for writing requirements.')
     to_group.add_argument('--to-format', choices=FORMATS, help='output requirements file format.')
     to_group.add_argument('--to-path', help='path to output file.')
     to_group.add_argument('--to-env', action='append', dest='to_envs', choices=ENVS, help=env_help)

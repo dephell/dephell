@@ -3,13 +3,15 @@ import json
 from collections import defaultdict
 from logging import captureWarnings
 from logging.config import dictConfig
-from typing import Optional
+from typing import Optional, Dict
+from pathlib import Path
 
 # external
 import tomlkit
 from cerberus import Validator
 
 # app
+from ..constants import SUFFIXES
 from .defaults import DEFAULT
 from .logging_config import LOGGING
 from .scheme import SCHEME
@@ -37,6 +39,11 @@ class Config:
     def attach(self, data: dict, container: Optional[dict] = None) -> None:
         if container is None:
             container = self._data
+
+        for section in ('from', 'to'):
+            if section in data and isinstance(data[section], str):
+                data[section] = self._expand_converter(data[section])
+
         for key, value in data.items():
             if value is None:
                 continue
@@ -46,6 +53,28 @@ class Config:
                 self.attach(data=value, container=container[key])
             else:
                 container[key] = value
+
+    @staticmethod
+    def _expand_converter(text: str) -> Dict[str, str]:
+        from ..converters import CONVERTERS
+
+        # if passed only format
+        if text in CONVERTERS:
+            converter = CONVERTERS[text]
+            for path in Path('.').iterdir():
+                if path.suffix in SUFFIXES:
+                    content = None if not path.is_file() else path.read_text()
+                    if converter.can_parse(path=path, content=content):
+                        return {'format': text, 'path': str(path)}
+
+        # if passed only filename
+        path = Path(text)
+        content = None if not path.is_file() else path.read_text()
+        for name, converter in CONVERTERS.items():
+            if converter.can_parse(path=path, content=content):
+                return {'format': name, 'path': text}
+
+        raise LookupError('cannot determine converter for file: ' + str(text))
 
     def attach_file(self, path: str, env: str) -> dict:
         # read
