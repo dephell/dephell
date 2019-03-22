@@ -1,3 +1,4 @@
+
 # built-in
 import os
 import shutil
@@ -8,7 +9,7 @@ from pathlib import Path
 from typing import Iterator, Optional
 from venv import EnvBuilder as EnvBuilder
 
-# external
+# project
 import attr
 
 # app
@@ -45,18 +46,45 @@ class VEnvBuilder(EnvBuilder):
 class VEnv:
     path = attr.ib(type=Path, convert=Path)
 
+    project = attr.ib(type=str, default=None)
+    env = attr.ib(type=str, default=None)
+
     @property
     def name(self):
         return self.path.name
 
+    @property
+    def prompt(self) -> str:
+        if self.project and self.env:
+            return self.project + '/' + self.env
+        if self.project:
+            return self.project
+        return self.path.name
+
     @cached_property
     def bin_path(self) -> Optional[Path]:
-        is_win = is_windows()
-        if is_win:
+        if is_windows():
             path = self.path / 'Scripts'
             if path.exists():
                 return path
+
         path = self.path / 'bin'
+        if path.exists():
+            return path
+        return None
+
+    @cached_property
+    def lib_path(self) -> Optional[Path]:
+        if is_windows():
+            path = self.path / 'Lib' / 'site-packages'
+            if path.exists():
+                return path
+
+        path = self.path / 'lib'
+        paths = list(path.glob('python*'))
+        if not paths:
+            return None
+        path = paths[0] / 'site-packages'
         if path.exists():
             return path
         return None
@@ -82,7 +110,11 @@ class VEnv:
         return bool(self.bin_path)
 
     def create(self, python_path) -> None:
-        builder = VEnvBuilder(python=str(python_path), with_pip=True)
+        builder = VEnvBuilder(
+            python=str(python_path),
+            with_pip=True,
+            prompt=self.prompt,
+        )
         builder.create(str(self.path))
 
         # clear cache
@@ -116,18 +148,23 @@ class VEnvs:
         digest_str = b64encode(digest_bin).decode()
         return digest_str.replace('+', '').replace('/', '')[:4]
 
-    def _get_path(self, project_path: Path) -> Path:
+    def get(self, project_path: Path, env: str) -> VEnv:
         if not project_path.exists():
             raise FileNotFoundError('Project directory does not exist')
         if not project_path.is_dir():
             raise IOError('Project path is not directory')
-        digest = self._encode(str(project_path))
-        name = project_path.name + '-' + digest
-        return str(self.path).format(project=name)
+        formatted = str(self.path).format(
+            project=project_path.name,
+            digest=self._encode(str(project_path)),
+            env=env,
+        )
+        path = Path(formatted.replace(os.path.sep + os.path.sep, os.path.sep))
+        return VEnv(path=path, project=project_path.name, env=env)
 
-    def get(self, project_path: Path) -> VEnv:
-        path = self._get_path(project_path)
-        return VEnv(path=path)
+    def get_by_name(self, name) -> VEnv:
+        formatted = str(self.path).replace('-{digest}', '').format(project=name, digest='', env='')
+        path = Path(formatted.replace(os.path.sep + os.path.sep, os.path.sep))
+        return VEnv(path=path, project=name)
 
     def __iter__(self) -> Iterator[VEnv]:
         for path in self.path.iterdir():

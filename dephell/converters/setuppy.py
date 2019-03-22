@@ -1,3 +1,4 @@
+
 # built-in
 from collections import defaultdict
 from distutils.core import run_setup
@@ -6,12 +7,10 @@ from pathlib import Path
 from typing import Optional
 
 # external
+from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 from yapf.yapflib.style import CreateGoogleStyle
 from yapf.yapflib.yapf_api import FormatCode
-
-# project
-from dephell_specifier import RangeSpecifier
 
 # app
 from ..controllers import DependencyMaker, Readme

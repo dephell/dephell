@@ -1,10 +1,11 @@
+
 # built-in
 import json
 from collections import defaultdict
 from logging import captureWarnings
 from logging.config import dictConfig
-from typing import Optional, Dict
 from pathlib import Path
+from typing import Dict, Optional
 
 # external
 import tomlkit
@@ -18,7 +19,8 @@ from .scheme import SCHEME
 
 
 class Config:
-    _skip = ('config', 'env', 'key')
+    env = ''
+    _skip = ('config', 'env', 'key', 'name')
 
     def __init__(self, data: Optional[dict] = None):
         self._data = data or DEFAULT
@@ -92,6 +94,7 @@ class Config:
         data = data[env]
 
         self.attach(data)
+        self.env = env
         return data
 
     def attach_cli(self, args, sep: str = '_') -> dict:

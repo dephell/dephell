@@ -1,7 +1,8 @@
+
 # built-in
-from urllib.parse import urlparse
 from pathlib import Path
 from typing import Optional
+from urllib.parse import urlparse
 
 # external
 from pip._internal.download import PipSession
@@ -129,7 +130,7 @@ class PIPConverter(BaseConverter):
                     sep=self.sep,
                     hash=digest,
                 )
-        if req.sources:
+        if self.lock and req.sources:
             line += '{sep}# ^ from {sources}'.format(
                 sep=self.sep,
                 sources=', '.join(req.sources),

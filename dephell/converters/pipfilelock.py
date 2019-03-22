@@ -1,3 +1,4 @@
+
 # built-in
 import json
 from collections import OrderedDict
@@ -5,12 +6,12 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Optional
 
-# project
+# external
+from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
 # app
 from ..models import RootDependency
-from dephell_pythons import Pythons
 from .pipfile import PIPFileConverter
 
 

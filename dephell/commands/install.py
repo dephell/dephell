@@ -1,3 +1,4 @@
+
 # built-in
 import sys
 from argparse import ArgumentParser
@@ -8,9 +9,9 @@ from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
-from .base import BaseCommand
-from ..venvs import VEnvs
 from ..package_manager import PackageManager
+from ..venvs import VEnvs
+from .base import BaseCommand
 
 
 class InstallCommand(BaseCommand):
@@ -61,7 +62,7 @@ class InstallCommand(BaseCommand):
         if venv is not None:
             executable = venv.python_path
         else:
-            venv = venvs.get(Path(self.config['project']))
+            venv = venvs.get(Path(self.config['project']), env=self.config.env)
             if venv.exists():
                 executable = venv.python_path
 

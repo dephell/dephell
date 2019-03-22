@@ -1,3 +1,4 @@
+
 # built-in
 from pathlib import Path
 
@@ -25,9 +26,10 @@ DEFAULT = dict(
     traceback=False,
 
     # venv
-    venv=str(data_dir / 'venvs' / '{project}'),
+    venv=str(data_dir / 'venvs' / '{project}-{digest}' / '{env}'),
 
     # other
     cache=str(data_dir / 'cache'),
+    bin=str(Path.home() / '.local' / 'bin'),
     project=str(Path('.').resolve()),
 )

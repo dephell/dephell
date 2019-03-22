@@ -1,3 +1,4 @@
+
 # built-in
 import re
 from pathlib import Path
@@ -5,9 +6,11 @@ from string import Template
 from typing import Optional
 
 # external
+from m2r import convert
+
+# project
 import attr
 from cached_property import cached_property
-from m2r import convert
 
 # app
 from ..constants import EXTENSIONS

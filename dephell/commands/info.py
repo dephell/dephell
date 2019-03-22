@@ -1,8 +1,9 @@
+
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
 
-# project
+# external
 from dephell_shells import Shells
 
 # app
@@ -27,7 +28,7 @@ class InfoCommand(BaseCommand):
 
     def __call__(self):
         venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.get(Path(self.config['project']))
+        venv = venvs.get(Path(self.config['project']), env=self.config.env)
         shells = Shells(bin_path=venv.bin_path)
 
         data = dict(

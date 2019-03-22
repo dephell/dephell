@@ -1,3 +1,4 @@
+
 # built-in
 from collections import defaultdict
 from email.parser import Parser
@@ -11,7 +12,7 @@ from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..controllers import DependencyMaker, Readme
-from ..models import Author, RootDependency
+from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
 
 
@@ -65,6 +66,12 @@ class _Reader:
                 content = stream.read()
             root = self.parse_requires(content, root=root)
 
+        # entry_points.txt
+        if (path / 'entry_points.txt').exists():
+            with (path / 'entry_points.txt').open('r') as stream:
+                content = stream.read()
+            root = self.parse_entrypoints(content, root=root)
+
         # readme and package files
         root.readme = Readme.discover(path=path)
         root.package = PackageRoot(path=path.parent)
@@ -72,9 +79,11 @@ class _Reader:
 
     def loads(self, content: str) -> RootDependency:
         if 'Name: ' in content:
-            return self.parse_info(content)
+            return self.parse_info(content=content)
+        elif '[console_scripts] ' in content:
+            return self.parse_entrypoints(content=content)
         else:
-            return self.parse_requires(content)
+            return self.parse_requires(content=content)
 
     @classmethod
     def parse_info(cls, content: str, root=None) -> RootDependency:
@@ -130,6 +139,22 @@ class _Reader:
             req = PackagingRequirement(req)
             deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
+        return root
+
+    def parse_entrypoints(self, content: str, root=None) -> RootDependency:
+        if root is None:
+            root = RootDependency(raw_name=self._get_name(content=content))
+        entrypoints = []
+        group = 'console_scripts'
+        for line in content.split('\n'):
+            line = line.strip()
+            if not line or line[0] in '#;':  # ignore comments
+                continue
+            if line[0] == '[' and line[-1] == ']':
+                group = line[1:-1]
+            else:
+                entrypoints.append(EntryPoint.parse(text=line, group=group))
+        root.entrypoints = tuple(entrypoints)
         return root
 
     @staticmethod

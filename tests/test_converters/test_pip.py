@@ -1,3 +1,6 @@
+
+
+
 # external
 from packaging.requirements import Requirement as PackagingRequirement
 
@@ -32,7 +35,7 @@ def test_format():
     assert 'hypothesis[django]' in result
     assert '<=3.0.0' in result
     assert 'python_version == "2.7"' in result
-    assert 'from root' in result
+    assert 'from root' not in result
     assert result.startswith(text)
 
 

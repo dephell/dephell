@@ -1,8 +1,9 @@
-# external
-import attr
-import pytest
+
+
 
 # project
+import attr
+import pytest
 from dephell import converters
 from dephell.controllers import Graph
 from dephell.models import Requirement
@@ -65,7 +66,7 @@ def test_load_dump_load_deps(converter, path):
     (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml', []),
 
     (converters.SetupPyConverter(), './tests/requirements/setup.py', []),
-    (converters.EggInfoConverter(), './tests/requirements/egg-info/', ['package']),
+    (converters.EggInfoConverter(), './tests/requirements/egg-info/', ['package', 'entrypoints']),
     (converters.WheelConverter(), './tests/requirements/wheel.whl', []),
 ])
 def test_load_dump_load_metainfo(converter, path, exclude):

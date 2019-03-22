@@ -1,8 +1,9 @@
+
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
 
-# project
+# external
 from dephell_shells import Shells
 
 # app
@@ -27,7 +28,7 @@ class ShellCommand(CreateCommand):
 
     def __call__(self) -> bool:
         venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.get(Path(self.config['project']))
+        venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
             self.logger.info('Creating venv for project...')
             python = self._get_python()  # from CreateCommand

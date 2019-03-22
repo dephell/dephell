@@ -1,3 +1,4 @@
+
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
@@ -23,7 +24,7 @@ class DestroyCommand(BaseCommand):
 
     def __call__(self) -> bool:
         venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.get(Path(self.config['project']))
+        venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
             self.logger.warning('venv does not exists')
             return False
