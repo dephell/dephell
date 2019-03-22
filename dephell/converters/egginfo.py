@@ -51,7 +51,7 @@ class _Reader:
         root = self.parse_info(content)
 
         # requires.txt
-        if not root.dependencies:
+        if not root.dependencies and (path / 'requires.txt').exists():
             with (path / 'requires.txt').open('r') as stream:
                 content = stream.read()
             root = self.parse_requires(content, root=root)
