@@ -1,5 +1,6 @@
 # built-in
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 
 # external
 import tomlkit
@@ -21,6 +22,14 @@ class PoetryLockConverter(BaseConverter):
         'python-versions', 'version', 'dependencies',
     )
     # fields for dependency: python, version, platform
+
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if isinstance(path, str):
+            path = Path(path)
+        if content:
+            return ('[[package]]' in content and '[metadata.hashes]' in content)
+        else:
+            return (path.name in ('pyproject.lock', 'poetry.lock'))
 
     def loads(self, content) -> RootDependency:
         doc = tomlkit.parse(content)

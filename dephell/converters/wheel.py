@@ -1,6 +1,7 @@
 # built-in
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Optional
 
 # project
 from dephell_archive import ArchivePath
@@ -18,6 +19,18 @@ class WheelConverter(BaseConverter):
     """
     lock = False
 
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if content is not None:
+            return False
+        # metadata file or dir for dists
+        if path.name in ('dist', 'METADATA'):
+            return True
+        # extracted wheel
+        if path.is_dir():
+            return (path / 'METADATA').exists()
+        # archived wheel
+        return (path.suffix in ('.whl', '.zip'))
+
     def load(self, path) -> RootDependency:
         """Parse wheel
 
@@ -31,7 +44,7 @@ class WheelConverter(BaseConverter):
 
         with TemporaryDirectory() as cache:
             # passed .whl archive
-            if path.is_file() and path.suffix == '.whl':
+            if path.is_file() and path.suffix in ('.whl', '.zip'):
                 archive = ArchivePath(archive_path=path, cache_path=Path(cache))
                 paths = list(archive.glob('*.dist-info/METADATA'))
 

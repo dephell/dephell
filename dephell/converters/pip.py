@@ -1,5 +1,6 @@
 # built-in
 from urllib.parse import urlparse
+from pathlib import Path
 from typing import Optional
 
 # external
@@ -17,6 +18,11 @@ from .base import BaseConverter
 
 class PIPConverter(BaseConverter):
     sep = ' \\\n  '
+
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if isinstance(path, str):
+            path = Path(path)
+        return (path.name in ('requirements.txt', 'requirements.in'))
 
     def __init__(self, lock):
         self.lock = lock

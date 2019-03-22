@@ -26,6 +26,14 @@ class PoetryConverter(BaseConverter):
     )
     _metafields = ('version', 'description', 'license', 'keywords', 'classifiers')
 
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if isinstance(path, str):
+            path = Path(path)
+        if content:
+            return ('[tool.poetry]' in content)
+        else:
+            return (path.name == 'pyproject.toml')
+
     def loads(self, content) -> RootDependency:
         doc = tomlkit.parse(content)
         if 'tool' not in doc:

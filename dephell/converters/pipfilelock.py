@@ -2,6 +2,8 @@
 import json
 from collections import OrderedDict
 from hashlib import sha256
+from pathlib import Path
+from typing import Optional
 
 # project
 from dephell_specifier import RangeSpecifier
@@ -19,6 +21,14 @@ from .pipfile import PIPFileConverter
 
 class PIPFileLockConverter(PIPFileConverter):
     lock = True
+
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if isinstance(path, str):
+            path = Path(path)
+        if content:
+            return ('pipfile-spec' in content and 'sha256' in content)
+        else:
+            return (path.name == 'Pipfile.lock')
 
     def loads(self, content) -> RootDependency:
         doc = json.loads(content, object_pairs_hook=OrderedDict)

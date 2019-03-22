@@ -4,6 +4,7 @@ from io import BytesIO
 from pathlib import Path
 from tarfile import TarFile, TarInfo
 from tempfile import TemporaryDirectory
+from typing import Optional
 
 # project
 from dephell_archive import ArchivePath
@@ -17,6 +18,13 @@ from .egginfo import EggInfoConverter
 
 class SDistConverter(BaseConverter):
     lock = False
+
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if content is not None:
+            return False
+        if path.name == 'dist':
+            return True
+        return (path.suffix in ('.zip', '.gz', '.tar'))
 
     def load(self, path) -> RootDependency:
         path = Path(str(path))

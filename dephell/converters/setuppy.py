@@ -3,6 +3,7 @@ from collections import defaultdict
 from distutils.core import run_setup
 from itertools import chain
 from pathlib import Path
+from typing import Optional
 
 # external
 from packaging.requirements import Requirement
@@ -42,6 +43,17 @@ setup(
 
 class SetupPyConverter(BaseConverter):
     lock = False
+
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if isinstance(path, str):
+            path = Path(path)
+        if path.name == 'setup.py':
+            return True
+        if not content:
+            return False
+        if 'setuptools' not in content and 'distutils' not in content:
+            return False
+        return ('setup(' in content)
 
     @classmethod
     def load(cls, path) -> RootDependency:

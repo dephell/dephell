@@ -12,6 +12,11 @@ from ..models import RootDependency
 
 class BaseConverter:
 
+    # inspection
+
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        return False
+
     # root dependency load and dump
 
     def loads(self, content: str) -> RootDependency:
@@ -66,7 +71,7 @@ class BaseConverter:
     # helpers
 
     @staticmethod
-    def _get_name(*, path=None, content=None):
+    def _get_name(*, path=None, content=None) -> str:
         if path is not None:
             path = Path(str(path))
             file_name = path.name

@@ -17,6 +17,15 @@ from .base import BaseConverter
 
 class _Reader:
 
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if isinstance(path, str):
+            path = Path(path)
+        if path.suffix == '.egg-info':
+            return True
+        if path.name in ('requires.txt', 'PKG-INFO'):
+            return True
+        return False
+
     def load(self, path) -> RootDependency:
         path = Path(str(path))
         if path.is_dir():
@@ -146,9 +155,15 @@ class _Writer:
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
         if isinstance(path, str):
             path = Path(path)
+
+        if path.is_file():
+            path.write_text(self.make_info(reqs=reqs, project=project))
+            return
+
         if path.suffix != '.egg-info':
             path /= project.name + '.egg-info'
         path.mkdir(exist_ok=True, parents=True)
+
         (path / 'dependency_links.txt').touch()
         (path / 'entry_points.txt').write_text(self.make_entrypoints(project=project))
         (path / 'PKG-INFO').write_text(self.make_info(reqs=reqs, project=project))

@@ -1,6 +1,7 @@
 # built-in
 from collections import OrderedDict
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 
 # external
 import tomlkit
@@ -27,6 +28,18 @@ class PIPFileConverter(BaseConverter):
         'subdirectory', 'path', 'file', 'uri',
         'git', 'svn', 'hg', 'bzr',
     )
+
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if isinstance(path, str):
+            path = Path(path)
+        if path.name == 'Pipfile':
+            return True
+        if content:
+            if '[[source]]' in content and '[packages]' in content:
+                return True
+            if '[packages]' in content and '[dev-packages]' in content:
+                return True
+        return False
 
     def loads(self, content) -> RootDependency:
         doc = tomlkit.parse(content)
