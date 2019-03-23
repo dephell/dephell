@@ -1,45 +1,45 @@
 # app
-from .config import ConfigCommand
-from .convert import ConvertCommand
-from .create import CreateCommand
-from .destroy import DestroyCommand
-from .get import GetCommand
-from .info import InfoCommand
+from .config import InspectConfigCommand
+from .convert import DepsConvertCommand
+from .create import VenvCreateCommand
+from .destroy import VenvDestroyCommand
+from .get import JailInstallCommand
+from .info import InspectVenvCommand
 from .init import InitCommand
-from .install import InstallCommand
-from .shell import ShellCommand
+from .install import DepsInstallCommand
+from .shell import VenvShellCommand
 
 
 __all__ = [
     'commands',
-    'ConfigCommand',
-    'ConvertCommand',
-    'CreateCommand',
-    'DestroyCommand',
-    'GetCommand',
-    'InfoCommand',
+    'InspectConfigCommand',
+    'DepsConvertCommand',
+    'VenvCreateCommand',
+    'VenvDestroyCommand',
+    'JailInstallCommand',
+    'InspectVenvCommand',
     'InitCommand',
-    'InstallCommand',
-    'ShellCommand',
+    'DepsInstallCommand',
+    'VenvShellCommand',
 ]
 
 
 commands = {
     'init': InitCommand,
 
-    'deps convert': ConvertCommand,
-    'deps install': InstallCommand,
+    'deps convert': DepsConvertCommand,
+    'deps install': DepsInstallCommand,
     # 'deps sync': ...,
     # 'deps remove': ...,
 
-    'jail install': GetCommand,
+    'jail install': JailInstallCommand,
     # 'jail update': ...,
     # 'jail remove': ...,
 
-    'venv create': CreateCommand,
-    'venv shell': ShellCommand,
-    'venv destroy': DestroyCommand,
+    'venv create': VenvCreateCommand,
+    'venv shell': VenvShellCommand,
+    'venv destroy': VenvDestroyCommand,
 
-    'inspect config': ConfigCommand,
-    'inspect venv': InfoCommand,
+    'inspect config': InspectConfigCommand,
+    'inspect venv': InspectVenvCommand,
 }

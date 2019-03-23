@@ -10,7 +10,7 @@ from ..venvs import VEnvs
 from .base import BaseCommand
 
 
-class DestroyCommand(BaseCommand):
+class VenvDestroyCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(

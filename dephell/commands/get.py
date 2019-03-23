@@ -12,10 +12,10 @@ from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
 from ..venvs import VEnvs
-from .create import CreateCommand
+from .create import VenvCreateCommand
 
 
-class GetCommand(CreateCommand):
+class JailInstallCommand(VenvCreateCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(

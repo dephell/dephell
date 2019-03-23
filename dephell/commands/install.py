@@ -14,7 +14,7 @@ from ..venvs import VEnvs
 from .base import BaseCommand
 
 
-class InstallCommand(BaseCommand):
+class DepsInstallCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(

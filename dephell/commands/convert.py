@@ -10,7 +10,7 @@ from ..models import Requirement
 from .base import BaseCommand
 
 
-class ConvertCommand(BaseCommand):
+class DepsConvertCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(

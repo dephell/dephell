@@ -7,7 +7,7 @@ from ..config import builders
 from .base import BaseCommand
 
 
-class ConfigCommand(BaseCommand):
+class InspectConfigCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(

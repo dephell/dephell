@@ -12,7 +12,7 @@ from ..venvs import VEnvs
 from .base import BaseCommand
 
 
-class InfoCommand(BaseCommand):
+class InspectVenvCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(

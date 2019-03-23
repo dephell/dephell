@@ -9,10 +9,10 @@ from dephell_shells import Shells
 # app
 from ..config import builders
 from ..venvs import VEnvs
-from .create import CreateCommand
+from .create import VenvCreateCommand
 
 
-class ShellCommand(CreateCommand):
+class VenvShellCommand(VenvCreateCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
@@ -31,7 +31,7 @@ class ShellCommand(CreateCommand):
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
             self.logger.info('Creating venv for project...')
-            python = self._get_python()  # from CreateCommand
+            python = self._get_python()  # from VenvCreateCommand
             self.logger.debug('choosen python', extra=dict(version=python.version))
             venv.create(python_path=python.path)
 
