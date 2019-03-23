@@ -20,7 +20,7 @@ class JailInstallCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell get',
+            prog='dephell jail install',
             description='download and install package into isolated environment',
         )
         builders.build_config(parser)

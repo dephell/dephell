@@ -14,7 +14,7 @@ class DepsConvertCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell convert',
+            prog='dephell deps convert',
             description='Convert dependencies between formats',
         )
         builders.build_config(parser)

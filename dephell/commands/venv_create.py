@@ -14,7 +14,7 @@ class VenvCreateCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell create',
+            prog='dephell venv create',
             description='Create virtual environment for current project.',
         )
         builders.build_config(parser)

@@ -11,7 +11,7 @@ class InspectConfigCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell config',
+            prog='dephell inspect config',
             description='Show current config',
         )
         builders.build_config(parser)

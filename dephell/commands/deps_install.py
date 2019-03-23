@@ -18,7 +18,7 @@ class DepsInstallCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell install',
+            prog='dephell deps install',
             description='Install project dependencies',
         )
         builders.build_config(parser)
