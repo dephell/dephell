@@ -1,4 +1,3 @@
-
 # built-in
 from pathlib import Path
 from typing import Optional

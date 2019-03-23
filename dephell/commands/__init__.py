@@ -24,14 +24,22 @@ __all__ = [
 ]
 
 
-commands = dict(
-    config=ConfigCommand,
-    convert=ConvertCommand,
-    create=CreateCommand,
-    destroy=DestroyCommand,
-    get=GetCommand,
-    info=InfoCommand,
-    init=InitCommand,
-    install=InstallCommand,
-    shell=ShellCommand,
-)
+commands = {
+    'init': InitCommand,
+
+    'deps convert': ConvertCommand,
+    'deps install': InstallCommand,
+    # 'deps sync': ...,
+    # 'deps remove': ...,
+
+    'jail install': GetCommand,
+    # 'jail update': ...,
+    # 'jail remove': ...,
+
+    'venv create': CreateCommand,
+    'venv shell': ShellCommand,
+    'venv destroy': DestroyCommand,
+
+    'inspect config': ConfigCommand,
+    'inspect venv': InfoCommand,
+}
