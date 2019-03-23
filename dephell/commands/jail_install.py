@@ -47,8 +47,8 @@ class JailInstallCommand(BaseCommand):
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get_by_name(name)
         if venv.exists():
-            self.logger.warning('remove installed version', extra=dict(package=name))
-            shutil.rmtree(venv.path)
+            self.logger.error('already installed', extra=dict(package=name))
+            return False
         python = get_python(self.config)
         self.logger.info('creating venv...', extra=dict(path=venv.path))
         venv.create(python_path=python.path)
