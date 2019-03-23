@@ -12,7 +12,6 @@ from .venv_shell import VenvShellCommand
 
 __all__ = [
     'commands',
-
     'DepsConvertCommand',
     'DepsInstallCommand',
     'InitCommand',
@@ -30,16 +29,12 @@ commands = {
     'deps install': DepsInstallCommand,
     # 'deps remove': ...,
     # 'deps sync': ...,
-
     'init': InitCommand,
-
     'inspect config': InspectConfigCommand,
     'inspect venv': InspectVenvCommand,
-
     'jail install': JailInstallCommand,
     # 'jail update': ...,
     # 'jail remove': ...,
-
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,
     'venv shell': VenvShellCommand,

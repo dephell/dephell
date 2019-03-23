@@ -12,10 +12,11 @@ from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
 from ..venvs import VEnvs
-from .create import VenvCreateCommand
+from .base import BaseCommand
+from .helpers import get_python
 
 
-class JailInstallCommand(VenvCreateCommand):
+class JailInstallCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
@@ -48,7 +49,7 @@ class JailInstallCommand(VenvCreateCommand):
         if venv.exists():
             self.logger.warning('remove installed version', extra=dict(package=name))
             shutil.rmtree(venv.path)
-        python = self._get_python()
+        python = get_python(self.config)
         self.logger.info('creating venv...', extra=dict(path=venv.path))
         venv.create(python_path=python.path)
 
