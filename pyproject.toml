@@ -10,9 +10,13 @@ to = {format = "egginfo", path = "."}
 from = {format = "setuppy", path = "setup.py"}
 to = {format = "sdist", path = "dist"}
 
-[tool.dephell.flake]
+[tool.dephell.flake8]
 from = {format = "pip", path = "requirements-flake.txt"}
 command = "flake8"
+
+[tool.dephell.pytest]
+from = {format = "setuppy", path = "setup.py"}
+command = "pytest"
 
 [tool.poetry]
 name = "dephell"
