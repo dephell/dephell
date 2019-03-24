@@ -45,6 +45,12 @@ class WareHouseRepo(Interface):
     hash = None
     link = None
 
+    @property
+    def pretty_url(self):
+        parsed = urlparse(self.url)
+        path = '/simple/' if parsed.path == '/pypi/' else parsed.path
+        return parsed.scheme + '://' + parsed.hostname + path
+
     def get_releases(self, dep) -> tuple:
         # retrieve data
         cache = JSONCache('releases', dep.base_name, ttl=config['cache']['ttl'])

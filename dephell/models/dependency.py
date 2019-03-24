@@ -192,6 +192,14 @@ class Dependency:
             self.link = dep.link
             self.repo = dep.repo
 
+        if dep.marker is not None:
+            if self.marker is not None:
+                marker = self.marker & dep.marker
+                # if markers incompatible then just reset them and hope in luck.
+                self.marker = marker if marker.compat else None
+            else:
+                self.marker = dep.marker
+
         self.constraint &= dep.constraint
         self.groups.actualize()
         self.envs.update(dep.envs)
@@ -202,5 +210,5 @@ class Dependency:
         new += dep
         return dep
 
-    def __lt__(self, other):
+    def __lt__(self, other: 'Dependency') -> bool:
         return self.name < other.name
