@@ -1,7 +1,6 @@
-
 # built-in
 import shutil
-from argparse import ArgumentParser
+from argparse import ArgumentParser, REMAINDER
 from pathlib import Path
 
 # app
@@ -12,25 +11,26 @@ from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
 from ..venvs import VEnvs
-from .create import CreateCommand
+from .base import BaseCommand
+from .helpers import get_python
 
 
-class GetCommand(CreateCommand):
+class JailInstallCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell get',
-            description='download and install package into isolated environment',
+            prog='dephell jail install',
+            description='Download and install package into isolated environment',
         )
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs='?')
+        parser.add_argument('name', nargs=REMAINDER, help='package to install')
         return parser
 
     def __call__(self) -> bool:
-        resolver = PIPConverter(lock=False).loads_resolver(self.args.name)
+        resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
         name = next(iter(resolver.graph.get_layer(0))).dependencies[0].name
 
         # resolve (and merge)
@@ -46,9 +46,9 @@ class GetCommand(CreateCommand):
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get_by_name(name)
         if venv.exists():
-            self.logger.warning('remove installed version', extra=dict(package=name))
-            shutil.rmtree(venv.path)
-        python = self._get_python()
+            self.logger.error('already installed', extra=dict(package=name))
+            return False
+        python = get_python(self.config)
         self.logger.info('creating venv...', extra=dict(path=venv.path))
         venv.create(python_path=python.path)
 
@@ -58,7 +58,9 @@ class GetCommand(CreateCommand):
             executable=venv.python_path,
             packages=len(reqs),
         ))
-        PackageManager(executable=venv.python_path).install(reqs=reqs)
+        code = PackageManager(executable=venv.python_path).install(reqs=reqs)
+        if code != 0:
+            return False
 
         # get entrypoints
         if not venv.lib_path:

@@ -1,5 +1,4 @@
 
-
 class UnknownLink:
     def __init__(self, link):
         self.short = link.split('#')[0]

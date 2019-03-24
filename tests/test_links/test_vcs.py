@@ -1,12 +1,11 @@
 
 
-
 # project
 import pytest
 from dephell.links.vcs import VCSLink
 
 
-@pytest.mark.parametrize("url,params", [
+@pytest.mark.parametrize('url, params', [
     # https
     (
         'https://github.com/r1chardj0n3s/parse.git',

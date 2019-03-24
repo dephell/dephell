@@ -1,4 +1,3 @@
-
 # built-in
 from pathlib import Path
 from typing import Optional
@@ -88,7 +87,7 @@ class PIPConverter(BaseConverter):
         urls = dict()
         for req in reqs:
             if isinstance(req.dep.repo, WareHouseRepo):
-                urls[req.dep.repo.name] = req.dep.repo.url
+                urls[req.dep.repo.name] = req.dep.repo.pretty_url
 
         # dump repos urls
         # pip._internal.build_env

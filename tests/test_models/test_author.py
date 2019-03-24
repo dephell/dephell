@@ -1,12 +1,11 @@
 
 
-
 # project
 import pytest
 from dephell.models.author import Author
 
 
-@pytest.mark.parametrize("name, mail, formatted", [
+@pytest.mark.parametrize('name, mail, formatted', [
     ('gram',            'example@mail.com',         'gram <example@mail.com>'),
     ('gram',            None,                       'gram'),
 
@@ -18,7 +17,7 @@ def test_format(name, mail, formatted):
     assert str(author) == formatted
 
 
-@pytest.mark.parametrize("name, mail, formatted", [
+@pytest.mark.parametrize('name, mail, formatted', [
     ('gram',            'example@mail.com',         'gram <example@mail.com>'),
     ('gram',            None,                       'gram'),
 

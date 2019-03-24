@@ -1,4 +1,3 @@
-
 # built-in
 from collections import OrderedDict
 from pathlib import Path
@@ -89,7 +88,7 @@ class PIPFileConverter(BaseConverter):
             added_repos.add(req.dep.repo.name)
             doc['source'].append(OrderedDict([
                 ('name', req.dep.repo.name),
-                ('url', req.dep.repo.url),
+                ('url', req.dep.repo.pretty_url),
                 ('verify_ssl', True),
             ]))
 

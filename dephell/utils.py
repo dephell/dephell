@@ -1,4 +1,3 @@
-
 # built-in
 import os
 import platform
@@ -60,10 +59,9 @@ class cached_property(object):  # noqa: N801
     """
     A property that is only computed once per instance and then replaces itself
     with an ordinary attribute. Deleting the attribute resets the property.
-    """  # noqa
-
+    """
     def __init__(self, func):
-        self.__doc__ = getattr(func, "__doc__")
+        self.__doc__ = getattr(func, '__doc__')
         self.func = func
 
     def __get__(self, obj, cls):

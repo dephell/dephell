@@ -1,4 +1,3 @@
-
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
@@ -12,11 +11,11 @@ from ..venvs import VEnvs
 from .base import BaseCommand
 
 
-class InfoCommand(BaseCommand):
+class InspectVenvCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell info',
+            prog='dephell inspect venv',
             description='Show virtual environment information for current project.',
         )
         builders.build_config(parser)

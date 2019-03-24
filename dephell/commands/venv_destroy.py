@@ -1,4 +1,3 @@
-
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
@@ -10,11 +9,11 @@ from ..venvs import VEnvs
 from .base import BaseCommand
 
 
-class DestroyCommand(BaseCommand):
+class VenvDestroyCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell create',
+            prog='dephell venv destroy',
             description='Destroy virtual environment for current project.',
         )
         builders.build_config(parser)

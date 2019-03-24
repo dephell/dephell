@@ -1,4 +1,3 @@
-
 # built-in
 import re
 import subprocess
@@ -46,7 +45,7 @@ class GitRepo(Interface):
     @cached_property
     def path(self):
         name = self.link.name
-        path = Path(config['cache']) / self.name / name
+        path = Path(config['cache']['path']) / self.name / name
         return path
 
     @cached_property

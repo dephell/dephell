@@ -1,4 +1,3 @@
-
 # built-in
 from io import BytesIO
 from itertools import chain
@@ -139,10 +138,8 @@ class SDistConverter(BaseConverter):
     # poetry/masonry/builders/sdist.py:clean_tarinfo
     @staticmethod
     def _set_uid_gid(tarinfo: TarInfo) -> TarInfo:
-        tarinfo.uid = 0
-        tarinfo.gid = 0
-        tarinfo.uname = ""
-        tarinfo.gname = ""
+        tarinfo.uid = tarinfo.gid = 0
+        tarinfo.uname = tarinfo.gname = ''
 
         # Set 644 permissions, leaving higher bits of st_mode unchanged
         new_mode = (tarinfo.mode | 0o644) & ~0o133

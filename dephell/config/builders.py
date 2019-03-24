@@ -62,6 +62,9 @@ def build_venv(parser):
 
 def build_other(parser):
     other_group = parser.add_argument_group('Other')
-    other_group.add_argument('--cache', help='path to dephell cache')
-    other_group.add_argument('--project', help='path to current project')
-    other_group.add_argument('--bin', help='path to dir for installing scripts')
+
+    other_group.add_argument('--cache-path', help='path to dephell cache')
+    other_group.add_argument('--cache-ttl', help='Time to live for releases list cache')
+
+    other_group.add_argument('--project', help='path to the current project')
+    other_group.add_argument('--bin', help='path to the dir for installing scripts')

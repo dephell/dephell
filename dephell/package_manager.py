@@ -1,4 +1,3 @@
-
 # built-in
 import subprocess
 import sys
@@ -29,6 +28,7 @@ class PackageManager:
             if path.exists():
                 path.unlink()
             converter.dump(reqs=reqs, path=path, project=None)
+            logger.debug(path.read_text())
             return self.run('install', '--no-deps', '-r', str(path))
 
     def run(self, *args) -> int:
@@ -43,6 +43,6 @@ class PackageManager:
             stderr = process_pip.stderr.read().decode()
             if process_pip.returncode != 0:
                 logger.error(stderr)
-            else:
+            elif stderr.strip():
                 logger.debug(stderr)
             return process_pip.returncode

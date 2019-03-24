@@ -1,37 +1,49 @@
 # app
-from .config import ConfigCommand
-from .convert import ConvertCommand
-from .create import CreateCommand
-from .destroy import DestroyCommand
-from .get import GetCommand
-from .info import InfoCommand
+from .deps_convert import DepsConvertCommand
+from .deps_install import DepsInstallCommand
 from .init import InitCommand
+from .inspect_config import InspectConfigCommand
+from .inspect_venv import InspectVenvCommand
 from .install import InstallCommand
-from .shell import ShellCommand
+from .jail_install import JailInstallCommand
+from .jail_remove import JailRemoveCommand
+from .run import RunCommand
+from .venv_create import VenvCreateCommand
+from .venv_destroy import VenvDestroyCommand
+from .venv_shell import VenvShellCommand
 
 
 __all__ = [
     'commands',
-    'ConfigCommand',
-    'ConvertCommand',
-    'CreateCommand',
-    'DestroyCommand',
-    'GetCommand',
-    'InfoCommand',
+    'DepsConvertCommand',
+    'DepsInstallCommand',
     'InitCommand',
+    'InspectConfigCommand',
+    'InspectVenvCommand',
     'InstallCommand',
-    'ShellCommand',
+    'JailInstallCommand',
+    'JailRemoveCommand',
+    'RunCommand',
+    'VenvCreateCommand',
+    'VenvDestroyCommand',
+    'VenvShellCommand',
 ]
 
 
-commands = dict(
-    config=ConfigCommand,
-    convert=ConvertCommand,
-    create=CreateCommand,
-    destroy=DestroyCommand,
-    get=GetCommand,
-    info=InfoCommand,
-    init=InitCommand,
-    install=InstallCommand,
-    shell=ShellCommand,
-)
+commands = {
+    'deps convert': DepsConvertCommand,
+    'deps install': DepsInstallCommand,
+    # 'deps remove': ...,
+    # 'deps sync': ...,
+    'init': InitCommand,
+    'inspect config': InspectConfigCommand,
+    'inspect venv': InspectVenvCommand,
+    'install': InstallCommand,
+    'jail install': JailInstallCommand,
+    'jail remove': JailRemoveCommand,
+    # 'jail update': ...,
+    'run': RunCommand,
+    'venv create': VenvCreateCommand,
+    'venv destroy': VenvDestroyCommand,
+    'venv shell': VenvShellCommand,
+}

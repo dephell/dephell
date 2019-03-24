@@ -1,6 +1,5 @@
 
 
-
 # external
 from dephell_markers import Markers
 from dephell_specifier import RangeSpecifier
@@ -10,7 +9,7 @@ import pytest
 from dephell.models import Dependency, Group, Release
 
 
-@pytest.mark.parametrize("pdep, prel, ok", [
+@pytest.mark.parametrize('pdep, prel, ok', [
     ('>=2.7',           '<=3.4',        True),
     ('<=2.7',           '>=3.4',        False),
 

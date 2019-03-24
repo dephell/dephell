@@ -1,4 +1,3 @@
-
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
@@ -9,14 +8,15 @@ from dephell_shells import Shells
 # app
 from ..config import builders
 from ..venvs import VEnvs
-from .create import CreateCommand
+from .base import BaseCommand
+from .helpers import get_python
 
 
-class ShellCommand(CreateCommand):
+class VenvShellCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell shell',
+            prog='dephell venv shell',
             description='Activate virtual environment for current project.',
         )
         builders.build_config(parser)
@@ -31,7 +31,7 @@ class ShellCommand(CreateCommand):
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
             self.logger.info('Creating venv for project...')
-            python = self._get_python()  # from CreateCommand
+            python = get_python(self.config)
             self.logger.debug('choosen python', extra=dict(version=python.version))
             venv.create(python_path=python.path)
 

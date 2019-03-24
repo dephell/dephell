@@ -1,8 +1,8 @@
-
 # built-in
 import json
 import pickle
 from pathlib import Path
+from time import time
 
 # app
 from .config import config
@@ -12,10 +12,20 @@ from .utils import cached_property
 class BaseCache:
     ext = ''
 
-    def __init__(self, *keys):
-        self.path = Path(config['cache'], *keys)
+    def __init__(self, *keys, ttl: int = -1):
+        self.path = Path(config['cache']['path'], *keys)
         if self.ext:
             self.path = self.path.with_suffix(self.ext)
+        self.ttl = ttl
+        self._check_ttl()
+
+    def _check_ttl(self) -> None:
+        if self.ttl < 0:
+            return
+        if not self.path.exists():
+            return
+        if time() - self.path.stat().st_mtime > self.ttl:
+            self.path.unlink()
 
     def __str__(self):
         return str(self.path)

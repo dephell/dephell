@@ -1,6 +1,3 @@
-
-
-
 # project
 import attr
 import pytest

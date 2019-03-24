@@ -1,4 +1,3 @@
-
 # built-in
 from operator import attrgetter
 from typing import Optional
@@ -71,7 +70,7 @@ class Group:
                 name=self.raw_name,
                 min_version=min_version,
                 max_version=max_version,
-            )
+            ),
         )[0]
 
     @property

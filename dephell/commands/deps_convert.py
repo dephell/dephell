@@ -1,4 +1,3 @@
-
 # built-in
 from argparse import ArgumentParser
 
@@ -10,11 +9,11 @@ from ..models import Requirement
 from .base import BaseCommand
 
 
-class ConvertCommand(BaseCommand):
+class DepsConvertCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell convert',
+            prog='dephell deps convert',
             description='Convert dependencies between formats',
         )
         builders.build_config(parser)

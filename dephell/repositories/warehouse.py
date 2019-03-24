@@ -1,9 +1,8 @@
-
 # built-in
 import asyncio
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Iterable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 from urllib.parse import urlparse
 
 # external
@@ -46,9 +45,15 @@ class WareHouseRepo(Interface):
     hash = None
     link = None
 
+    @property
+    def pretty_url(self):
+        parsed = urlparse(self.url)
+        path = '/simple/' if parsed.path == '/pypi/' else parsed.path
+        return parsed.scheme + '://' + parsed.hostname + path
+
     def get_releases(self, dep) -> tuple:
         # retrieve data
-        cache = JSONCache('releases', dep.base_name)
+        cache = JSONCache('releases', dep.base_name, ttl=config['cache']['ttl'])
         data = cache.load()
         if data is None:
             url = '{url}{name}/json'.format(url=self.url, name=dep.base_name)
