@@ -6,7 +6,7 @@ from hashlib import md5
 from itertools import chain
 from pathlib import Path
 from typing import Iterator, Optional
-from venv import EnvBuilder as EnvBuilder
+from venv import EnvBuilder
 
 # project
 import attr
