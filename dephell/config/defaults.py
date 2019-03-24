@@ -27,8 +27,13 @@ DEFAULT = dict(
     # venv
     venv=str(data_dir / 'venvs' / '{project}-{digest}' / '{env}'),
 
+    # cache
+    cache=dict(
+        path=str(data_dir / 'cache'),
+        ttl=3600,
+    ),
+
     # other
-    cache=str(data_dir / 'cache'),
     bin=str(Path.home() / '.local' / 'bin'),
     project=str(Path('.').resolve()),
 )

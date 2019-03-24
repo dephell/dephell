@@ -85,8 +85,18 @@ SCHEME = {
 
     # other
     'cache': dict(
-        type='string',
+        type='dict',
         required=True,  # because represented in default config
+        schema={
+            'path': dict(
+                type='string',
+                required=True,  # because represented in default config
+            ),
+            'ttl': dict(
+                type='integer',
+                required=True,  # because represented in default config
+            ),
+        },
     ),
     'project': dict(
         type='string',
