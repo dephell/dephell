@@ -1,4 +1,3 @@
-
 # project
 from dephell.config import Config
 

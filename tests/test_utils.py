@@ -1,4 +1,3 @@
-
 # project
 from dephell.utils import lazy_product
 

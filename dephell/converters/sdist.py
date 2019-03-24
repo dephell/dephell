@@ -1,4 +1,3 @@
-
 # built-in
 from io import BytesIO
 from itertools import chain
