@@ -4,6 +4,7 @@ from .deps_install import DepsInstallCommand
 from .init import InitCommand
 from .inspect_config import InspectConfigCommand
 from .inspect_venv import InspectVenvCommand
+from .install import InstallCommand
 from .jail_install import JailInstallCommand
 from .jail_remove import JailRemoveCommand
 from .run import RunCommand
@@ -19,6 +20,7 @@ __all__ = [
     'InitCommand',
     'InspectConfigCommand',
     'InspectVenvCommand',
+    'InstallCommand',
     'JailInstallCommand',
     'JailRemoveCommand',
     'RunCommand',
@@ -36,6 +38,7 @@ commands = {
     'init': InitCommand,
     'inspect config': InspectConfigCommand,
     'inspect venv': InspectVenvCommand,
+    'install': InstallCommand,
     'jail install': JailInstallCommand,
     'jail remove': JailRemoveCommand,
     # 'jail update': ...,

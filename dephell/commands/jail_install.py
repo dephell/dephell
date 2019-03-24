@@ -1,6 +1,6 @@
 # built-in
 import shutil
-from argparse import ArgumentParser
+from argparse import ArgumentParser, REMAINDER
 from pathlib import Path
 
 # app
@@ -20,17 +20,17 @@ class JailInstallCommand(BaseCommand):
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell jail install',
-            description='download and install package into isolated environment',
+            description='Download and install package into isolated environment',
         )
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs='+', help='package to install')
+        parser.add_argument('name', nargs=REMAINDER, help='package to install')
         return parser
 
     def __call__(self) -> bool:
-        resolver = PIPConverter(lock=False).loads_resolver(self.args.name)
+        resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
         name = next(iter(resolver.graph.get_layer(0))).dependencies[0].name
 
         # resolve (and merge)

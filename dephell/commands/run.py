@@ -1,7 +1,7 @@
 # built-in
 import subprocess
 import shlex
-from argparse import ArgumentParser
+from argparse import ArgumentParser, REMAINDER
 from pathlib import Path
 
 # app
@@ -22,7 +22,7 @@ class RunCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs='*', help='command to run')
+        parser.add_argument('name', nargs=REMAINDER, help='command to run')
         return parser
 
     def __call__(self) -> bool:
