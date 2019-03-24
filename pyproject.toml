@@ -12,6 +12,7 @@ to = {format = "sdist", path = "dist"}
 
 [tool.dephell.flake]
 from = {format = "pip", path = "requirements-flake.txt"}
+command = "flake8"
 
 [tool.poetry]
 name = "dephell"

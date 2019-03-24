@@ -41,6 +41,7 @@ parser.add_argument('command', choices=commands.keys(), nargs='?', help='command
 
 
 def main(argv: List[str]) -> int:
+    # get command name
     for size, direction in ((1, 1), (2, 1), (2, -1)):
         command_name = ' '.join(argv[:size][::direction])
         command_args = argv[size:]
@@ -53,13 +54,23 @@ def main(argv: List[str]) -> int:
         command_name = args.command
         command_args = argv[1:]
 
+    # get and init command object
     command = commands[command_name]
-    task = command(command_args)
+    try:
+        task = command(command_args)
+    except KeyError as e:  # env not found
+        logger.exception(e.args[0])
+        return ReturnCodes.INVALID_CONFIG.value
+    except Exception as e:
+        logger.exception('{}: {}'.format(type(e).__name__, e))
+        return ReturnCodes.UNKNOWN_EXCEPTION.value
 
+    # validate config
     is_valid = task.validate()
     if not is_valid:
         return ReturnCodes.INVALID_CONFIG.value
 
+    # execute command
     try:
         result = task()
     except Exception as e:

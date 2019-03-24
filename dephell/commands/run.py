@@ -1,5 +1,6 @@
 # built-in
 import subprocess
+import shlex
 from argparse import ArgumentParser
 from pathlib import Path
 
@@ -21,22 +22,34 @@ class RunCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs='+', help='command to run')
+        parser.add_argument('name', nargs='*', help='command to run')
         return parser
 
     def __call__(self) -> bool:
+        command = self.args.name
+        if not command:
+            command = self.config.get('command')
+            if not command:
+                self.logger.error('command required')
+                return False
+        if isinstance(command, str):
+            command = shlex.split(command)
+
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
-            self.logger.error('venv does not exists', extra=dict(project=self.config['project']))
-            return False
-
-        executable = venv.bin_path / self.args.name[0]
-        if not executable.exists():
-            self.logger.error('executable does not found in venv', extra=dict(
-                executable=executable.name,
+            self.logger.error('venv does not exists', extra=dict(
+                project=self.config['project'],
+                env=self.config.env,
             ))
             return False
 
-        result = subprocess.run([str(executable)] + self.args.name[1:])
+        executable = venv.bin_path / command[0]
+        if not executable.exists():
+            self.logger.error('executable does not found in venv', extra=dict(
+                executable=command[0],
+            ))
+            return False
+
+        result = subprocess.run([str(executable)] + command[1:])
         return not result.returncode
