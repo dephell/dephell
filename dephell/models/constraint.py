@@ -14,11 +14,7 @@ class Constraint:
         self._specs = {source.name: RangeSpecifier(spec)}
         self._groups = {source.name: source.group.number}
 
-    def attach_time(self, releases) -> None:
-        """Attach time to all specifiers if possible
-        """
-        for spec in self._specs.values():
-            spec.attach_time(releases)
+    # properties
 
     @property
     def empty(self) -> bool:
@@ -35,7 +31,15 @@ class Constraint:
             result.append((name, str(spec)))
         return tuple(sorted(result))
 
-    def apply(self, dep, spec):
+    # methods
+
+    def attach_time(self, releases) -> None:
+        """Attach time to all specifiers if possible
+        """
+        for spec in self._specs.values():
+            spec.attach_time(releases)
+
+    def apply(self, dep, spec) -> None:
         if dep.name in self._groups:
             # don't apply same group twice
             if self._groups[dep.name] == dep.group.number:
@@ -45,19 +49,6 @@ class Constraint:
         # save params
         self._specs[dep.name] = RangeSpecifier(spec)
         self._groups[dep.name] = dep.group.number
-
-    def merge(self, constraint):
-        for name, group in constraint._groups.items():
-            # if group already applied
-            # if self._groups.get(name, -1) == group:
-            #     continue
-            self._groups[name] = group
-
-            spec = constraint._specs[name]
-            if name in self._specs:
-                self._specs[name] += spec
-            else:
-                self._specs[name] = spec
 
     def unapply(self, name: str) -> None:
         if name not in self._specs:
@@ -77,15 +68,36 @@ class Constraint:
                 result.add(release)
         return result
 
-    def copy(self):
+    def copy(self) -> 'Constraint':
         return deepcopy(self)
 
-    def __str__(self):
+    # magic methods
+
+    def __and__(self, other):
+        return self.copy().__iand__(other)
+
+    def __iand__(self, other):
+        if not isinstance(other, Constraint):
+            return NotImplemented
+        for name, group in other._groups.items():
+            # if group already applied
+            # if self._groups.get(name, -1) == group:
+            #     continue
+            self._groups[name] = group
+
+            spec = other._specs[name]
+            if name in self._specs:
+                self._specs[name] += spec
+            else:
+                self._specs[name] = spec
+        return self
+
+    def __str__(self) -> str:
         specs = map(str, self._specs.values())
         specs = sorted(specs)
         return ','.join(specs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{name}({specs})'.format(
             name=type(self).__name__,
             specs=str(self),

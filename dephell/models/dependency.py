@@ -192,7 +192,7 @@ class Dependency:
             self.link = dep.link
             self.repo = dep.repo
 
-        self.constraint.merge(dep.constraint)
+        self.constraint &= dep.constraint
         self.groups.actualize()
         self.envs.update(dep.envs)
         return self
