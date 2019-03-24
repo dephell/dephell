@@ -14,7 +14,7 @@ class JailRemoveCommand(BaseCommand):
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell jail remove',
-            description='remove package isolated environment',
+            description='Remove package isolated environment',
         )
         builders.build_config(parser)
         builders.build_venv(parser)

@@ -26,7 +26,7 @@ class JailInstallCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs='?')
+        parser.add_argument('name', nargs='+', help='package to install')
         return parser
 
     def __call__(self) -> bool:
@@ -58,7 +58,9 @@ class JailInstallCommand(BaseCommand):
             executable=venv.python_path,
             packages=len(reqs),
         ))
-        PackageManager(executable=venv.python_path).install(reqs=reqs)
+        code = PackageManager(executable=venv.python_path).install(reqs=reqs)
+        if code != 0:
+            return False
 
         # get entrypoints
         if not venv.lib_path:

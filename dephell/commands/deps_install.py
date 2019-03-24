@@ -71,7 +71,8 @@ class DepsInstallCommand(BaseCommand):
             executable=executable,
             packages=len(reqs),
         ))
-        PackageManager(executable=executable).install(reqs=reqs)
+        code = PackageManager(executable=executable).install(reqs=reqs)
+        if code != 0:
+            return False
         self.logger.info('installed')
-
         return True

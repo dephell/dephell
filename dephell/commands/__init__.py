@@ -6,6 +6,7 @@ from .inspect_config import InspectConfigCommand
 from .inspect_venv import InspectVenvCommand
 from .jail_install import JailInstallCommand
 from .jail_remove import JailRemoveCommand
+from .run import RunCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
 from .venv_shell import VenvShellCommand
@@ -20,6 +21,7 @@ __all__ = [
     'InspectVenvCommand',
     'JailInstallCommand',
     'JailRemoveCommand',
+    'RunCommand',
     'VenvCreateCommand',
     'VenvDestroyCommand',
     'VenvShellCommand',
@@ -37,6 +39,7 @@ commands = {
     'jail install': JailInstallCommand,
     'jail remove': JailRemoveCommand,
     # 'jail update': ...,
+    'run': RunCommand,
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,
     'venv shell': VenvShellCommand,
