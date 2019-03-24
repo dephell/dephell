@@ -8,6 +8,10 @@ from pathlib import Path
 from ..config import builders
 from ..venvs import VEnvs
 from .base import BaseCommand
+from ..controllers import analize_conflict
+from ..converters import PIPConverter
+from ..models import Requirement
+from ..package_manager import PackageManager
 
 
 class RunCommand(BaseCommand):
@@ -46,10 +50,35 @@ class RunCommand(BaseCommand):
 
         executable = venv.bin_path / command[0]
         if not executable.exists():
-            self.logger.error('executable does not found in venv', extra=dict(
+            self.logger.warning('executable does not found in venv, trying to install...', extra=dict(
                 executable=command[0],
             ))
-            return False
+            result = self._install(name=command[0], venv=venv)
+            if not result:
+                return False
 
         result = subprocess.run([str(executable)] + command[1:])
         return not result.returncode
+
+    def _install(self, name: str, venv) -> bool:
+        # resolve
+        resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
+        self.logger.info('build dependencies graph...')
+        resolved = resolver.resolve()
+        if not resolved:
+            conflict = analize_conflict(resolver=resolver)
+            self.logger.warning('conflict was found')
+            print(conflict)
+            return False
+
+        # install
+        reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
+        self.logger.info('installation...', extra=dict(
+            executable=venv.python_path,
+            packages=len(reqs),
+        ))
+        code = PackageManager(executable=venv.python_path).install(reqs=reqs)
+        if code != 0:
+            return False
+        self.logger.info('installed')
+        return True
