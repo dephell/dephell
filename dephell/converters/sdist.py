@@ -108,7 +108,7 @@ class SDistConverter(BaseConverter):
                     rst = project.readme.to_rst()
                     tar.add(
                         name=str(rst.path),
-                        arcname=rst.name,
+                        arcname=rst.path.name,
                         filter=self._set_uid_gid,
                     )
                 elif (project.package.path / 'README.md').exists():
