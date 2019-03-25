@@ -75,16 +75,17 @@ class PoetryConverter(BaseConverter):
 
         # get extras for deps
         extras = defaultdict(set)
-        if 'extras' in section:
-            for extra, deps in section['extras'].items():
-                for dep in deps:
-                    extras[dep].add(extra)
+        for extra, deps in section.get('extras', {}).items():
+            for dep in deps:
+                extras[dep].add(extra)
+        for dep in section.get('dev-dependencies', {}):
+            extras[dep].add('dev')
 
         # read dependencies
         deps = []
-        if 'dependencies' in section:
-            for name, content in section['dependencies'].items():
-                if name == 'python':
+        for section_name in ('dependencies', 'dev-dependencies'):
+            for name, content in section.get(section_name, {}).items():
+                if name == 'python' and section_name == 'dependencies':
                     root.python = RangeSpecifier(content)
                     continue
                 deps.extend(self._make_deps(
