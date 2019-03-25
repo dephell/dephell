@@ -5,6 +5,7 @@ from typing import Optional
 
 # external
 from dephell_archive import ArchivePath
+from dephell_discover import Root as PackageRoot
 
 # app
 from ..models import RootDependency
@@ -37,32 +38,43 @@ class _Reader:
         path = Path(str(path))
         paths = None
 
+        # if passed METADATA, just parse and return it
+        if path.is_file() and path.suffix not in ('.whl', '.zip'):
+            return self.loads(content=path.read_text())
+
         with TemporaryDirectory() as cache:
-            # passed .whl archive
             if path.is_file() and path.suffix in ('.whl', '.zip'):
-                archive = ArchivePath(archive_path=path, cache_path=Path(cache))
-                paths = list(archive.glob('*.dist-info/METADATA'))
+                path = ArchivePath(archive_path=path, cache_path=Path(cache))
 
-            # passed extracted .whl
-            if path.is_dir():
-                paths = [path / 'METADATA']
-                if not path.exists():
-                    paths = list(path.glob('*.dist-info/METADATA'))
+            if not (path / 'METADATA').exists():
+                paths = list(path.glob('*.dist-info/METADATA'))
+                if not paths:
+                    raise FileNotFoundError('cannot find METADATA in dir', str(path))
+                # maybe it's possible, so we will have to process it
+                if len(paths) > 1:
+                    raise FileExistsError('too many METADATA in dir')
+                path = paths[0].parent
 
-            # passed METADATA file
-            if paths is None:
-                paths = [path]
+                return self.load_dir(path)
 
-            if not paths:
-                raise FileNotFoundError('cannot find METADATA in dir', str(path))
-            # maybe it's possible, so we will have to process it
-            if len(paths) > 1:
-                raise FileExistsError('too many METADATA in dir')
+    def load_dir(self, path) -> RootDependency:
+        if not (path / 'METADATA').exists():
+            raise FileNotFoundError('cannot find METADATA: {}'.format(str(path)))
+        converter = EggInfoConverter()
 
-            with paths[0].open('r') as stream:
+        # METADATA
+        with (path / 'METADATA').open('r') as stream:
+            content = stream.read()
+        root = converter.parse_info(content)
+
+        # entry_points.txt
+        if (path / 'entry_points.txt').exists():
+            with (path / 'entry_points.txt').open('r') as stream:
                 content = stream.read()
+            root = converter.parse_entrypoints(content, root=root)
 
-        return self.loads(content)
+        root.package = PackageRoot(path=path.parent)
+        return root
 
     def loads(self, content: str) -> RootDependency:
         """Parse METADATA file from .whl archive
@@ -71,12 +83,13 @@ class _Reader:
         # (c) PEP-0427
         return EggInfoConverter().parse_info(content)
 
+
+class _Writer:
+
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         return EggInfoConverter().dumps(reqs=reqs, project=project, content=content)
 
-
-class _Writer:
-    @staticmethod()
+    @staticmethod
     def make_wheel(paroject: RootDependency) -> str:
         return (
             'Wheel-Version: 1.0\n'
