@@ -52,7 +52,7 @@ class PIPFileLockConverter(PIPFileConverter):
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         packages = {True: OrderedDict(), False: OrderedDict()}
         for req in reqs:
-            packages[req.optional][req.name] = dict(self._format_req(req=req))
+            packages[bool(req.envs)][req.name] = dict(self._format_req(req=req))
 
         python = Pythons(abstract=True).get_by_spec(project.python)
         data = OrderedDict([

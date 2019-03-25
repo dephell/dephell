@@ -44,3 +44,5 @@ def test_dump():
 
     assert parsed['dependencies']['django']['git'] == 'https://github.com/django/django.git'
     assert parsed['dependencies']['django']['rev'] == '1.11.4'
+
+    assert 'pytest' in parsed['dev-dependencies']
