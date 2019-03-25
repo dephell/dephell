@@ -49,7 +49,10 @@ class DepsLicensesCommand(BaseCommand):
         licenses = defaultdict(set)
         for dep in resolver.graph:
             if dep.license:
-                licenses[dep.license].add(dep.name)
+                license = dep.license if isinstance(dep.license, str) else dep.license.name
+                licenses[license].add(dep.name)
+            else:
+                licenses['Unknown License'].add(dep.name)
         licenses = {name: sorted(deps) for name, deps in licenses.items()}
         print(json.dumps(licenses, sort_keys=True, indent=2))
         return True

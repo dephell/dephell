@@ -2,18 +2,18 @@
 import asyncio
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 from urllib.parse import urlparse
 
 # external
+import attr
 import aiofiles
 import requests
 from aiohttp import ClientSession
 from dephell_markers import Markers
+from dephell_licenses import licenses, License
 from packaging.requirements import Requirement
 
-# project
-import attr
 
 # app
 from ..cache import JSONCache, TextCache
@@ -121,8 +121,8 @@ class WareHouseRepo(Interface):
 
     # private methods
 
-    @staticmethod
-    def _update_dep_from_data(dep, data: dict) -> None:
+    @classmethod
+    def _update_dep_from_data(cls, dep, data: dict) -> None:
         """Updates metadata for dependency from json response
         """
         if not dep.description:
@@ -152,8 +152,34 @@ class WareHouseRepo(Interface):
 
         if not dep.classifiers:
             dep.classifiers = tuple(data['classifiers'])
-        if not dep.license and data['license'] not in ('UNKNOWN', '', None):
-            dep.license = data['license']
+
+        if not dep.license:
+            dep.license = cls._get_license(data)
+
+    @staticmethod
+    def _get_license(data: dict) -> Union[str, License, None]:
+        license_classifier = None
+        for classifier in data['classifiers']:
+            if classifier.startswith('License :: '):
+                license_classifier = classifier.split(' :: ')[-1].strip()
+                license = licenses.get_by_classifier(classifier)
+                if license is not None:
+                    return license
+
+        if data['license'] in ('UNKNOWN', '', None):
+            return license_classifier
+
+        license = licenses.get_by_id(data['license'])
+        if license is not None:
+            return license
+
+        license = licenses.get_by_name(data['license'])
+        if license is not None:
+            return license
+
+        if license_classifier:
+            return license_classifier
+        return data['license']
 
     async def _get_from_json(self, *, name, version):
         url = '{url}{name}/{version}/json'.format(
