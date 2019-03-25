@@ -122,7 +122,7 @@ class WareHouseRepo(Interface):
     # private methods
 
     @staticmethod
-    def _update_dep_from_data(dep, data):
+    def _update_dep_from_data(dep, data: dict) -> None:
         """Updates metadata for dependency from json response
         """
         if not dep.description:
@@ -152,6 +152,8 @@ class WareHouseRepo(Interface):
 
         if not dep.classifiers:
             dep.classifiers = tuple(data['classifiers'])
+        if not dep.license and data['license'] not in ('UNKNOWN', '', None):
+            dep.license = data['license']
 
     async def _get_from_json(self, *, name, version):
         url = '{url}{name}/{version}/json'.format(

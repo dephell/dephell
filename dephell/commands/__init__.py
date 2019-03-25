@@ -2,6 +2,7 @@
 from .build import BuildCommand
 from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
+from .deps_licenses import DepsLicensesCommand
 from .init import InitCommand
 from .inspect_config import InspectConfigCommand
 from .inspect_venv import InspectVenvCommand
@@ -19,6 +20,7 @@ __all__ = [
     'BuildCommand',
     'DepsConvertCommand',
     'DepsInstallCommand',
+    'DepsLicensesCommand',
     'InitCommand',
     'InspectConfigCommand',
     'InspectVenvCommand',
@@ -36,6 +38,7 @@ commands = {
     'build': BuildCommand,
     'deps convert': DepsConvertCommand,
     'deps install': DepsInstallCommand,
+    'deps licenses': DepsLicensesCommand,
     # 'deps remove': ...,
     # 'deps sync': ...,
     'init': InitCommand,
