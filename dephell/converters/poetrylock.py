@@ -1,4 +1,5 @@
 # built-in
+from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
 
@@ -34,20 +35,33 @@ class PoetryLockConverter(BaseConverter):
         root = RootDependency()
         root.python = RangeSpecifier(doc.get('metadata', {}).get('python-versions', '*'))
 
+        extras = defaultdict(set)
+        for extra, deps in doc.get('extras', {}):
+            for dep in deps:
+                extras[dep].add(extra)
+
         deps = []
-        if 'package' in doc:
-            for content in doc['package']:
-                deps.extend(self._make_deps(root=root, content=content))
+        for content in doc.get('package', []):
+            deps.extend(self._make_deps(
+                root=root,
+                content=content,
+                extras=extras[content.get('name', '')],
+            ))
         root.attach_dependencies(deps)
         return root
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
-        if content:
-            doc = tomlkit.parse(content)
-        else:
-            doc = tomlkit.document()
-
+        doc = tomlkit.parse(content) if content else tomlkit.document()
         doc['package'] = [self._format_req(req=req) for req in reqs]
+
+        # add extras
+        extras = defaultdict(list)
+        for req in reqs:
+            for extra in req.envs:
+                if extra != 'dev':
+                    extras[extra].append(req.name)
+        if extras:
+            doc['extras'] = dict(extras)
 
         doc['metadata'] = {
             # sha256 of tool.poetry section from pyproject.toml
@@ -64,7 +78,7 @@ class PoetryLockConverter(BaseConverter):
 
     # https://github.com/sdispater/poetry/blob/master/poetry.lock
     @classmethod
-    def _make_deps(cls, root, content) -> List[Dependency]:
+    def _make_deps(cls, root, content, extras=None) -> List[Dependency]:
         # get link
         url = None
         if 'source' in content:
@@ -74,6 +88,7 @@ class PoetryLockConverter(BaseConverter):
                 if 'reference' in content['source']:
                     url += '@' + content['source']['reference']
 
+        # make markers
         marker = content.get('marker', None)
         if content.get('python-versions', '*') != '*':
             python = RangeSpecifier(content['python-versions']).to_marker('python_version')
@@ -91,10 +106,15 @@ class PoetryLockConverter(BaseConverter):
             editable=False,
         )
 
+        # add extras
+        if extras:
+            for dep in deps:
+                dep.envs.extend(extras)
         if content.get('category', '') == 'dev':
             for dep in deps:
                 dep.envs.add('dev')
 
+        # add dependencies for dependencies
         subdeps = []
         for subname, subcontent in content.get('dependencies', dict()).items():
             if isinstance(subcontent, list):
