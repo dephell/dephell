@@ -33,11 +33,11 @@ def test_dumps_deps():
     assert len(reqs) > 2
 
     content = EggInfoConverter().dumps(reqs=reqs, project=resolver.graph.metainfo)
-    assert 'Requires: requests' in content
+    assert 'Requires-Dist: requests' in content
 
     parsed = Parser().parsestr(content)
     needed = {'attrs', 'cached-property', 'packaging', 'requests'}
-    assert set(parsed.get_all('Requires')) == needed
+    assert set(parsed.get_all('Requires-Dist')) == needed
 
 
 def test_dumps_metainfo():
@@ -48,7 +48,7 @@ def test_dumps_metainfo():
     assert len(reqs) > 2
 
     content = EggInfoConverter().dumps(reqs=reqs, project=resolver.graph.metainfo)
-    assert 'Requires: requests' in content
+    assert 'Requires-Dist: requests' in content
 
     parsed = Parser().parsestr(content)
     assert parsed.get('Name') == 'dephell'

@@ -101,7 +101,7 @@ class _Writer:
         converter = EggInfoConverter()
         getters = {
             'entry_points.txt': lambda: converter.make_entrypoints(project=project),
-            'METADATA': lambda: converter.make_info(reqs=reqs, project=project),
+            'METADATA': lambda: converter.make_info(reqs=reqs, project=project, with_requires=True),
             'top_level.txt': lambda: converter.make_top_level(project=project),
             'WHEEL': lambda: self.make_wheel(project=project),
         }

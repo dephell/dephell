@@ -6,14 +6,6 @@ to = {format = "setuppy", path = "setup.py"}
 from = {format = "setuppy", path = "setup.py"}
 to = {format = "egginfo", path = "."}
 
-[tool.dephell.sdist]
-from = {format = "setuppy", path = "setup.py"}
-to = {format = "sdist", path = "dist"}
-
-[tool.dephell.wheel]
-from = {format = "setuppy", path = "setup.py"}
-to = {format = "wheel", path = "dist"}
-
 [tool.dephell.flake8]
 from = {format = "pip", path = "requirements-flake.txt"}
 command = "flake8"

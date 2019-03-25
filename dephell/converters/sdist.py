@@ -70,7 +70,7 @@ class SDistConverter(BaseConverter):
             path.unlink()
 
         converter = EggInfoConverter()
-        info = converter.make_info(reqs=reqs, project=project)
+        info = converter.make_info(reqs=reqs, project=project, with_requires=False)
         getters = {
             'dependency_links.txt': lambda: '',
             'entry_points.txt': lambda: converter.make_entrypoints(project=project),
