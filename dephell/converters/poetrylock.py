@@ -90,6 +90,10 @@ class PoetryLockConverter(BaseConverter):
             editable=False,
         )
 
+        if content.get('category', '') == 'dev':
+            for dep in deps:
+                dep.envs.add('dev')
+
         subdeps = []
         for subname, subcontent in content.get('dependencies', dict()).items():
             if isinstance(subcontent, list):
@@ -124,6 +128,7 @@ class PoetryLockConverter(BaseConverter):
                 if isinstance(value, tuple):
                     value = list(value)
                 result[name] = value
+        result['category'] = 'dev' if 'dev' in req.envs else 'main'
         if 'version' not in result:
             result['version'] = '*'
         result['version'] = result['version'].lstrip('=')
