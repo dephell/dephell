@@ -70,7 +70,7 @@ class SDistConverter(BaseConverter):
             path.unlink()
 
         converter = EggInfoConverter()
-        info = converter.make_info(reqs=reqs, project=project)
+        info = converter.make_info(reqs=reqs, project=project, with_requires=False)
         getters = {
             'dependency_links.txt': lambda: '',
             'entry_points.txt': lambda: converter.make_entrypoints(project=project),
@@ -108,7 +108,7 @@ class SDistConverter(BaseConverter):
                     rst = project.readme.to_rst()
                     tar.add(
                         name=str(rst.path),
-                        arcname=rst.name,
+                        arcname=rst.path.name,
                         filter=self._set_uid_gid,
                     )
                 elif (project.package.path / 'README.md').exists():

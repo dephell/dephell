@@ -1,4 +1,5 @@
 # app
+from .build import BuildCommand
 from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
 from .init import InitCommand
@@ -15,6 +16,7 @@ from .venv_shell import VenvShellCommand
 
 __all__ = [
     'commands',
+    'BuildCommand',
     'DepsConvertCommand',
     'DepsInstallCommand',
     'InitCommand',
@@ -31,6 +33,7 @@ __all__ = [
 
 
 commands = {
+    'build': BuildCommand,
     'deps convert': DepsConvertCommand,
     'deps install': DepsInstallCommand,
     # 'deps remove': ...,

@@ -7,6 +7,7 @@ from typing import Optional
 
 # external
 from dephell_discover import Root as PackageRoot
+from dephell_markers import Markers
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
@@ -181,7 +182,7 @@ class _Writer:
             path = Path(path)
 
         if path.is_file():
-            path.write_text(self.make_info(reqs=reqs, project=project))
+            path.write_text(self.make_info(reqs=reqs, project=project, with_requires=False))
             return
 
         if path.suffix != '.egg-info':
@@ -190,15 +191,15 @@ class _Writer:
 
         (path / 'dependency_links.txt').touch()
         (path / 'entry_points.txt').write_text(self.make_entrypoints(project=project))
-        (path / 'PKG-INFO').write_text(self.make_info(reqs=reqs, project=project))
+        (path / 'PKG-INFO').write_text(self.make_info(reqs=reqs, project=project, with_requires=False))
         (path / 'requires.txt').write_text(self.make_requires(reqs=reqs))
         (path / 'SOURCES.txt').write_text(self.make_sources(project=project))
         (path / 'top_level.txt').write_text(self.make_top_level(project=project))
 
     def dumps(self, reqs, project: RootDependency, content: Optional[str] = None) -> str:
-        return self.make_info(reqs=reqs, project=project)
+        return self.make_info(reqs=reqs, project=project, with_requires=True)
 
-    def make_info(self, reqs, project: RootDependency) -> str:
+    def make_info(self, reqs, project: RootDependency, with_requires: bool) -> str:
         # distutils.dist.DistributionMetadata.write_pkg_file
         content = []
         content.append(('Metadata-Version', '2.1'))
@@ -239,8 +240,9 @@ class _Writer:
             content.append(('Classifier', classifier))
         for platform in project.platforms:
             content.append(('Platform', platform))
-        for req in reqs:
-            content.append(('Requires', self._format_req(req=req)))
+        if with_requires:
+            for req in reqs:
+                content.append(('Requires-Dist', self._format_req(req=req, with_envs=True)))
 
         extras = set()
         for req in reqs:
@@ -261,13 +263,13 @@ class _Writer:
                 for env in req.envs:
                     extras[env].append(req)
             else:
-                content.append(self._format_req(req=req))
+                content.append(self._format_req(req=req, with_envs=False))
 
         # write extra deps
         for extra, reqs in sorted(extras.items()):
             content.append('\n[{}]'.format(extra))
             for req in sorted(reqs):
-                content.append(self._format_req(req=req))
+                content.append(self._format_req(req=req, with_envs=False))
 
         return '\n'.join(content)
 
@@ -308,14 +310,22 @@ class _Writer:
         return '\n'.join(sorted(content))
 
     @staticmethod
-    def _format_req(req) -> str:
+    def _format_req(req, with_envs: bool) -> str:
         line = req.name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))
         if req.version:
             line += req.version
+
+        markers = None
         if req.markers:
-            line += '; ' + req.markers
+            markers = Markers(req.markers)
+        if with_envs and req.envs:
+            env_markers = Markers(' or '.join('extra == "{}"'.format(env) for env in req.envs))
+            markers = markers & env_markers if markers else env_markers
+        if markers:
+            line += '; ' + str(markers)
+
         return line
 
 
