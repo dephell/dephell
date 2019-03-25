@@ -56,7 +56,7 @@ class DepsInstallCommand(BaseCommand):
 
         # filter deps by envs
         layer = resolver.graph.get_layer(1)
-        for dep in layer.copy():
+        for dep in layer:
             if not dep.applied:
                 continue
             if not dep.envs and 'main' in self.config['envs']:
@@ -64,7 +64,6 @@ class DepsInstallCommand(BaseCommand):
             if dep.envs & set(self.config['envs']):
                 continue
             resolver.unapply(dep)
-        resolver.graph.clear()
 
         # get executable
         executable = Path(sys.executable)
