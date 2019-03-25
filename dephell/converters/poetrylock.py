@@ -31,9 +31,10 @@ class PoetryLockConverter(BaseConverter):
 
     def loads(self, content) -> RootDependency:
         doc = tomlkit.parse(content)
+        root = RootDependency()
+        root.python = RangeSpecifier(doc.get('metadata', {}).get('python-versions', '*'))
 
         deps = []
-        root = RootDependency()
         if 'package' in doc:
             for content in doc['package']:
                 deps.extend(self._make_deps(root=root, content=content))
@@ -51,8 +52,8 @@ class PoetryLockConverter(BaseConverter):
         doc['metadata'] = {
             # sha256 of tool.poetry section from pyproject.toml
             # 'content-hash': ...,
-            'platform': '*',
-            'python-versions': '*',
+            # 'platform': '*',
+            'python-versions': str(project.python),
         }
 
         doc['metadata']['hashes'] = tomlkit.table()
