@@ -1,7 +1,10 @@
 # built-in
+from base64 import urlsafe_b64encode
+from hashlib import sha256
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
+from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 
 # external
 from dephell_archive import ArchivePath
@@ -85,18 +88,65 @@ class _Reader:
 
 
 class _Writer:
+    def dump(self, reqs, path: Path, project: RootDependency) -> None:
+        if isinstance(path, str):
+            path = Path(path)
+        if path.suffix not in ('.whl', '.zip'):
+            path /= '{}-{}-py3-none-any.whl'.format(project.name, str(project.version))
+        path.parent.mkdir(exist_ok=True, parents=True)
+        if path.exists():
+            path.unlink()
+
+        converter = EggInfoConverter()
+        getters = {
+            'entry_points.txt': lambda: converter.make_entrypoints(project=project),
+            'METADATA': lambda: converter.make_info(reqs=reqs, project=project),
+            'top_level.txt': lambda: converter.make_top_level(project=project),
+            'WHEEL': lambda: self.make_wheel(project=project),
+        }
+
+        self._records = []
+        base_path = '{}-{}.dist-info/'.format(project.name, str(project.version))
+        with path.open('w+b') as stream:
+            with ZipFile(stream, mode='w', compression=ZIP_DEFLATED) as zip:
+                # write metafiles
+                for fname, getter in getters.items():
+                    self._write_content(zip=zip, path=base_path + fname, content=getter())
+
+                # write RECORD
+                self._write_content(
+                    zip=zip,
+                    path=base_path + 'RECORD',
+                    content=self.make_records(path=base_path + 'RECORD'),
+                )
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         return EggInfoConverter().dumps(reqs=reqs, project=project, content=content)
 
+    def _write_content(self, zip, path: str, content: str) -> None:
+        content = content.encode('utf-8')
+
+        # write content into archive
+        zip_info = ZipInfo(path)
+        zip.writestr(zip_info, content, compress_type=ZIP_DEFLATED)
+
+        # calculate hashsum
+        digest = sha256(content).digest()
+        digest = urlsafe_b64encode(digest).decode().rstrip("=")
+        self._records.append((path, digest, len(content)))
+
     @staticmethod
-    def make_wheel(paroject: RootDependency) -> str:
+    def make_wheel(project: RootDependency) -> str:
         return (
             'Wheel-Version: 1.0\n'
             'Generator: dephell (0.1.0)\n'
             'Root-Is-Purelib: true\n'
-            'Tag: py3-none-any\n',
+            'Tag: py3-none-any\n'
         )
+
+    def make_records(self, path: str) -> str:
+        content = '\n'.join('{},sha256={},{}'.format(*record) for record in self._records)
+        return content + ('\n{},,'.format(path))
 
 
 class WheelConverter(_Reader, _Writer, BaseConverter):
