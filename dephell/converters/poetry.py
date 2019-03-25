@@ -75,16 +75,17 @@ class PoetryConverter(BaseConverter):
 
         # get extras for deps
         extras = defaultdict(set)
-        if 'extras' in section:
-            for extra, deps in section['extras'].items():
-                for dep in deps:
-                    extras[dep].add(extra)
+        for extra, deps in section.get('extras', {}).items():
+            for dep in deps:
+                extras[dep].add(extra)
+        for dep in section.get('dev-dependencies', {}):
+            extras[dep].add('dev')
 
         # read dependencies
         deps = []
-        if 'dependencies' in section:
-            for name, content in section['dependencies'].items():
-                if name == 'python':
+        for section_name in ('dependencies', 'dev-dependencies'):
+            for name, content in section.get(section_name, {}).items():
+                if name == 'python' and section_name == 'dependencies':
                     root.python = RangeSpecifier(content)
                     continue
                 deps.extend(self._make_deps(
@@ -131,28 +132,31 @@ class PoetryConverter(BaseConverter):
         self._add_entrypoints(section=section, entrypoints=project.entrypoints)
 
         # dependencies
-        if 'dependencies' in section:
+        for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
+            if section_name not in section:
+                section[section_name] = tomlkit.table()
+                continue
             # clean dependencies from old dependencies
-            names = {req.name for req in reqs} | {'python'}
-            for name in dict(section['dependencies']):
+            names = {req.name for req in reqs if ('dev' in req.envs) is is_dev} | {'python'}
+            for name in dict(section[section_name]):
                 if name not in names:
-                    del section['dependencies'][name]
-        else:
-            section['dependencies'] = tomlkit.table()
+                    del section[section_name][name]
 
         # python version
         section['dependencies']['python'] = str(project.python)
 
         # write dependencies
-        for req in reqs:
-            section['dependencies'][req.name] = self._format_req(req=req)
+        for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
+            for req in reqs:
+                if ('dev' in req.envs) is is_dev:
+                    section[section_name][req.name] = self._format_req(req=req)
 
         # extras
         extras = defaultdict(list)
         for req in reqs:
             for extra in req.envs:
-                extras[extra].append(req.name)
-        print(extras)
+                if extra != 'dev':
+                    extras[extra].append(req.name)
         if extras:
             if 'extras' in section:
                 # drop old extras

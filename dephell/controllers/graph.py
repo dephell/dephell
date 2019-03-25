@@ -38,7 +38,17 @@ class Layer:
         raise KeyError('Dependency already added in layer: ' + dep.name)
 
     def clear(self) -> None:
-        self._mapping = {name: dep for name, dep in self._mapping.items() if dep.used}
+        for name, dep in self._mapping.copy().items():
+            if not dep.used:
+                del self._mapping[name]
+
+    def copy(self) -> 'Layer':
+        return type(self)(self.level, *self._mapping.values())
+
+    # magic methods
+
+    def __delitem__(self, name):
+        del self._mapping[name]
 
     def __contains__(self, dep) -> bool:
         if not isinstance(dep, str):

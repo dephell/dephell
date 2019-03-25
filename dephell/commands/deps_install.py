@@ -54,6 +54,17 @@ class DepsInstallCommand(BaseCommand):
             print(conflict)
             return False
 
+        # filter deps by envs
+        layer = resolver.graph.get_layer(1)
+        for dep in layer:
+            if not dep.applied:
+                continue
+            if not dep.envs and 'main' in self.config['envs']:
+                continue
+            if dep.envs & set(self.config['envs']):
+                continue
+            resolver.unapply(dep)
+
         # get executable
         executable = Path(sys.executable)
         venvs = VEnvs(path=self.config['venv'])

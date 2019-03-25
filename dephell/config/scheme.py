@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES
+from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES
 
 
 _TARGET = dict(
@@ -13,12 +13,6 @@ _TARGET = dict(
         'path': dict(
             type='string',
             required=True,
-        ),
-        'envs': dict(
-            type='list',
-            required=False,
-            default=('main', 'dev'),
-            allowed=ENVS,
         ),
     },
 )
@@ -34,6 +28,11 @@ SCHEME = {
         required=False,
         empty=True,
     ),
+    'envs': dict(
+        type='list',
+        required=True,
+    ),
+
     'silent':       dict(type='boolean', required=True),
     'warehouse':    dict(type='string', required=True),
     'bitbucket':    dict(type='string', required=True),

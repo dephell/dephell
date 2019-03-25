@@ -105,7 +105,7 @@ class PIPFileConverter(BaseConverter):
                 continue
 
             # clean packages from old packages
-            names = {req.name for req in reqs if is_dev is req.optional}
+            names = {req.name for req in reqs if is_dev is bool(req.envs)}
             for name in doc[section]:
                 if name not in names:
                     del doc[section][name]
@@ -113,7 +113,7 @@ class PIPFileConverter(BaseConverter):
         # write new packages
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             for req in reqs:
-                if is_dev is req.optional:
+                if is_dev is bool(req.envs):
                     doc[section][req.name] = self._format_req(req=req)
 
         return tomlkit.dumps(doc)

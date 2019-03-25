@@ -72,7 +72,7 @@ class Requirement:
 
     @property
     def optional(self) -> bool:
-        return bool(self.dep.envs)
+        return bool(self.dep.envs - {'dev'})
 
     @property
     def git(self) -> Optional[str]:

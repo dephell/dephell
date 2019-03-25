@@ -192,13 +192,10 @@ class Dependency:
             self.link = dep.link
             self.repo = dep.repo
 
-        if dep.marker is not None:
-            if self.marker is not None:
-                marker = self.marker & dep.marker
-                # if markers incompatible then just reset them and hope in luck.
-                self.marker = marker if marker.compat else None
-            else:
-                self.marker = dep.marker
+        if dep.marker is not None and self.marker is not None:
+            self.marker |= dep.marker
+        else:
+            self.marker = None
 
         self.constraint &= dep.constraint
         self.groups.actualize()

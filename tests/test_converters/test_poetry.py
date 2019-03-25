@@ -21,6 +21,9 @@ def test_load():
     assert deps['django'].link.rev == '1.11.4'
     assert isinstance(deps['django'].repo, GitRepo)
 
+    assert deps['mysqlclient'].envs == {'mysql'}
+    assert deps['pytest'].envs == {'dev'}
+
 
 def test_dump():
     converter = PoetryConverter()
@@ -41,3 +44,5 @@ def test_dump():
 
     assert parsed['dependencies']['django']['git'] == 'https://github.com/django/django.git'
     assert parsed['dependencies']['django']['rev'] == '1.11.4'
+
+    assert 'pytest' in parsed['dev-dependencies']

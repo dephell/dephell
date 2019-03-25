@@ -16,6 +16,7 @@ command = "flake8"
 
 [tool.dephell.pytest]
 from = {format = "setuppy", path = "setup.py"}
+envs = ["main", "tests"]
 command = "pytest"
 
 [tool.poetry]
@@ -53,3 +54,9 @@ dephell_markers = "*"     # https://github.com/dephell/dephell_markers
 dephell_pythons = "*"     # https://github.com/dephell/dephell_pythons
 dephell_shells = "*"      # https://github.com/dephell/dephell_shells
 dephell_specifier = "*"   # https://github.com/dephell/dephell_specifier
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+
+[tool.poetry.extras]
+tests = ["pytest"]

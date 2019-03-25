@@ -1,5 +1,5 @@
 # app
-from ..constants import ENVS, FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES
+from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES
 
 
 env_help = (
@@ -21,7 +21,6 @@ def build_from(parser):
     from_group.add_argument('--from', help='path or format for reading requirements.')
     from_group.add_argument('--from-format', choices=FORMATS, help='format for reading requirements.')
     from_group.add_argument('--from-path', help='path to input file.')
-    from_group.add_argument('--from-env', action='append', dest='from_envs', choices=ENVS, help=env_help)
 
 
 def build_to(parser):
@@ -29,7 +28,6 @@ def build_to(parser):
     to_group.add_argument('--to', help='path or format for writing requirements.')
     to_group.add_argument('--to-format', choices=FORMATS, help='output requirements file format.')
     to_group.add_argument('--to-path', help='path to output file.')
-    to_group.add_argument('--to-env', action='append', dest='to_envs', choices=ENVS, help=env_help)
 
 
 def build_resolver(parser):
@@ -68,3 +66,5 @@ def build_other(parser):
 
     other_group.add_argument('--project', help='path to the current project')
     other_group.add_argument('--bin', help='path to the dir for installing scripts')
+
+    other_group.add_argument('--envs', nargs='*', help='environments (main, dev) or extras to install')
