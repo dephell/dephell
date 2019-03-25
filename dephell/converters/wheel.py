@@ -1,6 +1,7 @@
 # built-in
 from base64 import urlsafe_b64encode
 from hashlib import sha256
+from itertools import chain
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
@@ -113,6 +114,15 @@ class _Writer:
                 for fname, getter in getters.items():
                     self._write_content(zip=zip, path=base_path + fname, content=getter())
 
+                # write packages
+                for package in chain(project.package.packages, project.package.data):
+                    for full_path in package:
+                        self._write_file(
+                            zip=zip,
+                            path='/'.join(full_path.relative_to(project.package.path).parts),
+                            fpath=full_path,
+                        )
+
                 # write RECORD
                 self._write_content(
                     zip=zip,
@@ -134,6 +144,23 @@ class _Writer:
         digest = sha256(content).digest()
         digest = urlsafe_b64encode(digest).decode().rstrip("=")
         self._records.append((path, digest, len(content)))
+
+    def _write_file(self, zip, path: str, fpath: Path) -> None:
+        # write content into archive
+        zip.write(filename=str(fpath), arcname=path, compress_type=ZIP_DEFLATED)
+
+        # calculate hashsum
+        # https://stackoverflow.com/questions/22058048/hashing-a-file-in-python
+        digest = sha256()
+        with fpath.open('rb') as stream:
+            while True:
+                data = stream.read(65536)
+                if not data:
+                    break
+                digest.update(data)
+        digest = urlsafe_b64encode(digest.digest()).decode().rstrip("=")
+
+        self._records.append((path, digest, fpath.stat().st_size))
 
     @staticmethod
     def make_wheel(project: RootDependency) -> str:
