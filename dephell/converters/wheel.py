@@ -142,7 +142,7 @@ class _Writer:
 
         # calculate hashsum
         digest = sha256(content).digest()
-        digest = urlsafe_b64encode(digest).decode().rstrip("=")
+        digest = urlsafe_b64encode(digest).decode().rstrip('=')
         self._records.append((path, digest, len(content)))
 
     def _write_file(self, zip, path: str, fpath: Path) -> None:
@@ -158,7 +158,7 @@ class _Writer:
                 if not data:
                     break
                 digest.update(data)
-        digest = urlsafe_b64encode(digest.digest()).decode().rstrip("=")
+        digest = urlsafe_b64encode(digest.digest()).decode().rstrip('=')
 
         self._records.append((path, digest, fpath.stat().st_size))
 

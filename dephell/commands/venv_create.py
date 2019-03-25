@@ -34,4 +34,5 @@ class VenvCreateCommand(BaseCommand):
         python = get_python(self.config)
         self.logger.debug('choosen python', extra=dict(version=python.version))
         venv.create(python_path=python.path)
+        self.logger.info('venv created', extra=dict(path=venv.path))
         return True

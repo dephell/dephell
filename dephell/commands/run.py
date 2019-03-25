@@ -12,6 +12,7 @@ from ..controllers import analize_conflict
 from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
+from .helpers import get_python
 
 
 class RunCommand(BaseCommand):
@@ -42,11 +43,14 @@ class RunCommand(BaseCommand):
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
-            self.logger.error('venv does not exists', extra=dict(
+            self.logger.warning('venv does not exist, creating...', extra=dict(
                 project=self.config['project'],
                 env=self.config.env,
             ))
-            return False
+            python = get_python(self.config)
+            self.logger.debug('choosen python', extra=dict(version=python.version))
+            venv.create(python_path=python.path)
+            self.logger.info('venv created', extra=dict(path=venv.path))
 
         executable = venv.bin_path / command[0]
         if not executable.exists():
@@ -62,7 +66,7 @@ class RunCommand(BaseCommand):
 
     def _install(self, name: str, venv) -> bool:
         # resolve
-        resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
+        resolver = PIPConverter(lock=False).loads_resolver(name)
         self.logger.info('build dependencies graph...')
         resolved = resolver.resolve()
         if not resolved:

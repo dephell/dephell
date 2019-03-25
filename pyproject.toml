@@ -2,10 +2,6 @@
 from = {format = "poetry", path = "pyproject.toml"}
 to = {format = "setuppy", path = "setup.py"}
 
-[tool.dephell.egg]
-from = {format = "setuppy", path = "setup.py"}
-to = {format = "egginfo", path = "."}
-
 [tool.dephell.flake8]
 from = {format = "pip", path = "requirements-flake.txt"}
 command = "flake8"
