@@ -12,12 +12,7 @@ from .base import BaseConverter
 from .egginfo import EggInfoConverter
 
 
-class WheelConverter(BaseConverter):
-    """
-    PEP-0427
-    https://www.python.org/dev/peps/pep-0427/
-    """
-    lock = False
+class _Reader:
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if content is not None:
@@ -78,3 +73,22 @@ class WheelConverter(BaseConverter):
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         return EggInfoConverter().dumps(reqs=reqs, project=project, content=content)
+
+
+class _Writer:
+    @staticmethod()
+    def make_wheel(paroject: RootDependency) -> str:
+        return (
+            'Wheel-Version: 1.0\n'
+            'Generator: dephell (0.1.0)\n'
+            'Root-Is-Purelib: true\n'
+            'Tag: py3-none-any\n',
+        )
+
+
+class WheelConverter(_Reader, _Writer, BaseConverter):
+    """
+    PEP-0427
+    https://www.python.org/dev/peps/pep-0427/
+    """
+    lock = False
