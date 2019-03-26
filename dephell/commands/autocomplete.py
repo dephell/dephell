@@ -1,6 +1,5 @@
 # built-in
 from argparse import ArgumentParser
-from pathlib import Path
 from collections import defaultdict
 
 from jinja2 import Environment, PackageLoader
@@ -46,7 +45,12 @@ class AutocompleteCommand(BaseCommand):
             if subcommand:
                 tree[command].add(subcommand)
 
-        script = template.render(first_words=first_words, tree=tree)
+        arguments = defaultdict(set)
+        for command_name, command in commands.items():
+            for action in command.get_parser()._actions:
+                arguments[command_name].update(action.option_strings)
+
+        script = template.render(first_words=first_words, tree=tree, arguments=arguments)
         print(script)
 
         return True

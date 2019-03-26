@@ -1,9 +1,10 @@
 _dephell()
 {
-  local first second current
+  local first second current double
   COMPREPLY=()
   first="${COMP_WORDS[1]}"
   second="${COMP_WORDS[2]}"
+  double="${COMP_WORDS[1]} ${COMP_WORDS[2]}"
   current="${COMP_WORDS[COMP_CWORD]}"
 
   # autocomplete command first word
@@ -25,5 +26,29 @@ _dephell()
       ;;
     esac
   fi
+
+  # autocomplete one-word command arguments
+  case "${first}" in
+    {% for command, args in arguments.items() %}
+      "{{ command }}")
+        COMPREPLY=( $(compgen -W "{% for a in args %}{{ a }} {% endfor %}" -- ${current}) )
+        return 0
+        ;;
+    {% endfor %}
+    *)
+    ;;
+  esac
+
+  # autocomplete two-words command arguments
+  case "${double}" in
+    {% for command, args in arguments.items() %}
+      "{{ command }}")
+        COMPREPLY=( $(compgen -W "{% for a in args %}{{ a }} {% endfor %}" -- ${current}) )
+        return 0
+        ;;
+    {% endfor %}
+    *)
+    ;;
+  esac
 }
 complete -F _dephell dephell
