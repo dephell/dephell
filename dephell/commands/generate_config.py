@@ -13,11 +13,11 @@ from ..converters import CONVERTERS
 from .base import BaseCommand
 
 
-class InitCommand(BaseCommand):
+class GenerateConfigCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell init',
+            prog='python3 -m dephell generate config',
             description='Create config file for dephell',
         )
         builders.build_config(parser)

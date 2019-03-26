@@ -20,7 +20,7 @@ _TARGET = dict(
 
 # all fields with default value (defaults.py) marked as required.
 SCHEME = {
-    'from': dict(required=True, **_TARGET),
+    'from': dict(required=False, **_TARGET),
     'to': dict(required=False, **_TARGET),
     'and': dict(
         type='list',

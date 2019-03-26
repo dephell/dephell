@@ -27,7 +27,9 @@ class BaseCommand:
         if args.config:
             config.attach_file(path=args.config, env=args.env)
         elif os.path.exists('pyproject.toml'):
-            config.attach_file(path='pyproject.toml', env=args.env)
+            data = config.attach_file(path='pyproject.toml', env=args.env, silent=True)
+            if data is None:
+                cls.logger.warning('cannot find tool.dephell section in the config')
         else:
             cls.logger.warning('cannot find config file')
         config.attach_cli(args)

@@ -77,13 +77,15 @@ class Config:
 
         raise LookupError('cannot determine converter for file: ' + str(text))
 
-    def attach_file(self, path: str, env: str) -> dict:
+    def attach_file(self, path: str, env: str, silent: bool = False) -> Optional[dict]:
         # read
         with open(path, 'r', encoding='utf8') as stream:
             doc = tomlkit.parse(stream.read())
 
         # get section
         if 'tool' not in doc or 'dephell' not in doc['tool']:
+            if silent:
+                return None
             raise KeyError('section [tool.dephell...] not found')
         data = dict(doc['tool']['dephell'])
 
