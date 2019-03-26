@@ -3,15 +3,15 @@ from .build import BuildCommand
 from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
 from .deps_licenses import DepsLicensesCommand
-from .init import InitCommand
+from .generate_config import InitCommand
 from .inspect_config import InspectConfigCommand
 from .inspect_venv import InspectVenvCommand
 from .install import InstallCommand
 from .jail_install import JailInstallCommand
 from .jail_remove import JailRemoveCommand
-from .run import RunCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
+from .venv_run import RunCommand
 from .venv_shell import VenvShellCommand
 
 
