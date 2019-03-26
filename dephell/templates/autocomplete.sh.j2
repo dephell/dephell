@@ -1,0 +1,15 @@
+_dephell()
+{
+    local first second current
+    COMPREPLY=()
+    first="${COMP_WORDS[1]}"
+    second="${COMP_WORDS[2]}"
+    current="${COMP_WORDS[COMP_CWORD]}"
+
+    # autocomplete command first word
+    if [[ ${first} == ${current} ]] ; then
+        COMPREPLY=( $(compgen -W "{% for c in commands %}{{ c }} {% endfor %}" -- ${current}) )
+        return 0
+    fi
+}
+complete -F _dephell dephell
