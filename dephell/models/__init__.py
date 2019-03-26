@@ -21,9 +21,7 @@ __all__ = [
     'GitRelease',
     'Group',
     'Groups',
-    'RangeSpecifier',
     'Release',
     'Requirement',
     'RootDependency',
-    'Specifier',
 ]

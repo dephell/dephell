@@ -20,4 +20,6 @@ DepHell
     :maxdepth: 1
     :caption: Commands
 
+    command-autocomplete
     command-build
+    command-deps-convert
