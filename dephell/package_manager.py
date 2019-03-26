@@ -31,6 +31,9 @@ class PackageManager:
             logger.debug(path.read_text())
             return self.run('install', '--no-deps', '-r', str(path))
 
+    def remove(self, reqs: List[Requirement]) -> int:
+        return self.run('uninstall', '-y', *[req.name for req in reqs])
+
     def run(self, *args) -> int:
         command_pip = [str(self.executable), '-m', 'pip'] + list(args)
         command_grep = [sys.executable, '-m', 'dephell.pip_cleaner']
