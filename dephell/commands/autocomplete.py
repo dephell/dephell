@@ -83,4 +83,24 @@ class AutocompleteCommand(BaseCommand):
             break
 
     def _zsh(self):
-        ...
+        from . import commands
+
+        template = env.get_template('autocomplete-zsh.sh.j2')
+        tree = defaultdict(set)
+        first_words = set()
+        for command_name, command in commands.items():
+            command_name, _sep, subcommand = command_name.partition(' ')
+            first_words.add(command_name)
+            if subcommand:
+                tree[command_name].add((subcommand, command.get_parser().description))
+
+        arguments = defaultdict(list)
+        for command_name, command in commands.items():
+            for action in command.get_parser()._actions:
+                arguments[command_name].append((action.option_strings, action.help))
+
+        script = template.render(first_words=first_words, tree=tree, arguments=arguments)
+        print(script)
+        path = Path.home() / '.oh-my-zsh' / 'custom' / 'dephell' / '_dephell'
+        path.write_text(script)
+        path.chmod(0o777)
