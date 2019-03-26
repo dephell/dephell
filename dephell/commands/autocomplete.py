@@ -98,7 +98,8 @@ class AutocompleteCommand(BaseCommand):
         arguments = defaultdict(list)
         for command_name, command in commands.items():
             for action in command.get_parser()._actions:
-                arguments[command_name].append((action.option_strings, action.help))
+                if action.help:
+                    arguments[command_name].append((action.option_strings, action.help))
 
         script = template.render(first_words=first_words, tree=tree, arguments=arguments)
         path = Path(user_data_dir('dephell')) / '_dephell_zsh_autocomplete'

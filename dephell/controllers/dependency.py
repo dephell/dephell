@@ -85,3 +85,17 @@ class DependencyMaker:
             for extra in extras:
                 deps.append(cls.extra_class.from_dep(dep=base_dep, extra=extra))
         return deps
+
+    @classmethod
+    def from_root(cls, dep, root) -> Dependency:
+        return cls.from_params(
+            raw_name=dep.raw_name,
+            constraint=Constraint('==' + dep.version),
+            source=root,
+
+            authors=dep.authors,
+            classifiers=dep.classifiers,
+            description=dep.description,
+            license=dep.license,
+            links=dep.links,
+        )
