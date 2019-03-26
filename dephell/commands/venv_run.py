@@ -15,11 +15,11 @@ from ..package_manager import PackageManager
 from .helpers import get_python
 
 
-class RunCommand(BaseCommand):
+class VenvRunCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='dephell run',
+            prog='dephell venv run',
             description='Run command inside venv',
         )
         builders.build_config(parser)
