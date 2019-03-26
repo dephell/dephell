@@ -36,6 +36,41 @@ _dephell()
       ;;
     esac
   fi
+
+  # autocomplete one-word command arguments
+  case "${first}" in
+    {% for command, args in arguments.items() %}
+      "{{ command }}")
+        commands=(
+          {% for opts, descr in args %}
+            '{{ opts[0] }}:{{ descr }}'
+          {% endfor %}
+        )
+        _describe 'command' commands
+        return 0
+        ;;
+    {% endfor %}
+    *)
+    ;;
+  esac
+
+  # autocomplete two-words command arguments
+  case "${double}" in
+    {% for command, args in arguments.items() %}
+      "{{ command }}")
+        commands=(
+          {% for opts, descr in args %}
+            '{{ opts[-1] }}:{{ descr }}'
+          {% endfor %}
+        )
+        _describe 'command' commands
+        return 0
+        ;;
+    {% endfor %}
+    *)
+    ;;
+  esac
+
 }
 
 compdef _dephell dephell
