@@ -4,6 +4,7 @@ from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
 from .deps_licenses import DepsLicensesCommand
 from .generate_config import GenerateConfigCommand
+from .generate_editorconfig import GenerateEditorconfigCommand
 from .generate_license import GenerateLicenseCommand
 from .inspect_config import InspectConfigCommand
 from .inspect_venv import InspectVenvCommand
@@ -23,6 +24,7 @@ __all__ = [
     'DepsInstallCommand',
     'DepsLicensesCommand',
     'GenerateConfigCommand',
+    'GenerateEditorconfigCommand',
     'GenerateLicenseCommand',
     'InspectConfigCommand',
     'InspectVenvCommand',
@@ -44,6 +46,7 @@ commands = {
     # 'deps remove': ...,
     # 'deps sync': ...,
     'generate config': GenerateConfigCommand,
+    'generate editorconfig': GenerateEditorconfigCommand,
     'generate license': GenerateLicenseCommand,
     'inspect config': InspectConfigCommand,
     'inspect venv': InspectVenvCommand,
