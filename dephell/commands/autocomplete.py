@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 from pathlib import Path
 
+from appdirs import user_data_dir
 from dephell_shells import Shells
 from jinja2 import Environment, PackageLoader
 
@@ -100,7 +101,11 @@ class AutocompleteCommand(BaseCommand):
                 arguments[command_name].append((action.option_strings, action.help))
 
         script = template.render(first_words=first_words, tree=tree, arguments=arguments)
-        print(script)
-        path = Path.home() / '.oh-my-zsh' / 'custom' / 'dephell' / '_dephell'
+        path = Path(user_data_dir('dephell')) / '_dephell_zsh_autocomplete'
         path.write_text(script)
         path.chmod(0o777)
+
+        rc_path = Path.home() / '.zshrc'
+        if str(path) not in rc_path.read_text():
+            with rc_path.open('a') as stream:
+                stream.write('\n\nsource {}\n'.format(str(path)))
