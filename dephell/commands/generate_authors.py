@@ -29,7 +29,7 @@ class GenerateAuthorsCommand(BaseCommand):
             mail = mail.strip().replace('"', '')
             name = name.strip().replace('"', '')
             authors[mail] = name
-        text = '\n'.join('{} <{}>'.format(name, mail) for mail, name in authors.items())
-        Path('AUTHORS').write_text(text)
+        lines = ('{} <{}>'.format(name, mail) for mail, name in authors.items())
+        Path('AUTHORS').write_text('\n'.join(sorted(lines)))
         self.logger.info('AUTHORS generated')
         return True
