@@ -135,9 +135,20 @@ class _Reader:
         if root is None:
             root = RootDependency(raw_name=self._get_name(content=content))
         deps = []
-        for req in content.split():
+        extra = None
+        for req in content.split('\n'):
+            req = req.strip()
+            if not req:
+                continue
+            if req[0] == '[' and req[-1] == ']':
+                extra = req[1:-1]
+                continue
             req = PackagingRequirement(req)
-            deps.extend(DependencyMaker.from_requirement(source=root, req=req))
+            subdeps = DependencyMaker.from_requirement(source=root, req=req)
+            if extra:
+                for dep in subdeps:
+                    dep.envs.add(extra)
+            deps.extend(subdeps)
         root.attach_dependencies(deps)
         return root
 

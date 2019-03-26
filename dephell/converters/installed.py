@@ -16,17 +16,15 @@ class InstalledConverter(BaseConverter):
     def load(self, path=None) -> RootDependency:
         paths = [path] if path else sys.path
         root = RootDependency(raw_name='installed')
-        deps = []
         for path in paths:
             if isinstance(path, str):
                 path = Path(path)
             for info_path in path.glob('*.egg-info'):
                 subroot = EggInfoConverter().load(info_path)
-                dep = DependencyMaker.from_root(dep=subroot, root=root)
-                deps.append(dep)
+                deps = DependencyMaker.from_root(dep=subroot, root=root)
+                root.attach_dependencies(deps)
             for info_path in path.glob('*.dist-info'):
                 subroot = WheelConverter().load(info_path)
-                dep = DependencyMaker.from_root(dep=subroot, root=root)
-                deps.append(dep)
-        root.attach_dependencies(deps)
+                deps = DependencyMaker.from_root(dep=subroot, root=root)
+                root.attach_dependencies(deps)
         return root

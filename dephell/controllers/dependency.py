@@ -1,5 +1,6 @@
 # built-in
 import re
+from contextlib import suppress
 from typing import List, Optional, Union
 
 # external
@@ -34,10 +35,13 @@ class DependencyMaker:
         constraint = Constraint(source, req.specifier)
         if isinstance(link, VCSLink) and link.rev:
             constraint._specs[source.name] = GitSpecifier()
+
+        marker = None
         if req.marker is not None:
-            marker = Markers(req.marker)
-        else:
-            marker = None
+            # some libs uses `in` fro python_version,
+            # but dephell_markers isn't ready for this
+            with suppress(ValueError):
+                marker = Markers(req.marker)
 
         base_dep = cls.dep_class(
             raw_name=req.name,
@@ -87,10 +91,10 @@ class DependencyMaker:
         return deps
 
     @classmethod
-    def from_root(cls, dep, root) -> Dependency:
+    def from_root(cls, dep, root) -> List[Union[Dependency, ExtraDependency]]:
         return cls.from_params(
             raw_name=dep.raw_name,
-            constraint=Constraint('==' + dep.version),
+            constraint='==' + dep.version,
             source=root,
 
             authors=dep.authors,

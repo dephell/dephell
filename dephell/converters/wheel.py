@@ -59,7 +59,7 @@ class _Reader:
                     raise FileExistsError('too many METADATA in dir')
                 path = paths[0].parent
 
-                return self.load_dir(path)
+            return self.load_dir(path)
 
     def load_dir(self, path) -> RootDependency:
         if not (path / 'METADATA').exists():
