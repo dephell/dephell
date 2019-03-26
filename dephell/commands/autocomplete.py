@@ -39,11 +39,14 @@ class AutocompleteCommand(BaseCommand):
 
         template = env.get_template('autocomplete.sh.j2')
         tree = defaultdict(set)
+        first_words = set()
         for command in commands:
             command, _sep, subcommand = command.partition(' ')
-            tree[command].add(subcommand)
+            first_words.add(command)
+            if subcommand:
+                tree[command].add(subcommand)
 
-        script = template.render(commands=tree)
+        script = template.render(first_words=first_words, tree=tree)
         print(script)
 
         return True
