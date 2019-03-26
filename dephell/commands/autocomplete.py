@@ -1,7 +1,9 @@
 # built-in
 from argparse import ArgumentParser
 from collections import defaultdict
+from pathlib import Path
 
+from dephell_shells import Shells
 from jinja2 import Environment, PackageLoader
 
 # app
@@ -34,6 +36,23 @@ class AutocompleteCommand(BaseCommand):
         return parser
 
     def __call__(self):
+        shell = Shells(bin_path=None).shell_name
+        msg = 'Autocompletion installed. Please, reload your shell'
+
+        if shell == 'bash':
+            self._bash()
+            self.logger.info(msg)
+            return True
+
+        if shell == 'zsh':
+            self._zsh()
+            self.logger.info(msg)
+            return True
+
+        self.logger.error('unsupported shell', extra=dict(shell=shell))
+        return False
+
+    def _bash(self):
         from . import commands
 
         template = env.get_template('autocomplete.sh.j2')
@@ -51,6 +70,17 @@ class AutocompleteCommand(BaseCommand):
                 arguments[command_name].update(action.option_strings)
 
         script = template.render(first_words=first_words, tree=tree, arguments=arguments)
-        print(script)
+        path = Path.home() / '.local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
+        path.write_text(script)
 
-        return True
+        for rc_name in ('.bashrc', '.profile'):
+            rc_path = Path.home() / rc_name
+            if not rc_path.exists():
+                continue
+            if 'bash_completion.d' not in rc_path.read_text():
+                with rc_path.open('a') as stream:
+                    stream.write('\n\nsource {}\n'.format(str(path)))
+            break
+
+    def _zsh(self):
+        ...
