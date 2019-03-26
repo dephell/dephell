@@ -6,7 +6,7 @@ from pathlib import Path
 # app
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import CONVERTERS
+from ..converters import CONVERTERS, InstalledConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
 from ..venvs import VEnvs
@@ -76,14 +76,51 @@ class DepsInstallCommand(BaseCommand):
             if venv.exists():
                 executable = venv.python_path
 
+        # get installed packages
+        installed_root = InstalledConverter().load(path=venv.lib_path)
+        installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
+
+        # plan what we will install and what we will remove
+        install = []
+        remove = []
+        for req in Requirement.from_graph(graph=resolver.graph, lock=True):
+            # not installed, install
+            if req.name not in installed:
+                install.append(req)
+                continue
+            # installed the same version, skip
+            version = req.version.strip('=')
+            if version == installed[req.name]:
+                continue
+            # installed old version, remove it and install new
+            self.logger.debug('dependency will be updated', extra=dict(
+                dependency=req.name,
+                old=installed[req.name],
+                new=version,
+            ))
+            remove.append(req)
+            install.append(req)
+
+        # remove
+        manager = PackageManager(executable=executable)
+        if remove:
+            self.logger.info('removing old packages...', extra=dict(
+                executable=executable,
+                packages=len(remove),
+            ))
+            code = manager.remove(reqs=remove)
+            if code != 0:
+                return False
+
         # install
-        reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
-        self.logger.info('installation...', extra=dict(
-            executable=executable,
-            packages=len(reqs),
-        ))
-        code = PackageManager(executable=executable).install(reqs=reqs)
-        if code != 0:
-            return False
+        if install:
+            self.logger.info('installation...', extra=dict(
+                executable=executable,
+                packages=len(install),
+            ))
+            code = manager.install(reqs=install)
+            if code != 0:
+                return False
+
         self.logger.info('installed')
         return True

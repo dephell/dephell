@@ -4,12 +4,12 @@
 import tomlkit
 
 # project
-from dephell.commands import InitCommand
+from dephell.commands import GenerateConfigCommand
 
 
 def test_create(tmpdir):
     config = tmpdir.join('pyproject.toml')
-    task = InitCommand(['--config', str(config)])
+    task = GenerateConfigCommand(['--config', str(config)])
     result = task()
     assert result is True
     assert config.check(file=1, exists=1)
@@ -30,7 +30,7 @@ def test_detect(tmpdir):
     tmpdir.join('requirements.txt').write('Django>=1.9\n')
 
     config = tmpdir.join('pyproject.toml')
-    task = InitCommand(['--config', str(config), '--project', str(tmpdir)])
+    task = GenerateConfigCommand(['--config', str(config), '--project', str(tmpdir)])
     result = task()
     assert result is True
     assert config.check(file=1, exists=1)

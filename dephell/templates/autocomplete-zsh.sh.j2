@@ -1,0 +1,76 @@
+_dephell()
+{
+  local first second current double commands
+  COMPREPLY=()
+  first="${words[2]}"
+  second="${words[3]}"
+  double="${words[2]} ${words[3]}"
+  current="${words[CURRENT]}"
+
+  # autocomplete command first word
+  if [[ $CURRENT == 2 ]] ; then
+    commands=(
+      {% for command in first_words %}
+        '{{ command }}'
+      {% endfor %}
+    )
+    _describe 'command' commands
+    return 0
+  fi
+
+  # autocomplete command second word
+  if [[ $CURRENT == 3 ]] ; then
+    case "${first}" in
+      {% for command, subcommands in tree.items() %}
+        {{ command }})
+          commands=(
+            {% for subcommand, descr in subcommands %}
+              '{{ subcommand }}:{{ descr }}'
+            {% endfor %}
+          )
+          _describe 'command' commands
+          return 0
+          ;;
+      {% endfor %}
+      *)
+      ;;
+    esac
+  fi
+
+  # autocomplete one-word command arguments
+  case "${first}" in
+    {% for command, args in arguments.items() %}
+      "{{ command }}")
+        commands=(
+          {% for opts, descr in args %}
+            '{{ opts[0] }}:{{ descr }}'
+          {% endfor %}
+        )
+        _describe 'command' commands
+        return 0
+        ;;
+    {% endfor %}
+    *)
+    ;;
+  esac
+
+  # autocomplete two-words command arguments
+  case "${double}" in
+    {% for command, args in arguments.items() %}
+      "{{ command }}")
+        commands=(
+          {% for opts, descr in args %}
+            '{{ opts[-1] }}:{{ descr }}'
+          {% endfor %}
+        )
+        _describe 'command' commands
+        return 0
+        ;;
+    {% endfor %}
+    *)
+    ;;
+  esac
+
+}
+
+compdef _dephell dephell

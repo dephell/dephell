@@ -40,6 +40,7 @@ class InspectVenvCommand(BaseCommand):
             data.update(dict(
                 activate=str(venv.bin_path / shells.current.activate),
                 bin=str(venv.bin_path),
+                lib=str(venv.lib_path),
                 python=str(venv.python_path),
             ))
         print(self.get_value(data=data, key=self.args.key))

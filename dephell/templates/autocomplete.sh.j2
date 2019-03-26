@@ -1,0 +1,55 @@
+_dephell()
+{
+  local first second current double
+  COMPREPLY=()
+  first="${COMP_WORDS[1]}"
+  second="${COMP_WORDS[2]}"
+  double="${COMP_WORDS[1]} ${COMP_WORDS[2]}"
+  current="${COMP_WORDS[COMP_CWORD]}"
+
+  # autocomplete command first word
+  if [[ ${first} == ${current} ]] ; then
+    COMPREPLY=( $(compgen -W "{% for c in first_words %}{{ c }} {% endfor %}--help" -- ${current}) )
+    return 0
+  fi
+
+  # autocomplete command second word
+  if [[ ${second} == ${current} ]] ; then
+    case "${first}" in
+      {% for command, subcommands in tree.items() %}
+        {{ command }})
+          COMPREPLY=( $(compgen -W "{% for c in subcommands %}{{ c }} {% endfor %}" -- ${current}) )
+          return 0
+          ;;
+      {% endfor %}
+      *)
+      ;;
+    esac
+  fi
+
+  # autocomplete one-word command arguments
+  case "${first}" in
+    {% for command, args in arguments.items() %}
+      "{{ command }}")
+        COMPREPLY=( $(compgen -W "{% for a in args %}{{ a }} {% endfor %}" -- ${current}) )
+        return 0
+        ;;
+    {% endfor %}
+    *)
+    ;;
+  esac
+
+  # autocomplete two-words command arguments
+  case "${double}" in
+    {% for command, args in arguments.items() %}
+      "{{ command }}")
+        COMPREPLY=( $(compgen -W "{% for a in args %}{{ a }} {% endfor %}" -- ${current}) )
+        return 0
+        ;;
+    {% endfor %}
+    *)
+    ;;
+  esac
+}
+
+complete -F _dephell dephell
