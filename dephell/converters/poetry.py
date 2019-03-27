@@ -56,6 +56,11 @@ class PoetryConverter(BaseConverter):
             if path.exists():
                 root.readme = Readme(path=path)
 
+        # read links
+        for field in ('homepage', 'repository', 'documentation'):
+            if field in section:
+                root.links[field] = section[field]
+
         # read entrypoints
         root.entrypoints = []
         for name, content in section.get('scripts', {}).items():
