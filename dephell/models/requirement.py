@@ -35,6 +35,8 @@ class Requirement:
             for dep in sorted(layer):
                 if applied and not dep.applied:
                     continue
+                if dep.constraint.empty:
+                    continue
                 if dep.extra is None:
                     req = cls(dep=dep, lock=lock)
                     result[dep.name] = req

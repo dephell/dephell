@@ -63,7 +63,12 @@ class DepsInstallCommand(BaseCommand):
                 continue
             if dep.envs & set(self.config['envs']):
                 continue
-            resolver.unapply(dep)
+            # without `soft=True` all deps of this dep will be marked as unapplied
+            # and ignored in Requirement.from_graph.
+            # It's bad behavior because deps of this dep can be required for other
+            # deps that won't be unapplied.
+            resolver.unapply(dep, soft=True)
+            dep.applied = False
 
         # get executable
         executable = Path(sys.executable)

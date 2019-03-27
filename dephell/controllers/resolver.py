@@ -47,7 +47,11 @@ class Resolver:
                 return other_dep
         parent.applied = True
 
-    def unapply(self, dep, *, force=True):
+    def unapply(self, dep, *, force=True, soft=False):
+        """
+        force -- unapply deps that not applied yet
+        soft -- do not mark dep as not applied.
+        """
         if not force and not dep.applied:
             return
         for child in dep.dependencies:
@@ -58,8 +62,9 @@ class Resolver:
             # unapply current dependency for child
             child.unapply(dep.name)
             # unapply child because he is modified
-            self.unapply(child, force=False)
-        dep.applied = False
+            self.unapply(child, force=False, soft=soft)
+        if not soft:
+            dep.applied = False
 
     def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
         if not config['silent']:
