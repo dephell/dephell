@@ -134,22 +134,20 @@ class _Reader:
     def parse_requires(self, content: str, root=None) -> RootDependency:
         if root is None:
             root = RootDependency(raw_name=self._get_name(content=content))
-        deps = []
-        extra = None
+        envs = {'main'}
         for req in content.split('\n'):
             req = req.strip()
-            if not req:
+            if not req or req[0] in '#;':
                 continue
+            # get section name as extra
             if req[0] == '[' and req[-1] == ']':
                 extra = req[1:-1]
+                envs = {extra} if extra == 'dev' else {'main', extra}
                 continue
+
             req = PackagingRequirement(req)
-            subdeps = DependencyMaker.from_requirement(source=root, req=req)
-            if extra:
-                for dep in subdeps:
-                    dep.envs.add(extra)
-            deps.extend(subdeps)
-        root.attach_dependencies(deps)
+            deps = DependencyMaker.from_requirement(source=root, req=req, envs=envs)
+            root.attach_dependencies(deps)
         return root
 
     def parse_entrypoints(self, content: str, root=None) -> RootDependency:
@@ -257,7 +255,7 @@ class _Writer:
 
         extras = set()
         for req in reqs:
-            extras.update(req.envs)
+            extras.update(req.main_envs)  # all envs (including dev and excluding main)
         for extra in sorted(extras):
             content.append(('Provides-Extra', extra))
 
@@ -270,8 +268,8 @@ class _Writer:
         content = []
         extras = defaultdict(list)
         for req in reqs:
-            if req.optional:
-                for env in req.envs:
+            if req.main_envs:
+                for env in req.main_envs:
                     extras[env].append(req)
             else:
                 content.append(self._format_req(req=req, with_envs=False))
@@ -331,8 +329,8 @@ class _Writer:
         markers = None
         if req.markers:
             markers = Markers(req.markers)
-        if with_envs and req.envs:
-            env_markers = Markers(' or '.join('extra == "{}"'.format(env) for env in req.envs))
+        if with_envs and req.main_envs:
+            env_markers = Markers(' or '.join('extra == "{}"'.format(env) for env in req.main_envs))
             markers = markers & env_markers if markers else env_markers
         if markers:
             line += '; ' + str(markers)

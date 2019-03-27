@@ -49,10 +49,16 @@ def test_load_dump_load_deps(converter, path):
             assert req1.dep.repo.name == req2.dep.repo.name
             assert req1.dep.repo.url == req2.dep.repo.url
 
+    # exactly one dev or main env should be specified for dep
+    for name, req1 in map1.items():
+        req2 = map2[name]
+        assert req1.is_dev is not req1.is_main
+        assert req2.is_dev is not req2.is_main
+
     # check envs (extras)
     for name, req1 in map1.items():
         req2 = map2[name]
-        assert req1.envs == req2.envs
+        assert req1.dep.envs == req2.dep.envs
 
 
 @pytest.mark.parametrize('converter, path, exclude', [

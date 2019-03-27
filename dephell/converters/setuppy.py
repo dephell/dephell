@@ -108,11 +108,12 @@ class SetupPyConverter(BaseConverter):
 
         # extras
         for extra, reqs in getattr(info, 'extras_require', {}).items():
+            envs = {extra} if extra == 'dev' else {'main', extra}
             for req in reqs:
                 req = Requirement(req)
                 deps = DependencyMaker.from_requirement(source=root, req=req)
                 for dep in deps:
-                    dep.envs = {extra}
+                    dep.envs = envs
                 root.attach_dependencies(deps)
 
         return root
@@ -179,9 +180,10 @@ class SetupPyConverter(BaseConverter):
 
         extras = defaultdict(list)
         for req in reqs:
-            formatted = self._format_req(req=req)
-            for env in req.envs:
-                extras[env].append(formatted)
+            if req.main_envs:
+                formatted = self._format_req(req=req)
+                for env in req.main_envs:
+                    extras[env].append(formatted)
         if extras:
             content.append(('extras_require', dict(extras)))
 

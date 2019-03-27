@@ -79,6 +79,9 @@ class Dependency:
                 deps.append(dep)
             else:
                 deps.extend(DependencyMaker.from_requirement(self, dep))
+        # propagate envs to deps of this dep
+        for dep in deps:
+            dep.envs.update(self.envs)
         return tuple(deps)
 
     @dependencies.setter
@@ -198,9 +201,12 @@ class Dependency:
         else:
             self.marker = None
 
+        self.envs.update(dep.envs)
+        if 'main' in self.envs and 'dev' in self.envs:
+            self.envs.remove('dev')
+
         self.constraint &= dep.constraint
         self.groups.actualize()
-        self.envs.update(dep.envs)
         return self
 
     def __add__(self, dep: 'Dependency') -> 'Dependency':

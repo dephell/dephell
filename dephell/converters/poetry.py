@@ -73,13 +73,15 @@ class PoetryConverter(BaseConverter):
                 root.entrypoints.append(EntryPoint(name=name, path=path, group=group_name))
         root.entrypoints = tuple(root.entrypoints)
 
-        # get extras for deps
-        extras = defaultdict(set)
+        # get envs for deps
+        envs = defaultdict(set)
         for extra, deps in section.get('extras', {}).items():
             for dep in deps:
-                extras[dep].add(extra)
+                envs[dep].add(extra)
+        for dep in section.get('dependencies', {}):
+            envs[dep].add('main')
         for dep in section.get('dev-dependencies', {}):
-            extras[dep].add('dev')
+            envs[dep].add('dev')
 
         # read dependencies
         deps = []
@@ -92,7 +94,7 @@ class PoetryConverter(BaseConverter):
                     root=root,
                     name=name,
                     content=content,
-                    extras=extras.get(name),
+                    envs=envs.get(name),
                 ))
         root.attach_dependencies(deps)
         return root
@@ -137,7 +139,7 @@ class PoetryConverter(BaseConverter):
                 section[section_name] = tomlkit.table()
                 continue
             # clean dependencies from old dependencies
-            names = {req.name for req in reqs if ('dev' in req.envs) is is_dev} | {'python'}
+            names = {req.name for req in reqs if is_dev is req.is_dev} | {'python'}
             for name in dict(section[section_name]):
                 if name not in names:
                     del section[section_name][name]
@@ -148,14 +150,17 @@ class PoetryConverter(BaseConverter):
         # write dependencies
         for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
             for req in reqs:
-                if ('dev' in req.envs) is is_dev:
+                if is_dev is req.is_dev:
                     section[section_name][req.name] = self._format_req(req=req)
 
         # extras
         extras = defaultdict(list)
         for req in reqs:
-            for extra in req.envs:
-                if extra != 'dev':
+            if req.is_main:
+                for extra in req.main_envs:
+                    extras[extra].append(req.name)
+            if req.is_dev:
+                for extra in req.dev_envs:
                     extras[extra].append(req.name)
         if extras:
             if 'extras' in section:
@@ -224,16 +229,14 @@ class PoetryConverter(BaseConverter):
 
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod
-    def _make_deps(root, name: str, content, extras: Optional[set] = None) -> List[Dependency]:
+    def _make_deps(root, name: str, content, envs: set) -> List[Dependency]:
         if isinstance(content, str):
             deps = [Dependency(
                 raw_name=name,
                 constraint=Constraint(root, content),
                 repo=get_repo(),
+                envs=envs,
             )]
-            if extras:
-                for dep in deps:
-                    dep.envs = extras
             return deps
 
         # get link
@@ -260,10 +263,8 @@ class PoetryConverter(BaseConverter):
             marker=markers or None,
             url=url,
             editable=content.get('develop', False),
+            envs=envs,
         )
-        if extras:
-            for dep in deps:
-                dep.envs = extras
         return deps
 
     def _format_req(self, req):

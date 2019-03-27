@@ -25,7 +25,7 @@ class DependencyMaker:
     extra_class = ExtraDependency
 
     @classmethod
-    def from_requirement(cls, source, req, *, url=None,
+    def from_requirement(cls, source, req, *, url=None, envs=None,
                          editable=False) -> List[Union[Dependency, ExtraDependency]]:
         if type(req) is str:
             req = PackagingRequirement(req)
@@ -38,10 +38,15 @@ class DependencyMaker:
 
         marker = None
         if req.marker is not None:
-            # some libs uses `in` fro python_version,
+            # some libs uses `in` for python_version,
             # but dephell_markers isn't ready for this
             with suppress(ValueError):
                 marker = Markers(req.marker)
+
+        if envs is None:
+            envs = {'main'}
+        if marker is not None:
+            envs.update(marker.extract('extra'))
 
         base_dep = cls.dep_class(
             raw_name=req.name,
@@ -50,6 +55,7 @@ class DependencyMaker:
             link=link,
             marker=marker,
             editable=editable,
+            envs=envs,
         )
         deps = [base_dep]
         if req.extras:
@@ -60,28 +66,41 @@ class DependencyMaker:
     @classmethod
     def from_params(cls, *, raw_name: str, constraint,
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
-                    repo=None, marker=None, extras: Optional[List[str]] = None,
+                    repo=None, marker=None, extras: Optional[List[str]] = None, envs=None,
                     **kwargs) -> List[Union[Dependency, ExtraDependency]]:
+
         # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
             raw_name = link.name
+
         # make constraint
         if source:
             constraint = Constraint(source, constraint)
             if isinstance(link, VCSLink) and link.rev:
                 constraint._specs[source.name] = GitSpecifier()
+
         # make repo
         if repo is None:
             repo = get_repo(link)
+
+        # make marker
         if marker is not None:
             marker = Markers(marker)
+
+        # make envs
+        if envs is None:
+            envs = {'main'}
+        if marker is not None:
+            envs.update(marker.extract('extra'))
+
         base_dep = cls.dep_class(
             link=link,
             repo=repo,
             raw_name=raw_name,
             constraint=constraint,
             marker=marker,
+            envs=envs,
             **kwargs,
         )
         deps = [base_dep]

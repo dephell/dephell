@@ -63,9 +63,9 @@ class PIPFileConverter(BaseConverter):
                             name=repo_name,
                             url=repos[repo_name],
                         )
-                if is_dev:
-                    for dep in subdeps:
-                        dep.envs = {'dev'}
+                for dep in subdeps:
+                    # Pipfile doesn't support any other envs
+                    dep.envs = {'dev'} if is_dev else {'main'}
                 deps.extend(subdeps)
         root.attach_dependencies(deps)
         return root
@@ -105,7 +105,7 @@ class PIPFileConverter(BaseConverter):
                 continue
 
             # clean packages from old packages
-            names = {req.name for req in reqs if is_dev is bool(req.envs)}
+            names = {req.name for req in reqs if is_dev is req.is_dev}
             for name in doc[section]:
                 if name not in names:
                     del doc[section][name]
@@ -113,7 +113,7 @@ class PIPFileConverter(BaseConverter):
         # write new packages
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             for req in reqs:
-                if is_dev is bool(req.envs):
+                if is_dev is req.is_dev:
                     doc[section][req.name] = self._format_req(req=req)
 
         return tomlkit.dumps(doc)

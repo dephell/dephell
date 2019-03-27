@@ -47,7 +47,11 @@ class Resolver:
                 return other_dep
         parent.applied = True
 
-    def unapply(self, dep, *, force=True):
+    def unapply(self, dep, *, force=True, soft=False):
+        """
+        force -- unapply deps that not applied yet
+        soft -- do not mark dep as not applied.
+        """
         if not force and not dep.applied:
             return
         for child in dep.dependencies:
@@ -58,8 +62,9 @@ class Resolver:
             # unapply current dependency for child
             child.unapply(dep.name)
             # unapply child because he is modified
-            self.unapply(child, force=False)
-        dep.applied = False
+            self.unapply(child, force=False, soft=soft)
+        if not soft:
+            dep.applied = False
 
     def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
         if not config['silent']:
@@ -108,6 +113,32 @@ class Resolver:
                     ))
                     self.unapply(dep)
                     dep.group = group
+
+    def apply_envs(self, envs: set) -> None:
+        layer = self.graph.get_layer(1)
+
+        # Unapply deps that we don't need
+        for dep in layer:
+            if not dep.applied:
+                continue
+            if dep.envs & envs:
+                continue
+            # without `soft=True` all deps of this dep will be marked as unapplied
+            # and ignored in Requirement.from_graph.
+            # It's bad behavior because deps of this dep can be required for other
+            # deps that won't be unapplied.
+            self.unapply(dep, soft=True)
+            dep.applied = False
+
+        # Some child deps can be unapplied from other child deps, but we need them.
+        # For example, if we need A, but don't need B, and A and B depends on C,
+        # then C will be unapplied from B. Let's retun B in the graph by apllying A.
+        for dep in layer:
+            if not dep.applied:
+                continue
+            if not dep.envs & envs:
+                continue
+            self.apply(dep)
 
     def _apply_deps(self, deps, debug: bool = False) -> bool:
         if not config['silent']:

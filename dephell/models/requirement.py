@@ -35,6 +35,8 @@ class Requirement:
             for dep in sorted(layer):
                 if applied and not dep.applied:
                     continue
+                if dep.constraint.empty:
+                    continue
                 if dep.extra is None:
                     req = cls(dep=dep, lock=lock)
                     result[dep.name] = req
@@ -65,14 +67,6 @@ class Requirement:
     @property
     def link(self):
         return self.dep.link
-
-    @property
-    def envs(self) -> Set[str]:
-        return self.dep.envs
-
-    @property
-    def optional(self) -> bool:
-        return bool(self.dep.envs - {'dev'})
 
     @property
     def git(self) -> Optional[str]:
@@ -130,7 +124,48 @@ class Requirement:
 
     @cached_property
     def sources(self) -> tuple:
+        """List of parent packages that depends on this package.
+        """
         return tuple(sorted(self.dep.constraint.sources))
+
+    # envs
+
+    @property
+    def is_main(self) -> bool:
+        """
+        For poetry and Pipfile it means that dependency placed in the main section.
+        """
+        return 'main' in self.dep.envs
+
+    @property
+    def main_envs(self) -> Set[str]:
+        """
+        For setup.py, egg-info and other classic things it returns all extras
+        for dependency including `dev`.
+        """
+        return self.dep.envs - {'main'}
+
+    @property
+    def is_dev(self) -> bool:
+        """
+        For poetry and Pipfile it means that dependency placed in the dev section.
+        """
+        return 'dev' in self.dep.envs
+
+    @property
+    def dev_envs(self) -> Set[str]:
+        """
+        For poetry it returns extras for dependencies in the dev section.
+        """
+        return self.dep.envs - {'dev'}
+
+    @property
+    def optional(self) -> bool:
+        """
+        Required for poetry. Shows that req has some extras except dev or main.
+        In poetry it has quite different meaning, but let's think about it in this way.
+        """
+        return bool(self.dep.envs - {'dev', 'main'})
 
     # magic methods
 

@@ -35,19 +35,20 @@ class PoetryLockConverter(BaseConverter):
         root = RootDependency()
         root.python = RangeSpecifier(doc.get('metadata', {}).get('python-versions', '*'))
 
-        extras = defaultdict(set)
-        for extra, deps in doc.get('extras', {}):
+        envs = defaultdict(set)
+        for extra, deps in doc.get('extras', {}).items():
             for dep in deps:
-                extras[dep].add(extra)
-
-        deps = []
+                envs[dep].add(extra)
         for content in doc.get('package', []):
-            deps.extend(self._make_deps(
+            # category can be "dev" or "main"
+            envs[content['name']].add(content['category'])
+
+        for content in doc.get('package', []):
+            root.attach_dependencies(self._make_deps(
                 root=root,
                 content=content,
-                extras=extras[content.get('name', '')],
+                envs=envs[content['name']],
             ))
-        root.attach_dependencies(deps)
         return root
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
@@ -57,8 +58,11 @@ class PoetryLockConverter(BaseConverter):
         # add extras
         extras = defaultdict(list)
         for req in reqs:
-            for extra in req.envs:
-                if extra != 'dev':
+            if req.is_main:
+                for extra in req.main_envs:
+                    extras[extra].append(req.name)
+            if req.is_dev:
+                for extra in req.dev_envs:
                     extras[extra].append(req.name)
         if extras:
             doc['extras'] = dict(extras)
@@ -78,7 +82,7 @@ class PoetryLockConverter(BaseConverter):
 
     # https://github.com/sdispater/poetry/blob/master/poetry.lock
     @classmethod
-    def _make_deps(cls, root, content, extras=None) -> List[Dependency]:
+    def _make_deps(cls, root, content, envs) -> List[Dependency]:
         # get link
         url = None
         if 'source' in content:
@@ -104,15 +108,8 @@ class PoetryLockConverter(BaseConverter):
             marker=marker,
             url=url,
             editable=False,
+            envs=envs,
         )
-
-        # add extras
-        if extras:
-            for dep in deps:
-                dep.envs.extend(extras)
-        if content.get('category', '') == 'dev':
-            for dep in deps:
-                dep.envs.add('dev')
 
         # add dependencies for dependencies
         subdeps = []
@@ -123,6 +120,7 @@ class PoetryLockConverter(BaseConverter):
                 subdeps.extend(DependencyMaker.from_params(
                     raw_name=subname,
                     constraint=Constraint(root, '==' + subcontent),
+                    envs=envs,
                 ))
                 continue
 
@@ -137,6 +135,7 @@ class PoetryLockConverter(BaseConverter):
                 raw_name=subname,
                 constraint=Constraint(root, subcontent['version']),
                 marker=marker,
+                envs=envs,
             ))
         deps[0].dependencies = tuple(subdeps)
 
@@ -149,7 +148,7 @@ class PoetryLockConverter(BaseConverter):
                 if isinstance(value, tuple):
                     value = list(value)
                 result[name] = value
-        result['category'] = 'dev' if 'dev' in req.envs else 'main'
+        result['category'] = 'dev' if req.is_dev else 'main'
         if 'version' not in result:
             result['version'] = '*'
         result['version'] = result['version'].lstrip('=')
