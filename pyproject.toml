@@ -58,8 +58,9 @@ dephell_specifier = "*"   # https://github.com/dephell/dephell_specifier
 pytest = "*"
 sphinx = "*"
 recommonmark = "*"
-sphinx_rtd_theme = "*"
+sphinx-rtd-theme = "*"
+pygments-github-lexers = "*"
 
 [tool.poetry.extras]
 tests = ["pytest"]
-docs = ["sphinx", "recommonmark", "sphinx_rtd_theme"]
+docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]
