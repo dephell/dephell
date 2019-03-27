@@ -126,6 +126,11 @@ class PoetryConverter(BaseConverter):
             elif field in section:
                 del section[field]
 
+        # write links
+        for name in ('homepage', 'repository', 'documentation'):
+            if name in project.links:
+                section[name] = project.links[name]
+
         if project.authors:
             section['authors'] = [str(author) for author in project.authors]
         elif 'authors' in section:
