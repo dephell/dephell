@@ -24,6 +24,7 @@
     cmd-build
     cmd-deps-convert
     cmd-deps-install
+    cmd-inspect-config
 
 .. toctree::
     :maxdepth: 1
