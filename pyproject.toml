@@ -11,6 +11,11 @@ from = {format = "setuppy", path = "setup.py"}
 envs = ["main", "tests"]
 command = "pytest"
 
+[tool.dephell.docs]
+from = {format = "poetry", path = "pyproject.toml"}
+envs = ["docs"]
+command = "sphinx-build -M html docs/source docs/build"
+
 [tool.poetry]
 name = "dephell"
 version = "0.3.0"
@@ -51,6 +56,10 @@ dephell_specifier = "*"   # https://github.com/dephell/dephell_specifier
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
+sphinx = "*"
+recommonmark = "*"
+sphinx_rtd_theme = "*"
 
 [tool.poetry.extras]
 tests = ["pytest"]
+docs = ["sphinx", "recommonmark", "sphinx_rtd_theme"]
