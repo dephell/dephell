@@ -27,10 +27,10 @@ insert_final_newline = true
 RULES = (
     ('*.py', ('indent_style = space', 'indent_size = 4')),
     ('*.{md,rst,txt}', ('indent_style = space', 'indent_size = 4')),
-    ('*.ini', ('indent_style = space', 'indent_size = 4')),
+    ('*.{ini,toml}', ('indent_style = space', 'indent_size = 4')),
 
     ('*.js', ('indent_style = space', 'indent_size = 2')),
-    ('*.{json,yml,yaml,toml}', ('indent_style = space', 'indent_size = 2')),
+    ('*.{json,yml,yaml}', ('indent_style = space', 'indent_size = 2')),
     ('*.{html,j2}', ('indent_style = space', 'indent_size = 2')),
 
     ('Makefile', ('indent_style = tab')),

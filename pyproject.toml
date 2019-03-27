@@ -48,6 +48,24 @@ version = "0.3.0"
 authors = ["orsinium"]
 description = "Dependency resolution for Python"
 readme = "README.md"
+license = "MIT"
+repository = "https://github.com/dephell/dephell"
+keywords = [
+    "dephell", "packaging", "dependency", "dependencies", "venv", "licenses",
+    "pip", "poetry", "pipfile", "pipenv", "setuptools",
+]
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Framework :: Setuptools Plugin",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Topic :: Security",  # because we lock dependencies with hashes :)
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 
 [tool.poetry.scripts]
 dephell = "dephell.cli:entrypoint"
