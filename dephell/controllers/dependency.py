@@ -68,15 +68,18 @@ class DependencyMaker:
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
                     repo=None, marker=None, extras: Optional[List[str]] = None, envs=None,
                     **kwargs) -> List[Union[Dependency, ExtraDependency]]:
+
         # make link
         link = parse_link(url)
         if link and link.name and rex_hash.fullmatch(raw_name):
             raw_name = link.name
+
         # make constraint
         if source:
             constraint = Constraint(source, constraint)
             if isinstance(link, VCSLink) and link.rev:
                 constraint._specs[source.name] = GitSpecifier()
+
         # make repo
         if repo is None:
             repo = get_repo(link)
@@ -97,6 +100,7 @@ class DependencyMaker:
             raw_name=raw_name,
             constraint=constraint,
             marker=marker,
+            envs=envs,
             **kwargs,
         )
         deps = [base_dep]

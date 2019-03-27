@@ -198,9 +198,12 @@ class Dependency:
         else:
             self.marker = None
 
+        self.envs.update(dep.envs)
+        if 'main' in self.envs and 'dev' in self.envs:
+            self.envs.remove('dev')
+
         self.constraint &= dep.constraint
         self.groups.actualize()
-        self.envs.update(dep.envs)
         return self
 
     def __add__(self, dep: 'Dependency') -> 'Dependency':

@@ -42,9 +42,8 @@ class PIPFileLockConverter(PIPFileConverter):
         for section, is_dev in [('default', False), ('develop', True)]:
             for name, content in doc.get(section, {}).items():
                 subdeps = self._make_deps(root, name, content)
-                if is_dev:
-                    for dep in subdeps:
-                        dep.envs = {'dev'}
+                for dep in subdeps:
+                    dep.envs = {'dev'} if is_dev else {'main'}
                 deps.extend(subdeps)
         root.attach_dependencies(deps)
         return root
@@ -52,7 +51,7 @@ class PIPFileLockConverter(PIPFileConverter):
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         packages = {True: OrderedDict(), False: OrderedDict()}
         for req in reqs:
-            packages[bool(req.envs)][req.name] = dict(self._format_req(req=req))
+            packages[req.is_dev][req.name] = dict(self._format_req(req=req))
 
         python = Pythons(abstract=True).get_by_spec(project.python)
         data = OrderedDict([
