@@ -7,7 +7,7 @@ from recommonmark.parser import CommonMarkParser
 import sphinx_rtd_theme
 
 
-sys.path.append(os.path.abspath('../../'))
+sys.path.append(os.path.abspath('../'))
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
@@ -38,7 +38,7 @@ todo_include_todos = True
 pygments_style = 'sphinx'
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_logo = str(Path(__file__).parent.parent.parent / 'assets' / 'logo.png')
+html_logo = str(Path(__file__).parent.parent / 'assets' / 'logo.png')
 html_theme_options = {
     'logo_only': True,
     'display_version': False,
