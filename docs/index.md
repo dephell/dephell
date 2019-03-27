@@ -15,6 +15,7 @@
     :caption: Main Info
 
     config
+    params
 
 .. toctree::
     :maxdepth: 1
