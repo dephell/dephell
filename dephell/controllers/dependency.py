@@ -25,7 +25,7 @@ class DependencyMaker:
     extra_class = ExtraDependency
 
     @classmethod
-    def from_requirement(cls, source, req, *, url=None,
+    def from_requirement(cls, source, req, *, url=None, envs=None,
                          editable=False) -> List[Union[Dependency, ExtraDependency]]:
         if type(req) is str:
             req = PackagingRequirement(req)
@@ -38,10 +38,15 @@ class DependencyMaker:
 
         marker = None
         if req.marker is not None:
-            # some libs uses `in` fro python_version,
+            # some libs uses `in` for python_version,
             # but dephell_markers isn't ready for this
             with suppress(ValueError):
                 marker = Markers(req.marker)
+
+        if not envs:
+            envs = {'main'}
+        if marker:
+            envs.update(marker.extract('extra'))
 
         base_dep = cls.dep_class(
             raw_name=req.name,
@@ -50,6 +55,7 @@ class DependencyMaker:
             link=link,
             marker=marker,
             editable=editable,
+            envs=envs,
         )
         deps = [base_dep]
         if req.extras:
