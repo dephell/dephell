@@ -79,6 +79,9 @@ class Dependency:
                 deps.append(dep)
             else:
                 deps.extend(DependencyMaker.from_requirement(self, dep))
+        # propagate envs to deps of this dep
+        for dep in deps:
+            dep.envs.update(self.envs)
         return tuple(deps)
 
     @dependencies.setter

@@ -55,20 +55,7 @@ class DepsInstallCommand(BaseCommand):
             return False
 
         # filter deps by envs
-        layer = resolver.graph.get_layer(1)
-        for dep in layer:
-            if not dep.applied:
-                continue
-            if not dep.envs and 'main' in self.config['envs']:
-                continue
-            if dep.envs & set(self.config['envs']):
-                continue
-            # without `soft=True` all deps of this dep will be marked as unapplied
-            # and ignored in Requirement.from_graph.
-            # It's bad behavior because deps of this dep can be required for other
-            # deps that won't be unapplied.
-            resolver.unapply(dep, soft=True)
-            dep.applied = False
+        resolver.apply_envs(set(self.config['envs']))
 
         # get executable
         executable = Path(sys.executable)
