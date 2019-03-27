@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
 import sphinx_rtd_theme
 
 
@@ -53,24 +54,6 @@ htmlhelp_basename = 'dephelldoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #
-    # 'papersize': 'letterpaper',
-
-    # The font size ('10pt', '11pt' or '12pt').
-    #
-    # 'pointsize': '10pt',
-
-    # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
-
-    # Latex figure (float) alignment
-    #
-    # 'figure_align': 'htbp',
-}
-
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
@@ -96,3 +79,14 @@ texinfo_documents = [
     (master_doc, 'dephell', 'DepHell Documentation',
      author, 'DepHell', 'One line description of project.', 'Miscellaneous'),
 ]
+
+
+# https://github.com/rtfd/recommonmark/blob/master/docs/conf.py
+def setup(app):
+    config = {
+        # 'url_resolver': lambda url: github_doc_root + url,
+        'auto_toc_tree_section': 'Contents',
+        'enable_eval_rst': True,
+    }
+    app.add_config_value('recommonmark_config', config, True)
+    app.add_transform(AutoStructify)
