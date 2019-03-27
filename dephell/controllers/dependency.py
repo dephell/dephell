@@ -43,9 +43,9 @@ class DependencyMaker:
             with suppress(ValueError):
                 marker = Markers(req.marker)
 
-        if not envs:
+        if envs is None:
             envs = {'main'}
-        if marker:
+        if marker is not None:
             envs.update(marker.extract('extra'))
 
         base_dep = cls.dep_class(
@@ -66,7 +66,7 @@ class DependencyMaker:
     @classmethod
     def from_params(cls, *, raw_name: str, constraint,
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
-                    repo=None, marker=None, extras: Optional[List[str]] = None,
+                    repo=None, marker=None, extras: Optional[List[str]] = None, envs=None,
                     **kwargs) -> List[Union[Dependency, ExtraDependency]]:
         # make link
         link = parse_link(url)
@@ -80,8 +80,17 @@ class DependencyMaker:
         # make repo
         if repo is None:
             repo = get_repo(link)
+
+        # make marker
         if marker is not None:
             marker = Markers(marker)
+
+        # make envs
+        if envs is None:
+            envs = {'main'}
+        if marker is not None:
+            envs.update(marker.extract('extra'))
+
         base_dep = cls.dep_class(
             link=link,
             repo=repo,
