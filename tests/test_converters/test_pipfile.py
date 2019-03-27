@@ -22,9 +22,8 @@ def test_load():
     assert deps['django'].editable is True
     assert deps['requests'].editable is False
 
-    assert 'dev' in deps['nose'].envs
-    assert 'dev' not in deps['requests'].envs
-
+    assert deps['nose'].envs == {'dev'}
+    assert deps['requests'].envs == {'main'}
 
 def test_load_git_based_dep():
     converter = PIPFileConverter()

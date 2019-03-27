@@ -21,7 +21,7 @@ def test_load():
     assert deps['django'].link.rev == '1.11.4'
     assert isinstance(deps['django'].repo, GitRepo)
 
-    assert deps['mysqlclient'].envs == {'mysql'}
+    assert deps['mysqlclient'].envs == {'main', 'mysql'}
     assert deps['pytest'].envs == {'dev'}
 
 
