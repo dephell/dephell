@@ -25,6 +25,8 @@
     cmd-build
     cmd-deps-convert
     cmd-deps-install
+    cmd-generate-authors
+    cmd-generate-config
     cmd-inspect-config
     cmd-venv-create
     cmd-deps-licenses

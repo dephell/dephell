@@ -45,7 +45,7 @@ command = "sphinx-build -M html docs docs/build"
 [tool.poetry]
 name = "dephell"
 version = "0.3.0"
-authors = ["orsinium"]
+authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
 license = "MIT"
