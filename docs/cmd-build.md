@@ -1,4 +1,4 @@
-# build
+# dephell build
 
 Build package for project:
 

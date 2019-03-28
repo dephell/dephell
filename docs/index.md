@@ -15,14 +15,26 @@
     :caption: Main Info
 
     config
-```
+    params
 
-```eval_rst
 .. toctree::
     :maxdepth: 1
     :caption: Commands
 
-    command-autocomplete
-    command-build
-    command-deps-convert
+    cmd-autocomplete
+    cmd-build
+    cmd-deps-convert
+    cmd-deps-install
+    cmd-generate-authors
+    cmd-generate-config
+    cmd-inspect-config
+    cmd-venv-create
+    cmd-deps-licenses
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Recipes
+
+    use-poetry-lock
+    use-licenses
 ```

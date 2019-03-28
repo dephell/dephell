@@ -67,6 +67,7 @@ class Config:
                     content = None if not path.is_file() else path.read_text()
                     if converter.can_parse(path=path, content=content):
                         return {'format': text, 'path': str(path)}
+            raise LookupError('cannot find file for converter: ' + str(text))
 
         # if passed only filename
         path = Path(text)

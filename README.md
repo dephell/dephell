@@ -1,24 +1,16 @@
 # ![DepHell](./assets/logo.png)
 
-Dependency resolution for Python.
+**DepHell** -- dependency management for Python.
+
++ Manage dependencies: convert between formats, install, lock, resolve conflicts.
++ Manage virtual environments: create, remove, run shell, run commands inside.
++ Install CLI tools into isolated environments.
++ Build packages (to upload on PyPI).
++ Discover licenses of all project dependencies.
++ Generate .editorconfig, LICENSE, AUTHORS.
 
 ## Installation
 
 ```bash
-sudo pip3 install dephell
-```
-
-## Python lib usage
-
-```python
-from dephell import PIPConverter, Requirement
-
-loader = PIPConverter(lock=False)
-resolver = loader.load_resolver(path='requirements.in')
-
-resolver.resolve()
-reqs = Requirement.from_graph(resolver.graph, lock=True)
-
-dumper = PIPConverter(lock=True)
-dumper.dump(reqs=reqs, path='requirements.txt')
+python3 -m pip install --user dephell
 ```

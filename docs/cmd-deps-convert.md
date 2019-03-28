@@ -1,4 +1,4 @@
-# deps convert
+# dephell deps convert
 
 Convert dependencies between formats. Dephell will automagically lock them if needed and resolve all conflicts.
 

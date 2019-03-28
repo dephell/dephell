@@ -1,27 +1,71 @@
+
+# Default section.
+# Convert dephell metainfo and dependencies from poetry to setup.py:
+# $ dephell deps convert
 [tool.dephell.main]
+# read from poetry format
 from = {format = "poetry", path = "pyproject.toml"}
+# and convert into setup.py
 to = {format = "setuppy", path = "setup.py"}
 
+# Install flake8 with plugin in the separated venv and run it:
+# $ dephell venv create --env=flake8
+# $ dephell deps install --env=flake8
+# $ dephell venv run --env=flake8
 [tool.dephell.flake8]
+# read requirements file
 from = {format = "pip", path = "requirements-flake.txt"}
+# run this command
 command = "flake8"
 
+# Install project dependencies and pytest in the separated venv and run it:
+# $ dephell venv create --env=pytest
+# $ dephell deps install --env=pytest
+# $ dephell venv run --env=pytest
 [tool.dephell.pytest]
+# read dependencies from setup.py
 from = {format = "setuppy", path = "setup.py"}
+# install main dependencies and `tests` extra dependencies
 envs = ["main", "tests"]
+# run command `pytest`
 command = "pytest"
 
+# Generate documentation:
+# $ dephell venv create --env=docs
+# $ dephell deps install --env=docs
+# $ dephell venv run --env=docs
 [tool.dephell.docs]
+# read dependencies from poetry format
 from = {format = "poetry", path = "pyproject.toml"}
+# install only `docs` extra dependencies
 envs = ["docs"]
+# run this command:
 command = "sphinx-build -M html docs docs/build"
 
 [tool.poetry]
 name = "dephell"
 version = "0.3.0"
-authors = ["orsinium"]
+authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
+license = "MIT"
+repository = "https://github.com/dephell/dephell"
+keywords = [
+    "dephell", "packaging", "dependency", "dependencies", "venv", "licenses",
+    "pip", "poetry", "pipfile", "pipenv", "setuptools",
+]
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Framework :: Setuptools Plugin",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Topic :: Security",  # because we lock dependencies with hashes :)
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 
 [tool.poetry.scripts]
 dephell = "dephell.cli:entrypoint"
@@ -58,8 +102,9 @@ dephell_specifier = "*"   # https://github.com/dephell/dephell_specifier
 pytest = "*"
 sphinx = "*"
 recommonmark = "*"
-sphinx_rtd_theme = "*"
+sphinx-rtd-theme = "*"
+pygments-github-lexers = "*"
 
 [tool.poetry.extras]
 tests = ["pytest"]
-docs = ["sphinx", "recommonmark", "sphinx_rtd_theme"]
+docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]

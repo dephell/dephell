@@ -1,4 +1,4 @@
-# autocomplete
+# dephell autocomplete
 
 Enable dephell autocompletion for current shell. Supported shells:
 

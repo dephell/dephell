@@ -4,6 +4,7 @@ import os.path
 from functools import reduce
 from logging import getLogger
 from operator import getitem
+from typing import Optional
 
 # app
 from ..config import config
@@ -44,12 +45,15 @@ class BaseCommand:
         return is_valid
 
     @staticmethod
-    def get_value(data, key):
+    def get_value(data, key, sep: Optional[str] = '-'):
         # print all config
         if not key:
             return json.dumps(data, indent=2, sort_keys=True)
 
-        keys = key.split('-')
+        if sep is None:
+            return json.dumps(data[key], indent=2, sort_keys=True)
+
+        keys = key.split(sep)
         value = reduce(getitem, keys, data)
         # print config section
         if type(value) is dict:

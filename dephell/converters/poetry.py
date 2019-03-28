@@ -56,6 +56,11 @@ class PoetryConverter(BaseConverter):
             if path.exists():
                 root.readme = Readme(path=path)
 
+        # read links
+        for field in ('homepage', 'repository', 'documentation'):
+            if field in section:
+                root.links[field] = section[field]
+
         # read entrypoints
         root.entrypoints = []
         for name, content in section.get('scripts', {}).items():
@@ -120,6 +125,11 @@ class PoetryConverter(BaseConverter):
                 section[field] = value
             elif field in section:
                 del section[field]
+
+        # write links
+        for name in ('homepage', 'repository', 'documentation'):
+            if name in project.links:
+                section[name] = project.links[name]
 
         if project.authors:
             section['authors'] = [str(author) for author in project.authors]
