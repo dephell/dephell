@@ -38,4 +38,4 @@ $ dephell deps convert
 ## More info
 
 1. [How dephell works with config and parameters](config)
-1. [`dephell convert` command](cmd-deps-convert)
+1. [`dephell deps convert` command](cmd-deps-convert)

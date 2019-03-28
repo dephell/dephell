@@ -27,10 +27,12 @@
     cmd-deps-install
     cmd-inspect-config
     cmd-venv-create
+    cmd-deps-licenses
 
 .. toctree::
     :maxdepth: 1
     :caption: Recipes
 
     use-poetry-lock
+    use-licenses
 ```

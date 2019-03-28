@@ -1,5 +1,4 @@
 # built-in
-import json
 from argparse import ArgumentParser
 from collections import defaultdict
 
@@ -23,6 +22,7 @@ class DepsLicensesCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_output(parser)
         builders.build_other(parser)
+        parser.add_argument('key', nargs='*')
         return parser
 
     def __call__(self):
@@ -49,10 +49,10 @@ class DepsLicensesCommand(BaseCommand):
         licenses = defaultdict(set)
         for dep in resolver.graph:
             if dep.license:
-                license = dep.license if isinstance(dep.license, str) else dep.license.name
+                license = dep.license if isinstance(dep.license, str) else dep.license.id
                 licenses[license].add(dep.name)
             else:
-                licenses['Unknown License'].add(dep.name)
+                licenses['Unknown'].add(dep.name)
         licenses = {name: sorted(deps) for name, deps in licenses.items()}
-        print(json.dumps(licenses, sort_keys=True, indent=2))
+        print(self.get_value(data=licenses, key=' '.join(self.args.key), sep=None))
         return True
