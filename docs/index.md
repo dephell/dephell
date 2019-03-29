@@ -27,6 +27,8 @@
     cmd-deps-install
     cmd-generate-authors
     cmd-generate-config
+    cmd-generate-editorconfig
+    cmd-generate-license
     cmd-inspect-config
     cmd-venv-create
     cmd-deps-licenses
