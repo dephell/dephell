@@ -25,6 +25,7 @@
     cmd-build
     cmd-deps-convert
     cmd-deps-install
+    cmd-deps-licenses
     cmd-generate-authors
     cmd-generate-config
     cmd-generate-editorconfig
@@ -32,8 +33,8 @@
     cmd-inspect-config
     cmd-inspect-venv
     cmd-install
+    cmd-jail-install
     cmd-venv-create
-    cmd-deps-licenses
 
 .. toctree::
     :maxdepth: 1
