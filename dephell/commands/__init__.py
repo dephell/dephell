@@ -9,6 +9,7 @@ from .generate_config import GenerateConfigCommand
 from .generate_editorconfig import GenerateEditorconfigCommand
 from .generate_license import GenerateLicenseCommand
 from .inspect_config import InspectConfigCommand
+from .inspect_gadget import InspectGadgetCommand
 from .inspect_venv import InspectVenvCommand
 from .install import InstallCommand
 from .jail_install import JailInstallCommand
@@ -31,6 +32,7 @@ __all__ = [
     'GenerateEditorconfigCommand',
     'GenerateLicenseCommand',
     'InspectConfigCommand',
+    'InspectGadgetCommand',
     'InspectVenvCommand',
     'InstallCommand',
     'JailInstallCommand',
@@ -56,6 +58,7 @@ commands = {
     'generate license': GenerateLicenseCommand,
     'inspect config': InspectConfigCommand,
     'inspect venv': InspectVenvCommand,
+    'inspect gadget': InspectGadgetCommand,
     'install': InstallCommand,
     'jail install': JailInstallCommand,
     'jail remove': JailRemoveCommand,
