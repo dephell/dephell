@@ -13,6 +13,7 @@ from .inspect_gadget import InspectGadgetCommand
 from .inspect_venv import InspectVenvCommand
 from .install import InstallCommand
 from .jail_install import JailInstallCommand
+from .jail_list import JailListCommand
 from .jail_remove import JailRemoveCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
@@ -36,6 +37,7 @@ __all__ = [
     'InspectVenvCommand',
     'InstallCommand',
     'JailInstallCommand',
+    'JailListCommand',
     'JailRemoveCommand',
     'VenvCreateCommand',
     'VenvDestroyCommand',
@@ -61,6 +63,7 @@ commands = {
     'inspect gadget': InspectGadgetCommand,
     'install': InstallCommand,
     'jail install': JailInstallCommand,
+    'jail list': JailListCommand,
     'jail remove': JailRemoveCommand,
     # 'jail update': ...,
     'venv create': VenvCreateCommand,
