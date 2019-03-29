@@ -30,6 +30,8 @@
     cmd-generate-editorconfig
     cmd-generate-license
     cmd-inspect-config
+    cmd-inspect-venv
+    cmd-install
     cmd-venv-create
     cmd-deps-licenses
 
