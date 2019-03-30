@@ -3,9 +3,6 @@ from collections import ChainMap
 from logging import getLogger
 from typing import Optional
 
-# external
-from graphviz import Digraph
-
 # app
 from ..models.root import RootDependency
 
@@ -180,6 +177,9 @@ class Graph:
         return parents
 
     def draw(self, path: str = '.dephell_report', suffix: str = '') -> None:
+        from graphviz import Digraph
+        from graphviz.backend import ExecutableNotFound
+
         dot = Digraph(
             name=self._roots[0].name + suffix,
             directory=path,
@@ -208,7 +208,10 @@ class Graph:
                 dot.edge(parent, dep.name, label=constraint)
 
         # save files
-        dot.render()
+        try:
+            dot.render()
+        except ExecutableNotFound as e:
+            raise ImportError('GraphViz is not installed yet.') from e
 
     # properties
 

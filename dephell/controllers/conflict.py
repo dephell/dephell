@@ -1,19 +1,48 @@
+import re
+from logging import getLogger
+
 # external
-from graphviz.backend import ExecutableNotFound
-from html2text import html2text
 from jinja2 import Environment, PackageLoader
 
 
+logger = getLogger('dephell')
 env = Environment(
     loader=PackageLoader('dephell', 'templates'),
 )
 
 
+REPLACEMENTS = (
+    ('</div>', '\n\n'),
+    ('</ul>', '\n\n'),
+    ('</ol>', '\n\n'),
+
+    ('</li>', '\n'),
+    ('</p>', '\n'),
+
+    ('<ul>', '\n'),
+    ('<ol>', '\n'),
+    ('<li>', ' * '),
+)
+REX_BEGINING = re.compile(r'(\n[ \t]+)')
+
+
+# https://github.com/dephell/dephell/issues/11
+def html2text(text: str) -> str:
+    text = REX_BEGINING.sub('', text)
+    for tag, char in REPLACEMENTS:
+        text = text.replace(tag, char)
+    for tag, _ in REPLACEMENTS:
+        text = text.replace(tag.replace('/', ''), '')
+    while '\n\n\n' in text:
+        text = text.replace('\n\n\n', '\n\n')
+    return text.strip() + '\n'
+
+
 def analize_conflict(resolver, suffix: str = '') -> str:
     try:
         resolver.graph.draw(suffix=suffix)
-    except ExecutableNotFound:
-        print('GraphViz is not installed yet.')
+    except ImportError as e:
+        logger.warning(e.args[0])
 
     conflict = resolver.graph.conflict
     if conflict is None:
