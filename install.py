@@ -32,4 +32,14 @@ create(str(path), with_pip=True)
 
 print('install dephell')
 pip_path = list(path.glob('*/pip3'))[0]
-exit(subprocess.run([str(pip_path), 'install', 'dephell[full]']))
+result = subprocess.run([str(pip_path), 'install', 'dephell[full]'])
+if result.returncode != 0:
+    exit(result.returncode)
+
+print('copy binary dephell')
+local_path = pip_path.parent / 'dephell'
+if not local_path.exists():
+    print('DepHell binary not found')
+    exit(1)
+global_path = Path.home() / '.local' / 'bin' / 'dephell'
+global_path.symlink_to(local_path)
