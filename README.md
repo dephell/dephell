@@ -9,6 +9,8 @@
 + Discover licenses of all project dependencies.
 + Generate .editorconfig, LICENSE, AUTHORS.
 
+See [documentation](https://dephell.readthedocs.io/) for more details.
+
 ## Installation
 
 ```bash

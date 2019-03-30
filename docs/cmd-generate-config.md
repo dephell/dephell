@@ -8,7 +8,8 @@ $ dephell generate config
 
 Good for quick start.
 
-## More info
+## See also
 
+1. [dephell inspect config](cmd-inspect-config) to show current config parameters.
 1. [How dephell works with config and parameters](config)
 1. [Full list of config parameters](params)

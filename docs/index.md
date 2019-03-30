@@ -25,11 +25,21 @@
     cmd-build
     cmd-deps-convert
     cmd-deps-install
+    cmd-deps-licenses
     cmd-generate-authors
     cmd-generate-config
+    cmd-generate-editorconfig
+    cmd-generate-license
     cmd-inspect-config
+    cmd-inspect-venv
+    cmd-install
+    cmd-jail-install
+    cmd-jail-list
+    cmd-jail-remove
     cmd-venv-create
-    cmd-deps-licenses
+    cmd-venv-destroy
+    cmd-venv-run
+    cmd-venv-shell
 
 .. toctree::
     :maxdepth: 1

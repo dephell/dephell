@@ -59,3 +59,9 @@ $ dephell inspect config --from=setup.py from
   "path": "setup.py"
 }
 ```
+
+## See also
+
+1. [dephell generate config](cmd-generate-config) to initialize DepHell config for project.
+1. [How dephell works with config and parameters](config).
+1. [Full list of config parameters](params).

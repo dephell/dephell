@@ -68,4 +68,4 @@ Other:
 
 ## Default values
 
-Default values a little bit varies for different systems. Please, use [inspect config](cmd-inspect-config) to view your actual config for current sysstem, project and environment.
+Default values a little bit varies for different systems. Please, use [inspect config](cmd-inspect-config) to view your actual config for current system, project and environment.

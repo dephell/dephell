@@ -163,7 +163,7 @@ class Dependency:
             result += '[{}]'.format(self.extra)
         if self.constraint:
             result += str(self.constraint)
-        if self.marker:
+        if self.marker and str(self.marker):
             result += '; ' + str(self.marker)
         return result
 
