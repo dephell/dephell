@@ -7,7 +7,6 @@ from urllib.parse import urlparse
 
 # external
 import attr
-import aiofiles
 import requests
 from aiohttp import ClientSession
 from dephell_markers import Markers
@@ -21,6 +20,12 @@ from ..config import config
 from ..models.author import Author
 from ..models.release import Release
 from .base import Interface
+
+
+try:
+    import aiofiles
+except ImportError:
+    aiofiles = None
 
 
 def _process_url(url: str) -> str:
@@ -233,11 +238,22 @@ class WareHouseRepo(Interface):
                             response.status, response.reason, url,
                         ))
                     path = Path(tmp) / url.rsplit('/', maxsplit=1)[-1]
-                    async with aiofiles.open(str(path), mode='wb') as stream:
-                        while True:
-                            chunk = await response.content.read(1024)
-                            if not chunk:
-                                break
-                            await stream.write(chunk)
+
+                    # download file
+                    if aiofiles is not None:
+                        async with aiofiles.open(str(path), mode='wb') as stream:
+                            while True:
+                                chunk = await response.content.read(1024)
+                                if not chunk:
+                                    break
+                                await stream.write(chunk)
+                    else:
+                        with path.open(mode='wb') as stream:
+                            while True:
+                                chunk = await response.content.read(1024)
+                                if not chunk:
+                                    break
+                                stream.write(chunk)
+
             root = converter.load(path)
             return tuple(str(dep) for dep in root.dependencies)

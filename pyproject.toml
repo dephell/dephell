@@ -72,7 +72,6 @@ dephell = "dephell.cli:entrypoint"
 
 [tool.poetry.dependencies]
 python = ">=3.5"
-aiofiles = "*"
 aiohttp = "*"
 appdirs = "*"
 attrs = "*"
@@ -85,7 +84,13 @@ pip = "*"
 requests = "*"
 tomlkit = "*"
 tqdm = "*"
-yapf = "*"
+
+# optional
+aiofiles = {optional = true}
+autopep8 = {optional = true}
+colorama = {optional = true}
+graphviz = {optional = true}
+yapf = {optional = true}
 
 # dephell ecosystem
 dephell_archive = "*"     # https://github.com/dephell/dephell_archive
@@ -104,5 +109,6 @@ sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
 
 [tool.poetry.extras]
+full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
 tests = ["pytest"]
 docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]

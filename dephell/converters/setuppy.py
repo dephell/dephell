@@ -8,14 +8,22 @@ from typing import Optional
 # external
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
-from yapf.yapflib.style import CreateGoogleStyle
-from yapf.yapflib.yapf_api import FormatCode
 
 # app
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from ..utils import chdir
 from .base import BaseConverter
+
+try:
+    from yapf.yapflib.style import CreateGoogleStyle
+    from yapf.yapflib.yapf_api import FormatCode
+except ImportError:
+    FormatCode = None
+try:
+    from autopep8 import fix_code
+except ImportError:
+    fix_code = None
 
 
 TEMPLATE = """
@@ -175,7 +183,7 @@ class SetupPyConverter(BaseConverter):
         data = {package: sorted(paths) for package, paths in data.items()}
         content.append(('package_data', data))
 
-        reqs_list = [self._format_req(req=req) for req in reqs]
+        reqs_list = [self._format_req(req=req) for req in reqs if not req.main_envs]
         content.append(('install_requires', reqs_list))
 
         extras = defaultdict(list)
@@ -195,7 +203,12 @@ class SetupPyConverter(BaseConverter):
         content = ',\n    '.join('{}={!r}'.format(name, value) for name, value in content)
         content = TEMPLATE.format(kwargs=content, readme=readme)
 
-        content, _changed = FormatCode(content, style_config=CreateGoogleStyle())
+        # beautify
+        if FormatCode is not None:
+            content, _changed = FormatCode(content, style_config=CreateGoogleStyle())
+        if fix_code is not None:
+            content = fix_code(content)
+
         return content
 
     # private methods
