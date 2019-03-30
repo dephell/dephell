@@ -39,7 +39,8 @@ So, you can write command above quite shorter:
 $ dephell deps licenses --env=flake8
 ```
 
-## More info
+## See also
 
-1. [How dephell works with config and parameters](config)
-1. [`dephell deps licenses` command](cmd-deps-licenses)
+1. [How dephell works with config and parameters](config).
+1. [dephell deps licenses](cmd-deps-licenses) documentation.
+1. [dephell generate license](cmd-generate-license) to make license for project.

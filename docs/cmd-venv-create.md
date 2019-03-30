@@ -8,6 +8,8 @@ Path to virtual environment contains these substitutions:
 + `{digest}` will be replaced by the short 4-letters digest of the project path to avoid conflicts for the projects with the same name in different locations.
 + `{env}` will be replaced by current environment (`main` by default).
 
+So, virtual environment unique for every project and environment by default.
+
 For example, create virtual environment for `docs` environment of current project:
 
 ```bash
@@ -27,3 +29,12 @@ Get path to the current venv (if created) with [dephell inspect venv](cmd-inspec
 $ dephell inspect venv venv
 /home/gram/.local/share/dephell/venvs/dephell-nLn6/main
 ```
+
+## See also
+
+1. [dephell deps install](cmd-deps-install) to install project dependencies into created virtual environment.
+1. [dephell install](cmd-install) to install package into created virtual environment.
+1. [dephell jail install](cmd-jail-install) to install Python CLI tools into isolated virtual environment.
+1. [dephell venv destroy](cmd-venv-destroy) to remove virtual environment.
+1. [dephell venv run](cmd-venv-run) to run tool from virtual environment.
+1. [dephell venv shell](cmd-venv-shell) to activate virtual environment for current shell.

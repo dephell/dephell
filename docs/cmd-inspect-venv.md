@@ -20,3 +20,8 @@ Specify `--env` to get information about other environment:
 ```bash
 $ dephell inspect venv --env=docs
 ```
+
+## See also
+
+1. [dephell venv create](cmd-venv-create) for information about virtual environments management in DepHell.
+1. [dephell inspect config](cmd-inspect-config) to get information about config parameters like venv path template.

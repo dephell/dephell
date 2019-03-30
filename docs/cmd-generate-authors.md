@@ -7,3 +7,7 @@ $ dephell generate authors
 ```
 
 Easy :)
+
+## See also
+
+1. [dephell generate license](cmd-generate-license) to make license file for project.

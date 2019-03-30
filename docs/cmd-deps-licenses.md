@@ -42,8 +42,9 @@ INFO resolved
 ]
 ```
 
-## More info
+## See also
 
+1. [Example of this command usage](use-licenses)
+1. [dephell generate license](cmd-generate-license) to make license file for your project.
 1. [How dephell works with config and parameters](config)
 1. [Full list of config parameters](params)
-1. [Example of this command usage](use-licenses)

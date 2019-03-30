@@ -15,3 +15,8 @@ For open source software use [MIT License](https://en.wikipedia.org/wiki/MIT_Lic
 1. [GNU GPLv3](https://en.wikipedia.org/wiki/GNU_General_Public_License#Version_3) forbid to use your project in proprietary projects. It useful when you want to make open source only for open source, but really limit your project popularity and usage. Almost all developers writes some proprietary software, and only a bit dvelopers get paid for open source. So, don't forbid your users to use your code.
 1. [The Unlicense](https://en.wikipedia.org/wiki/Unlicense) and [WTFPL](https://en.wikipedia.org/wiki/WTFPL) have limitations on usage in some countries. Don't use them.
 1. Most of your users don't know about other licenses like [Mozilla Public License](https://en.wikipedia.org/wiki/Mozilla_Public_License). Don't force them to read about new licenses specially for your project. Please, value their time.
+
+## See also
+
+1. [dephell deps licenses](cmd-deps-licenses) to show licenses for all project dependencies.
+1. [dephell generate authors](cmd-generate-authors) to make AUTHORS file for project.

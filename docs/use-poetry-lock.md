@@ -35,7 +35,7 @@ Dephell by default uses `pyproject.toml` config and `main` section, so you can r
 $ dephell deps convert
 ```
 
-## More info
+## See also
 
 1. [How dephell works with config and parameters](config)
 1. [`dephell deps convert` command](cmd-deps-convert)

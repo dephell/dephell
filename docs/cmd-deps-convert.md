@@ -27,3 +27,8 @@ You can specify input and output in three different ways:
     1. [setup.py](https://docs.python.org/3/distutils/setupscript.html) (`setuppy`)
     1. [pyproject.toml build-system requires](https://www.python.org/dev/peps/pep-0518/#build-system-table) (`pyproject`)
     1. Installed packages (`installed`). It works like [pip freeze](https://pip.pypa.io/en/stable/reference/pip_freeze/). Dephell can only read from this format, of course. If you want to install packages, use `install` command.
+
+## See also
+
+1. [dephell build](cmd-deps-install) to fast convert dependencies into setup.py, sdist and wheel.
+1. [dephell deps install](cmd-deps-install) to install project dependencies.

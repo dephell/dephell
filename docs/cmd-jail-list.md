@@ -22,3 +22,8 @@ $ dephell jail list httpie
   "http"
 ]
 ```
+
+## See also
+
+1. [dephell jail install](cmd-jail-install) to create a new jail.
+1. [dephell jail remove](cmd-jail-remove) to remove jail.
