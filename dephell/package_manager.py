@@ -22,6 +22,9 @@ class PackageManager:
     executable = attr.ib(type=Path)
 
     def install(self, reqs: List[Requirement]) -> int:
+        args = ['--no-deps']
+        if self.executable.samefile(sys.executable):
+            args.append('--user')
         converter = PIPConverter(lock=True)
         with TemporaryDirectory() as path:
             path = Path(path) / 'requiements.txt'
@@ -29,7 +32,7 @@ class PackageManager:
                 path.unlink()
             converter.dump(reqs=reqs, path=path, project=None)
             logger.debug(path.read_text())
-            return self.run('install', '--no-deps', '-r', str(path))
+            return self.run('install', *args, '-r', str(path))
 
     def remove(self, reqs: List[Requirement]) -> int:
         return self.run('uninstall', '-y', *[req.name for req in reqs])
