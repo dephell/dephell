@@ -37,6 +37,8 @@
     cmd-jail-list
     cmd-jail-remove
     cmd-venv-create
+    cmd-venv-destroy
+    cmd-venv-run
 
 .. toctree::
     :maxdepth: 1
