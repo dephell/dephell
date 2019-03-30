@@ -78,7 +78,6 @@ appdirs = "*"
 attrs = "*"
 cerberus = "*"
 editorconfig = "*"  # https://github.com/editorconfig/editorconfig-core-py
-html2text = "*"
 jinja2 = "*"
 m2r = "*"
 packaging = "*"
