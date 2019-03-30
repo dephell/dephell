@@ -39,6 +39,7 @@
     cmd-venv-create
     cmd-venv-destroy
     cmd-venv-run
+    cmd-venv-shell
 
 .. toctree::
     :maxdepth: 1
