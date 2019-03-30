@@ -183,7 +183,7 @@ class SetupPyConverter(BaseConverter):
         data = {package: sorted(paths) for package, paths in data.items()}
         content.append(('package_data', data))
 
-        reqs_list = [self._format_req(req=req) for req in reqs]
+        reqs_list = [self._format_req(req=req) for req in reqs if not req.main_envs]
         content.append(('install_requires', reqs_list))
 
         extras = defaultdict(list)
