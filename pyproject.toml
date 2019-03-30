@@ -72,7 +72,6 @@ dephell = "dephell.cli:entrypoint"
 
 [tool.poetry.dependencies]
 python = ">=3.5"
-aiofiles = "*"
 aiohttp = "*"
 appdirs = "*"
 attrs = "*"
@@ -87,6 +86,7 @@ tomlkit = "*"
 tqdm = "*"
 
 # optional
+aiofiles = {optional = true}
 autopep8 = {optional = true}
 colorama = {optional = true}
 graphviz = {optional = true}
@@ -109,6 +109,6 @@ sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
 
 [tool.poetry.extras]
-full = ['autopep8', 'colorama', 'graphviz', 'yapf']
+full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
 tests = ["pytest"]
 docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]
