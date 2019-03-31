@@ -207,3 +207,19 @@ def test_backjump_past_failed_package_on_disjoint_constraint():
         ),
     )
     check(root=root, a='==1', b='==4')
+
+
+def test_cyclic_dependencies():
+    root = make_root(
+        root=Fake('', 'a'),
+        a=(
+            Fake('1', 'b==1'),
+        ),
+        b=(
+            Fake('1', 'c==1'),
+        ),
+        c=(
+            Fake('1', 'a==1'),
+        ),
+    )
+    check(root=root, a='==1', b='==1', c='==1')
