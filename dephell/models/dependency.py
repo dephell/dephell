@@ -66,6 +66,13 @@ class Dependency:
 
     @property
     def dependencies(self) -> tuple:
+        """
+        Be careful when you getting this property because it locks group.
+        Locked dependencies have special behavior in the resolver,
+        so you can accidentaly get conflict in the resolving.
+        To avoid it call `.unlock()` after `dependencies` if Dependency
+        was locked (`.locked`) before access.
+        """
         deps = self.__dict__.get('dependencies')
         if deps is not None:
             return deps

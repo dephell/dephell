@@ -52,19 +52,16 @@ class Resolver:
                 return other_dep
         parent.applied = True
 
-    def unapply(self, dep, *, force=True, soft=False):
+    def unapply(self, dep, *, force: bool = True, soft: bool = False) -> None:
         """
         force -- unapply deps that not applied yet
         soft -- do not mark dep as not applied.
         """
         if not force and not dep.applied:
             return
-
         # it must be before actual unapplying to avoid recursion on cyclic dependencies
         if not soft:
             dep.applied = False
-            if dep.locked:
-                dep.unlock()
 
         for child in dep.dependencies:
             child = self.graph.get(child.name)
@@ -75,6 +72,9 @@ class Resolver:
             child.unapply(dep.name)
             # unapply child because he is modified
             self.unapply(child, force=False, soft=soft)
+
+        if not soft and dep.locked:
+            dep.unlock()
 
     def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
         if not config['silent']:

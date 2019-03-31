@@ -162,6 +162,7 @@ class Graph:
         for dep in deps:
             for layer in self._layers:
                 for parent in layer:
+                    was_locked = parent.locked
                     for children in parent.dependencies:
                         if children.name != dep.name:
                             continue
@@ -169,6 +170,9 @@ class Graph:
                             continue
                         parents[parent.name] = parent
                         break
+                    # if dependency hasn't been locked then unlock it after our accidental lock
+                    if parent.locked and not was_locked:
+                        parent.unlock()
         if parents:
             parents.update(self.get_parents(
                 *parents.values(),
