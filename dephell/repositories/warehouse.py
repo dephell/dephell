@@ -1,5 +1,6 @@
 # built-in
 import asyncio
+from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Optional, Tuple, Union
@@ -11,7 +12,7 @@ import requests
 from aiohttp import ClientSession
 from dephell_markers import Markers
 from dephell_licenses import licenses, License
-from packaging.requirements import Requirement
+from packaging.requirements import Requirement, InvalidRequirement
 
 
 # app
@@ -26,6 +27,9 @@ try:
     import aiofiles
 except ImportError:
     aiofiles = None
+
+
+logger = getLogger('dephell.repositories')
 
 
 def _process_url(url: str) -> str:
@@ -107,7 +111,16 @@ class WareHouseRepo(Interface):
         # filter result
         result = []
         for dep in deps:
-            req = Requirement(dep)
+            try:
+                req = Requirement(dep)
+            except InvalidRequirement as e:
+                try:
+                    # try to parse with dropped out markers
+                    req = Requirement(dep.split(';')[0])
+                except InvalidRequirement:
+                    msg = 'cannot parse requirement: {} from {} {}'
+                    raise ValueError(msg.format(dep, name, version)) from e
+
             dep_extra = req.marker and Markers(req.marker).extra
             # it's not extra and we want not extra too
             if dep_extra is None and extra is None:
@@ -226,7 +239,10 @@ class WareHouseRepo(Interface):
         for converer, checker in rules:
             for file_info in files_info:
                 if checker(file_info):
-                    return await self._download_and_parse(url=file_info['url'], converter=converer)
+                    try:
+                        return await self._download_and_parse(url=file_info['url'], converter=converer)
+                    except FileNotFoundError as e:
+                        logger.warning(e.args[0])
         return ()
 
     async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
