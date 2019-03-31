@@ -14,6 +14,7 @@
     :maxdepth: 1
     :caption: Main Info
 
+    installation
     config
     params
 

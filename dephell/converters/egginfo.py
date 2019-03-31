@@ -277,7 +277,7 @@ class _Writer:
         # write extra deps
         for extra, reqs in sorted(extras.items()):
             content.append('\n[{}]'.format(extra))
-            for req in sorted(reqs):
+            for req in reqs:
                 content.append(self._format_req(req=req, with_envs=False))
 
         return '\n'.join(content)
