@@ -141,7 +141,8 @@ class _Reader:
                 continue
             # get section name as extra
             if req[0] == '[' and req[-1] == ']':
-                extra = req[1:-1]
+                # TODO: process markers after `:`
+                extra = req[1:-1].split(':')[0]
                 envs = {extra} if extra == 'dev' else {'main', extra}
                 continue
 
