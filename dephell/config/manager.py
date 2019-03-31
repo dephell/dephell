@@ -112,7 +112,7 @@ class Config:
     def attach_cli(self, args, sep: str = '_') -> dict:
         data = defaultdict(dict)
         for name, value in args._get_kwargs():
-            if value is None:
+            if value is None or value is False:
                 continue
             parsed = name.split(sep, maxsplit=1)
             if len(parsed) == 1:
