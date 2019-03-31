@@ -9,6 +9,7 @@ from tqdm import tqdm
 # app
 from ..config import config
 from .conflict import analize_conflict
+from ..models import RootDependency
 
 
 logger = getLogger('dephell.resolver')
@@ -36,6 +37,10 @@ class Resolver:
                 # add new dep to graph
                 other_dep = new_dep.copy()
                 self.graph.add(other_dep)
+            elif isinstance(other_dep, RootDependency):
+                # if some of the dependencies cyclicaly dependes on root
+                # then ignore these deps
+                continue
             else:
                 # merge deps
                 try:
