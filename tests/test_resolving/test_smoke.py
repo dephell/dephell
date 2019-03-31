@@ -56,3 +56,14 @@ def test_subpackages():
     assert 'oslo-utils' in resolver.graph
     assert 'pbr' in resolver.graph
     # assert str(resolver.graph.get('oslo-i18n').group.best_release.version) == '2.1.0'
+
+
+def test_arpeggio():
+    # https://github.com/sdispater/poetry#dependency-resolution
+    resolver = loader.loads_resolver(content='parver==0.2.1')
+    resolved = resolver.resolve()
+    assert resolved is True
+    assert 'parver' in resolver.graph
+    assert 'arpeggio' in resolver.graph
+    # arpeggio==1.7.*,>=1.7.0
+    assert str(resolver.graph.get('arpeggio').group.best_release.version) == '1.7.1'

@@ -38,7 +38,7 @@ class Resolver:
                 other_dep = new_dep.copy()
                 self.graph.add(other_dep)
             elif isinstance(other_dep, RootDependency):
-                # if some of the dependencies cyclicaly dependes on root
+                # if some of the dependencies cyclicaly depends on root
                 # then ignore these deps
                 continue
             else:
@@ -59,6 +59,13 @@ class Resolver:
         """
         if not force and not dep.applied:
             return
+
+        # it must be before actual unapplying to avoid recursion on cyclic dependencies
+        if not soft:
+            dep.applied = False
+            if dep.locked:
+                dep.unlock()
+
         for child in dep.dependencies:
             child = self.graph.get(child.name)
             if child is None:
@@ -68,8 +75,6 @@ class Resolver:
             child.unapply(dep.name)
             # unapply child because he is modified
             self.unapply(child, force=False, soft=soft)
-        if not soft:
-            dep.applied = False
 
     def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
         if not config['silent']:
@@ -82,8 +87,9 @@ class Resolver:
 
         while True:
             if config['silent']:
-                logger.debug('next layer', extra=dict(
+                logger.debug('next iteration', extra=dict(
                     layers=len(self.graph._layers),
+                    mutations=self.mutator.mutations,
                 ))
             else:
                 layers_bar.update()

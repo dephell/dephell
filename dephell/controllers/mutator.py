@@ -31,10 +31,10 @@ class Mutator:
 
     @staticmethod
     def _make_snapshot(groups) -> tuple:
-        snapshot = sorted(group.name + str(group.number) for group in groups)
+        snapshot = sorted(group.name + '|' + str(group.number) for group in groups)
         return tuple(snapshot)
 
-    def check(self, groups):
+    def check(self, groups) -> bool:
         for group in groups:
             if group.empty:
                 return False
@@ -44,11 +44,11 @@ class Mutator:
         self._snapshots.add(self._make_snapshot(groups))
 
     @property
-    def mutations(self):
+    def mutations(self) -> int:
         return len(self._snapshots)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{name}(mutations={mutations})'.format(
-            name=self.__class__.__name__,
+            name=type(self).__name__,
             mutations=self.mutations,
         )
