@@ -3,21 +3,21 @@
 </div>
 
 <div>
-  Releases:
   <ul>
-    {% for release in conflict.groups.releases %}
+    {% for name, spec in conflict.constraint.specs %}
       <li>
-        {{ release.version }}
+        {{ spec }} goes from {{ graph.get(name).group }}
       </li>
     {% endfor %}
   </ul>
 </div>
 
 <div>
+  Releases:
   <ul>
-    {% for name, spec in conflict.constraint.specs %}
+    {% for release in conflict.groups.releases %}
       <li>
-        {{ spec }} goes from {{ graph.get(name).group }}
+        {{ release.version }}
       </li>
     {% endfor %}
   </ul>
