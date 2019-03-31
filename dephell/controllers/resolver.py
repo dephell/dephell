@@ -64,9 +64,10 @@ class Resolver:
             dep.applied = False
 
         for child in dep.dependencies:
-            child = self.graph.get(child.name)
+            child_name = child.name
+            child = self.graph.get(child_name)
             if child is None:
-                logger.warning('child not found', extra=dict(dep=dep.name))
+                logger.warning('child not found', extra=dict(dep=dep.name, child=child_name))
                 continue
             # unapply current dependency for child
             child.unapply(dep.name)
