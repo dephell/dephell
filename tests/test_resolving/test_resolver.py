@@ -238,7 +238,7 @@ def test_cyclic_dependencies_with_unapply():
         ),
         c=(
             Fake('1', 'a==1'),
-            Fake('2', 'a==1'),
+            Fake('2', 'b==2', 'a==1'),
         ),
     )
     check(root=root, a='==1', b='==1', c='==1')

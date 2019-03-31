@@ -76,6 +76,9 @@ def main(argv: List[str]) -> int:
     except Exception as e:
         logger.exception('{}: {}'.format(type(e).__name__, e))
         return ReturnCodes.UNKNOWN_EXCEPTION.value
+    except KeyboardInterrupt:
+        logger.exception('stopped by user')
+        return ReturnCodes.UNKNOWN_EXCEPTION.value
     if not result:
         return ReturnCodes.COMMAND_ERROR.value
     return ReturnCodes.OK.value
