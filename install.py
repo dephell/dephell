@@ -42,4 +42,6 @@ if not local_path.exists():
     print('DepHell binary not found')
     exit(1)
 global_path = Path.home() / '.local' / 'bin' / 'dephell'
+if global_path.exists() or global_path.is_symlink():
+    global_path.unlink()
 global_path.symlink_to(local_path)
