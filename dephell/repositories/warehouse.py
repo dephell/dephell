@@ -274,5 +274,11 @@ class WareHouseRepo(Interface):
                                     break
                                 stream.write(chunk)
 
+            # load and make separated dep for every env
             root = converter.load(path)
-            return tuple(str(dep) for dep in root.dependencies)
+            deps = []
+            for dep in root.dependencies:
+                for env in dep.envs.copy():
+                    dep.envs = {env}
+                    deps.append(str(dep))
+            return tuple(deps)

@@ -1,6 +1,6 @@
 # built-in
 from copy import deepcopy
-from typing import Iterable, Optional
+from typing import Iterable
 
 # external
 from dephell_markers import Markers
@@ -36,7 +36,7 @@ class Dependency:
     # info from requirements file
     editable = attr.ib(type=bool, default=False, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
-    marker = attr.ib(type=Optional[Markers], default=None, repr=False)
+    marker = attr.ib(type=Markers, factory=Markers, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
 
     extra = None
@@ -104,7 +104,7 @@ class Dependency:
 
     @property
     def python_compat(self) -> bool:
-        if self.marker is None:
+        if not self.marker:
             return True
         needed = self.marker.python_version
         if needed is None:
@@ -170,8 +170,12 @@ class Dependency:
             result += '[{}]'.format(self.extra)
         if self.constraint:
             result += str(self.constraint)
-        if self.marker and str(self.marker):
-            result += '; ' + str(self.marker)
+
+        marker = deepcopy(self.marker)
+        for env in self.envs - {'main'}:
+            marker &= Markers('extra == "{}"'.format(env))
+        if marker:
+            result += '; ' + str(marker)
         return result
 
     def __iadd__(self, dep: 'Dependency') -> 'Dependency':
