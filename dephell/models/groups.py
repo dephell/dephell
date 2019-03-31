@@ -38,6 +38,8 @@ class Groups:
         if self.extra is not None:
             for release in releases:
                 release.extra = self.extra
+        if not releases:
+            raise LookupError('cannot find releases for ' + self.dep.name)
         return releases
 
     async def _fetch_all_deps(self, releases):

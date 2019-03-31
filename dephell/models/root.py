@@ -60,6 +60,7 @@ class RootDependency:
     locked = False
     compat = True
     used = True
+    constraint = None
 
     @cached_property
     def name(self) -> str:

@@ -45,7 +45,7 @@ def _process_url(url: str) -> str:
 class WareHouseRepo(Interface):
     name = attr.ib(default='pypi')
     url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
-    prereleases = attr.ib(type=bool, default=False)  # allow prereleases
+    prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
     hash = None
     link = None
