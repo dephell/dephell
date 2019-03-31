@@ -114,12 +114,15 @@ class WareHouseRepo(Interface):
             try:
                 req = Requirement(dep)
             except InvalidRequirement as e:
+                msg = 'cannot parse requirement: {} from {} {}'
                 try:
                     # try to parse with dropped out markers
                     req = Requirement(dep.split(';')[0])
                 except InvalidRequirement:
-                    msg = 'cannot parse requirement: {} from {} {}'
                     raise ValueError(msg.format(dep, name, version)) from e
+                else:
+                    msg = 'cannot parse requirement: "{}" from {} {}'
+                    logger.warning(msg.format(dep, name, version))
 
             dep_extra = req.marker and Markers(req.marker).extra
             # it's not extra and we want not extra too

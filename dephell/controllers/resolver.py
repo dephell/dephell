@@ -62,7 +62,7 @@ class Resolver:
         for child in dep.dependencies:
             child = self.graph.get(child.name)
             if child is None:
-                logger.warning('child not found')
+                logger.warning('child not found', extra=dict(dep=dep.name))
                 continue
             # unapply current dependency for child
             child.unapply(dep.name)
@@ -81,7 +81,11 @@ class Resolver:
             )
 
         while True:
-            if not config['silent']:
+            if config['silent']:
+                logger.debug('next layer', extra=dict(
+                    layers=len(self.graph._layers),
+                ))
+            else:
                 layers_bar.update()
             # get not applied deps
             deps = self.graph.get_leafs(level=level)
@@ -112,7 +116,7 @@ class Resolver:
             for group in groups:
                 dep = self.graph.get(group.name)
                 if dep.group.number != group.number:
-                    logger.debug('mutated {group_from} to {group_to}', extra=dict(
+                    logger.debug('mutated', extra=dict(
                         group_from=str(dep.group),
                         group_to=str(group),
                     ))
@@ -161,8 +165,8 @@ class Resolver:
             if conflict is None:
                 continue
 
-            logger.debug('conflict {name}{constraint}', extra=dict(
-                name=conflict.name,
+            logger.debug('conflict', extra=dict(
+                dep=conflict.name,
                 constraint=conflict.constraint,
             ))
             self.graph.conflict = conflict.copy()
