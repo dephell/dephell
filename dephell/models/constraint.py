@@ -93,9 +93,8 @@ class Constraint:
         return self
 
     def __str__(self) -> str:
-        specs = map(str, self._specs.values())
-        specs = sorted(specs)
-        return ','.join(specs)
+        specs = map(str, set(self._specs.values()))
+        return ','.join(spec for spec in sorted(specs) if spec)
 
     def __repr__(self) -> str:
         return '{name}({specs})'.format(
