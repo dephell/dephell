@@ -227,6 +227,13 @@ class WareHouseRepo(Interface):
         if not files_info:
             return ()
 
+        # Dirty hack to make DepHell much faster.
+        # If releases contains wheel then PyPI can parse requirements from it,
+        # but hasn't found iany requirements. So, release has no requirements.
+        for file_info in files_info:
+            if file_info['packagetype'] == 'bdist_wheel':
+                return ()
+
         from ..converters import SDistConverter, WheelConverter
 
         sdist = SDistConverter()
