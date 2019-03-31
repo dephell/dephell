@@ -24,7 +24,7 @@ SCHEME = {
     'to': dict(required=False, **_TARGET),
     'and': dict(
         type='list',
-        schema=dict(required=True, **_TARGET),
+        schema=_TARGET,
         required=False,
         empty=True,
     ),
