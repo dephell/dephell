@@ -13,6 +13,10 @@ See [documentation](https://dephell.readthedocs.io/) for more details.
 
 ## Installation
 
+Simplest way:
+
 ```bash
-python3 -m pip install --user dephell
+python3 -m pip install --user dephell[full]
 ```
+
+See [installation documentation](https://dephell.readthedocs.io/en/latest/installation.html) for better ways.
