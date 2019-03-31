@@ -223,3 +223,22 @@ def test_cyclic_dependencies():
         ),
     )
     check(root=root, a='==1', b='==1', c='==1')
+
+
+def test_cyclic_dependencies_with_unapply():
+    root = make_root(
+        root=Fake('', 'a'),
+        a=(
+            Fake('1', 'b==1'),
+            Fake('2', 'b==2'),
+        ),
+        b=(
+            Fake('1', 'c==1'),
+            Fake('2', 'c==2'),
+        ),
+        c=(
+            Fake('1', 'a==1'),
+            Fake('2', 'a==1'),
+        ),
+    )
+    check(root=root, a='==1', b='==1', c='==1')

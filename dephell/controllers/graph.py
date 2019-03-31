@@ -162,8 +162,6 @@ class Graph:
         for dep in deps:
             for layer in self._layers:
                 for parent in layer:
-                    if not parent.locked:
-                        continue
                     for children in parent.dependencies:
                         if children.name != dep.name:
                             continue
