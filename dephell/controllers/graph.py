@@ -104,7 +104,7 @@ class Graph:
             for parent in layer:
                 if parent.name in parents_names:
                     return self.add(dep, level=layer.level + 1)
-        raise KeyError('Can\'t find any parent for dependency')
+        raise KeyError('cannot find any parent for dependency: ' + str(dep.name))
 
     def get_leafs(self, level: Optional[int] = None) -> tuple:
         """Get deps that isn't applied yet
@@ -132,6 +132,8 @@ class Graph:
         raise KeyError('cannot find dep')
 
     def get(self, name: str):
+        if name in self._deps:
+            return self._deps[name]
         for layer in reversed(self._layers):
             dep = layer.get(name)
             if dep is not None:
