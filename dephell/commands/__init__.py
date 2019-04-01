@@ -11,10 +11,10 @@ from .generate_license import GenerateLicenseCommand
 from .inspect_config import InspectConfigCommand
 from .inspect_gadget import InspectGadgetCommand
 from .inspect_venv import InspectVenvCommand
-from .install import PackageInstallCommand
 from .jail_install import JailInstallCommand
 from .jail_list import JailListCommand
 from .jail_remove import JailRemoveCommand
+from .package_install import PackageInstallCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
 from .venv_run import VenvRunCommand
