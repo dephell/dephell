@@ -28,7 +28,7 @@ class DepsConvertCommand(BaseCommand):
     def __call__(self):
         loader = CONVERTERS[self.config['from']['format']]
         dumper = CONVERTERS[self.config['to']['format']]
-        self.logger.info('converting...', extra={
+        self.logger.info('start converting...', extra={
             'from-format':  self.config['from']['format'],
             'from-path':    self.config['from']['path'],
             'to-format':    self.config['to']['format'],
@@ -48,6 +48,7 @@ class DepsConvertCommand(BaseCommand):
 
             # merge (without full graph building)
             if not should_be_resolved:
+                self.logger.info('merging...')
                 resolved = resolver.resolve(level=1)
                 if not resolved:
                     conflict = analize_conflict(resolver=resolver)
@@ -58,6 +59,7 @@ class DepsConvertCommand(BaseCommand):
 
         # resolve (and merge)
         if should_be_resolved:
+            self.logger.info('resolving...')
             resolved = resolver.resolve()
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)

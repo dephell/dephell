@@ -11,3 +11,14 @@
     {% endfor %}
   </ul>
 </div>
+
+<div>
+  Releases:
+  <ul>
+    {% for release in conflict.groups.releases %}
+      <li>
+        {{ release.version }}
+      </li>
+    {% endfor %}
+  </ul>
+</div>

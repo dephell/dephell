@@ -116,10 +116,11 @@ class SetupPyConverter(BaseConverter):
 
         # extras
         for extra, reqs in getattr(info, 'extras_require', {}).items():
+            extra, marker = cls._split_extra_and_marker(extra)
             envs = {extra} if extra == 'dev' else {'main', extra}
             for req in reqs:
                 req = Requirement(req)
-                deps = DependencyMaker.from_requirement(source=root, req=req)
+                deps = DependencyMaker.from_requirement(source=root, req=req, marker=marker)
                 for dep in deps:
                     dep.envs = envs
                 root.attach_dependencies(deps)

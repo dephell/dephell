@@ -2,7 +2,7 @@
 from os import unlink
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Optional
+from typing import Optional, Tuple
 
 # app
 from ..constants import FILES
@@ -79,7 +79,19 @@ class BaseConverter:
 
             if file_name in FILES:
                 return project_name
+            if file_name[0].isdigit():
+                return project_name
             return file_name
 
         if content is not None:
             return 'root-{length}'.format(length=len(content))
+
+    @staticmethod
+    def _split_extra_and_marker(text: str) -> Tuple[str, Optional[str]]:
+        text = text.lstrip('[').lstrip('[')
+        if ':' not in text:
+            return text, None
+        extra, marker = text.split(':')
+        if not extra:
+            extra = 'main'
+        return extra, None

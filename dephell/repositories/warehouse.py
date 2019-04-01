@@ -1,5 +1,6 @@
 # built-in
 import asyncio
+from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Optional, Tuple, Union
@@ -11,7 +12,7 @@ import requests
 from aiohttp import ClientSession
 from dephell_markers import Markers
 from dephell_licenses import licenses, License
-from packaging.requirements import Requirement
+from packaging.requirements import Requirement, InvalidRequirement
 
 
 # app
@@ -26,6 +27,9 @@ try:
     import aiofiles
 except ImportError:
     aiofiles = None
+
+
+logger = getLogger('dephell.repositories')
 
 
 def _process_url(url: str) -> str:
@@ -45,7 +49,7 @@ def _process_url(url: str) -> str:
 class WareHouseRepo(Interface):
     name = attr.ib(default='pypi')
     url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
-    prereleases = attr.ib(type=bool, default=False)  # allow prereleases
+    prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
     hash = None
     link = None
@@ -107,7 +111,19 @@ class WareHouseRepo(Interface):
         # filter result
         result = []
         for dep in deps:
-            req = Requirement(dep)
+            try:
+                req = Requirement(dep)
+            except InvalidRequirement as e:
+                msg = 'cannot parse requirement: {} from {} {}'
+                try:
+                    # try to parse with dropped out markers
+                    req = Requirement(dep.split(';')[0])
+                except InvalidRequirement:
+                    raise ValueError(msg.format(dep, name, version)) from e
+                else:
+                    msg = 'cannot parse requirement: "{}" from {} {}'
+                    logger.warning(msg.format(dep, name, version))
+
             dep_extra = req.marker and Markers(req.marker).extra
             # it's not extra and we want not extra too
             if dep_extra is None and extra is None:
@@ -211,6 +227,13 @@ class WareHouseRepo(Interface):
         if not files_info:
             return ()
 
+        # Dirty hack to make DepHell much faster.
+        # If releases contains wheel then PyPI can parse requirements from it,
+        # but hasn't found iany requirements. So, release has no requirements.
+        for file_info in files_info:
+            if file_info['packagetype'] == 'bdist_wheel':
+                return ()
+
         from ..converters import SDistConverter, WheelConverter
 
         sdist = SDistConverter()
@@ -226,7 +249,10 @@ class WareHouseRepo(Interface):
         for converer, checker in rules:
             for file_info in files_info:
                 if checker(file_info):
-                    return await self._download_and_parse(url=file_info['url'], converter=converer)
+                    try:
+                        return await self._download_and_parse(url=file_info['url'], converter=converer)
+                    except FileNotFoundError as e:
+                        logger.warning(e.args[0])
         return ()
 
     async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
@@ -255,5 +281,11 @@ class WareHouseRepo(Interface):
                                     break
                                 stream.write(chunk)
 
+            # load and make separated dep for every env
             root = converter.load(path)
-            return tuple(str(dep) for dep in root.dependencies)
+            deps = []
+            for dep in root.dependencies:
+                for env in dep.envs.copy():
+                    dep.envs = {env}
+                    deps.append(str(dep))
+            return tuple(deps)

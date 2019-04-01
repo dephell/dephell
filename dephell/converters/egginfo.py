@@ -34,7 +34,7 @@ class _Reader:
             if path.suffix == '.egg-info':
                 return self.load_dir(path)
             # find *.egg-info in current dir
-            paths = list(path.glob('**/*.egg-info'))
+            paths = list(path.glob('*.egg-info'))
             return self.load_dir(*paths)
 
         if path.suffix in ('.zip', '.gz', '.tar'):
@@ -52,7 +52,10 @@ class _Reader:
             raise FileNotFoundError('cannot find egg-info')
         # maybe it's possible, so we will have to process it
         if len(paths) > 1:
-            raise FileExistsError('too many egg-info')
+            min_parts = min(len(path.parts) for path in paths)
+            paths = [path for path in paths if len(path.parts) == min_parts]
+            if len(paths) > 1:
+                raise FileExistsError('too many egg-info', *paths)
         path = paths[0]
 
         # pkg-info
@@ -135,18 +138,19 @@ class _Reader:
         if root is None:
             root = RootDependency(raw_name=self._get_name(content=content))
         envs = {'main'}
+        marker = Markers()
         for req in content.split('\n'):
             req = req.strip()
             if not req or req[0] in '#;':
                 continue
             # get section name as extra
             if req[0] == '[' and req[-1] == ']':
-                extra = req[1:-1]
+                extra, marker = self._split_extra_and_marker(req)
                 envs = {extra} if extra == 'dev' else {'main', extra}
                 continue
 
             req = PackagingRequirement(req)
-            deps = DependencyMaker.from_requirement(source=root, req=req, envs=envs)
+            deps = DependencyMaker.from_requirement(source=root, req=req, envs=envs, marker=marker)
             root.attach_dependencies(deps)
         return root
 

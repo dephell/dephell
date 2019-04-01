@@ -104,7 +104,7 @@ class Graph:
             for parent in layer:
                 if parent.name in parents_names:
                     return self.add(dep, level=layer.level + 1)
-        raise KeyError('Can\'t find any parent for dependency')
+        raise KeyError('cannot find any parent for dependency: ' + str(dep.name))
 
     def get_leafs(self, level: Optional[int] = None) -> tuple:
         """Get deps that isn't applied yet
@@ -132,6 +132,8 @@ class Graph:
         raise KeyError('cannot find dep')
 
     def get(self, name: str):
+        if name in self._deps:
+            return self._deps[name]
         for layer in reversed(self._layers):
             dep = layer.get(name)
             if dep is not None:
@@ -162,6 +164,7 @@ class Graph:
         for dep in deps:
             for layer in self._layers:
                 for parent in layer:
+                    was_locked = parent.locked
                     for children in parent.dependencies:
                         if children.name != dep.name:
                             continue
@@ -169,6 +172,9 @@ class Graph:
                             continue
                         parents[parent.name] = parent
                         break
+                    # if dependency hasn't been locked then unlock it after our accidental lock
+                    if parent.locked and not was_locked:
+                        parent.unlock()
         if parents:
             parents.update(self.get_parents(
                 *parents.values(),

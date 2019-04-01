@@ -9,6 +9,7 @@ from tqdm import tqdm
 # app
 from ..config import config
 from .conflict import analize_conflict
+from ..models import RootDependency
 
 
 logger = getLogger('dephell.resolver')
@@ -36,6 +37,10 @@ class Resolver:
                 # add new dep to graph
                 other_dep = new_dep.copy()
                 self.graph.add(other_dep)
+            elif isinstance(other_dep, RootDependency):
+                # if some of the dependencies cyclicaly depends on root
+                # then ignore these deps
+                continue
             else:
                 # merge deps
                 try:
@@ -47,24 +52,30 @@ class Resolver:
                 return other_dep
         parent.applied = True
 
-    def unapply(self, dep, *, force=True, soft=False):
+    def unapply(self, dep, *, force: bool = True, soft: bool = False) -> None:
         """
         force -- unapply deps that not applied yet
         soft -- do not mark dep as not applied.
         """
         if not force and not dep.applied:
             return
+        # it must be before actual unapplying to avoid recursion on cyclic dependencies
+        if not soft:
+            dep.applied = False
+
         for child in dep.dependencies:
-            child = self.graph.get(child.name)
+            child_name = child.name
+            child = self.graph.get(child_name)
             if child is None:
-                logger.warning('child not found')
+                logger.warning('child not found', extra=dict(dep=dep.name, child=child_name))
                 continue
             # unapply current dependency for child
             child.unapply(dep.name)
             # unapply child because he is modified
             self.unapply(child, force=False, soft=soft)
-        if not soft:
-            dep.applied = False
+
+        if not soft and dep.locked:
+            dep.unlock()
 
     def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
         if not config['silent']:
@@ -76,7 +87,12 @@ class Resolver:
             )
 
         while True:
-            if not config['silent']:
+            if config['silent']:
+                logger.debug('next iteration', extra=dict(
+                    layers=len(self.graph._layers),
+                    mutations=self.mutator.mutations,
+                ))
+            else:
                 layers_bar.update()
             # get not applied deps
             deps = self.graph.get_leafs(level=level)
@@ -107,7 +123,7 @@ class Resolver:
             for group in groups:
                 dep = self.graph.get(group.name)
                 if dep.group.number != group.number:
-                    logger.debug('mutated {group_from} to {group_to}', extra=dict(
+                    logger.debug('mutated', extra=dict(
                         group_from=str(dep.group),
                         group_to=str(group),
                     ))
@@ -156,8 +172,8 @@ class Resolver:
             if conflict is None:
                 continue
 
-            logger.debug('conflict {name}{constraint}', extra=dict(
-                name=conflict.name,
+            logger.debug('conflict', extra=dict(
+                dep=conflict.name,
                 constraint=conflict.constraint,
             ))
             self.graph.conflict = conflict.copy()

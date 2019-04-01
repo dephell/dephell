@@ -24,6 +24,8 @@ class RootRelease:
     version = attr.ib(default='0.0.0')
     time = attr.ib(default=None)
 
+    extra = None
+
     @cached_property
     def name(self) -> str:
         return canonicalize_name(self.raw_name)
@@ -51,7 +53,7 @@ class RootDependency:
     entrypoints = attr.ib(default=tuple(), repr=False)      # entry_points
 
     # additional info objects
-    package = attr.ib(default=PackageRoot(Path('.').resolve()))  # packages, package_data
+    package = attr.ib(default=PackageRoot(Path('.').resolve()), repr=False)  # packages, package_data
     python = attr.ib(default=RangeSpecifier(), repr=False)  # Requires-Python
     readme = attr.ib(default=None, repr=False)              # Description
 
@@ -60,6 +62,7 @@ class RootDependency:
     locked = False
     compat = True
     used = True
+    constraint = None
 
     @cached_property
     def name(self) -> str:

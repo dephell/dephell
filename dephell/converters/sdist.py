@@ -28,7 +28,7 @@ class SDistConverter(BaseConverter):
 
     def load(self, path) -> RootDependency:
         path = Path(str(path))
-        if path.suffix not in ('.zip', '.gz', '.tar'):
+        if path.suffix not in ('.zip', '.gz', '.tar', '.tgz', '.bz2'):
             raise ValueError('invalid file extension: ' + path.suffix)
         root = None
         converter = EggInfoConverter()
@@ -36,7 +36,7 @@ class SDistConverter(BaseConverter):
             archive = ArchivePath(archive_path=path, cache_path=Path(cache))
 
             # read *.egg-info
-            paths = list(archive.glob('**/*.egg-info'))
+            paths = list(archive.glob('*.egg-info')) + list(archive.glob('*/*.egg-info'))
             if paths:
                 root = converter.load_dir(*paths)
                 root.readme = Readme.discover(path=archive)

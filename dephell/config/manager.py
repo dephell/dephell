@@ -48,6 +48,16 @@ class Config:
         for key, value in data.items():
             if value is None:
                 continue
+
+            # convert `and` section from tomlkit types to python types
+            if isinstance(value, (list, tuple)):
+                new_value = []
+                for subvalue in value:
+                    if isinstance(subvalue, dict):
+                        subvalue = dict(subvalue)
+                    new_value.append(subvalue)
+                value = new_value
+
             if key not in container:
                 container[key] = value
             elif isinstance(value, dict):
@@ -102,7 +112,7 @@ class Config:
     def attach_cli(self, args, sep: str = '_') -> dict:
         data = defaultdict(dict)
         for name, value in args._get_kwargs():
-            if value is None:
+            if value is None or value is False:
                 continue
             parsed = name.split(sep, maxsplit=1)
             if len(parsed) == 1:

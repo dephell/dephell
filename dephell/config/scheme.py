@@ -24,7 +24,7 @@ SCHEME = {
     'to': dict(required=False, **_TARGET),
     'and': dict(
         type='list',
-        schema=dict(required=True, **_TARGET),
+        schema=_TARGET,
         required=False,
         empty=True,
     ),
@@ -33,11 +33,14 @@ SCHEME = {
         required=True,
     ),
 
-    'silent':       dict(type='boolean', required=True),
     'warehouse':    dict(type='string', required=True),
     'bitbucket':    dict(type='string', required=True),
+
     'strategy':     dict(type='string', required=True, allowed=STRATEGIES),
     'prereleases':  dict(type='boolean', required=True),
+    'mutations':    dict(type='integer', required=True),
+
+    'silent':       dict(type='boolean', required=True),
     'level':        dict(type='string', required=True, allowed=LOG_LEVELS),
     'format':       dict(type='string', required=True, allowed=LOG_FORMATTERS),
     'nocolors':     dict(type='boolean', required=True),

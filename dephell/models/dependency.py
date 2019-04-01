@@ -1,6 +1,6 @@
 # built-in
 from copy import deepcopy
-from typing import Iterable, Optional
+from typing import Tuple
 
 # external
 from dephell_markers import Markers
@@ -36,7 +36,7 @@ class Dependency:
     # info from requirements file
     editable = attr.ib(type=bool, default=False, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
-    marker = attr.ib(type=Optional[Markers], default=None, repr=False)
+    marker = attr.ib(type=Markers, factory=Markers, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
 
     extra = None
@@ -65,7 +65,14 @@ class Dependency:
                 return group
 
     @property
-    def dependencies(self) -> tuple:
+    def dependencies(self) -> Tuple['Dependency', ...]:
+        """
+        Be careful when you getting this property because it locks group.
+        Locked dependencies have special behavior in the resolver,
+        so you can accidentaly get conflict in the resolving.
+        To avoid it call `.unlock()` after `dependencies` if Dependency
+        was locked (`.locked`) before access.
+        """
         deps = self.__dict__.get('dependencies')
         if deps is not None:
             return deps
@@ -74,8 +81,6 @@ class Dependency:
         deps = []
         for dep in self.group.dependencies:
             if isinstance(dep, Dependency):
-                deps.append(dep)
-            elif isinstance(dep, Iterable):
                 deps.append(dep)
             else:
                 deps.extend(DependencyMaker.from_requirement(self, dep))
@@ -88,7 +93,7 @@ class Dependency:
     def dependencies(self, dependencies: tuple) -> None:
         constraint = str(self.constraint)
         if not constraint.startswith('==') or ',' in constraint or '||' in constraint:
-            raise ValueError('cannot set deps for non-locked dependency')
+            raise ValueError('cannot set deps for non-locked dependency', self.name, str(self.constraint))
         self.__dict__['dependencies'] = dependencies
 
     @property
@@ -97,7 +102,7 @@ class Dependency:
 
     @property
     def python_compat(self) -> bool:
-        if self.marker is None:
+        if not self.marker:
             return True
         needed = self.marker.python_version
         if needed is None:
@@ -163,8 +168,12 @@ class Dependency:
             result += '[{}]'.format(self.extra)
         if self.constraint:
             result += str(self.constraint)
-        if self.marker and str(self.marker):
-            result += '; ' + str(self.marker)
+
+        marker = deepcopy(self.marker)
+        for env in self.envs - {'main'}:
+            marker &= Markers('extra == "{}"'.format(env))
+        if marker:
+            result += '; ' + str(marker)
         return result
 
     def __iadd__(self, dep: 'Dependency') -> 'Dependency':
@@ -209,7 +218,21 @@ class Dependency:
         self.groups.actualize()
         return self
 
+    def __ior__(self, dep: 'Dependency') -> 'Dependency':
+        if not isinstance(dep, type(self)):
+            return NotImplemented
+        new_constraint = self.constraint | dep.constraint
+        self += dep
+        self.constraint = new_constraint
+        self.groups.actualize()
+        return self
+
     def __add__(self, dep: 'Dependency') -> 'Dependency':
+        new = self.copy()
+        new += dep
+        return dep
+
+    def __or__(self, dep: 'Dependency') -> 'Dependency':
         new = self.copy()
         new += dep
         return dep

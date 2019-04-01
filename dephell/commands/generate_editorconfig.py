@@ -33,8 +33,8 @@ RULES = (
     ('*.{json,yml,yaml}', ('indent_style = space', 'indent_size = 2')),
     ('*.{html,j2}', ('indent_style = space', 'indent_size = 2')),
 
-    ('Makefile', ('indent_style = tab')),
-    ('*.go', ('indent_style = tab')),
+    ('Makefile', ('indent_style = tab', )),
+    ('*.go', ('indent_style = tab', )),
 )
 
 
