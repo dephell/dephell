@@ -1,6 +1,6 @@
 # built-in
 from copy import deepcopy
-from typing import Iterable
+from typing import Tuple
 
 # external
 from dephell_markers import Markers
@@ -65,7 +65,7 @@ class Dependency:
                 return group
 
     @property
-    def dependencies(self) -> tuple:
+    def dependencies(self) -> Tuple['Dependency', ...]:
         """
         Be careful when you getting this property because it locks group.
         Locked dependencies have special behavior in the resolver,
@@ -81,8 +81,6 @@ class Dependency:
         deps = []
         for dep in self.group.dependencies:
             if isinstance(dep, Dependency):
-                deps.append(dep)
-            elif isinstance(dep, Iterable):
                 deps.append(dep)
             else:
                 deps.extend(DependencyMaker.from_requirement(self, dep))

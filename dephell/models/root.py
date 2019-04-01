@@ -24,6 +24,8 @@ class RootRelease:
     version = attr.ib(default='0.0.0')
     time = attr.ib(default=None)
 
+    extra = None
+
     @cached_property
     def name(self) -> str:
         return canonicalize_name(self.raw_name)
