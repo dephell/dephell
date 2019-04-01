@@ -51,6 +51,7 @@ def build_output(parser):
     output_group.add_argument('--nocolors', action='store_true', help='do not color output.')
     output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
     output_group.add_argument('--traceback', action='store_true', help='show traceback for exceptions.')
+    output_group.add_argument('--filter', help='filter for JSON output.')
 
 
 def build_venv(parser):

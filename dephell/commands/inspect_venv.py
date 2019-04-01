@@ -22,7 +22,6 @@ class InspectVenvCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('key', nargs='?')
         return parser
 
     def __call__(self):
@@ -43,4 +42,4 @@ class InspectVenvCommand(BaseCommand):
                 lib=str(venv.lib_path),
                 python=str(venv.python_path),
             ))
-        print(self.get_value(data=data, key=self.args.key))
+        print(self.get_value(data=data, key=self.config['filter']))

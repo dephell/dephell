@@ -13,11 +13,11 @@ from ..venvs import VEnvs
 from .base import BaseCommand
 
 
-class InstallCommand(BaseCommand):
+class PackageInstallCommand(BaseCommand):
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='dephell install',
+            prog='dephell package install',
             description='Download and install package into project environment',
         )
         builders.build_config(parser)
