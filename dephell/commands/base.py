@@ -3,7 +3,6 @@ import json
 import os.path
 from functools import reduce
 from logging import getLogger
-from operator import getitem
 from typing import Optional
 
 # app
@@ -44,8 +43,8 @@ class BaseCommand:
             print(self.config.format_errors())
         return is_valid
 
-    @staticmethod
-    def get_value(data, key, sep: Optional[str] = '-'):
+    @classmethod
+    def get_value(cls, data, key, sep: Optional[str] = '-'):
         # print all config
         if not key:
             return json.dumps(data, indent=2, sort_keys=True)
@@ -53,11 +52,29 @@ class BaseCommand:
         if sep is None:
             return json.dumps(data[key], indent=2, sort_keys=True)
 
-        keys = key.split(sep)
-        value = reduce(getitem, keys, data)
+        keys = key.replace('.', sep).split(sep)
+        value = reduce(cls._getitem, keys, data)
         # print config section
         if type(value) is dict:
             return json.dumps(value, indent=2, sort_keys=True)
 
         # print one value
         return value
+
+    @staticmethod
+    def _getitem(value, key):
+        if key in ('reverse()', 'reversed()'):
+            return value[::-1]
+        if key == 'first()':
+            return value[0]
+        if key == 'last()':
+            return value[-1]
+        if key == 'min()':
+            return min(value)
+        if key == 'max()':
+            return max(value)
+        if key in ('len()', 'length()'):
+            return len(value)
+        if key.isdigit():
+            key = int(key)
+        return value[key]
