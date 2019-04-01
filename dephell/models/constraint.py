@@ -92,6 +92,21 @@ class Constraint:
                 self._specs[name] = spec
         return self
 
+    def __or__(self, other):
+        return self.copy().__ior__(other)
+
+    def __ior__(self, other):
+        if not isinstance(other, Constraint):
+            return NotImplemented
+        for name, group in other._groups.items():
+            self._groups[name] = group
+            spec = other._specs[name]
+            if name in self._specs:
+                self._specs[name] = RangeSpecifier(str(self._specs[name]) + '||' + str(spec))
+            else:
+                self._specs[name] = spec
+        return self
+
     def __str__(self) -> str:
         specs = map(str, set(self._specs.values()))
         return ','.join(spec for spec in sorted(specs) if spec)

@@ -1,5 +1,6 @@
 # project
 from dephell.converters.pip import PIPConverter
+from packaging.version import Version
 
 
 loader = PIPConverter(lock=False)
@@ -66,4 +67,4 @@ def test_arpeggio():
     assert 'parver' in resolver.graph
     assert 'arpeggio' in resolver.graph
     # arpeggio==1.7.*,>=1.7.0
-    assert str(resolver.graph.get('arpeggio').group.best_release.version) == '1.7.1'
+    assert resolver.graph.get('arpeggio').group.best_release.version >= Version('1.9.0')

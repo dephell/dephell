@@ -218,7 +218,21 @@ class Dependency:
         self.groups.actualize()
         return self
 
+    def __ior__(self, dep: 'Dependency') -> 'Dependency':
+        if not isinstance(dep, type(self)):
+            return NotImplemented
+        new_constraint = self.constraint | dep.constraint
+        self += dep
+        self.constraint = new_constraint
+        self.groups.actualize()
+        return self
+
     def __add__(self, dep: 'Dependency') -> 'Dependency':
+        new = self.copy()
+        new += dep
+        return dep
+
+    def __or__(self, dep: 'Dependency') -> 'Dependency':
         new = self.copy()
         new += dep
         return dep
