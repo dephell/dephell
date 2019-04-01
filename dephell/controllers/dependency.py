@@ -1,5 +1,6 @@
 # built-in
 import re
+from copy import copy
 from logging import getLogger
 from typing import List, Optional, Union
 
@@ -26,7 +27,7 @@ class DependencyMaker:
     extra_class = ExtraDependency
 
     @classmethod
-    def from_requirement(cls, source, req, *, url=None, envs=None,
+    def from_requirement(cls, source, req, *, url=None, envs=None, marker: Union[Markers, str] = None,
                          editable=False) -> List[Union[Dependency, ExtraDependency]]:
         if type(req) is str:
             req = PackagingRequirement(req)
@@ -37,12 +38,15 @@ class DependencyMaker:
         if isinstance(link, VCSLink) and link.rev:
             constraint._specs[source.name] = GitSpecifier()
 
-        marker = Markers()
+        if isinstance(marker, Markers):
+            marker = copy(marker)
+        else:
+            marker = Markers(marker)
         if req.marker is not None:
             # some libs uses `in` for python_version,
             # but dephell_markers isn't ready for this
             try:
-                marker = Markers(req.marker)
+                marker &= Markers(req.marker)
             except ValueError:
                 logger.warning('cannot parse marker', extra=dict(marker=req.marker))
 
@@ -68,7 +72,8 @@ class DependencyMaker:
     @classmethod
     def from_params(cls, *, raw_name: str, constraint,
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
-                    repo=None, marker=None, extras: Optional[List[str]] = None, envs=None,
+                    repo=None, marker: Union[Markers, str] = None,
+                    extras: Optional[List[str]] = None, envs=None,
                     **kwargs) -> List[Union[Dependency, ExtraDependency]]:
 
         # make link
@@ -87,7 +92,10 @@ class DependencyMaker:
             repo = get_repo(link)
 
         # make marker
-        marker = Markers(marker)
+        if isinstance(marker, Markers):
+            marker = copy(marker)
+        else:
+            marker = Markers(marker)
 
         # make envs
         if envs is None:

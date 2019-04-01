@@ -138,19 +138,19 @@ class _Reader:
         if root is None:
             root = RootDependency(raw_name=self._get_name(content=content))
         envs = {'main'}
+        marker = Markers()
         for req in content.split('\n'):
             req = req.strip()
             if not req or req[0] in '#;':
                 continue
             # get section name as extra
             if req[0] == '[' and req[-1] == ']':
-                # TODO: process markers after `:`
-                extra = req[1:-1].split(':')[0]
+                extra, marker = self._split_extra_and_marker(req)
                 envs = {extra} if extra == 'dev' else {'main', extra}
                 continue
 
             req = PackagingRequirement(req)
-            deps = DependencyMaker.from_requirement(source=root, req=req, envs=envs)
+            deps = DependencyMaker.from_requirement(source=root, req=req, envs=envs, marker=marker)
             root.attach_dependencies(deps)
         return root
 
