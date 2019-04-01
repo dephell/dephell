@@ -73,6 +73,8 @@ class BaseCommand:
             return min(value)
         if key == 'max()':
             return max(value)
+        if key == 'type()':
+            return type(value).__name__
         if key in ('len()', 'length()'):
             return len(value)
         if key.isdigit():
