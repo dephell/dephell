@@ -1,5 +1,5 @@
 # built-in
-from argparse import ArgumentParser
+from argparse import ArgumentParser, REMAINDER
 from datetime import datetime
 from getpass import getuser
 from pathlib import Path
@@ -22,7 +22,7 @@ class GenerateLicenseCommand(BaseCommand):
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs=1, help='licnse name')
+        parser.add_argument('name', nargs=REMAINDER, help='licnse name')
         return parser
 
     def __call__(self):
