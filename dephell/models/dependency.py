@@ -93,7 +93,7 @@ class Dependency:
     def dependencies(self, dependencies: tuple) -> None:
         constraint = str(self.constraint)
         if not constraint.startswith('==') or ',' in constraint or '||' in constraint:
-            raise ValueError('cannot set deps for non-locked dependency')
+            raise ValueError('cannot set deps for non-locked dependency', self.name, str(self.constraint))
         self.__dict__['dependencies'] = dependencies
 
     @property

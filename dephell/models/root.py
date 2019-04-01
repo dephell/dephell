@@ -53,7 +53,7 @@ class RootDependency:
     entrypoints = attr.ib(default=tuple(), repr=False)      # entry_points
 
     # additional info objects
-    package = attr.ib(default=PackageRoot(Path('.').resolve()))  # packages, package_data
+    package = attr.ib(default=PackageRoot(Path('.').resolve()), repr=False)  # packages, package_data
     python = attr.ib(default=RangeSpecifier(), repr=False)  # Requires-Python
     readme = attr.ib(default=None, repr=False)              # Description
 

@@ -101,15 +101,23 @@ class PoetryLockConverter(BaseConverter):
             else:
                 marker = '({}) and {}'.format(marker, python)
 
+        # make version
+        version = content['version']
+        if version != '*':
+            version = '==' + version
+
         deps = DependencyMaker.from_params(
             raw_name=content['name'],
             description=content['description'],
-            constraint=Constraint(root, '==' + content['version']),
+            constraint=Constraint(root, version),
             marker=marker,
             url=url,
             editable=False,
             envs=envs,
         )
+
+        if version == '*':
+            return deps
 
         # add dependencies for dependencies
         subdeps = []
