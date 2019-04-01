@@ -26,7 +26,7 @@ class Requirement:
 
         # if roots wasn't applied then apply them
         if len(graph._layers) == 1:
-            for root in graph._layers[0]:
+            for root in graph._roots:
                 for dep in root.dependencies:
                     graph.add(dep)
 
@@ -44,7 +44,10 @@ class Requirement:
                     extras[dep.base_name].append(dep)
 
         # add extras
+        roots = [root.name for root in graph._roots]
         for name, deps in extras.items():
+            if name not in result and name in roots:
+                continue
             result[name].extra_deps = tuple(sorted(deps, key=lambda dep: dep.extra))
         return tuple(result.values())
 
