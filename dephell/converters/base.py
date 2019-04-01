@@ -79,6 +79,8 @@ class BaseConverter:
 
             if file_name in FILES:
                 return project_name
+            if file_name[0].isdigit():
+                return project_name
             return file_name
 
         if content is not None:
