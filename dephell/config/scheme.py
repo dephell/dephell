@@ -45,6 +45,7 @@ SCHEME = {
     'format':       dict(type='string', required=True, allowed=LOG_FORMATTERS),
     'nocolors':     dict(type='boolean', required=True),
     'traceback':    dict(type='boolean', required=True),
+    'filter':       dict(type='string', required=False),
 
     # venv
     'venv':     dict(type='string', required=True),

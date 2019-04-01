@@ -22,7 +22,6 @@ class DepsLicensesCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('key', nargs='*')
         return parser
 
     def __call__(self):
@@ -54,5 +53,5 @@ class DepsLicensesCommand(BaseCommand):
             else:
                 licenses['Unknown'].add(dep.name)
         licenses = {name: sorted(deps) for name, deps in licenses.items()}
-        print(self.get_value(data=licenses, key=' '.join(self.args.key), sep=None))
+        print(self.get_value(data=licenses, key=self.config['filter'], sep=None))
         return True

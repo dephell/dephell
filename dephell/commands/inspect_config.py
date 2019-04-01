@@ -21,8 +21,7 @@ class InspectConfigCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('key', nargs='?')
         return parser
 
     def __call__(self):
-        print(self.get_value(data=self.config._data, key=self.args.key))
+        print(self.get_value(data=self.config._data, key=self.config['filter']))

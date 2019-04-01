@@ -24,7 +24,6 @@ class PackageShowCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_other(parser)
         parser.add_argument('name', help='package name (and version)')
-        parser.add_argument('key', nargs='?', help='key to filter result')
         return parser
 
     def __call__(self):
@@ -59,4 +58,4 @@ class PackageShowCommand(BaseCommand):
             links=dep.links,
             authors=[str(author) for author in dep.authors],
         )
-        print(self.get_value(data=data, key=self.args.key))
+        print(self.get_value(data=data, key=self.config['filter']))
