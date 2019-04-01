@@ -34,7 +34,7 @@ class _Reader:
             if path.suffix == '.egg-info':
                 return self.load_dir(path)
             # find *.egg-info in current dir
-            paths = list(path.glob('**/*.egg-info'))
+            paths = list(path.glob('*.egg-info'))
             return self.load_dir(*paths)
 
         if path.suffix in ('.zip', '.gz', '.tar'):
@@ -52,7 +52,10 @@ class _Reader:
             raise FileNotFoundError('cannot find egg-info')
         # maybe it's possible, so we will have to process it
         if len(paths) > 1:
-            raise FileExistsError('too many egg-info')
+            min_parts = min(len(path.parts) for path in paths)
+            paths = [path for path in paths if len(path.parts) == min_parts]
+            if len(paths) > 1:
+                raise FileExistsError('too many egg-info', *paths)
         path = paths[0]
 
         # pkg-info
