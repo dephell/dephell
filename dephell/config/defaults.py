@@ -14,6 +14,7 @@ DEFAULT = dict(
     # resolver
     prereleases=False,
     strategy='max',
+    mutations=200,
 
     # api
     bitbucket='https://api.bitbucket.org/2.0',

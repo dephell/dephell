@@ -34,6 +34,7 @@ def build_resolver(parser):
     resolver_group = parser.add_argument_group('Resolver rules')
     resolver_group.add_argument('--strategy', choices=STRATEGIES, help='Algorithm to select best release.')
     resolver_group.add_argument('--prereleases', action='store_true', help='Allow prereleases')
+    resolver_group.add_argument('--mutations', type=int, help='Maximum mutations limit')
 
 
 def build_api(parser):
@@ -62,7 +63,7 @@ def build_other(parser):
     other_group = parser.add_argument_group('Other')
 
     other_group.add_argument('--cache-path', help='path to dephell cache')
-    other_group.add_argument('--cache-ttl', help='Time to live for releases list cache')
+    other_group.add_argument('--cache-ttl', type=int, help='Time to live for releases list cache')
 
     other_group.add_argument('--project', help='path to the current project')
     other_group.add_argument('--bin', help='path to the dir for installing scripts')
