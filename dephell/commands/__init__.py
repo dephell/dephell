@@ -11,7 +11,7 @@ from .generate_license import GenerateLicenseCommand
 from .inspect_config import InspectConfigCommand
 from .inspect_gadget import InspectGadgetCommand
 from .inspect_venv import InspectVenvCommand
-from .install import InstallCommand
+from .install import PackageInstallCommand
 from .jail_install import JailInstallCommand
 from .jail_list import JailListCommand
 from .jail_remove import JailRemoveCommand
@@ -35,10 +35,10 @@ __all__ = [
     'InspectConfigCommand',
     'InspectGadgetCommand',
     'InspectVenvCommand',
-    'InstallCommand',
     'JailInstallCommand',
     'JailListCommand',
     'JailRemoveCommand',
+    'PackageInstallCommand',
     'VenvCreateCommand',
     'VenvDestroyCommand',
     'VenvRunCommand',
@@ -61,11 +61,11 @@ commands = {
     'inspect config': InspectConfigCommand,
     'inspect venv': InspectVenvCommand,
     'inspect gadget': InspectGadgetCommand,
-    'install': InstallCommand,
     'jail install': JailInstallCommand,
     'jail list': JailListCommand,
     'jail remove': JailRemoveCommand,
     # 'jail update': ...,
+    'package install': PackageInstallCommand,
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,
     'venv run': VenvRunCommand,
