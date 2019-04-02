@@ -37,6 +37,7 @@
     cmd-jail-install
     cmd-jail-list
     cmd-jail-remove
+    cmd-package-downloads
     cmd-package-install
     cmd-package-list
     cmd-package-search
