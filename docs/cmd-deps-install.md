@@ -13,5 +13,5 @@ Place to install lookup:
 ## See also
 
 1. [dephell venv create](cmd-venv-create) to create virtual environment for dependencies.
-1. [dephell install](cmd-package-install) to install single package
+1. [dephell package install](cmd-package-install) to install single package
 1. [dephell jail install](cmd-package-install) to install some Python CLI tool into isolated virtual environment.
