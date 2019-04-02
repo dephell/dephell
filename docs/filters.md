@@ -17,6 +17,7 @@ JSON output of any command can be filtered with `--filter` argument.
 Filters separated by `.` or `-` and can be one of the following type:
 
 + Field name to get some field from dict output.
++ Sum of fields. Will return dictionary with given fields. For example, `name+license` will return `{"license": "BSD-2-Clause", "name": "click"}`.
 + Index to get some element from list output.
 + Function to process output.
 

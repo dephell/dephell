@@ -32,7 +32,7 @@ $ dephell deps licenses --level=WARNING --silent | jq --compact-output '."Apache
 This example uses [jq](https://stedolan.github.io/jq/) to filter only one license from output. However, for simple filtering by license name you can just pass this name as positional argument in the command:
 
 ```bash
-$ dephell deps licenses Apache-2.0
+$ dephell deps licenses --filter="Apache-2.0"
 
 INFO resolved
 [
