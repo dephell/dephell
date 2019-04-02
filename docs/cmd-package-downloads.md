@@ -40,10 +40,10 @@ $ dephell package downloads textdistance
 + `total.day` -- total downloads yesterday.
 + `total.week` -- total downloads for previous 7 days.
 + `total.month` -- total downloads from yesterday to the same day in the previous month.
-+ `pythons.#.chart` and `system.#.chart` -- downloads bar chart for last 28 days grouped by 7 days.
-+ `pythons.#.day` and `system.#.day` -- total downloads yesterday.
-+ `pythons.#.week` and `system.#.week` -- total downloads for previous 7 days.
-+ `pythons.#.month` and `system.#.month` -- total downloads for previous 30 days.
++ `pythons.#.chart` and `systems.#.chart` -- downloads bar chart for last 28 days grouped by 7 days.
++ `pythons.#.day` and `systems.#.day` -- total downloads yesterday.
++ `pythons.#.week` and `systems.#.week` -- total downloads for previous 7 days.
++ `pythons.#.month` and `systems.#.month` -- total downloads for previous 30 days.
 
 ## Filtering
 
