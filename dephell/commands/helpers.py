@@ -6,6 +6,31 @@ from ..converters import CONVERTERS
 from ..config import Config
 
 
+FILTERS = {
+    'first()': lambda v: v[0],
+    'last()': lambda v: v[-1],
+    'len()': lambda v: len(v),
+    'max()': lambda v: max(v),
+    'min()': lambda v: min(v),
+    'reverse()': lambda v: v[::-1],
+    'type()': lambda v: type(v).__name__,
+
+    # aliases
+    'latest()': lambda v: v[-1],
+    'length()': lambda v: len(v),
+    'reversed()': lambda v: v[::-1],
+}
+
+
+def getitem(value, key):
+    filter = FILTERS.get(key)
+    if filter is not None:
+        return filter(value)
+    if key.isdigit():
+        key = int(key)
+    return value[key]
+
+
 def get_python(config: Config) -> Python:
     pythons = Pythons()
 

@@ -7,6 +7,7 @@ from typing import Optional
 
 # app
 from ..config import config
+from .helpers import getitem
 
 
 class BaseCommand:
@@ -53,30 +54,10 @@ class BaseCommand:
             return json.dumps(data[key], indent=2, sort_keys=True)
 
         keys = key.replace('.', sep).split(sep)
-        value = reduce(cls._getitem, keys, data)
+        value = reduce(getitem, keys, data)
         # print config section
         if type(value) is dict:
             return json.dumps(value, indent=2, sort_keys=True)
 
         # print one value
         return value
-
-    @staticmethod
-    def _getitem(value, key):
-        if key in ('reverse()', 'reversed()'):
-            return value[::-1]
-        if key == 'first()':
-            return value[0]
-        if key == 'last()':
-            return value[-1]
-        if key == 'min()':
-            return min(value)
-        if key == 'max()':
-            return max(value)
-        if key == 'type()':
-            return type(value).__name__
-        if key in ('len()', 'length()'):
-            return len(value)
-        if key.isdigit():
-            key = int(key)
-        return value[key]
