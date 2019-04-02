@@ -17,7 +17,7 @@ $ dephell jail list
 Output can be filtered by jail name:
 
 ```bash
-$ dephell jail list httpie
+$ dephell jail list --filter=httpie
 [
   "http"
 ]
@@ -25,5 +25,6 @@ $ dephell jail list httpie
 
 ## See also
 
+1. [How to filter commands JSON output](filters).
 1. [dephell jail install](cmd-jail-install) to create a new jail.
 1. [dephell jail remove](cmd-jail-remove) to remove jail.

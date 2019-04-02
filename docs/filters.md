@@ -34,6 +34,8 @@ Functions:
 + `type()` -- get value type.
 + `zip()` -- transpose output. `[[a, b], [c, d], [e, f]]` will be converted into `[[a, c, e], [b, d, f]]`.
 
+First filter gets command output. Next filters get output from previous filter.
+
 ## Example
 
 Let's filter output of [dephell package show](cmd-package-show):
