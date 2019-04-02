@@ -31,6 +31,7 @@ FILTERS = {
     'min()': lambda v: min(v),
     'reverse()': lambda v: v[::-1],
     'sort()': lambda v: sorted(v),
+    'sum()': lambda v: sum(v),
     'type()': lambda v: type(v).__name__,
     'zip()': lambda v: list(map(list, zip(*v))),
 
