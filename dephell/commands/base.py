@@ -56,7 +56,7 @@ class BaseCommand:
         keys = key.replace('.', sep).split(sep)
         value = reduce(getitem, keys, data)
         # print config section
-        if type(value) is dict:
+        if isinstance(value, (dict, list)):
             return json.dumps(value, indent=2, sort_keys=True)
 
         # print one value

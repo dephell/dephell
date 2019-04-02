@@ -9,14 +9,21 @@ from ..config import Config
 
 
 def _each(value):
-    new_value = defaultdict(list)
-    for line in value:
-        for name, field in line.items():
-            new_value[name].append(field)
+    if isinstance(value, list):
+        new_value = defaultdict(list)
+        for line in value:
+            for name, field in line.items():
+                new_value[name].append(field)
+        return dict(new_value)
+
+    new_value = []
+    for line in zip(*value.values()):
+        new_value.append(dict(zip(value.keys(), line)))
     return new_value
 
 
 FILTERS = {
+    'each()': _each,
     'first()': lambda v: v[0],
     'last()': lambda v: v[-1],
     'len()': lambda v: len(v),
@@ -24,9 +31,10 @@ FILTERS = {
     'min()': lambda v: min(v),
     'reverse()': lambda v: v[::-1],
     'type()': lambda v: type(v).__name__,
-    'each()': _each,
+    'zip()': lambda v: list(map(list, zip(*v))),
 
     # aliases
+    '#': _each,
     'latest()': lambda v: v[-1],
     'length()': lambda v: len(v),
     'reversed()': lambda v: v[::-1],
@@ -37,6 +45,9 @@ def getitem(value, key):
     filter = FILTERS.get(key)
     if filter is not None:
         return filter(value)
+    if '+' in key:
+        keys = key.split('+')
+        return {key: value[key] for key in keys}
     if key.isdigit():
         key = int(key)
     return value[key]
