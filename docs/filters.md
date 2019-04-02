@@ -12,6 +12,27 @@ JSON output of any command can be filtered with `--filter` argument.
 + [dephell package search](cmd-package-search)
 + [dephell package show](cmd-package-show)
 
+## Filters
+
+Filters separated by `.` or `-` and can be one of the following type:
+
++ Field name to get some field from dict output.
++ Index to get some element from list output.
++ Function to process output.
+
+Functions:
+
++ `each()` or `#` -- convert list of dicts to dict of lists or otherwise. For example, `[{a: 1, b: 2}, {a: 3, b: 4}]` will be converted into `{a: [1, 3], b: [2, 4]}`.
++ `first()` or `0` -- get first element from list.
++ `last()` or `latest()` -- get last element from list.
++ `len()`, `length()` or `size()` -- get count of elements in a list.
++ `max()` -- get maximum value from a list.
++ `min()` -- get minimum value from a list.
++ `reverse()` or `reversed()` -- reverse values in a list.
++ `sort()` or `sorted()` -- sort values in a list.
++ `type()` -- get value type.
++ `zip()` -- transpose output. `[[a, b], [c, d], [e, f]]` will be converted into `[[a, c, e], [b, d, f]]`.
+
 ## Example
 
 Let's filter output of [dephell package show](cmd-package-show):

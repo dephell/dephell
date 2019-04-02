@@ -39,6 +39,7 @@ FILTERS = {
     'latest()': lambda v: v[-1],
     'length()': lambda v: len(v),
     'reversed()': lambda v: v[::-1],
+    'size()': lambda v: len(v),
     'sorted()': lambda v: sorted(v),
 }
 
