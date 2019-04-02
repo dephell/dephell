@@ -16,6 +16,7 @@ from .jail_list import JailListCommand
 from .jail_remove import JailRemoveCommand
 from .package_install import PackageInstallCommand
 from .package_list import PackageListCommand
+from .package_search import PackageSearchCommand
 from .package_show import PackageShowCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
@@ -42,6 +43,7 @@ __all__ = [
     'JailRemoveCommand',
     'PackageListCommand',
     'PackageInstallCommand',
+    'PackageSearchCommand',
     'PackageShowCommand',
     'VenvCreateCommand',
     'VenvDestroyCommand',
@@ -71,6 +73,7 @@ commands = {
     # 'jail update': ...,
     'package install': PackageInstallCommand,
     'package list': PackageListCommand,
+    'package search': PackageSearchCommand,
     'package show': PackageShowCommand,
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,

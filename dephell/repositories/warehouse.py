@@ -1,10 +1,12 @@
 # built-in
 import asyncio
+import re
 from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict, Iterable
 from urllib.parse import urlparse
+from xmlrpc.client import ServerProxy
 
 # external
 import attr
@@ -30,6 +32,22 @@ except ImportError:
 
 
 logger = getLogger('dephell.repositories')
+rex_token = re.compile(r'^((?P<field>[a-z_]+)\:)?(?P<value>.+)$')
+_fields = {
+    'author_email',
+    'author',
+    'description',
+    'download_url',
+    'home_page',
+    'keywords',
+    'license',
+    'maintainer_email',
+    'maintainer',
+    'name',
+    'platform',
+    'summary',
+    'version',
+}
 
 
 def _process_url(url: str) -> str:
@@ -139,6 +157,29 @@ class WareHouseRepo(Interface):
                 continue
 
         return tuple(result)
+
+    def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
+        fields = dict()
+        for token in query:
+            group = rex_token.fullmatch(token).groupdict()
+            fields[group['field'] or 'name'] = group['value']
+        logger.debug('search on PyPI', extra=dict(query=fields))
+        invalid_fields = set(fields) - _fields
+        if invalid_fields:
+            raise ValueError('Invalid fields: {}'.format(', '.join(invalid_fields)))
+
+        with ServerProxy('https://pypi.org/pypi') as client:
+            response = client.search(fields, 'and')
+
+        results = []
+        for info in response:
+            results.append(dict(
+                name=info['name'],
+                version=info['version'],
+                description=info['summary'],
+                url='https://pypi.org/project/{}/'.format(info['name']),
+            ))
+        return results
 
     # private methods
 

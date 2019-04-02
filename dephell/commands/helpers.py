@@ -30,6 +30,7 @@ FILTERS = {
     'max()': lambda v: max(v),
     'min()': lambda v: min(v),
     'reverse()': lambda v: v[::-1],
+    'sort()': lambda v: sorted(v),
     'type()': lambda v: type(v).__name__,
     'zip()': lambda v: list(map(list, zip(*v))),
 
@@ -38,6 +39,7 @@ FILTERS = {
     'latest()': lambda v: v[-1],
     'length()': lambda v: len(v),
     'reversed()': lambda v: v[::-1],
+    'sorted()': lambda v: sorted(v),
 }
 
 
