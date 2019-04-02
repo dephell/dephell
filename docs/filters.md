@@ -35,6 +35,7 @@ Functions:
 + `min()` -- get minimum value from a list.
 + `reverse()` or `reversed()` -- reverse values in a list.
 + `sort()` or `sorted()` -- sort values in a list.
++ `sum()` -- sum of values in a list.
 + `type()` -- get value type.
 + `zip()` -- transpose output. `[[a, b], [c, d], [e, f]]` will be converted into `[[a, c, e], [b, d, f]]`.
 
