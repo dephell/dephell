@@ -53,5 +53,5 @@ class DepsLicensesCommand(BaseCommand):
             else:
                 licenses['Unknown'].add(dep.name)
         licenses = {name: sorted(deps) for name, deps in licenses.items()}
-        print(self.get_value(data=licenses, key=self.config['filter'], sep=None))
+        print(self.get_value(data=licenses, key=self.config.get('filter'), sep=None))
         return True

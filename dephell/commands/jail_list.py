@@ -32,5 +32,5 @@ class JailListCommand(BaseCommand):
             if venv_path.match(venvs_path):
                 entrypoints[venv_path.name].append(entrypoint.name)
 
-        print(self.get_value(data=dict(entrypoints), key=self.config['filter'], sep=None))
+        print(self.get_value(data=dict(entrypoints), key=self.config.get('filter'), sep=None))
         return True
