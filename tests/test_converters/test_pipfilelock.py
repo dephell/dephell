@@ -3,7 +3,7 @@ import json
 
 # project
 from dephell.converters import PIPFileLockConverter
-from dephell.links import VCSLink
+from dephell_links import VCSLink
 from dephell.models import Requirement
 from dephell.repositories import GitRepo
 

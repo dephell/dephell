@@ -4,7 +4,7 @@ from pathlib import Path
 # project
 from dephell.controllers import DependencyMaker
 from dephell.converters import PIPFileConverter
-from dephell.links import VCSLink
+from dephell_links import VCSLink
 from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
 

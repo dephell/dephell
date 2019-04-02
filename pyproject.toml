@@ -96,6 +96,7 @@ yapf = {optional = true}
 dephell_archive = "*"     # https://github.com/dephell/dephell_archive
 dephell_discover = "*"    # https://github.com/dephell/dephell_discover
 dephell_licenses = "*"    # https://github.com/dephell/dephell_licenses
+dephell_links = "*"       # https://github.com/dephell/dephell_links
 dephell_markers = "*"     # https://github.com/dephell/dephell_markers
 dephell_pythons = "*"     # https://github.com/dephell/dephell_pythons
 dephell_shells = "*"      # https://github.com/dephell/dephell_shells
