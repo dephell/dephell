@@ -26,7 +26,7 @@ $ dephell inspect config
 Show one section:
 
 ```bash
-$ dephell inspect config from
+$ dephell inspect config --filter=from
 {
   "format": "poetry",
   "path": "pyproject.toml"
@@ -37,23 +37,23 @@ $ dephell inspect config from
 Show one value:
 
 ```bash
-$ dephell inspect config from-format
+$ dephell inspect config --filter=from-format
 poetry
 
-$ dephell inspect config warehouse
+$ dephell inspect config --filter=warehouse
 https://pypi.org/pypi/
 ```
 
 ## Combine it with arguments
 
 ```bash
-$ dephell inspect config --from-path=lol from
+$ dephell inspect config --from-path=lol --filter=from
 {
   "format": "poetry",
   "path": "lol"
 }
 
-$ dephell inspect config --from=setup.py from
+$ dephell inspect config --from=setup.py --filter=from
 {
   "format": "setuppy",
   "path": "setup.py"
@@ -65,3 +65,4 @@ $ dephell inspect config --from=setup.py from
 1. [dephell generate config](cmd-generate-config) to initialize DepHell config for project.
 1. [How dephell works with config and parameters](config).
 1. [Full list of config parameters](params).
+1. [How to filter commands JSON output](filters).

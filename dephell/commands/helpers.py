@@ -39,19 +39,36 @@ FILTERS = {
     'latest()': lambda v: v[-1],
     'length()': lambda v: len(v),
     'reversed()': lambda v: v[::-1],
+    'size()': lambda v: len(v),
     'sorted()': lambda v: sorted(v),
 }
 
 
 def getitem(value, key):
+    # function
     filter = FILTERS.get(key)
     if filter is not None:
         return filter(value)
+
+    # sum of fields
     if '+' in key:
         keys = key.split('+')
         return {key: value[key] for key in keys}
+
+    # index
     if key.isdigit():
         key = int(key)
+        return value[key]
+
+    # slice
+    if ':' in key:
+        left, _sep, right = key.partition(':')
+        if (not left or left.isdigit()) and (not right or right.isdigit()):
+            left = int(left) if left else 0
+            right = int(right) if right else None
+            return value[left:right]
+
+    # field
     return value[key]
 
 

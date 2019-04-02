@@ -57,6 +57,7 @@ Commands that accept these parameters:
 + `--nocolors` -- do not color output.
 + `--silent` -- suppress any output except errors. Disables progress bar for resolver.
 + `--traceback` -- show traceback for exceptions.
++ `--filter` -- [filter for JSON output](filters).
 
 Other:
 

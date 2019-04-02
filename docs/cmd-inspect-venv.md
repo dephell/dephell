@@ -21,7 +21,15 @@ Specify `--env` to get information about other environment:
 $ dephell inspect venv --env=docs
 ```
 
+Specify `--filter` to get one field from command output:
+
+```bash
+$ dephell inspect venv --filter=project
+/home/gram/Documents/dephell
+```
+
 ## See also
 
 1. [dephell venv create](cmd-venv-create) for information about virtual environments management in DepHell.
 1. [dephell inspect config](cmd-inspect-config) to get information about config parameters like venv path template.
+1. [How to filter commands JSON output](filters).

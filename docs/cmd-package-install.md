@@ -1,4 +1,4 @@
-# dephell install
+# dephell package install
 
 Install package. Looks for a place to install in the same way as [dephell deps install](cmd-deps-install):
 
@@ -7,13 +7,13 @@ Install package. Looks for a place to install in the same way as [dephell deps i
 1. If virtual environment isn't found then your current python will be used.
 
 ```bash
-$ dephell install pytest
+$ dephell package install pytest
 ```
 
 Package specification the same as for [pip requirements file](https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format):
 
 ```bash
-$ dephell install requests[security]>=2.17.0
+$ dephell package install requests[security]>=2.17.0
 ```
 
 ## See also
