@@ -9,7 +9,7 @@ from dephell_specifier import RangeSpecifier
 
 # app
 from ..controllers import DependencyMaker
-from ..links import DirLink
+from dephell_links import DirLink
 from ..models import Constraint, Dependency, RootDependency
 from .base import BaseConverter
 

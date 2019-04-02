@@ -10,7 +10,7 @@ from dephell_specifier import GitSpecifier
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
-from ..links import VCSLink, parse_link
+from dephell_links import VCSLink, parse_link
 from ..models.constraint import Constraint
 from ..models.dependency import Dependency
 from ..models.extra_dependency import ExtraDependency
