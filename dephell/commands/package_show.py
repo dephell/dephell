@@ -41,21 +41,22 @@ class PackageShowCommand(BaseCommand):
 
         converter = InstalledConverter()
         root = converter.load(path)
-        local_version = None
+        local_versions = []
         for subdep in root.dependencies:
             if subdep.name == dep.name:
-                local_version = str(subdep.constraint).lstrip('=')
+                local_versions = str(subdep.constraint).lstrip('=').split(' || ')
 
         data = dict(
             name=dep.name,
             version=dict(
                 latest=str(releases[0].version),
-                installed=local_version,
+                installed=local_versions,
             ),
             description=dep.description,
 
             license=getattr(dep.license, 'id', dep.license),
             links=dep.links,
+            updated=str(releases[0].time.date()),
             authors=[str(author) for author in dep.authors],
         )
         print(self.get_value(data=data, key=self.config.get('filter')))

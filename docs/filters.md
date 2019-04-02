@@ -153,3 +153,18 @@ $ dephell package search --filter="#.name+description.each()" author:orsinium
   ...
 ]
 ```
+
+## Alternatives
+
+In some rare cases you could want to specify some complex filter that not covered by DepHell. So, you can process DepHell output into some other command that can process JSON. Some of them:
+
++ [jq](https://stedolan.github.io/jq/)
++ [jj](https://github.com/tidwall/jj)
++ [jd](https://github.com/tidwall/jd)
+
+Also, it's recommend for better processing to disable INFO-messages and progress bars. For example:
+
+```bash
+$ dephell deps licenses --level=WARNING --silent | jq --compact-output '."Apache-2.0"'
+["aiofiles","aiohttp",...]
+```

@@ -17,6 +17,7 @@
     installation
     config
     params
+    filters
 
 .. toctree::
     :maxdepth: 1

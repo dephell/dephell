@@ -43,7 +43,7 @@ class PackageListCommand(BaseCommand):
                 name=dep.name,
                 version=dict(
                     latest=str(releases[0].version),
-                    installed=str(dep.constraint).lstrip('='),
+                    installed=str(dep.constraint).lstrip('=').split(' || '),
                 ),
                 description=dep.description,
 
