@@ -34,10 +34,13 @@
     cmd-generate-license
     cmd-inspect-config
     cmd-inspect-venv
-    cmd-package-install
     cmd-jail-install
     cmd-jail-list
     cmd-jail-remove
+    cmd-package-install
+    cmd-package-list
+    cmd-package-search
+    cmd-package-show
     cmd-venv-create
     cmd-venv-destroy
     cmd-venv-run
