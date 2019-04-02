@@ -68,8 +68,10 @@ class JailInstallCommand(BaseCommand):
             return False
         paths = list(venv.lib_path.glob('{}*.*-info'.format(name)))
         if not paths:
-            self.logger.critical('cannot locate dist-info for installed package')
-            return False
+            paths = list(venv.lib_path.glob('{}*.*-info'.format(name.replace('-', '_'))))
+            if not paths:
+                self.logger.critical('cannot locate dist-info for installed package')
+                return False
         path = paths[0] / 'entry_points.txt'
         if not path.exists():
             self.logger.error('cannot find any entrypoints for package')
