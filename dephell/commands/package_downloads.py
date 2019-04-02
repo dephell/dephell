@@ -1,6 +1,7 @@
 # built-in
 from argparse import ArgumentParser
 from collections import defaultdict
+from itertools import zip_longest
 from typing import Iterable
 
 import requests
@@ -16,7 +17,7 @@ class PackageDownloadsCommand(BaseCommand):
         pythons='https://pypistats.org/api/packages/{}/python_minor',
         systems='https://pypistats.org/api/packages/{}/system',
     )
-    ticks = '▁▂▃▄▅▆▇█'
+    ticks = '_▁▂▃▄▅▆▇█'
 
     @classmethod
     def get_parser(cls):
@@ -73,17 +74,21 @@ class PackageDownloadsCommand(BaseCommand):
                     day=downloads[-1],
                     week=sum(downloads[-7:]),
                     month=sum(downloads[-30:]),
-                    chart=self.make_chart(downloads[-7:]),
+                    chart=self.make_chart(downloads[-28:], group=7),
                 ))
 
         print(self.get_value(data=data, key=self.config.get('filter')))
 
-    def make_chart(self, values: Iterable[int]) -> str:
+    def make_chart(self, values: Iterable[int], group: int = None) -> str:
         peek = max(values)
         if peek == 0:
-            return self.ticks[-1] * len(values)
-        chart = ''
-        for value in values:
-            index = round((len(self.ticks) - 1) * value / peek)
-            chart += self.ticks[int(index)]
+            chart = self.ticks[-1] * len(values)
+        else:
+            chart = ''
+            for value in values:
+                index = round((len(self.ticks) - 1) * value / peek)
+                chart += self.ticks[int(index)]
+        if group:
+            chunks = map(''.join, zip_longest(*[iter(chart)] * group, fillvalue=' '))
+            chart = ' '.join(chunks).strip()
         return chart
