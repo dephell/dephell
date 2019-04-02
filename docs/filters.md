@@ -19,6 +19,10 @@ Filters separated by `.` or `-` and can be one of the following type:
 + Field name to get some field from dict output.
 + Sum of fields. Will return dictionary with given fields. For example, `name+license` will return `{"license": "BSD-2-Clause", "name": "click"}`.
 + Index to get some element from list output.
++ Slice to get set of elements from list output. For example:
+    + `:10` to get first 10 elements,
+    + `10:` to drop out first 10 elements,
+    + `2:5` to get elements with indices 2, 3 and 4.
 + Function to process output.
 
 Functions:
