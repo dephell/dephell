@@ -156,6 +156,9 @@ $ dephell package search --filter="#.name+description.each()" author:orsinium
   },
   ...
 ]
+
+# get only first 10 elements for previous filter:
+$ dephell package search --filter="#.name+description.each().:10" author:orsinium
 ```
 
 ## Alternatives

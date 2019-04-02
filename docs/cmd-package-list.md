@@ -55,6 +55,12 @@ $ dephell package list --filter="#.name+description.each()"
 ]
 ```
 
+Show name and description for first 10 packages (it can be useful for pagination by output):
+
+```bash
+$ dephell package list --filter="#.name+description.each().:10"
+```
+
 ## See also
 
 1. [How to filter commands JSON output](filters).
