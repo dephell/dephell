@@ -1,14 +1,32 @@
 # built-in
 from argparse import ArgumentParser
 from collections import defaultdict
+from datetime import date, timedelta
 from itertools import zip_longest
-from typing import Iterable
+from typing import Iterable, Iterator
 
+import attr
 import requests
 
 # app
 from ..config import builders
 from .base import BaseCommand
+
+
+@attr.s()
+class DateList:
+    start = attr.ib()
+    end = attr.ib()
+    _data = attr.ib(factory=dict, repr=False)
+
+    def add(self, date: str, value: int):
+        self._data[date] = value
+
+    def __iter__(self) -> Iterator[int]:
+        moment = self.start
+        while moment <= self.end:
+            yield self._data.get(str(moment), 0)
+            moment += timedelta(1)
 
 
 class PackageDownloadsCommand(BaseCommand):
@@ -62,18 +80,22 @@ class PackageDownloadsCommand(BaseCommand):
                 return False
             body = response.json()['data']
 
-            grouped = defaultdict(list)
+            yesterday = date.today() - timedelta(1)
+            grouped = defaultdict(lambda: DateList(start=yesterday - timedelta(30), end=yesterday))
             for line in body:
                 category = line['category'].replace('.', '')
-                grouped[category].append(line['downloads'])
+                grouped[category].add(date=line['date'], value=line['downloads'])
 
             data[category_name] = []
             for category, downloads in grouped.items():
+                downloads = list(downloads)
+                if sum(downloads) == 0:
+                    continue
                 data[category_name].append(dict(
                     category=category,
                     day=downloads[-1],
                     week=sum(downloads[-7:]),
-                    month=sum(downloads[-30:]),
+                    month=sum(downloads),
                     chart=self.make_chart(downloads[-28:], group=7),
                 ))
 
