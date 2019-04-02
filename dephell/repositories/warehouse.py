@@ -168,9 +168,11 @@ class WareHouseRepo(Interface):
         if invalid_fields:
             raise ValueError('Invalid fields: {}'.format(', '.join(invalid_fields)))
 
-        client = ServerProxy('https://pypi.org/pypi')
+        with ServerProxy('https://pypi.org/pypi') as client:
+            response = client.search(fields, 'and')
+
         results = []
-        for info in client.search(fields, 'and'):
+        for info in response:
             results.append(dict(
                 name=info['name'],
                 version=info['version'],
