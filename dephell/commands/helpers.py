@@ -1,9 +1,19 @@
+from collections import defaultdict
+
 # external
 from dephell_pythons import Python, Pythons
 
 # app
 from ..converters import CONVERTERS
 from ..config import Config
+
+
+def _each(value):
+    new_value = defaultdict(list)
+    for line in value:
+        for name, field in line.items():
+            new_value[name].append(field)
+    return new_value
 
 
 FILTERS = {
@@ -14,6 +24,7 @@ FILTERS = {
     'min()': lambda v: min(v),
     'reverse()': lambda v: v[::-1],
     'type()': lambda v: type(v).__name__,
+    'each()': _each,
 
     # aliases
     'latest()': lambda v: v[-1],
