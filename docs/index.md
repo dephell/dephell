@@ -33,7 +33,7 @@
     cmd-generate-license
     cmd-inspect-config
     cmd-inspect-venv
-    cmd-install
+    cmd-package-install
     cmd-jail-install
     cmd-jail-list
     cmd-jail-remove
