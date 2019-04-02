@@ -46,18 +46,19 @@ class BaseCommand:
 
     @classmethod
     def get_value(cls, data, key, sep: Optional[str] = '-'):
+        json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
         # print all config
         if not key:
-            return json.dumps(data, indent=2, sort_keys=True)
+            return json.dumps(data, **json_params)
 
         if sep is None:
-            return json.dumps(data[key], indent=2, sort_keys=True)
+            return json.dumps(data[key], **json_params)
 
         keys = key.replace('.', sep).split(sep)
         value = reduce(getitem, keys, data)
         # print config section
         if isinstance(value, (dict, list)):
-            return json.dumps(value, indent=2, sort_keys=True)
+            return json.dumps(value, **json_params)
 
         # print one value
         return value
