@@ -44,7 +44,7 @@ class PackageShowCommand(BaseCommand):
         local_versions = []
         for subdep in root.dependencies:
             if subdep.name == dep.name:
-                local_versions = str(subdep.constraint).lstrip('=').split(' || ')
+                local_versions = str(subdep.constraint).replace('=', '').split(' || ')
 
         data = dict(
             name=dep.name,
