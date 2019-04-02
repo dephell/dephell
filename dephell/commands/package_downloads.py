@@ -80,6 +80,8 @@ class PackageDownloadsCommand(BaseCommand):
 
     def make_chart(self, values: Iterable[int]) -> str:
         peek = max(values)
+        if peek == 0:
+            return self.ticks[-1] * len(values)
         chart = ''
         for value in values:
             index = round((len(self.ticks) - 1) * value / peek)
