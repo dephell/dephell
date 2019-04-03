@@ -30,6 +30,11 @@ class DateList:
 
 
 class PackageDownloadsCommand(BaseCommand):
+    """Show downloads statistic for package from PyPI.org.
+
+    https://dephell.readthedocs.io/en/latest/cmd-package-downloads.html
+    """
+
     recent_url = 'https://pypistats.org/api/packages/{}/recent'
     categories = dict(
         pythons='https://pypistats.org/api/packages/{}/python_minor',
@@ -41,7 +46,7 @@ class PackageDownloadsCommand(BaseCommand):
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell package downloads',
-            description='Show downloads statistic for package from PyPI.org.',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)
@@ -51,7 +56,7 @@ class PackageDownloadsCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        name = self.args.name.replace('_', '-')
+        name = self.args.name.lower().replace('_', '-')
         data = dict()
 
         url = self.recent_url.format(name)

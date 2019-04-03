@@ -16,11 +16,15 @@ from .helpers import get_python
 
 
 class JailInstallCommand(BaseCommand):
+    """Download and install package into isolated environment.
+
+    https://dephell.readthedocs.io/en/latest/cmd-jail-install.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell jail install',
-            description='Download and install package into isolated environment',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_venv(parser)

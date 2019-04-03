@@ -12,11 +12,15 @@ from .base import BaseCommand
 
 
 class InspectVenvCommand(BaseCommand):
+    """Show virtual environment information for current project.
+
+    https://dephell.readthedocs.io/en/latest/cmd-inspect-venv.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell inspect venv',
-            description='Show virtual environment information for current project.',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_venv(parser)

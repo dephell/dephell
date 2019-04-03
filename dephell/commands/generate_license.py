@@ -13,26 +13,35 @@ from .base import BaseCommand
 
 
 class GenerateLicenseCommand(BaseCommand):
+    """Create LICENSE file.
+
+    https://dephell.readthedocs.io/en/latest/cmd-generate-license.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell generate license',
-            description='Create LICENSE file',
+            prog='dephell generate license',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs=REMAINDER, help='licnse name')
+        parser.add_argument('name', nargs=REMAINDER, help='license name')
         return parser
 
     def __call__(self):
-        name = ' '.join(self.args.name)
+        # get license object
+        name = ' '.join(self.args.name).strip()
+        if not name:
+            name = 'MIT'
         license = licenses.get_by_id(name)
         if license is None:
             license = licenses.get_by_name(name)
         if license is None:
             self.logger.error('cannot find license with given name')
             return False
+
+        # generate license text
         text = license.make_text(copyright='{year} {name}'.format(
             year=datetime.now().year,
             name=getuser().title(),

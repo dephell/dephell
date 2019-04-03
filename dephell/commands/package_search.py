@@ -8,11 +8,15 @@ from .base import BaseCommand
 
 
 class PackageSearchCommand(BaseCommand):
+    """Search packages on PyPI.org
+
+    https://dephell.readthedocs.io/en/latest/cmd-package-search.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell package search',
-            description='Search package on PyPI.org',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)

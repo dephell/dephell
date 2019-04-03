@@ -7,11 +7,15 @@ from .base import BaseCommand
 
 
 class InspectConfigCommand(BaseCommand):
+    """Show current config.
+
+    https://dephell.readthedocs.io/en/latest/cmd-inspect-config.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell inspect config',
-            description='Show current config',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_from(parser)

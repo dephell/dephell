@@ -17,20 +17,17 @@ env = Environment(
 )
 
 
-DUMPERS = (
-    ('setuppy', 'setup.py'),
-    ('egginfo', '.'),
-    ('sdist', 'dist/'),
-    ('wheel', 'dist/'),
-)
-
-
 class AutocompleteCommand(BaseCommand):
+    """Enable DepHell commands autocomplete for current shell.
+
+    https://dephell.readthedocs.io/en/latest/cmd-autocomplete.html
+    """
+
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell autocomplete',
-            description='Enable dephell commands autocomplete for current shell',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)
@@ -93,7 +90,8 @@ class AutocompleteCommand(BaseCommand):
             command_name, _sep, subcommand = command_name.partition(' ')
             first_words.add(command_name)
             if subcommand:
-                tree[command_name].add((subcommand, command.get_parser().description))
+                description = command.get_parser().description.lstrip().split('\n', maxsplit=1)[0]
+                tree[command_name].add((subcommand, description))
 
         arguments = defaultdict(list)
         for command_name, command in commands.items():

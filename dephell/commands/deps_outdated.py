@@ -9,11 +9,15 @@ from ..converters import CONVERTERS
 
 
 class DepsOutdatedCommand(BaseCommand):
+    """Show outdated project dependencies.
+
+    https://dephell.readthedocs.io/en/latest/cmd-deps-outdated.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell deps outdated',
-            description='Show outdated project dependencies',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_to(parser)

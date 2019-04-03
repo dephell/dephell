@@ -13,11 +13,16 @@ from .helpers import get_python
 
 
 class VenvShellCommand(BaseCommand):
+    """Activate virtual environment for current project.
+
+    https://dephell.readthedocs.io/en/latest/cmd-venv-shell.html
+    """
+
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell venv shell',
-            description='Activate virtual environment for current project.',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_from(parser)

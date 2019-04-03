@@ -10,11 +10,15 @@ from .base import BaseCommand
 
 
 class VenvDestroyCommand(BaseCommand):
+    """Destroy virtual environment for current project.
+
+    https://dephell.readthedocs.io/en/latest/cmd-venv-destroy.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell venv destroy',
-            description='Destroy virtual environment for current project.',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)

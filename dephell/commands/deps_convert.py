@@ -10,11 +10,15 @@ from .base import BaseCommand
 
 
 class DepsConvertCommand(BaseCommand):
+    """Convert dependencies between formats.
+
+    https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell deps convert',
-            description='Convert dependencies between formats',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_from(parser)

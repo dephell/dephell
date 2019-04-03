@@ -13,11 +13,15 @@ from .base import BaseCommand
 
 
 class PackageShowCommand(BaseCommand):
+    """Show information about package from PyPI.org.
+
+    https://dephell.readthedocs.io/en/latest/cmd-package-show.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell package show',
-            description='Show information about package from PyPI.org.',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)

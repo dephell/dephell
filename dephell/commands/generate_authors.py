@@ -9,11 +9,15 @@ from .base import BaseCommand
 
 
 class GenerateAuthorsCommand(BaseCommand):
+    """Create AUTHORS file for project by git log.
+
+    https://dephell.readthedocs.io/en/latest/cmd-generate-authors.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell generate authors',
-            description='Create AUTHORS file for project by git log',
+            prog='dephell generate authors',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)

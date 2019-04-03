@@ -35,7 +35,7 @@ class PatchedParser(ArgumentParser):
 
 
 parser = PatchedParser(
-    description='Lock and convert dependencies between formats.',
+    description='Manage dependencies, projects, virtual environments.',
 )
 parser.add_argument('command', choices=commands.keys(), nargs='?', help='command to execute')
 

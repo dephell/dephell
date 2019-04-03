@@ -11,11 +11,16 @@ from .base import BaseCommand
 
 
 class PackageListCommand(BaseCommand):
+    """Show all installed packages.
+
+    https://dephell.readthedocs.io/en/latest/cmd-package-list.html
+    """
+
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell package list',
-            description='Show all installed packages',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)

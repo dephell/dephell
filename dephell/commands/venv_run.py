@@ -16,11 +16,15 @@ from .helpers import get_python
 
 
 class VenvRunCommand(BaseCommand):
+    """Run command in the project virtual environment
+
+    https://dephell.readthedocs.io/en/latest/cmd-venv-run.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell venv run',
-            description='Run command inside venv',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_api(parser)
