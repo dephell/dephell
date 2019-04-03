@@ -1,11 +1,13 @@
 # built-in
 from argparse import ArgumentParser
+from pathlib import Path
 
 # app
 from ..config import builders
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
-from ..converters import CONVERTERS
+from ..venvs import VEnvs
+from ..converters import CONVERTERS, InstalledConverter
 
 
 class DepsOutdatedCommand(BaseCommand):
@@ -28,28 +30,40 @@ class DepsOutdatedCommand(BaseCommand):
 
     def __call__(self):
         loader_config = self.config.get('to', self.config['from'])
-        self.logger.info('get dependencies', extra=dict(
-            format=loader_config['format'],
-            path=loader_config['path'],
-        ))
         loader = CONVERTERS[loader_config['format']]
-        if not loader.lock:
-            self.logger.error('use this command only with lockfile')
-            return False
-        root = loader.load(path=loader_config['path'])
+        if loader.lock:
+            self.logger.info('get dependencies from lockfile', extra=dict(
+                format=loader_config['format'],
+                path=loader_config['path'],
+            ))
+            root = loader.load(path=loader_config['path'])
+        else:
+            venvs = VEnvs(path=self.config['venv'])
+            venv = venvs.get(Path(self.config['project']), env=self.config.env)
+            if venv.exists():
+                self.logger.info('get packages from project environment', extra=dict(
+                    path=str(venv.path),
+                ))
+                path = venv.lib_path
+            else:
+                path = None
+                self.logger.info('get packages from global python lib')
+
+            converter = InstalledConverter()
+            root = converter.load(path)
 
         repo = WareHouseRepo()
         data = []
         for dep in root.dependencies:
             releases = repo.get_releases(dep)
             latest = str(releases[0].version)
-            installed = str(dep.constraint).lstrip('=')
-            if latest == installed:
+            installed = str(dep.constraint).replace('=', '').split(' || ')
+            if latest in installed:
                 continue
             data.append(dict(
                 name=dep.name,
                 latest=latest,
-                locked=installed,
+                installed=installed,
                 updated=str(releases[0].time.date()),
                 description=dep.description,
             ))
