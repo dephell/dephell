@@ -8,6 +8,9 @@ build/
 pip-wheel-metadata/
 
 Pipfile.lock
+poetry.lock
+poetry.lock.toml
+
 .tox
 .mypy_cache
 
