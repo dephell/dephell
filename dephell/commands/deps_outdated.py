@@ -16,6 +16,7 @@ class DepsOutdatedCommand(BaseCommand):
             description='Show outdated project dependencies',
         )
         builders.build_config(parser)
+        builders.build_to(parser)
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
@@ -28,6 +29,9 @@ class DepsOutdatedCommand(BaseCommand):
             path=loader_config['path'],
         ))
         loader = CONVERTERS[loader_config['format']]
+        if not loader.lock:
+            self.logger.error('use this command only with lockfile')
+            return False
         root = loader.load(path=loader_config['path'])
 
         repo = WareHouseRepo()
@@ -46,3 +50,4 @@ class DepsOutdatedCommand(BaseCommand):
                 description=dep.description,
             ))
         print(self.get_value(data=data, key=self.config.get('filter')))
+        return True

@@ -25,3 +25,4 @@ class InspectConfigCommand(BaseCommand):
 
     def __call__(self):
         print(self.get_value(data=self.config._data, key=self.config.get('filter')))
+        return True

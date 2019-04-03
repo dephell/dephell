@@ -100,6 +100,7 @@ class PackageDownloadsCommand(BaseCommand):
                 ))
 
         print(self.get_value(data=data, key=self.config.get('filter')))
+        return True
 
     def make_chart(self, values: Iterable[int], group: int = None) -> str:
         peek = max(values)

@@ -52,3 +52,4 @@ class PackageListCommand(BaseCommand):
                 authors=[str(author) for author in dep.authors],
             ))
         print(self.get_value(data=data, key=self.config.get('filter')))
+        return True

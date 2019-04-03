@@ -53,3 +53,4 @@ class InspectGadgetCommand(BaseCommand):
 
     def __call__(self):
         print(GADGET)
+        return True

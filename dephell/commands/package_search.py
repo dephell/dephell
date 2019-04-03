@@ -25,3 +25,4 @@ class PackageSearchCommand(BaseCommand):
         repo = WareHouseRepo()
         results = repo.search(self.args.name)
         print(self.get_value(data=results, key=self.config.get('filter')))
+        return True
