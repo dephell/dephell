@@ -41,7 +41,8 @@ class DepsOutdatedCommand(BaseCommand):
             data.append(dict(
                 name=dep.name,
                 latest=latest,
-                installed=installed,
+                locked=installed,
+                updated=str(releases[0].time.date()),
                 description=dep.description,
             ))
         print(self.get_value(data=data, key=self.config.get('filter')))
