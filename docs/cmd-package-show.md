@@ -9,20 +9,18 @@ $ dephell package show jsonschema
     "Julian Berman <Julian@GrayVines.com>"
   ],
   "description": "An implementation of JSON Schema validation for Python",
+  "installed": [
+    "2.6.0",
+    "3.0.1"
+  ],
+  "latest": "3.0.1",
   "license": "MIT",
   "links": {
     "homepage": "https://github.com/Julian/jsonschema",
     "package": "https://pypi.org/project/jsonschema/"
   },
   "name": "jsonschema",
-  "updated": "2019-03-01",
-  "version": {
-    "installed": [
-      "2.6.0",
-      "3.0.1"
-    ],
-    "latest": "3.0.1"
-  }
+  "updated": "2019-03-01"
 }
 ```
 

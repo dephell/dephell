@@ -14,11 +14,15 @@ from .base import BaseCommand
 
 
 class GenerateConfigCommand(BaseCommand):
+    """Create config file for DepHell.
+
+    https://dephell.readthedocs.io/en/latest/cmd-generate-config.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell generate config',
-            description='Create config file for dephell',
+            prog='dephell generate config',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)

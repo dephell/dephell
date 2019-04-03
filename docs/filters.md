@@ -52,6 +52,8 @@ $ dephell package show textdistance
     "orsinium <master_fess@mail.ru>"
   ],
   "description": "Compute distance between the two texts.",
+  "installed": [],
+  "latest": "4.1.2",
   "license": "MIT",
   "links": {
     "download": "https://github.com/orsinium/textdistance/tarball/master",
@@ -59,24 +61,23 @@ $ dephell package show textdistance
     "package": "https://pypi.org/project/textdistance/"
   },
   "name": "textdistance",
-  "version": {
-    "installed": null,
-    "latest": "4.1.2"
-  }
+  "updated": "2019-03-18"
 }
 ```
 
-Get field:
+Get some fields:
 
 ```bash
-$ dephell package show --filter=version textdistance
+# one field value:
+$ dephell package show --filter=latest textdistance
+4.1.2
+
+# a few fields:
+$ dephell package show --filter="latest+installed" textdistance
 {
-  "installed": null,
+  "installed": [],
   "latest": "4.1.2"
 }
-
-$ dephell package show --filter=version.latest textdistance
-4.1.2
 ```
 
 Filter list items:
@@ -112,7 +113,7 @@ $ dephell package show --filter="authors.len()" click
 2
 ```
 
-Work with items in list:
+Work with items in a list:
 
 ```bash
 dephell package search author:orsinium

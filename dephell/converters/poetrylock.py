@@ -108,7 +108,7 @@ class PoetryLockConverter(BaseConverter):
 
         deps = DependencyMaker.from_params(
             raw_name=content['name'],
-            description=content['description'],
+            description=content.get('description', ''),
             constraint=Constraint(root, version),
             marker=marker,
             url=url,

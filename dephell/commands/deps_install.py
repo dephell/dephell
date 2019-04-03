@@ -14,14 +14,18 @@ from .base import BaseCommand
 
 
 class DepsInstallCommand(BaseCommand):
+    """Install project dependencies.
+
+    https://dephell.readthedocs.io/en/latest/cmd-deps-install.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell deps install',
-            description='Install project dependencies',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
-        builders.build_from(parser)
+        builders.build_to(parser)
         builders.build_resolver(parser)
         builders.build_api(parser)
         builders.build_venv(parser)

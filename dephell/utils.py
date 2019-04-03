@@ -22,6 +22,11 @@ def chdir(path):
         os.chdir(curdir)
 
 
+@contextmanager
+def nullcontext(value=None):
+    yield value
+
+
 def lazy_product(*all_groups):
     slices = [[] for _ in range(len(all_groups))]
     all_groups = [iter(groups) for groups in all_groups]

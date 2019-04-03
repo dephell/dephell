@@ -4,6 +4,7 @@ from .build import BuildCommand
 from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
 from .deps_licenses import DepsLicensesCommand
+from .deps_outdated import DepsOutdatedCommand
 from .generate_authors import GenerateAuthorsCommand
 from .generate_config import GenerateConfigCommand
 from .generate_editorconfig import GenerateEditorconfigCommand
@@ -32,6 +33,7 @@ __all__ = [
     'DepsConvertCommand',
     'DepsInstallCommand',
     'DepsLicensesCommand',
+    'DepsOutdatedCommand',
     'GenerateAuthorsCommand',
     'GenerateConfigCommand',
     'GenerateEditorconfigCommand',
@@ -60,6 +62,7 @@ commands = {
     'deps convert': DepsConvertCommand,
     'deps install': DepsInstallCommand,
     'deps licenses': DepsLicensesCommand,
+    'deps outdated': DepsOutdatedCommand,
     # 'deps remove': ...,
     # 'deps sync': ...,
     'generate authors': GenerateAuthorsCommand,

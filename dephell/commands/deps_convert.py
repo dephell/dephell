@@ -10,11 +10,15 @@ from .base import BaseCommand
 
 
 class DepsConvertCommand(BaseCommand):
+    """Convert dependencies between formats.
+
+    https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell deps convert',
-            description='Convert dependencies between formats',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_from(parser)
@@ -48,25 +52,25 @@ class DepsConvertCommand(BaseCommand):
 
             # merge (without full graph building)
             if not should_be_resolved:
-                self.logger.info('merging...')
+                self.logger.debug('merging...')
                 resolved = resolver.resolve(level=1)
                 if not resolved:
                     conflict = analize_conflict(resolver=resolver)
                     self.logger.warning('conflict was found')
                     print(conflict)
                     return False
-                self.logger.info('merged')
+                self.logger.debug('merged')
 
         # resolve (and merge)
         if should_be_resolved:
-            self.logger.info('resolving...')
+            self.logger.debug('resolving...')
             resolved = resolver.resolve()
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
                 self.logger.warning('conflict was found')
                 print(conflict)
                 return False
-            self.logger.info('resolved')
+            self.logger.debug('resolved')
 
         # dump
         dumper.dump(

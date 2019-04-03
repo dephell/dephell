@@ -10,11 +10,15 @@ from .base import BaseCommand
 
 
 class DepsLicensesCommand(BaseCommand):
+    """Show licenses for all project dependencies.
+
+    https://dephell.readthedocs.io/en/latest/cmd-deps-licenses.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell deps licenses',
-            description='Show licenses for all project dependencies',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_from(parser)

@@ -1,6 +1,6 @@
 # dephell deps convert
 
-Convert dependencies between formats. Dephell will automagically lock them if needed and resolve all conflicts.
+Convert dependencies between formats. Dephell will automagically lock them if needed and resolve all conflicts. Dependency resolution is the strongest side of the DepHell, pip and pipenv has no any dependency resolution that would be smart enough.
 
 You can specify input and output in three different ways:
 

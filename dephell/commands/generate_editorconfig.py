@@ -39,11 +39,16 @@ RULES = (
 
 
 class GenerateEditorconfigCommand(BaseCommand):
+    """Create EditorConfig for project.
+
+    https://dephell.readthedocs.io/en/latest/cmd-generate-editorconfig.html
+    https://editorconfig.org/
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='python3 -m dephell generate editorconfig',
-            description='Create EditorConfig for project',
+            prog='dephell generate editorconfig',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)

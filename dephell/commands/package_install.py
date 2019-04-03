@@ -14,11 +14,16 @@ from .base import BaseCommand
 
 
 class PackageInstallCommand(BaseCommand):
+    """Download and install package into project environment.
+
+    https://dephell.readthedocs.io/en/latest/cmd-package-install.html
+    """
+
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell package install',
-            description='Download and install package into project environment',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_venv(parser)

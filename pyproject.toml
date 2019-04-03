@@ -8,6 +8,12 @@ from = {format = "poetry", path = "pyproject.toml"}
 # and convert into setup.py
 to = {format = "setuppy", path = "setup.py"}
 
+# Make lockfile
+# $ dephell deps convert --env=lock
+[tool.dephell.lock]
+from = {format = "poetry", path = "pyproject.toml"}
+to = {format = "poetrylock", path = "poetry.lock"}
+
 # Install flake8 with plugin in the separated venv and run it:
 # $ dephell venv create --env=flake8
 # $ dephell deps install --env=flake8
@@ -83,7 +89,7 @@ packaging = "*"
 pip = "*"
 requests = "*"
 tomlkit = "*"
-tqdm = "*"
+yaspin = "*"
 
 # optional
 aiofiles = {optional = true}

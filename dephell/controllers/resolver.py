@@ -1,25 +1,18 @@
 # built-in
-from contextlib import suppress
 from logging import getLogger
-from typing import Optional
+from typing import Optional, ContextManager
 
 # external
-from tqdm import tqdm
+from yaspin import yaspin
 
 # app
 from ..config import config
 from .conflict import analize_conflict
 from ..models import RootDependency
+from ..utils import nullcontext
 
 
 logger = getLogger('dephell.resolver')
-
-
-class _Progress(tqdm):
-    @classmethod
-    def _decr_instances(cls, instance):
-        with suppress(RuntimeError):
-            return super()._decr_instances(instance)
 
 
 class Resolver:
@@ -78,57 +71,60 @@ class Resolver:
             dep.unlock()
 
     def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
-        if not config['silent']:
-            layers_bar = _Progress(
-                total=10 ** 10,
-                bar_format='{n:>7} layers   [{elapsed} elapsed]',
-                position=1,
-                leave=False,
+        if config['silent']:
+            spinner = nullcontext(type('Mock', [], {}))
+        else:
+            spinner = yaspin(text="resolving...")
+
+        with spinner as spinner:
+            while True:
+                resolved = self._resolve(debug=debug, level=level, spinner=spinner)
+                if resolved is not None:
+                    return resolved
+
+    def _resolve(self, debug: bool, level: Optional[int], spinner: ContextManager) -> Optional[bool]:
+        if config['silent']:
+            logger.debug('next iteration', extra=dict(
+                layers=len(self.graph._layers),
+                mutations=self.mutator.mutations,
+            ))
+        else:
+            spinner.text = 'layers: {layers}, mutations: {mutations}'.format(
+                layers=len(self.graph._layers),
+                mutations=self.mutator.mutations,
             )
+        # get not applied deps
+        deps = self.graph.get_leafs(level=level)
+        # if we already build deps for all nodes in graph
+        if not deps:
+            return True
 
-        while True:
-            if config['silent']:
-                logger.debug('next iteration', extra=dict(
-                    layers=len(self.graph._layers),
-                    mutations=self.mutator.mutations,
-                ))
-            else:
-                layers_bar.update()
-            # get not applied deps
-            deps = self.graph.get_leafs(level=level)
-            # if we already build deps for all nodes in graph
-            if not deps:
-                if not config['silent']:
-                    del layers_bar
-                    print('\r')
-                return True
-
-            # check python version
-            for dep in deps:
-                if not dep.python_compat:
-                    self.graph.conflict = dep
-                    return False
-
-            no_conflicts = self._apply_deps(deps, debug=debug)
-            if no_conflicts:
-                continue
-
-            # if we have conflict, try to mutate graph
-            groups = self.mutator.mutate(self.graph)
-            # if cannot mutate
-            if groups is None:
+        # check python version
+        for dep in deps:
+            if not dep.python_compat:
+                self.graph.conflict = dep
                 return False
-            self.graph.conflict = None
-            # apply mutation
-            for group in groups:
-                dep = self.graph.get(group.name)
-                if dep.group.number != group.number:
-                    logger.debug('mutated', extra=dict(
-                        group_from=str(dep.group),
-                        group_to=str(group),
-                    ))
-                    self.unapply(dep)
-                    dep.group = group
+
+        no_conflicts = self._apply_deps(deps, debug=debug)
+        if no_conflicts:
+            return None
+
+        # if we have conflict, try to mutate graph
+        groups = self.mutator.mutate(self.graph)
+        # if cannot mutate
+        if groups is None:
+            return False
+        self.graph.conflict = None
+        # apply mutation
+        for group in groups:
+            dep = self.graph.get(group.name)
+            if dep.group.number != group.number:
+                logger.debug('mutated', extra=dict(
+                    group_from=str(dep.group),
+                    group_to=str(group),
+                ))
+                self.unapply(dep)
+                dep.group = group
 
     def apply_envs(self, envs: set) -> None:
         layer = self.graph.get_layer(1)
@@ -157,17 +153,7 @@ class Resolver:
             self.apply(dep)
 
     def _apply_deps(self, deps, debug: bool = False) -> bool:
-        if not config['silent']:
-            packages_bar = _Progress(
-                total=len(deps),
-                bar_format='{n:>3}/{total:>3} packages [{elapsed} elapsed]',
-                position=2,
-                leave=False,
-            )
-
         for dep in deps:
-            if not config['silent']:
-                packages_bar.update()
             conflict = self.apply(dep)
             if conflict is None:
                 continue

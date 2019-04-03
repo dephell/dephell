@@ -42,14 +42,19 @@ GADGET = r"""
 
 
 class InspectGadgetCommand(BaseCommand):
+    """Show Inspector Gadget.
+
+    This command shouldn't be documented.
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell inspect config',
-            description='Show Inspector Gadget',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         return parser
 
     def __call__(self):
         print(GADGET)
+        return True

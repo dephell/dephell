@@ -13,11 +13,15 @@ from .base import BaseCommand
 
 
 class PackageShowCommand(BaseCommand):
+    """Show information about package from PyPI.org.
+
+    https://dephell.readthedocs.io/en/latest/cmd-package-show.html
+    """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell package show',
-            description='Show information about package from PyPI.org.',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)
@@ -48,11 +52,9 @@ class PackageShowCommand(BaseCommand):
 
         data = dict(
             name=dep.name,
-            version=dict(
-                latest=str(releases[0].version),
-                installed=local_versions,
-            ),
             description=dep.description,
+            latest=str(releases[0].version),
+            installed=local_versions,
 
             license=getattr(dep.license, 'id', dep.license),
             links=dep.links,
@@ -60,3 +62,4 @@ class PackageShowCommand(BaseCommand):
             authors=[str(author) for author in dep.authors],
         )
         print(self.get_value(data=data, key=self.config.get('filter')))
+        return True

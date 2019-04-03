@@ -11,11 +11,16 @@ from .base import BaseCommand
 
 
 class PackageListCommand(BaseCommand):
+    """Show all installed packages.
+
+    https://dephell.readthedocs.io/en/latest/cmd-package-list.html
+    """
+
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
             prog='dephell package list',
-            description='Show all installed packages',
+            description=cls.__doc__,
         )
         builders.build_config(parser)
         builders.build_output(parser)
@@ -41,10 +46,8 @@ class PackageListCommand(BaseCommand):
             releases = repo.get_releases(dep)
             data.append(dict(
                 name=dep.name,
-                version=dict(
-                    latest=str(releases[0].version),
-                    installed=str(dep.constraint).replace('=', '').split(' || '),
-                ),
+                latest=str(releases[0].version),
+                installed=str(dep.constraint).replace('=', '').split(' || '),
                 description=dep.description,
 
                 license=getattr(dep.license, 'id', dep.license),
@@ -52,3 +55,4 @@ class PackageListCommand(BaseCommand):
                 authors=[str(author) for author in dep.authors],
             ))
         print(self.get_value(data=data, key=self.config.get('filter')))
+        return True

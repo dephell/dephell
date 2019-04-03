@@ -74,9 +74,9 @@ class SetupPyConverter(BaseConverter):
             description=cls._get(info, 'description'),
             license=cls._get(info, 'license'),
 
-            keywords=cls._get_list(info, 'keywords'),
-            classifiers=cls._get_list(info, 'classifiers'),
-            platforms=cls._get_list(info, 'platforms'),
+            keywords=tuple(cls._get_list(info, 'keywords')),
+            classifiers=tuple(cls._get_list(info, 'classifiers')),
+            platforms=tuple(cls._get_list(info, 'platforms')),
 
             python=RangeSpecifier(cls._get(info, 'python_requires')),
             readme=Readme.from_code(path=path),
