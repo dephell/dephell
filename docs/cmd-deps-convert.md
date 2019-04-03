@@ -32,3 +32,4 @@ You can specify input and output in three different ways:
 
 1. [dephell build](cmd-deps-install) to fast convert dependencies into setup.py, sdist and wheel.
 1. [dephell deps install](cmd-deps-install) to install project dependencies.
+1. [dephell deps tree](cmd-deps-tree) to show dependencies tree for project.

@@ -29,6 +29,7 @@
     cmd-deps-install
     cmd-deps-licenses
     cmd-deps-outdated
+    cmd-deps-tree
     cmd-generate-authors
     cmd-generate-config
     cmd-generate-editorconfig
