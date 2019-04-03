@@ -89,7 +89,7 @@ packaging = "*"
 pip = "*"
 requests = "*"
 tomlkit = "*"
-tqdm = "*"
+yaspin = "*"
 
 # optional
 aiofiles = {optional = true}
