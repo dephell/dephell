@@ -52,11 +52,9 @@ class PackageShowCommand(BaseCommand):
 
         data = dict(
             name=dep.name,
-            version=dict(
-                latest=str(releases[0].version),
-                installed=local_versions,
-            ),
             description=dep.description,
+            latest=str(releases[0].version),
+            installed=local_versions,
 
             license=getattr(dep.license, 'id', dep.license),
             links=dep.links,

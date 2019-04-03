@@ -46,10 +46,8 @@ class PackageListCommand(BaseCommand):
             releases = repo.get_releases(dep)
             data.append(dict(
                 name=dep.name,
-                version=dict(
-                    latest=str(releases[0].version),
-                    installed=str(dep.constraint).replace('=', '').split(' || '),
-                ),
+                latest=str(releases[0].version),
+                installed=str(dep.constraint).replace('=', '').split(' || '),
                 description=dep.description,
 
                 license=getattr(dep.license, 'id', dep.license),
