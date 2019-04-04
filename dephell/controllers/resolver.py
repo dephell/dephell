@@ -9,7 +9,7 @@ from yaspin import yaspin
 from ..config import config
 from .conflict import analize_conflict
 from ..models import RootDependency
-from ..utils import nullcontext
+from ..context_tools import nullcontext
 
 
 logger = getLogger('dephell.resolver')
