@@ -71,6 +71,11 @@ class DepsTreeCommand(BaseCommand):
             print(self.get_value(result, key=self.config.get('filter')))
             return True
 
+        if self.args.type == 'graph':
+            resolver.graph.draw()
+            self.logger.info('graph saved into .dephell_report/')
+            return True
+
     @classmethod
     def _make_tree(cls, dep, *, level: int = 0) -> List[str]:
         lines = ['{level}- {name} [required: {constraint}, locked: {best}, latest: {latest}]'.format(
