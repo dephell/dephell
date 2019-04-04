@@ -29,15 +29,19 @@ class DepsOutdatedCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        loader_config = self.config.get('to', self.config['from'])
-        loader = CONVERTERS[loader_config['format']]
-        if loader.lock:
-            self.logger.info('get dependencies from lockfile', extra=dict(
-                format=loader_config['format'],
-                path=loader_config['path'],
-            ))
-            root = loader.load(path=loader_config['path'])
-        else:
+        root = None
+
+        loader_config = self.config.get('to') or self.config.get('from')
+        if loader_config is not None:
+            loader = CONVERTERS[loader_config['format']]
+            if loader.lock:
+                self.logger.info('get dependencies from lockfile', extra=dict(
+                    format=loader_config['format'],
+                    path=loader_config['path'],
+                ))
+                root = loader.load(path=loader_config['path'])
+
+        if root is None:
             venvs = VEnvs(path=self.config['venv'])
             venv = venvs.get(Path(self.config['project']), env=self.config.env)
             if venv.exists():
