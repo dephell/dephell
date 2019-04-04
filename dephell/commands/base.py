@@ -45,7 +45,7 @@ class BaseCommand:
         return is_valid
 
     @classmethod
-    def get_value(cls, data, key, sep: Optional[str] = '-'):
+    def get_value(cls, data, key: str = None, sep: Optional[str] = '-'):
         json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
         # print all config
         if not key:
