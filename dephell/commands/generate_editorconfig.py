@@ -56,16 +56,18 @@ class GenerateEditorconfigCommand(BaseCommand):
         return parser
 
     def __call__(self):
+        project_path = Path(self.config['project'])
+
         matched = []
         non_matched = list(RULES)
-        for path in Path().iterdir():
+        for path in project_path.iterdir():
             for i, (match, _rule) in enumerate(non_matched):
                 if fnmatch(path.name, match):
                     matched.append(non_matched.pop(i))
                     break
 
         matched = ['[{}]\n{}'.format(match, '\n'.join(rule)) for match, rule in matched]
-        text = HEADER + '\n\n'.join(matched)
-        Path('.editorconfig').write_text(text)
+        text = HEADER + '\n\n'.join(matched) + '\n'
+        (project_path / '.editorconfig').write_text(text)
         self.logger.info('editorconfig generated')
         return True
