@@ -1,10 +1,11 @@
 # built-in
-from argparse import ArgumentParser
+from argparse import ArgumentParser, REMAINDER
+from typing import List
 
 # app
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import CONVERTERS
+from ..converters import CONVERTERS, PIPConverter
 from .base import BaseCommand
 
 
@@ -25,11 +26,15 @@ class DepsTreeCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_output(parser)
         builders.build_other(parser)
+        parser.add_argument('name', nargs=REMAINDER, help='package to install')
         return parser
 
     def __call__(self):
-        loader = CONVERTERS[self.config['from']['format']]
-        resolver = loader.load_resolver(path=self.config['from']['path'])
+        if self.args.name:
+            resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
+        else:
+            loader = CONVERTERS[self.config['from']['format']]
+            resolver = loader.load_resolver(path=self.config['from']['path'])
 
         # resolve
         self.logger.debug('resolving...')
@@ -42,17 +47,18 @@ class DepsTreeCommand(BaseCommand):
         self.logger.debug('resolved')
 
         for dep in sorted(resolver.graph.get_layer(1)):
-            self._print_dep(dep)
+            print('\n'.join(self._make_tree(dep)))
         return True
 
     @classmethod
-    def _print_dep(cls, dep, *, level: int = 0):
-        print('{level}- {name} [required: {constraint}, locked: {best}, latest: {latest}]'.format(
+    def _make_tree(cls, dep, *, level: int = 0) -> List[str]:
+        lines = ['{level}- {name} [required: {constraint}, locked: {best}, latest: {latest}]'.format(
             level='  ' * level,
             name=dep.name,
             constraint=str(dep.constraint) or '*',
             best=str(dep.group.best_release.version),
             latest=str(dep.groups.releases[0].version),
-        ))
+        )]
         for subdep in sorted(dep.dependencies):
-            cls._print_dep(subdep, level=level + 1)
+            lines.extend(cls._make_tree(subdep, level=level + 1))
+        return lines
