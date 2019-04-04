@@ -19,7 +19,7 @@ from .scheme import SCHEME
 
 class Config:
     env = ''
-    _skip = ('config', 'env', 'key', 'name')
+    _skip = ('config', 'env', 'key', 'name', 'type')
 
     def __init__(self, data: Optional[dict] = None):
         self._data = data or DEFAULT

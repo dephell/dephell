@@ -10,7 +10,7 @@ from .base import BaseCommand
 
 
 class DepsTreeCommand(BaseCommand):
-    """Show dependencies tree
+    """Show dependencies tree.
 
     https://dephell.readthedocs.io/en/latest/cmd-deps-tree.html
     """
@@ -26,7 +26,14 @@ class DepsTreeCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs=REMAINDER, help='package to install')
+        parser.add_argument(
+            '--type',
+            nargs='?',
+            choices=('pretty', 'json', 'graph'),
+            default='pretty',
+            help='format for tree output.',
+        )
+        parser.add_argument('name', nargs=REMAINDER, help='package to get dependencies from')
         return parser
 
     def __call__(self):
@@ -46,9 +53,23 @@ class DepsTreeCommand(BaseCommand):
             return False
         self.logger.debug('resolved')
 
-        for dep in sorted(resolver.graph.get_layer(1)):
-            print('\n'.join(self._make_tree(dep)))
-        return True
+        if self.args.type == 'pretty':
+            for dep in sorted(resolver.graph.get_layer(1)):
+                print('\n'.join(self._make_tree(dep)))
+            return True
+
+        if self.args.type == 'json':
+            result = []
+            for dep in sorted(resolver.graph):
+                result.append(dict(
+                    name=dep.name,
+                    constraint=str(dep.constraint) or '*',
+                    best=str(dep.group.best_release.version),
+                    latest=str(dep.groups.releases[0].version),
+                    dependencies=[subdep.name for subdep in dep.dependencies]
+                ))
+            print(self.get_value(result, key=self.config.get('filter')))
+            return True
 
     @classmethod
     def _make_tree(cls, dep, *, level: int = 0) -> List[str]:
