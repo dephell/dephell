@@ -72,7 +72,7 @@ class Resolver:
 
     def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
         if config['silent']:
-            spinner = nullcontext(type('Mock', [], {}))
+            spinner = nullcontext(type('Mock', (), {}))
         else:
             spinner = yaspin(text="resolving...")
 
