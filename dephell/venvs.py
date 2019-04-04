@@ -43,7 +43,7 @@ class VEnvBuilder(EnvBuilder):
 
 @attr.s()
 class VEnv:
-    path = attr.ib(type=Path, convert=Path)
+    path = attr.ib(type=Path, converter=Path)
 
     project = attr.ib(type=str, default=None)
     env = attr.ib(type=str, default=None)
@@ -132,7 +132,7 @@ class VEnv:
 
 @attr.s()
 class VEnvs:
-    path = attr.ib(type=Path, convert=Path)
+    path = attr.ib(type=Path, converter=Path)
 
     @cached_property
     def current(self) -> Optional[VEnv]:
