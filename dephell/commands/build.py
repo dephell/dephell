@@ -1,5 +1,6 @@
 # built-in
 from argparse import ArgumentParser
+from pathlib import Path
 
 # app
 from ..config import builders
@@ -57,13 +58,14 @@ class BuildCommand(BaseCommand):
             self.logger.info('merged')
 
         # dump
+        project_path = Path(self.config['project'])
         for to_format, to_path in DUMPERS:
             if to_format == self.config['from']['format']:
                 continue
             self.logger.info('dumping...', extra=dict(format=to_format))
             dumper = CONVERTERS[to_format]
             dumper.dump(
-                path=to_path,
+                path=project_path.joinpath(to_path),
                 reqs=Requirement.from_graph(resolver.graph, lock=False),
                 project=resolver.graph.metainfo,
             )

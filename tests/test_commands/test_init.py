@@ -1,4 +1,4 @@
-
+from pathlib import Path
 
 # external
 import tomlkit
@@ -7,14 +7,16 @@ import tomlkit
 from dephell.commands import GenerateConfigCommand
 
 
-def test_create(tmpdir):
-    config = tmpdir.join('pyproject.toml')
-    task = GenerateConfigCommand(['--config', str(config)])
+def test_create(temp_path: Path):
+    config = temp_path / 'pyproject.toml'
+    task = GenerateConfigCommand(['--config', str(config), '--project', str(temp_path)])
     result = task()
     assert result is True
-    assert config.check(file=1, exists=1)
-    content = config.read()
+    assert config.exists()
+    assert config.is_file()
+    content = config.read_text()
     parsed = tomlkit.parse(content)
+
     assert '[tool.dephell.example]' in content
     assert 'from = {format = "pip"' in content
 
@@ -25,17 +27,19 @@ def test_create(tmpdir):
     assert parsed['to']['path'] == 'requirements.lock'
 
 
-def test_detect(tmpdir):
-    tmpdir.join('requirements.in').write('Django>=1.9\n')
-    tmpdir.join('requirements.txt').write('Django>=1.9\n')
+def test_detect(temp_path: Path):
+    (temp_path / 'requirements.in').write_text('Django>=1.9\n')
+    (temp_path / 'requirements.txt').write_text('Django>=1.9\n')
 
-    config = tmpdir.join('pyproject.toml')
-    task = GenerateConfigCommand(['--config', str(config), '--project', str(tmpdir)])
+    config = temp_path / 'pyproject.toml'
+    task = GenerateConfigCommand(['--config', str(config), '--project', str(temp_path)])
     result = task()
     assert result is True
-    assert config.check(file=1, exists=1)
-    content = config.read()
+    assert config.exists()
+    assert config.is_file()
+    content = config.read_text()
     parsed = tomlkit.parse(content)
+
     assert '[tool.dephell.pip]' in content
     assert 'from = {format = "pip"' in content
 
