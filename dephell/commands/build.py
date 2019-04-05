@@ -59,6 +59,7 @@ class BuildCommand(BaseCommand):
 
         # dump
         project_path = Path(self.config['project'])
+        reqs = Requirement.from_graph(resolver.graph, lock=False)
         for to_format, to_path in DUMPERS:
             if to_format == self.config['from']['format']:
                 continue
@@ -66,7 +67,7 @@ class BuildCommand(BaseCommand):
             dumper = CONVERTERS[to_format]
             dumper.dump(
                 path=project_path.joinpath(to_path),
-                reqs=Requirement.from_graph(resolver.graph, lock=False),
+                reqs=reqs,
                 project=resolver.graph.metainfo,
             )
 

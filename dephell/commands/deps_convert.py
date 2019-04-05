@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 
 # app
+from ..actions import attach_deps
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
@@ -32,34 +33,22 @@ class DepsConvertCommand(BaseCommand):
     def __call__(self):
         loader = CONVERTERS[self.config['from']['format']]
         dumper = CONVERTERS[self.config['to']['format']]
-        self.logger.info('start converting...', extra={
-            'from-format':  self.config['from']['format'],
-            'from-path':    self.config['from']['path'],
-            'to-format':    self.config['to']['format'],
-            'to-path':      self.config['to']['path'],
-        })
 
         # load
+        self.logger.debug('load dependencies...', extra=dict(
+            format=self.config['from']['format'],
+            path=self.config['from']['path'],
+        ))
         resolver = loader.load_resolver(path=self.config['from']['path'])
         should_be_resolved = not loader.lock and dumper.lock
 
         # attach
-        if self.config.get('and'):
-            for source in self.config['and']:
-                loader = CONVERTERS[source['format']]
-                root = loader.load(path=source['path'])
-                resolver.graph.add(root)
-
-            # merge (without full graph building)
-            if not should_be_resolved:
-                self.logger.debug('merging...')
-                resolved = resolver.resolve(level=1, silent=self.config['silent'])
-                if not resolved:
-                    conflict = analize_conflict(resolver=resolver)
-                    self.logger.warning('conflict was found')
-                    print(conflict)
-                    return False
-                self.logger.debug('merged')
+        merged = attach_deps(resolver=resolver, config=self.config, merge=not should_be_resolved)
+        if not merged:
+            conflict = analize_conflict(resolver=resolver)
+            self.logger.warning('conflict was found')
+            print(conflict)
+            return False
 
         # resolve (and merge)
         if should_be_resolved:
@@ -73,6 +62,10 @@ class DepsConvertCommand(BaseCommand):
             self.logger.debug('resolved')
 
         # dump
+        self.logger.debug('dump dependencies...', extra=dict(
+            format=self.config['to']['format'],
+            path=self.config['to']['path'],
+        ))
         dumper.dump(
             path=self.config['to']['path'],
             reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),
