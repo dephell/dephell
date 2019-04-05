@@ -20,10 +20,10 @@ class BaseCommand:
 
     @classmethod
     def get_parser(cls):
-        return cls.parser
+        raise NotImplementedError
 
     @classmethod
-    def get_config(cls, args):
+    def get_config(cls, args) -> Config:
         config.setup_logging()
         if args.config:
             config.attach_file(path=args.config, env=args.env)
@@ -37,7 +37,7 @@ class BaseCommand:
         config.setup_logging()
         return config
 
-    def validate(self):
+    def validate(self) -> bool:
         is_valid = self.config.validate()
         if not is_valid:
             self.logger.error('invalid config')
