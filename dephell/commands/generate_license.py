@@ -46,6 +46,6 @@ class GenerateLicenseCommand(BaseCommand):
             year=datetime.now().year,
             name=getuser().title(),
         ))
-        Path('LICENSE').write_text(text)
+        (Path(self.config['project']) / 'LICENSE').write_text(text)
         self.logger.info('license generated', extra=dict(license=license.name))
         return True

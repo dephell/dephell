@@ -5,7 +5,7 @@ from dephell.commands import DepsTreeCommand
 from dephell.config import Config
 
 
-def test_deps_outdated_command(temp_path: Path, capsys):
+def test_deps_tree_command(temp_path: Path, capsys):
     config = Config()
     config.attach({
         'level': 'WARNING',
