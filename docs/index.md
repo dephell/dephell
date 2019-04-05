@@ -18,6 +18,7 @@
     config
     params
     filters
+    venv-lookup
 
 .. toctree::
     :maxdepth: 1

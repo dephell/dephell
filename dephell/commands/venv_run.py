@@ -62,14 +62,14 @@ class VenvRunCommand(BaseCommand):
             self.logger.warning('executable does not found in venv, trying to install...', extra=dict(
                 executable=command[0],
             ))
-            result = self._install(name=command[0], venv=venv)
+            result = self._install(name=command[0], python_path=venv.python_path)
             if not result:
                 return False
 
         result = subprocess.run([str(executable)] + command[1:])
         return not result.returncode
 
-    def _install(self, name: str, venv) -> bool:
+    def _install(self, name: str, python_path: Path) -> bool:
         # resolve
         resolver = PIPConverter(lock=False).loads_resolver(name)
         self.logger.info('build dependencies graph...')
@@ -83,10 +83,10 @@ class VenvRunCommand(BaseCommand):
         # install
         reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
         self.logger.info('installation...', extra=dict(
-            executable=venv.python_path,
+            executable=python_path,
             packages=len(reqs),
         ))
-        code = PackageManager(executable=venv.python_path).install(reqs=reqs)
+        code = PackageManager(executable=python_path).install(reqs=reqs)
         if code != 0:
             return False
         self.logger.info('installed')
