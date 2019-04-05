@@ -12,7 +12,7 @@ from ..controllers import analize_conflict
 from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
-from .helpers import get_python
+from ..actions import get_python
 
 
 class VenvRunCommand(BaseCommand):

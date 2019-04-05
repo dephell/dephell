@@ -12,7 +12,7 @@ from ..package_manager import PackageManager
 from ..utils import is_windows
 from ..venvs import VEnvs
 from .base import BaseCommand
-from .helpers import get_python
+from ..actions import get_python
 
 
 class JailInstallCommand(BaseCommand):
