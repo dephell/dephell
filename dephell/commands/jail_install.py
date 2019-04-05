@@ -4,9 +4,10 @@ from argparse import ArgumentParser, REMAINDER
 from pathlib import Path
 
 # app
+from ..actions import get_entrypoints
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import EggInfoConverter, PIPConverter
+from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
@@ -70,20 +71,9 @@ class JailInstallCommand(BaseCommand):
             return False
 
         # get entrypoints
-        if not venv.lib_path:
-            self.logger.critical('cannot locate lib path in the venv')
+        entrypoints = get_entrypoints(venv=venv, name=name)
+        if entrypoints is None:
             return False
-        paths = list(venv.lib_path.glob('{}*.*-info'.format(name)))
-        if not paths:
-            paths = list(venv.lib_path.glob('{}*.*-info'.format(name.replace('-', '_'))))
-            if not paths:
-                self.logger.critical('cannot locate dist-info for installed package')
-                return False
-        path = paths[0] / 'entry_points.txt'
-        if not path.exists():
-            self.logger.error('cannot find any entrypoints for package')
-            return False
-        entrypoints = EggInfoConverter().parse_entrypoints(content=path.read_text()).entrypoints
 
         # copy console scripts
         self.logger.info('copy executables...', extra=dict(package=name, path=self.config['bin']))
