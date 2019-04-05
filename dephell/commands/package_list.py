@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_venv
+from ..actions import get_venv, make_json
 from ..config import builders
 from ..converters import InstalledConverter
 from ..repositories import WareHouseRepo
@@ -52,5 +52,5 @@ class PackageListCommand(BaseCommand):
                 links=dep.links,
                 authors=[str(author) for author in dep.authors],
             ))
-        print(self.get_value(data=data, key=self.config.get('filter')))
+        print(make_json(data=data, key=self.config.get('filter')))
         return True

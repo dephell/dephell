@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 
 # app
-from ..actions import attach_deps
+from ..actions import attach_deps, make_json
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
@@ -52,5 +52,5 @@ class DepsLicensesCommand(BaseCommand):
             else:
                 licenses['Unknown'].add(dep.name)
         licenses = {name: sorted(deps) for name, deps in licenses.items()}
-        print(self.get_value(data=licenses, key=self.config.get('filter'), sep=None))
+        print(make_json(data=licenses, key=self.config.get('filter'), sep=None))
         return True

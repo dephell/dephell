@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from dephell_shells import Shells
 
 # app
-from ..actions import get_venv
+from ..actions import get_venv, make_json
 from ..config import builders
 from .base import BaseCommand
 
@@ -44,5 +44,5 @@ class InspectVenvCommand(BaseCommand):
                 lib=str(venv.lib_path),
                 python=str(venv.python_path),
             ))
-        print(self.get_value(data=data, key=self.config.get('filter')))
+        print(make_json(data=data, key=self.config.get('filter')))
         return True

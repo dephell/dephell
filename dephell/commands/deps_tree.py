@@ -3,7 +3,7 @@ from argparse import ArgumentParser, REMAINDER
 from typing import List
 
 # app
-from ..actions import attach_deps
+from ..actions import attach_deps, make_json
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS, PIPConverter
@@ -70,7 +70,7 @@ class DepsTreeCommand(BaseCommand):
                     latest=str(dep.groups.releases[0].version),
                     dependencies=[subdep.name for subdep in dep.dependencies]
                 ))
-            print(self.get_value(result, key=self.config.get('filter')))
+            print(make_json(result, key=self.config.get('filter')))
             return True
 
         if self.args.type == 'graph':

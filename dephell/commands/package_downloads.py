@@ -9,6 +9,7 @@ import attr
 import requests
 
 # app
+from ..actions import make_json
 from ..config import builders
 from .base import BaseCommand
 
@@ -104,7 +105,7 @@ class PackageDownloadsCommand(BaseCommand):
                     chart=self.make_chart(downloads[-28:], group=7),
                 ))
 
-        print(self.get_value(data=data, key=self.config.get('filter')))
+        print(make_json(data=data, key=self.config.get('filter')))
         return True
 
     def make_chart(self, values: Iterable[int], group: int = None) -> str:

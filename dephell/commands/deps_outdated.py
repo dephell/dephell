@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_python, get_venv
+from ..actions import get_python, get_venv, make_json
 from ..config import builders
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
@@ -69,5 +69,5 @@ class DepsOutdatedCommand(BaseCommand):
                 updated=str(releases[0].time.date()),
                 description=dep.description,
             ))
-        print(self.get_value(data=data, key=self.config.get('filter')))
+        print(make_json(data=data, key=self.config.get('filter')))
         return True

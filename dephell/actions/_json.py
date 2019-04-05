@@ -1,4 +1,8 @@
+# built-in
+import json
 from collections import defaultdict
+from functools import reduce
+from typing import Optional
 
 
 def _each(value):
@@ -64,3 +68,22 @@ def getitem(value, key):
 
     # field
     return value[key]
+
+
+def make_json(data, key: str = None, sep: Optional[str] = '-') -> str:
+    json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
+    # print all config
+    if not key:
+        return json.dumps(data, **json_params)
+
+    if sep is None:
+        return json.dumps(data[key], **json_params)
+
+    keys = key.replace('.', sep).split(sep)
+    value = reduce(getitem, keys, data)
+    # print config section
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, **json_params)
+
+    # print one value
+    return str(value)
