@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from dephell.commands import VenvDestroyCommand
@@ -9,7 +10,7 @@ def test_venv_destroy_command(temp_path: Path):
     venv_path = temp_path / 'venv'
     venv = VEnv(path=venv_path)
     assert venv.exists() is False
-    assert venv.create()
+    venv.create(python_path=sys.executable)
 
     config = Config()
     config.attach({
