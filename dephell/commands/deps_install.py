@@ -1,15 +1,13 @@
 # built-in
-import sys
 from argparse import ArgumentParser
-from pathlib import Path
 
 # app
+from ..actions import get_python, get_venv
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS, InstalledConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
-from ..venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -62,18 +60,17 @@ class DepsInstallCommand(BaseCommand):
         resolver.apply_envs(set(self.config['envs']))
 
         # get executable
-        executable = Path(sys.executable)
-        venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.current
+        venv = get_venv(config=self.config)
         if venv is not None:
+            lib_path = venv.lib_path
             executable = venv.python_path
         else:
-            venv = venvs.get(Path(self.config['project']), env=self.config.env)
-            if venv.exists():
-                executable = venv.python_path
+            lib_path = None
+            executable = get_python(config=self.config).path
+        self.logger.debug('choosen python', extra=dict(path=str(executable)))
 
         # get installed packages
-        installed_root = InstalledConverter().load(path=venv.lib_path)
+        installed_root = InstalledConverter().load(path=lib_path)
         installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
 
         # plan what we will install and what we will remove
