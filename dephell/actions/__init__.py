@@ -1,5 +1,7 @@
 """Actions are functions that used only in commands
 """
+
+from ._autocomplete import make_bash_autocomplete, make_zsh_autocomplete
 from ._python import get_python
 from ._venv import get_venv
 
@@ -7,4 +9,6 @@ from ._venv import get_venv
 __all__ = [
     'get_python',
     'get_venv',
+    'make_bash_autocomplete',
+    'make_zsh_autocomplete',
 ]
