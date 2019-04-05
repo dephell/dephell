@@ -4,7 +4,7 @@ from dephell.commands import PackageSearchCommand
 from dephell.config import Config
 
 
-def test_package_downloads_command(capsys):
+def test_package_search_command(capsys):
     config = Config()
     config.attach({
         'level': 'WARNING',
