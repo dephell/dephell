@@ -82,7 +82,6 @@ aiohttp = "*"
 appdirs = "*"
 attrs = "*"
 cerberus = "*"
-editorconfig = "*"  # https://github.com/editorconfig/editorconfig-core-py
 jinja2 = "*"
 m2r = "*"
 packaging = "*"

@@ -1,8 +1,32 @@
 # built-in
 from pathlib import Path
+from typing import Tuple
 
 # external
-from editorconfig.fnmatch import fnmatch
+import attr
+
+
+@attr.s(frozen=True)
+class Rule:
+    header = attr.ib(type=str)
+    patterns = attr.ib(type=Tuple[str, ...])
+    styles = attr.ib(type=Tuple[str, ...])
+
+    def match(self, path: Path) -> bool:
+        for pattern in self.patterns:
+            iterator = path.glob(pattern)
+            try:
+                next(iterator)
+            except StopIteration:
+                continue
+            return True
+        return False
+
+    def __str__(self) -> str:
+        return '[{header}]\n{styles}'.format(
+            header=self.header,
+            styles='\n'.join(self.styles),
+        )
 
 
 HEADER = """
@@ -20,27 +44,67 @@ insert_final_newline = true
 """
 
 RULES = (
-    ('*.py', ('indent_style = space', 'indent_size = 4')),
-    ('*.{md,rst,txt}', ('indent_style = space', 'indent_size = 4')),
-    ('*.{ini,toml}', ('indent_style = space', 'indent_size = 4')),
+    # 4 spaces
+    Rule(
+        header='*.py',
+        patterns=('**/*.py', ),
+        styles=('indent_style = space', 'indent_size = 4'),
+    ),
+    Rule(
+        header='*.{md,rst,txt}',
+        patterns=('*.md', '*.rst', '*.txt'),
+        styles=('indent_style = space', 'indent_size = 4'),
+    ),
+    Rule(
+        header='*.{ini,toml}',
+        patterns=('*.ini', '*.toml'),
+        styles=('indent_style = space', 'indent_size = 4'),
+    ),
+    Rule(
+        header='*Dockerfile',
+        patterns=('*.Dockerfile', 'Dockerfile'),
+        styles=('indent_style = space', 'indent_size = 4'),
+    ),
 
-    ('*.js', ('indent_style = space', 'indent_size = 2')),
-    ('*.{json,yml,yaml}', ('indent_style = space', 'indent_size = 2')),
-    ('*.{html,j2}', ('indent_style = space', 'indent_size = 2')),
+    # 2 spaces
+    Rule(
+        header='*.js',
+        patterns=('**/*.js', ),
+        styles=('indent_style = space', 'indent_size = 2'),
+    ),
+    Rule(
+        header='*.{json,yml,yaml}',
+        patterns=('*.json', '*.yml', '*.yaml'),
+        styles=('indent_style = space', 'indent_size = 2'),
+    ),
+    Rule(
+        header='*.{html,html.j2}',
+        patterns=('**/*.html', '**/*.html.j2'),
+        styles=('indent_style = space', 'indent_size = 2'),
+    ),
 
-    ('Makefile', ('indent_style = tab', )),
-    ('*.go', ('indent_style = tab', )),
+    # tabs
+    Rule(
+        header='Makefile',
+        patterns=('Makefile', ),
+        styles=('indent_style = tab', ),
+    ),
+    Rule(
+        header='*.go',
+        patterns=('*.go', ),
+        styles=('indent_style = tab', ),
+    ),
 )
 
 
 def make_editorconfig(path: Path) -> str:
     matched = []
-    non_matched = list(RULES)
-    for path in path.iterdir():
-        for i, (match, _rule) in enumerate(non_matched):
-            if fnmatch(path.name, match):
-                matched.append(non_matched.pop(i))
-                break
+    matched = []
+    non_matched = []
+    for i, rule in enumerate(RULES):
+        if rule.match(path):
+            matched.append(rule)
+        else:
+            non_matched.append(rule)
 
-    matched = ['[{}]\n{}'.format(match, '\n'.join(rule)) for match, rule in matched]
-    return HEADER + '\n\n'.join(matched) + '\n'
+    return HEADER + '\n\n'.join(map(str, matched)) + '\n'
