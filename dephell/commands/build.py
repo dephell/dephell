@@ -49,7 +49,7 @@ class BuildCommand(BaseCommand):
                 resolver.graph.add(root)
 
             # merge (without full graph building)
-            resolved = resolver.resolve(level=1)
+            resolved = resolver.resolve(level=1, silent=self.config['silent'])
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
                 self.logger.warning('conflict was found')

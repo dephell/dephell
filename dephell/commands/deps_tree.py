@@ -45,7 +45,7 @@ class DepsTreeCommand(BaseCommand):
 
         # resolve
         self.logger.debug('resolving...')
-        resolved = resolver.resolve()
+        resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
             conflict = analize_conflict(resolver=resolver)
             self.logger.warning('conflict was found')

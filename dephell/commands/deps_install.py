@@ -49,7 +49,7 @@ class DepsInstallCommand(BaseCommand):
 
         # resolve
         self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve()
+        resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
             conflict = analize_conflict(resolver=resolver)
             self.logger.warning('conflict was found')

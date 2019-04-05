@@ -36,7 +36,7 @@ class PackageInstallCommand(BaseCommand):
         # resolve
         resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
         self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve()
+        resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
             conflict = analize_conflict(resolver=resolver)
             self.logger.warning('conflict was found')

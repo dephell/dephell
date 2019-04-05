@@ -53,7 +53,7 @@ class DepsConvertCommand(BaseCommand):
             # merge (without full graph building)
             if not should_be_resolved:
                 self.logger.debug('merging...')
-                resolved = resolver.resolve(level=1)
+                resolved = resolver.resolve(level=1, silent=self.config['silent'])
                 if not resolved:
                     conflict = analize_conflict(resolver=resolver)
                     self.logger.warning('conflict was found')
@@ -64,7 +64,7 @@ class DepsConvertCommand(BaseCommand):
         # resolve (and merge)
         if should_be_resolved:
             self.logger.debug('resolving...')
-            resolved = resolver.resolve()
+            resolved = resolver.resolve(silent=self.config['silent'])
             if not resolved:
                 conflict = analize_conflict(resolver=resolver)
                 self.logger.warning('conflict was found')

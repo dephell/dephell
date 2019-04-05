@@ -6,7 +6,6 @@ from typing import Optional, ContextManager
 from yaspin import yaspin
 
 # app
-from ..config import config
 from .conflict import analize_conflict
 from ..models import RootDependency
 from ..context_tools import nullcontext
@@ -70,20 +69,21 @@ class Resolver:
         if not soft and dep.locked:
             dep.unlock()
 
-    def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
-        if config['silent']:
+    def resolve(self, debug: bool = False, silent: bool = False, level: Optional[int] = None) -> bool:
+        if silent:
             spinner = nullcontext(type('Mock', (), {}))
         else:
             spinner = yaspin(text="resolving...")
 
         with spinner as spinner:
             while True:
-                resolved = self._resolve(debug=debug, level=level, spinner=spinner)
+                resolved = self._resolve(debug=debug, silent=silent, level=level, spinner=spinner)
                 if resolved is not None:
                     return resolved
 
-    def _resolve(self, debug: bool, level: Optional[int], spinner: ContextManager) -> Optional[bool]:
-        if config['silent']:
+    def _resolve(self, debug: bool, silent: bool, level: Optional[int],
+                 spinner: ContextManager) -> Optional[bool]:
+        if silent:
             logger.debug('next iteration', extra=dict(
                 layers=len(self.graph._layers),
                 mutations=self.mutator.mutations,
