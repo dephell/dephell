@@ -43,7 +43,7 @@ class DepsOutdatedCommand(BaseCommand):
         if root is None:
             # get executable
             venv = get_venv(config=self.config)
-            if venv is not None:
+            if venv.exists():
                 lib_path = venv.lib_path
                 executable = venv.python_path
             else:

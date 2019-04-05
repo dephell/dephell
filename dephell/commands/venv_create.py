@@ -3,10 +3,10 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # app
+from ..actions import get_python
 from ..config import builders
 from ..venvs import VEnvs
 from .base import BaseCommand
-from ..actions import get_python
 
 
 class VenvCreateCommand(BaseCommand):

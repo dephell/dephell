@@ -46,14 +46,17 @@ class JailInstallCommand(BaseCommand):
             print(conflict)
             return False
 
-        # get executable
+        # make venv
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get_by_name(name)
         if venv.exists():
             self.logger.error('already installed', extra=dict(package=name))
             return False
         python = get_python(self.config)
-        self.logger.info('creating venv...', extra=dict(path=venv.path))
+        self.logger.info('creating venv...', extra=dict(
+            venv=str(venv.path),
+            python=str(python.path),
+        ))
         venv.create(python_path=python.path)
 
         # install

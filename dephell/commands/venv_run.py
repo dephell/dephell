@@ -50,6 +50,7 @@ class VenvRunCommand(BaseCommand):
             self.logger.warning('venv does not exist, creating...', extra=dict(
                 project=self.config['project'],
                 env=self.config.env,
+                path=str(venv.path),
             ))
             python = get_python(self.config)
             self.logger.debug('choosen python', extra=dict(version=python.version))

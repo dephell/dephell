@@ -1,14 +1,13 @@
 # built-in
 from argparse import ArgumentParser
-from pathlib import Path
 
 # app
+from ..actions import get_venv
 from ..controllers import DependencyMaker
 from ..config import builders
 from ..converters import InstalledConverter
 from ..models import RootDependency
 from ..repositories import WareHouseRepo
-from ..venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -35,12 +34,11 @@ class PackageShowCommand(BaseCommand):
         repo = WareHouseRepo()
         releases = repo.get_releases(dep)
 
-        venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.get(Path(self.config['project']), env=self.config.env)
-        path = None
+        venv = get_venv(config=self.config)
         if venv.exists():
             path = venv.lib_path
         else:
+            path = None
             self.logger.warning('venv not found, package version will be shown for global python lib')
 
         converter = InstalledConverter()
