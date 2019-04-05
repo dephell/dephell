@@ -34,7 +34,7 @@ class DepsInstallCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        loader_config = self.config.get('to', self.config['from'])
+        loader_config = self.config.get('to') or self.config['from']
         self.logger.info('get dependencies', extra=dict(
             format=loader_config['format'],
             path=loader_config['path'],

@@ -9,7 +9,7 @@ from yaspin import yaspin
 from ..config import config
 from .conflict import analize_conflict
 from ..models import RootDependency
-from ..utils import nullcontext
+from ..context_tools import nullcontext
 
 
 logger = getLogger('dephell.resolver')
@@ -72,7 +72,7 @@ class Resolver:
 
     def resolve(self, debug: bool = False, level: Optional[int] = None) -> bool:
         if config['silent']:
-            spinner = nullcontext(type('Mock', [], {}))
+            spinner = nullcontext(type('Mock', (), {}))
         else:
             spinner = yaspin(text="resolving...")
 

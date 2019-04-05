@@ -82,9 +82,10 @@ def get_python(config: Config) -> Python:
         return pythons.get_best(python)
 
     # defined in dependency file
-    loader = CONVERTERS[config['from']['format']]
-    root = loader.load(path=config['from']['path'])
-    if root.python:
-        return pythons.get_by_spec(root.python)
+    if 'from' in config:
+        loader = CONVERTERS[config['from']['format']]
+        root = loader.load(path=config['from']['path'])
+        if root.python:
+            return pythons.get_by_spec(root.python)
 
     return pythons.current

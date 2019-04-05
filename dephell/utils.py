@@ -1,30 +1,7 @@
 # built-in
 import os
 import platform
-from contextlib import contextmanager
 from itertools import product
-
-
-@contextmanager
-def chdir(path):
-    """Context manager for changing dir and restoring previous workdir after exit.
-    """
-    curdir = os.getcwd()
-
-    path = str(path)
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(curdir)
-
-
-@contextmanager
-def nullcontext(value=None):
-    yield value
 
 
 def lazy_product(*all_groups):

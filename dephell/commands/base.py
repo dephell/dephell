@@ -6,17 +6,21 @@ from logging import getLogger
 from typing import Optional
 
 # app
-from ..config import config
+from ..config import config, Config
 from .helpers import getitem
 
 
 class BaseCommand:
     logger = getLogger('dephell.commands')
 
-    def __init__(self, argv):
+    def __init__(self, argv, config: Config = None):
         parser = self.get_parser()
         self.args = parser.parse_args(argv)
-        self.config = self.get_config(self.args)
+
+        if config is None:
+            self.config = self.get_config(self.args)
+        else:
+            self.config = config
 
     @classmethod
     def get_parser(cls):

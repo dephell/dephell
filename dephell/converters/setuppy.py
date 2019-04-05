@@ -12,7 +12,7 @@ from packaging.requirements import Requirement
 # app
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
-from ..utils import chdir
+from ..context_tools import chdir
 from .base import BaseConverter
 
 try:
