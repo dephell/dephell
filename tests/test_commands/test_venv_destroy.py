@@ -1,0 +1,25 @@
+from pathlib import Path
+
+from dephell.commands import VenvDestroyCommand
+from dephell.config import Config
+from dephell.venvs import VEnv
+
+
+def test_venv_destroy_command(temp_path: Path):
+    venv_path = temp_path / 'venv'
+    venv = VEnv(path=venv_path)
+    assert venv.exists() is False
+    assert venv.create()
+
+    config = Config()
+    config.attach({
+        'project': str(temp_path),
+        'venv': str(venv_path),
+    })
+
+    command = VenvDestroyCommand(argv=[], config=config)
+    result = command()
+
+    assert result is True
+    venv = VEnv(path=venv_path)
+    assert venv.exists() is False
