@@ -1,12 +1,11 @@
 # built-in
 from argparse import ArgumentParser
-from pathlib import Path
 
 # app
+from ..actions import get_python, get_venv
 from ..config import builders
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
-from ..venvs import VEnvs
 from ..converters import CONVERTERS, InstalledConverter
 
 
@@ -42,19 +41,18 @@ class DepsOutdatedCommand(BaseCommand):
                 root = loader.load(path=loader_config['path'])
 
         if root is None:
-            venvs = VEnvs(path=self.config['venv'])
-            venv = venvs.get(Path(self.config['project']), env=self.config.env)
-            if venv.exists():
-                self.logger.info('get packages from project environment', extra=dict(
-                    path=str(venv.path),
-                ))
-                path = venv.lib_path
+            # get executable
+            venv = get_venv(config=self.config)
+            if venv is not None:
+                lib_path = venv.lib_path
+                executable = venv.python_path
             else:
-                path = None
-                self.logger.info('get packages from global python lib')
+                lib_path = None
+                executable = get_python(config=self.config).path
+            self.logger.debug('choosen python', extra=dict(path=str(executable)))
 
             converter = InstalledConverter()
-            root = converter.load(path)
+            root = converter.load(lib_path)
 
         repo = WareHouseRepo()
         data = []
