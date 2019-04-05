@@ -2,40 +2,10 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-# external
-from editorconfig.fnmatch import fnmatch
-
 # app
+from ..actions import make_editorconfig
 from ..config import builders
 from .base import BaseCommand
-
-
-HEADER = """
-# EditorConfig helps developers define and maintain consistent
-# coding styles between different editors and IDEs
-# https://editorconfig.org
-root = true
-
-[*]
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
-
-"""
-
-RULES = (
-    ('*.py', ('indent_style = space', 'indent_size = 4')),
-    ('*.{md,rst,txt}', ('indent_style = space', 'indent_size = 4')),
-    ('*.{ini,toml}', ('indent_style = space', 'indent_size = 4')),
-
-    ('*.js', ('indent_style = space', 'indent_size = 2')),
-    ('*.{json,yml,yaml}', ('indent_style = space', 'indent_size = 2')),
-    ('*.{html,j2}', ('indent_style = space', 'indent_size = 2')),
-
-    ('Makefile', ('indent_style = tab', )),
-    ('*.go', ('indent_style = tab', )),
-)
 
 
 class GenerateEditorconfigCommand(BaseCommand):
@@ -57,17 +27,7 @@ class GenerateEditorconfigCommand(BaseCommand):
 
     def __call__(self):
         project_path = Path(self.config['project'])
-
-        matched = []
-        non_matched = list(RULES)
-        for path in project_path.iterdir():
-            for i, (match, _rule) in enumerate(non_matched):
-                if fnmatch(path.name, match):
-                    matched.append(non_matched.pop(i))
-                    break
-
-        matched = ['[{}]\n{}'.format(match, '\n'.join(rule)) for match, rule in matched]
-        text = HEADER + '\n\n'.join(matched) + '\n'
+        text = make_editorconfig(path=project_path)
         (project_path / '.editorconfig').write_text(text)
         self.logger.info('editorconfig generated')
         return True
