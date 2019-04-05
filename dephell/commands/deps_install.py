@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_python, get_venv
+from ..actions import get_python, get_venv, attach_deps
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS, InstalledConverter
@@ -39,13 +39,7 @@ class DepsInstallCommand(BaseCommand):
         ))
         loader = CONVERTERS[loader_config['format']]
         resolver = loader.load_resolver(path=loader_config['path'])
-
-        # attach
-        if self.config.get('and'):
-            for source in self.config['and']:
-                loader = CONVERTERS[source['format']]
-                root = loader.load(path=source['path'])
-                resolver.graph.add(root)
+        attach_deps(resolver=resolver, config=self.config, merge=False)
 
         # resolve
         self.logger.info('build dependencies graph...')

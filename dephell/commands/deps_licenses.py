@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 
 # app
+from ..actions import attach_deps
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
@@ -31,13 +32,7 @@ class DepsLicensesCommand(BaseCommand):
     def __call__(self):
         loader = CONVERTERS[self.config['from']['format']]
         resolver = loader.load_resolver(path=self.config['from']['path'])
-
-        # attach
-        if self.config.get('and'):
-            for source in self.config['and']:
-                loader = CONVERTERS[source['format']]
-                root = loader.load(path=source['path'])
-                resolver.graph.add(root)
+        attach_deps(resolver=resolver, config=self.config, merge=False)
 
         # resolve (and merge)
         resolved = resolver.resolve(silent=self.config['silent'])

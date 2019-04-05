@@ -3,6 +3,7 @@ from argparse import ArgumentParser, REMAINDER
 from typing import List
 
 # app
+from ..actions import attach_deps
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS, PIPConverter
@@ -42,6 +43,7 @@ class DepsTreeCommand(BaseCommand):
         else:
             loader = CONVERTERS[self.config['from']['format']]
             resolver = loader.load_resolver(path=self.config['from']['path'])
+            attach_deps(resolver=resolver, config=self.config, merge=False)
 
         # resolve
         self.logger.debug('resolving...')
