@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_python, get_venv, make_json
+from ..actions import get_python_env, make_json
 from ..config import builders
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
@@ -42,17 +42,9 @@ class DepsOutdatedCommand(BaseCommand):
 
         if root is None:
             # get executable
-            venv = get_venv(config=self.config)
-            if venv.exists():
-                lib_path = venv.lib_path
-                executable = venv.python_path
-            else:
-                lib_path = None
-                executable = get_python(config=self.config).path
-            self.logger.debug('choosen python', extra=dict(path=str(executable)))
-
-            converter = InstalledConverter()
-            root = converter.load(lib_path)
+            python = get_python_env(config=self.config)
+            self.logger.debug('choosen python', extra=dict(path=str(python.path)))
+            root = InstalledConverter().load(paths=python.lib_paths)
 
         repo = WareHouseRepo()
         data = []

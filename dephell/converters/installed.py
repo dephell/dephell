@@ -13,8 +13,13 @@ from ..controllers import DependencyMaker
 class InstalledConverter(BaseConverter):
     lock = True
 
-    def load(self, path=None) -> RootDependency:
-        paths = [path] if path else sys.path
+    def load(self, path=None, paths=None) -> RootDependency:
+        if paths is None:
+            if path is not None:
+                paths = [path]
+            else:
+                paths = sys.path
+
         root = RootDependency(raw_name='installed')
         parsers = [
             (EggInfoConverter(), '*.egg-info'),

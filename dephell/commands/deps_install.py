@@ -58,7 +58,7 @@ class DepsInstallCommand(BaseCommand):
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
         # get installed packages
-        installed_root = InstalledConverter().load(path=python.lib_path)
+        installed_root = InstalledConverter().load(paths=python.lib_paths)
         installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
 
         # plan what we will install and what we will remove

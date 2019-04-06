@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_venv, make_json
+from ..actions import get_python_env, make_json
 from ..config import builders
 from ..converters import InstalledConverter
 from ..repositories import WareHouseRepo
@@ -28,15 +28,9 @@ class PackageListCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        venv = get_venv(config=self.config)
-        if venv.exists():
-            path = venv.lib_path
-        else:
-            path = None
-            self.logger.warning('venv not found, package version will be shown for global python lib')
-
-        converter = InstalledConverter()
-        root = converter.load(path=path)
+        python = get_python_env(config=self.config)
+        self.logger.debug('choosen python', extra=dict(path=str(python.path)))
+        root = InstalledConverter().load(paths=python.lib_paths)
 
         repo = WareHouseRepo()
         data = []

@@ -2,7 +2,7 @@
 from argparse import ArgumentParser, REMAINDER
 
 # app
-from ..actions import get_python, get_venv
+from ..actions import get_python_env
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import PIPConverter
@@ -42,19 +42,15 @@ class PackageInstallCommand(BaseCommand):
             return False
 
         # get executable
-        venv = get_venv(config=self.config)
-        if venv.exists():
-            executable = venv.python_path
-        else:
-            executable = get_python(config=self.config)
+        python = get_python_env(config=self.config)
 
         # install
         reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
         self.logger.info('installation...', extra=dict(
-            executable=executable,
+            executable=str(python.path),
             packages=len(reqs),
         ))
-        code = PackageManager(executable=executable).install(reqs=reqs)
+        code = PackageManager(executable=python.path).install(reqs=reqs)
         if code != 0:
             return False
         self.logger.info('installed')

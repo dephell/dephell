@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_venv, make_json
+from ..actions import get_python_env, make_json
 from ..controllers import DependencyMaker
 from ..config import builders
 from ..converters import InstalledConverter
@@ -34,15 +34,10 @@ class PackageShowCommand(BaseCommand):
         repo = WareHouseRepo()
         releases = repo.get_releases(dep)
 
-        venv = get_venv(config=self.config)
-        if venv.exists():
-            path = venv.lib_path
-        else:
-            path = None
-            self.logger.warning('venv not found, package version will be shown for global python lib')
+        python = get_python_env(config=self.config)
+        self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
-        converter = InstalledConverter()
-        root = converter.load(path)
+        root = InstalledConverter().load(paths=python.lib_paths)
         local_versions = []
         for subdep in root.dependencies:
             if subdep.name == dep.name:
