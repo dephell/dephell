@@ -1,14 +1,13 @@
 # built-in
 from argparse import ArgumentParser
-from pathlib import Path
 
 # app
+from ..actions import get_python_env, make_json
 from ..controllers import DependencyMaker
 from ..config import builders
 from ..converters import InstalledConverter
 from ..models import RootDependency
 from ..repositories import WareHouseRepo
-from ..venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -35,16 +34,10 @@ class PackageShowCommand(BaseCommand):
         repo = WareHouseRepo()
         releases = repo.get_releases(dep)
 
-        venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.get(Path(self.config['project']), env=self.config.env)
-        path = None
-        if venv.exists():
-            path = venv.lib_path
-        else:
-            self.logger.warning('venv not found, package version will be shown for global python lib')
+        python = get_python_env(config=self.config)
+        self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
-        converter = InstalledConverter()
-        root = converter.load(path)
+        root = InstalledConverter().load(paths=python.lib_paths)
         local_versions = []
         for subdep in root.dependencies:
             if subdep.name == dep.name:
@@ -61,5 +54,5 @@ class PackageShowCommand(BaseCommand):
             updated=str(releases[0].time.date()),
             authors=[str(author) for author in dep.authors],
         )
-        print(self.get_value(data=data, key=self.config.get('filter')))
+        print(make_json(data=data, key=self.config.get('filter')))
         return True

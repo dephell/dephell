@@ -1,15 +1,13 @@
 # built-in
-import sys
 from argparse import ArgumentParser, REMAINDER
-from pathlib import Path
 
 # app
+from ..actions import get_python_env
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
-from ..venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -36,7 +34,7 @@ class PackageInstallCommand(BaseCommand):
         # resolve
         resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
         self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve()
+        resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
             conflict = analize_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
@@ -44,23 +42,15 @@ class PackageInstallCommand(BaseCommand):
             return False
 
         # get executable
-        executable = Path(sys.executable)
-        venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.current
-        if venv is not None:
-            executable = venv.python_path
-        else:
-            venv = venvs.get(Path(self.config['project']), env=self.config.env)
-            if venv.exists():
-                executable = venv.python_path
+        python = get_python_env(config=self.config)
 
         # install
         reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
         self.logger.info('installation...', extra=dict(
-            executable=executable,
+            executable=str(python.path),
             packages=len(reqs),
         ))
-        code = PackageManager(executable=executable).install(reqs=reqs)
+        code = PackageManager(executable=python.path).install(reqs=reqs)
         if code != 0:
             return False
         self.logger.info('installed')

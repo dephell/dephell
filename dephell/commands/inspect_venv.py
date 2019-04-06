@@ -1,13 +1,12 @@
 # built-in
 from argparse import ArgumentParser
-from pathlib import Path
 
 # external
 from dephell_shells import Shells
 
 # app
+from ..actions import get_venv, make_json
 from ..config import builders
-from ..venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -29,8 +28,7 @@ class InspectVenvCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.get(Path(self.config['project']), env=self.config.env)
+        venv = get_venv(config=self.config)
         shells = Shells(bin_path=venv.bin_path)
 
         data = dict(
@@ -46,5 +44,5 @@ class InspectVenvCommand(BaseCommand):
                 lib=str(venv.lib_path),
                 python=str(venv.python_path),
             ))
-        print(self.get_value(data=data, key=self.config.get('filter')))
+        print(make_json(data=data, key=self.config.get('filter')))
         return True

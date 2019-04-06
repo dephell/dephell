@@ -1,13 +1,9 @@
 # built-in
-import json
 import os.path
-from functools import reduce
 from logging import getLogger
-from typing import Optional
 
 # app
 from ..config import config, Config
-from .helpers import getitem
 
 
 class BaseCommand:
@@ -24,10 +20,10 @@ class BaseCommand:
 
     @classmethod
     def get_parser(cls):
-        return cls.parser
+        raise NotImplementedError
 
     @classmethod
-    def get_config(cls, args):
+    def get_config(cls, args) -> Config:
         config.setup_logging()
         if args.config:
             config.attach_file(path=args.config, env=args.env)
@@ -41,28 +37,9 @@ class BaseCommand:
         config.setup_logging()
         return config
 
-    def validate(self):
+    def validate(self) -> bool:
         is_valid = self.config.validate()
         if not is_valid:
             self.logger.error('invalid config')
             print(self.config.format_errors())
         return is_valid
-
-    @classmethod
-    def get_value(cls, data, key: str = None, sep: Optional[str] = '-'):
-        json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
-        # print all config
-        if not key:
-            return json.dumps(data, **json_params)
-
-        if sep is None:
-            return json.dumps(data[key], **json_params)
-
-        keys = key.replace('.', sep).split(sep)
-        value = reduce(getitem, keys, data)
-        # print config section
-        if isinstance(value, (dict, list)):
-            return json.dumps(value, **json_params)
-
-        # print one value
-        return value

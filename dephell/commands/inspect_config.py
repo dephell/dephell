@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 
 # app
+from ..actions import make_json
 from ..config import builders
 from .base import BaseCommand
 
@@ -28,5 +29,5 @@ class InspectConfigCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        print(self.get_value(data=self.config._data, key=self.config.get('filter')))
+        print(make_json(data=self.config._data, key=self.config.get('filter')))
         return True

@@ -1,12 +1,11 @@
 # built-in
 from argparse import ArgumentParser
-from pathlib import Path
 
 # app
+from ..actions import get_python_env, make_json
 from ..config import builders
 from ..converters import InstalledConverter
 from ..repositories import WareHouseRepo
-from ..venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -29,16 +28,9 @@ class PackageListCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.get(Path(self.config['project']), env=self.config.env)
-        path = None
-        if venv.exists():
-            path = venv.lib_path
-        else:
-            self.logger.warning('venv not found, package version will be shown for global python lib')
-
-        converter = InstalledConverter()
-        root = converter.load(path)
+        python = get_python_env(config=self.config)
+        self.logger.debug('choosen python', extra=dict(path=str(python.path)))
+        root = InstalledConverter().load(paths=python.lib_paths)
 
         repo = WareHouseRepo()
         data = []
@@ -54,5 +46,5 @@ class PackageListCommand(BaseCommand):
                 links=dep.links,
                 authors=[str(author) for author in dep.authors],
             ))
-        print(self.get_value(data=data, key=self.config.get('filter')))
+        print(make_json(data=data, key=self.config.get('filter')))
         return True

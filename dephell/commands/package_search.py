@@ -2,6 +2,7 @@
 from argparse import ArgumentParser, REMAINDER
 
 # app
+from ..actions import make_json
 from ..config import builders
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
@@ -28,5 +29,5 @@ class PackageSearchCommand(BaseCommand):
     def __call__(self):
         repo = WareHouseRepo()
         results = repo.search(self.args.name)
-        print(self.get_value(data=results, key=self.config.get('filter')))
+        print(make_json(data=results, key=self.config.get('filter')))
         return True

@@ -4,15 +4,16 @@ from argparse import ArgumentParser, REMAINDER
 from pathlib import Path
 
 # app
+from ..actions import get_entrypoints
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import EggInfoConverter, PIPConverter
+from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
 from ..venvs import VEnvs
 from .base import BaseCommand
-from .helpers import get_python
+from ..actions import get_python
 
 
 class JailInstallCommand(BaseCommand):
@@ -39,21 +40,24 @@ class JailInstallCommand(BaseCommand):
 
         # resolve (and merge)
         self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve()
+        resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
             conflict = analize_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False
 
-        # get executable
+        # make venv
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get_by_name(name)
         if venv.exists():
             self.logger.error('already installed', extra=dict(package=name))
             return False
         python = get_python(self.config)
-        self.logger.info('creating venv...', extra=dict(path=venv.path))
+        self.logger.info('creating venv...', extra=dict(
+            venv=str(venv.path),
+            python=str(python.path),
+        ))
         venv.create(python_path=python.path)
 
         # install
@@ -67,20 +71,9 @@ class JailInstallCommand(BaseCommand):
             return False
 
         # get entrypoints
-        if not venv.lib_path:
-            self.logger.critical('cannot locate lib path in the venv')
+        entrypoints = get_entrypoints(venv=venv, name=name)
+        if entrypoints is None:
             return False
-        paths = list(venv.lib_path.glob('{}*.*-info'.format(name)))
-        if not paths:
-            paths = list(venv.lib_path.glob('{}*.*-info'.format(name.replace('-', '_'))))
-            if not paths:
-                self.logger.critical('cannot locate dist-info for installed package')
-                return False
-        path = paths[0] / 'entry_points.txt'
-        if not path.exists():
-            self.logger.error('cannot find any entrypoints for package')
-            return False
-        entrypoints = EggInfoConverter().parse_entrypoints(content=path.read_text()).entrypoints
 
         # copy console scripts
         self.logger.info('copy executables...', extra=dict(package=name, path=self.config['bin']))

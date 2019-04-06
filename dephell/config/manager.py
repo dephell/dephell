@@ -22,7 +22,7 @@ class Config:
     _skip = ('config', 'env', 'key', 'name', 'type')
 
     def __init__(self, data: Optional[dict] = None):
-        self._data = data or DEFAULT
+        self._data = data or DEFAULT.copy()
 
     def setup_logging(self, data: Optional[dict] = None) -> None:
         captureWarnings(True)

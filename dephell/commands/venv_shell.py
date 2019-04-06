@@ -9,7 +9,7 @@ from dephell_shells import Shells
 from ..config import builders
 from ..venvs import VEnvs
 from .base import BaseCommand
-from .helpers import get_python
+from ..actions import get_python
 
 
 class VenvShellCommand(BaseCommand):

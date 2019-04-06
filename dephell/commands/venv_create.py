@@ -3,10 +3,10 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # app
+from ..actions import get_python
 from ..config import builders
 from ..venvs import VEnvs
 from .base import BaseCommand
-from .helpers import get_python
 
 
 class VenvCreateCommand(BaseCommand):
@@ -31,7 +31,7 @@ class VenvCreateCommand(BaseCommand):
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if venv.exists():
-            self.logger.warning('venv already exists', extra=dict(path=venv.path))
+            self.logger.error('venv already exists', extra=dict(path=venv.path))
             return False
 
         self.logger.info('creating venv for project...', extra=dict(path=venv.path))

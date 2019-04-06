@@ -12,7 +12,7 @@ from ..controllers import analize_conflict
 from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
-from .helpers import get_python
+from ..actions import get_python
 
 
 class VenvRunCommand(BaseCommand):
@@ -50,6 +50,7 @@ class VenvRunCommand(BaseCommand):
             self.logger.warning('venv does not exist, creating...', extra=dict(
                 project=self.config['project'],
                 env=self.config.env,
+                path=str(venv.path),
             ))
             python = get_python(self.config)
             self.logger.debug('choosen python', extra=dict(version=python.version))
@@ -61,18 +62,18 @@ class VenvRunCommand(BaseCommand):
             self.logger.warning('executable does not found in venv, trying to install...', extra=dict(
                 executable=command[0],
             ))
-            result = self._install(name=command[0], venv=venv)
+            result = self._install(name=command[0], python_path=venv.python_path)
             if not result:
                 return False
 
         result = subprocess.run([str(executable)] + command[1:])
         return not result.returncode
 
-    def _install(self, name: str, venv) -> bool:
+    def _install(self, name: str, python_path: Path) -> bool:
         # resolve
         resolver = PIPConverter(lock=False).loads_resolver(name)
         self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve()
+        resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
             conflict = analize_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
@@ -82,10 +83,10 @@ class VenvRunCommand(BaseCommand):
         # install
         reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
         self.logger.info('installation...', extra=dict(
-            executable=venv.python_path,
+            executable=python_path,
             packages=len(reqs),
         ))
-        code = PackageManager(executable=venv.python_path).install(reqs=reqs)
+        code = PackageManager(executable=python_path).install(reqs=reqs)
         if code != 0:
             return False
         self.logger.info('installed')

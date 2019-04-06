@@ -8,8 +8,9 @@ from pathlib import Path
 from typing import Iterator, Optional
 from venv import EnvBuilder
 
-# project
+# external
 import attr
+from dephell_pythons import Python, Finder
 
 # app
 from .constants import PYTHONS
@@ -47,6 +48,8 @@ class VEnv:
 
     project = attr.ib(type=str, default=None)
     env = attr.ib(type=str, default=None)
+
+    # properties
 
     @property
     def name(self):
@@ -100,6 +103,18 @@ class VEnv:
                 if path.exists():
                     return path
         return None
+
+    @cached_property
+    def python(self) -> Python:
+        python = Python(
+            path=self.python_path,
+            version=Finder.get_version(path=self.python_path),
+            implementation=Finder.get_implementation(path=self.python_path)
+        )
+        python.lib_paths = [self.lib_path]
+        return python
+
+    # methods
 
     def exists(self) -> bool:
         """Returns true if venv already created and valid.

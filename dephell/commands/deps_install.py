@@ -1,15 +1,13 @@
 # built-in
-import sys
 from argparse import ArgumentParser
-from pathlib import Path
 
 # app
+from ..actions import get_python_env, attach_deps
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS, InstalledConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
-from ..venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -41,17 +39,11 @@ class DepsInstallCommand(BaseCommand):
         ))
         loader = CONVERTERS[loader_config['format']]
         resolver = loader.load_resolver(path=loader_config['path'])
-
-        # attach
-        if self.config.get('and'):
-            for source in self.config['and']:
-                loader = CONVERTERS[source['format']]
-                root = loader.load(path=source['path'])
-                resolver.graph.add(root)
+        attach_deps(resolver=resolver, config=self.config, merge=False)
 
         # resolve
         self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve()
+        resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
             conflict = analize_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
@@ -62,18 +54,11 @@ class DepsInstallCommand(BaseCommand):
         resolver.apply_envs(set(self.config['envs']))
 
         # get executable
-        executable = Path(sys.executable)
-        venvs = VEnvs(path=self.config['venv'])
-        venv = venvs.current
-        if venv is not None:
-            executable = venv.python_path
-        else:
-            venv = venvs.get(Path(self.config['project']), env=self.config.env)
-            if venv.exists():
-                executable = venv.python_path
+        python = get_python_env(config=self.config)
+        self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
         # get installed packages
-        installed_root = InstalledConverter().load(path=venv.lib_path)
+        installed_root = InstalledConverter().load(paths=python.lib_paths)
         installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
 
         # plan what we will install and what we will remove
@@ -98,10 +83,10 @@ class DepsInstallCommand(BaseCommand):
             install.append(req)
 
         # remove
-        manager = PackageManager(executable=executable)
+        manager = PackageManager(executable=python.path)
         if remove:
             self.logger.info('removing old packages...', extra=dict(
-                executable=executable,
+                executable=python.path,
                 packages=len(remove),
             ))
             code = manager.remove(reqs=remove)
@@ -111,7 +96,7 @@ class DepsInstallCommand(BaseCommand):
         # install
         if install:
             self.logger.info('installation...', extra=dict(
-                executable=executable,
+                executable=python.path,
                 packages=len(install),
             ))
             code = manager.install(reqs=install)

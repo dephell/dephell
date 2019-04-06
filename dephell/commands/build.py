@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # app
+from ..actions import attach_deps
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS
@@ -40,25 +41,20 @@ class BuildCommand(BaseCommand):
     def __call__(self):
         loader = CONVERTERS[self.config['from']['format']]
         resolver = loader.load_resolver(path=self.config['from']['path'])
+        if loader.lock:
+            self.logger.warning('do not build project from lockfile!')
 
         # attach
-        if self.config.get('and'):
-            for source in self.config['and']:
-                loader = CONVERTERS[source['format']]
-                root = loader.load(path=source['path'])
-                resolver.graph.add(root)
-
-            # merge (without full graph building)
-            resolved = resolver.resolve(level=1)
-            if not resolved:
-                conflict = analize_conflict(resolver=resolver)
-                self.logger.warning('conflict was found')
-                print(conflict)
-                return False
-            self.logger.info('merged')
+        merged = attach_deps(resolver=resolver, config=self.config, merge=True)
+        if not merged:
+            conflict = analize_conflict(resolver=resolver)
+            self.logger.warning('conflict was found')
+            print(conflict)
+            return False
 
         # dump
         project_path = Path(self.config['project'])
+        reqs = Requirement.from_graph(resolver.graph, lock=False)
         for to_format, to_path in DUMPERS:
             if to_format == self.config['from']['format']:
                 continue
@@ -66,7 +62,7 @@ class BuildCommand(BaseCommand):
             dumper = CONVERTERS[to_format]
             dumper.dump(
                 path=project_path.joinpath(to_path),
-                reqs=Requirement.from_graph(resolver.graph, lock=False),
+                reqs=reqs,
                 project=resolver.graph.metainfo,
             )
 

@@ -93,7 +93,10 @@ class _Writer:
         if isinstance(path, str):
             path = Path(path)
         if path.suffix not in ('.whl', '.zip'):
-            path /= '{}-{}-py3-none-any.whl'.format(project.name, str(project.version))
+            path /= '{name}-{version}-py3-none-any.whl'.format(
+                name=project.name.replace('-', '_'),
+                version=str(project.version),
+            )
         path.parent.mkdir(exist_ok=True, parents=True)
         if path.exists():
             path.unlink()

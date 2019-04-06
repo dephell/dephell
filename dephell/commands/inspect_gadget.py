@@ -6,7 +6,8 @@ from ..config import builders
 from .base import BaseCommand
 
 
-# https://www.asciiart.eu/cartoons/inspector-gadget
+# Source: https://www.asciiart.eu/cartoons/inspector-gadget
+# Author: https://en.wikipedia.org/wiki/Joan_Stark
 GADGET = r"""
            ___
      _..--"\  `|`""--.._

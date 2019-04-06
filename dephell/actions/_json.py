@@ -1,11 +1,8 @@
+# built-in
+import json
 from collections import defaultdict
-
-# external
-from dephell_pythons import Python, Pythons
-
-# app
-from ..converters import CONVERTERS
-from ..config import Config
+from functools import reduce
+from typing import Optional
 
 
 def _each(value):
@@ -73,19 +70,20 @@ def getitem(value, key):
     return value[key]
 
 
-def get_python(config: Config) -> Python:
-    pythons = Pythons()
+def make_json(data, key: str = None, sep: Optional[str] = '-') -> str:
+    json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
+    # print all config
+    if not key:
+        return json.dumps(data, **json_params)
 
-    # defined in config
-    python = config.get('python')
-    if python:
-        return pythons.get_best(python)
+    if sep is None:
+        return json.dumps(data[key], **json_params)
 
-    # defined in dependency file
-    if 'from' in config:
-        loader = CONVERTERS[config['from']['format']]
-        root = loader.load(path=config['from']['path'])
-        if root.python:
-            return pythons.get_by_spec(root.python)
+    keys = key.replace('.', sep).split(sep)
+    value = reduce(getitem, keys, data)
+    # print config section
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, **json_params)
 
-    return pythons.current
+    # print one value
+    return str(value)
