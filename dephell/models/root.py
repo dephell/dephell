@@ -48,7 +48,7 @@ class RootDependency:
     links = attr.ib(factory=dict, repr=False)               # Home-page, Download-URL
     authors = attr.ib(default=tuple(), repr=False)          # Author, Author-email
     keywords = attr.ib(default=tuple(), repr=False)         # Keywords
-    classifiers = attr.ib(default=tuple(), repr=False)      # Classifier
+    classifiers = attr.ib(type=tuple, default=tuple(), repr=False)      # Classifier
     platforms = attr.ib(default=tuple(), repr=False)        # Platform
     entrypoints = attr.ib(default=tuple(), repr=False)      # entry_points
 

@@ -31,7 +31,7 @@ class VenvCreateCommand(BaseCommand):
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if venv.exists():
-            self.logger.warning('venv already exists', extra=dict(path=venv.path))
+            self.logger.error('venv already exists', extra=dict(path=venv.path))
             return False
 
         self.logger.info('creating venv for project...', extra=dict(path=venv.path))

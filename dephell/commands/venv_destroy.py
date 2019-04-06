@@ -29,7 +29,7 @@ class VenvDestroyCommand(BaseCommand):
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
-            self.logger.warning('venv does not exist')
+            self.logger.error('venv does not exist')
             return False
         rmtree(str(venv.path))
         self.logger.info('venv removed')

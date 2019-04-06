@@ -4,7 +4,7 @@ import sys
 from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List
+from typing import List, Set
 
 # project
 import attr
@@ -20,6 +20,7 @@ logger = getLogger('dephell')
 @attr.s()
 class PackageManager:
     executable = attr.ib(type=Path)
+    secured = attr.ib(type=Set[str], default={'setuptools', 'pip'}, repr=False)
 
     def install(self, reqs: List[Requirement]) -> int:
         args = ['--no-deps']
@@ -35,7 +36,10 @@ class PackageManager:
             return self.run('install', *args, '-r', str(path))
 
     def remove(self, reqs: List[Requirement]) -> int:
-        return self.run('uninstall', '-y', *[req.name for req in reqs])
+        names = [req.name for req in reqs if req.name not in self.secured]
+        if not names:
+            return 0
+        return self.run('uninstall', '-y', *names)
 
     def run(self, *args) -> int:
         command_pip = [str(self.executable), '-m', 'pip'] + list(args)

@@ -30,7 +30,7 @@ class Dependency:
     description = attr.ib(type=str, default='', repr=False)     # summary
     authors = attr.ib(factory=tuple, repr=False)                # author{,_email}, maintainer{,_email}
     links = attr.ib(factory=dict, repr=False)                   # project_url{,s}, package_url
-    classifiers = attr.ib(factory=tuple, repr=False)            # classifiers
+    classifiers = attr.ib(type=tuple, factory=tuple, repr=False)            # classifiers
     license = attr.ib(default=None, repr=False)                 # license
 
     # info from requirements file

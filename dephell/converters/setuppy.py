@@ -37,6 +37,8 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
+except ModuleNotFoundError:
+    from distutils.core import setup
 
 {readme}
 
@@ -167,7 +169,7 @@ class SetupPyConverter(BaseConverter):
         if project.keywords:
             content.append(('keywords', ' '.join(project.keywords)))
         if project.classifiers:
-            content.append(('classifiers', project.classifiers))
+            content.append(('classifiers', list(project.classifiers)))
         if project.platforms:
             content.append(('platforms', project.platforms))
         if project.entrypoints:
