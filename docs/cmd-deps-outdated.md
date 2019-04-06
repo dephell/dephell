@@ -48,6 +48,7 @@ INFO get packages from project environment (path=/home/gram/.local/share/dephell
 
 ## See also
 
+1. [How DepHell choose Python environment](python-lookup).
 1. [How to filter commands JSON output](filters).
 1. [dephell package list](cmd-package-list) to show information about installed packages.
 1. [dephell package show](cmd-package-show) to get information about package.

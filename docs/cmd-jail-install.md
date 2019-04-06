@@ -17,6 +17,7 @@ It will install [isort](https://github.com/timothycrosley/isort) with [requireme
 
 ## See also
 
+1. [How DepHell choose Python interpreter](python-lookup).
 1. [dephell jail list](cmd-jail-list) to show all created jails.
 1. [dephell jail remove](cmd-jail-remove) to remove jail.
 1. [dephell venv create](cmd-venv-create) for information about virtual environments management in DepHell.

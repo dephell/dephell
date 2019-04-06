@@ -1,6 +1,6 @@
 # dephell package list
 
-Show installed packages. If virtual environment for current project and environment exists this command will show packages for this virtual environment. Otherwise, this command will show all globally installed packages for current Python.
+Show installed packages. See [how DepHell looks for Python environment](python-lookup).
 
 ```bash
 $ dephell package list
@@ -70,6 +70,7 @@ $ dephell package list --filter="#.name+description.each().:10"
 
 ## See also
 
+1. [How DepHell choose Python environment](python-lookup).
 1. [How to filter commands JSON output](filters).
 1. [dephell deps outdated](cmd-deps-outdated) to show outdated packages in the virtual environment or lockfile.
 1. [dephell package search](cmd-package-search) to search packages on [PyPI](https://pypi.org/).

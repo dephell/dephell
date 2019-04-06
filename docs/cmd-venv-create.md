@@ -32,6 +32,7 @@ $ dephell inspect venv venv
 
 ## See also
 
+1. [How DepHell choose Python interpreter](python-lookup).
 1. [dephell deps install](cmd-deps-install) to install project dependencies into created virtual environment.
 1. [dephell package install](cmd-package-install) to install package into created virtual environment.
 1. [dephell jail install](cmd-jail-install) to install Python CLI tools into isolated virtual environment.

@@ -37,6 +37,7 @@ $ locate jsonschema/__init__.py
 
 ## See also
 
+1. [How DepHell choose Python environment](python-lookup).
 1. [How to filter commands JSON output](filters).
 1. [dephell package search](cmd-package-search) to search packages on [PyPI](https://pypi.org/).
 1. [dephell package list](cmd-package-list) to show information about installed packages.
