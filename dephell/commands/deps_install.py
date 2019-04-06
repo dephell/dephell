@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_python, get_venv, attach_deps
+from ..actions import get_python_env, attach_deps
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS, InstalledConverter
@@ -54,17 +54,11 @@ class DepsInstallCommand(BaseCommand):
         resolver.apply_envs(set(self.config['envs']))
 
         # get executable
-        venv = get_venv(config=self.config)
-        if venv.exists():
-            lib_path = venv.lib_path
-            executable = venv.python_path
-        else:
-            lib_path = None
-            executable = get_python(config=self.config).path
-        self.logger.debug('choosen python', extra=dict(path=str(executable)))
+        python = get_python_env(config=self.config)
+        self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
         # get installed packages
-        installed_root = InstalledConverter().load(path=lib_path)
+        installed_root = InstalledConverter().load(path=python.lib_path)
         installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
 
         # plan what we will install and what we will remove
@@ -89,10 +83,10 @@ class DepsInstallCommand(BaseCommand):
             install.append(req)
 
         # remove
-        manager = PackageManager(executable=executable)
+        manager = PackageManager(executable=python.path)
         if remove:
             self.logger.info('removing old packages...', extra=dict(
-                executable=executable,
+                executable=python.path,
                 packages=len(remove),
             ))
             code = manager.remove(reqs=remove)
@@ -102,7 +96,7 @@ class DepsInstallCommand(BaseCommand):
         # install
         if install:
             self.logger.info('installation...', extra=dict(
-                executable=executable,
+                executable=python.path,
                 packages=len(install),
             ))
             code = manager.install(reqs=install)

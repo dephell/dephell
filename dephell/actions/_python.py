@@ -4,6 +4,7 @@ from dephell_pythons import Python, Pythons
 # app
 from ..converters import CONVERTERS
 from ..config import Config
+from ._venv import get_venv
 
 
 def get_python(config: Config) -> Python:
@@ -32,3 +33,16 @@ def get_python(config: Config) -> Python:
             return pythons.get_by_spec(root.python)
 
     return pythons.current
+
+
+def get_python_env(config: Config) -> Python:
+    """
+    1. Looks for venv
+    2. Looks for python
+
+    Use it when you looking for place to work with packages (list, install, remove).
+    """
+    venv = get_venv(config=config)
+    if venv.exists():
+        return venv.python
+    return get_python(config=config)

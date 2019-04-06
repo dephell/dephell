@@ -12,7 +12,9 @@ def get_venv(config: Config) -> VEnv:
 
     1. Venv for current project and env (if exists).
     2. Current active venv.
-    3. If no active venv then venv for current project and env will be returned
+    3. If no active venv then venv for current project and env will be returned.
+
+    Use it when you want to work only with virtual environment.
     """
     venvs = VEnvs(path=config['venv'])
 
