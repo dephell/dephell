@@ -4,7 +4,7 @@ from pathlib import Path
 
 from dephell.commands import InspectVenvCommand
 from dephell.config import Config
-from dephell.venvs import VEnv
+from dephell_venvs import VEnv
 
 
 def test_inspect_venv_command(temp_path: Path, capsys):

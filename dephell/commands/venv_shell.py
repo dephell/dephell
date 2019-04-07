@@ -7,7 +7,7 @@ from dephell_shells import Shells
 
 # app
 from ..config import builders
-from ..venvs import VEnvs
+from dephell_venvs import VEnvs
 from .base import BaseCommand
 from ..actions import get_python
 
