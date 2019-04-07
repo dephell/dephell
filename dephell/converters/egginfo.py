@@ -199,7 +199,7 @@ class _Writer:
             return
 
         if path.suffix != '.egg-info':
-            path /= project.name + '.egg-info'
+            path /= project.name.replace('-', '_') + '.egg-info'
         path.mkdir(exist_ok=True, parents=True)
 
         (path / 'dependency_links.txt').touch()
