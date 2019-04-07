@@ -122,7 +122,7 @@ class _Writer:
                     for full_path in package:
                         self._write_file(
                             zip=zip,
-                            path='/'.join(full_path.relative_to(project.package.path).parts),
+                            path=package.module.replace('.', '/') + '/' + full_path.name,
                             fpath=full_path,
                         )
 
