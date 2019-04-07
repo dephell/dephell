@@ -90,7 +90,7 @@ class SDistConverter(BaseConverter):
             # write metafiles
             self._write_content(tar=tar, path='PKG-INFO', content=info)
             for fname, getter in getters.items():
-                fpath = '{}.egg-info/{}'.format(project.name, fname)
+                fpath = '{}.egg-info/{}'.format(project.name.replace('-', '_'), fname)
                 self._write_content(tar=tar, path=fpath, content=getter())
 
             # write packages
