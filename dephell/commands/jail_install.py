@@ -11,7 +11,7 @@ from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
-from ..venvs import VEnvs
+from dephell_venvs import VEnvs
 from .base import BaseCommand
 from ..actions import get_python
 

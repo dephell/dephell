@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dephell.commands import VenvCreateCommand
 from dephell.config import Config
-from dephell.venvs import VEnv
+from dephell_venvs import VEnv
 
 
 def test_venv_create_command(temp_path: Path):

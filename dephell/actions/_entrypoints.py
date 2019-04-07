@@ -3,7 +3,7 @@ from typing import Tuple
 
 from ..converters import EggInfoConverter
 from ..models import EntryPoint
-from ..venvs import VEnv
+from dephell_venvs import VEnv
 
 
 logger = getLogger('dephell.actions')

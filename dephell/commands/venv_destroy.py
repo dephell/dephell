@@ -1,11 +1,10 @@
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
-from shutil import rmtree
 
 # app
 from ..config import builders
-from ..venvs import VEnvs
+from dephell_venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -31,6 +30,6 @@ class VenvDestroyCommand(BaseCommand):
         if not venv.exists():
             self.logger.error('venv does not exist')
             return False
-        rmtree(str(venv.path))
+        venv.destroy()
         self.logger.info('venv removed')
         return True

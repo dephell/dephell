@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dephell.commands import DepsInstallCommand
 from dephell.config import Config
-from dephell.venvs import VEnv
+from dephell_venvs import VEnv
 
 
 def test_deps_install_command(temp_path: Path):

@@ -122,8 +122,20 @@ class _Writer:
                     for full_path in package:
                         self._write_file(
                             zip=zip,
-                            path='/'.join(full_path.relative_to(project.package.path).parts),
+                            path=package.module.replace('.', '/') + '/' + full_path.name,
                             fpath=full_path,
+                        )
+
+                # write license files
+                patterns = ('LICEN[CS]E*', 'COPYING*', 'NOTICE*', 'AUTHORS*')
+                for pattern in patterns:
+                    for file_path in project.package.path.glob(pattern):
+                        if not file_path.is_file():
+                            continue
+                        self._write_file(
+                            zip=zip,
+                            path=base_path + file_path.name,
+                            fpath=file_path,
                         )
 
                 # write RECORD

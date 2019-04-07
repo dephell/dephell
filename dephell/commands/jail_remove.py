@@ -5,7 +5,7 @@ from pathlib import Path
 
 # app
 from ..config import builders
-from ..venvs import VEnvs
+from dephell_venvs import VEnvs
 from .base import BaseCommand
 
 

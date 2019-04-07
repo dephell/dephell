@@ -4,7 +4,7 @@ from pathlib import Path
 
 from dephell.commands import DepsOutdatedCommand
 from dephell.config import Config
-from dephell.venvs import VEnv
+from dephell_venvs import VEnv
 
 
 def test_deps_outdated_command_file(temp_path: Path, capsys):

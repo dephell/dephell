@@ -2,7 +2,7 @@ from pathlib import Path
 
 # app
 from ..config import Config
-from ..venvs import VEnvs, VEnv
+from dephell_venvs import VEnvs, VEnv
 
 
 def get_venv(config: Config) -> VEnv:
