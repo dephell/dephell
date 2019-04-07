@@ -25,7 +25,11 @@ class GenerateAuthorsCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        result = subprocess.run(['git', 'log', '--pretty="%ae|%an%n%ce|%cn"'], capture_output=True)
+        result = subprocess.run(
+            ['git', 'log', '--pretty="%ae|%an%n%ce|%cn"'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
         authors = dict()
         for line in result.stdout.decode().strip().split('\n'):
             mail, name = line.split('|')
