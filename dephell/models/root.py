@@ -1,7 +1,7 @@
 # built-in
 from contextlib import suppress
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Tuple
 
 # external
 from dephell_discover import Root as PackageRoot
@@ -20,10 +20,11 @@ from .group import Group
 class RootRelease:
     raw_name = attr.ib()
     dependencies = attr.ib(repr=False)
-    extra = attr.ib(type=Optional[str], default=None)
 
     version = attr.ib(default='0.0.0')
     time = attr.ib(default=None)
+
+    extra = None
 
     @cached_property
     def name(self) -> str:
@@ -37,7 +38,6 @@ class RootRelease:
 class RootDependency:
     raw_name = attr.ib(default='root')
     dependencies = attr.ib(factory=list, repr=False)
-    extra = attr.ib(type=Optional[str], default=None)
 
     # additional info strings
     version = attr.ib(default='0.0.0', repr=False)      # Version
@@ -66,12 +66,6 @@ class RootDependency:
 
     @cached_property
     def name(self) -> str:
-        if self.extra is None:
-            return self.base_name
-        return '{}[{}]'.format(self.base_name, self.extra)
-
-    @cached_property
-    def base_name(self) -> str:
         return canonicalize_name(self.raw_name)
 
     @cached_property
@@ -80,7 +74,6 @@ class RootDependency:
             raw_name=self.raw_name,
             dependencies=self.dependencies,
             version=self.version,
-            extra=self.extra,
         )
         return (release, )
 
