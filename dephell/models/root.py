@@ -108,6 +108,9 @@ class RootDependency:
     def unapply(self, name: str):
         raise NotImplementedError
 
+    def copy(self):
+        return type(self)(**attr.asdict(self, recurse=False))
+
     @classmethod
     def get_metainfo(cls, other, *others):
         """Merge metainfo, but not dependencies
