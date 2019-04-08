@@ -45,6 +45,7 @@
     :caption: Inspect
 
     cmd-inspect-config
+    cmd-inspect-self
     cmd-inspect-venv
 
 .. toctree::
