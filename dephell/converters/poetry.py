@@ -121,11 +121,13 @@ class PoetryConverter(BaseConverter):
             value = getattr(project, field)
             if isinstance(value, tuple):
                 value = list(value)
-            if value:
-                if section[field].value != value:
-                    section[field] = value
-            elif field in section:
-                del section[field]
+            if not value:   # delete
+                if field in section:
+                    del section[field]
+            elif field not in section:  # insert
+                section[field] = value
+            elif section[field].value != value:  # update
+                section[field] = value
 
         # write links
         for name in ('homepage', 'repository', 'documentation'):
