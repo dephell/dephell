@@ -73,3 +73,26 @@ EXTENSIONS = MappingProxyType(OrderedDict([
     ('txt',         'txt'),
     ('',            'txt'),
 ]))
+
+
+# about name aliases: https://github.com/semver/semver/issues/411
+VERSION_MAJOR = ('major', 'breaking')
+VERSION_MINOR = ('minor', 'feature')
+VERSION_PATCH = ('patch', 'fix', 'micro')
+VERSION_PRE = ('pre', 'rc', 'alpha')
+# semver has no post-releases: https://github.com/semver/semver/issues/200
+VERSION_POST = ('post', )
+VERSION_DEV = ('dev', )
+VERSION_LOCAL = ('local', )
+VERSION_SCHEMES = MappingProxyType(dict(
+    # https://www.python.org/dev/peps/pep-0440/#version-scheme
+    pep=VERSION_MAJOR + VERSION_MINOR + VERSION_PATCH + VERSION_PRE + VERSION_POST + VERSION_DEV + VERSION_LOCAL,
+    # https://semver.org/
+    semver=VERSION_MAJOR + VERSION_MINOR + VERSION_PATCH + VERSION_PRE + VERSION_LOCAL,
+    # https://github.com/staltz/comver
+    comver=VERSION_MAJOR + VERSION_MINOR + VERSION_PRE + VERSION_LOCAL,
+    # https://calver.org/
+    calver=VERSION_MAJOR + VERSION_PATCH,
+    # Mac OS X reference
+    roman=VERSION_MAJOR,
+))

@@ -13,6 +13,7 @@ from dephell.actions import arabic2roman, roman2arabic
     (7, 'VII'),
 
     (10, 'X'),
+    (13, 'XIII'),
     (14, 'XIV'),
     (15, 'XV'),
     (16, 'XVI'),
