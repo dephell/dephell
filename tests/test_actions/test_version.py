@@ -1,5 +1,5 @@
 import pytest
-from dephell.actions import bump_version
+from dephell.actions import bump_version, bump_file
 
 
 @pytest.mark.parametrize('scheme, rule, old, new', [
@@ -43,3 +43,32 @@ from dephell.actions import bump_version
 ])
 def test_bump_version(scheme, rule, old, new):
     bump_version(scheme=scheme, rule=rule, version=old) == new
+
+
+@pytest.mark.parametrize('old, new, changed, content, expected', [
+    (
+        '1.2', '1.3', True,
+        ('from a import b', 'c = "1.2"', '__version__ = "1.2"'),
+        ('from a import b', 'c = "1.2"', '__version__ = "1.3"'),
+    ),
+    (
+        'III', 'IV', True,
+        ('from a import b', 'c = "1.2"', '__version__ = "III"'),
+        ('from a import b', 'c = "1.2"', '__version__ = "IV"'),
+    ),
+    (
+        '1.2', '1.3', True,
+        ('from a import b', 'c = "1.2"', '__version__ = "1.0"'),
+        ('from a import b', 'c = "1.2"', '__version__ = "1.3"'),
+    ),
+    (
+        '1.2', '1.3', True,
+        ('from a import b', 'c = "1.2"', '__version__ = \'1.0\''),
+        ('from a import b', 'c = "1.2"', '__version__ = \'1.3\''),
+    ),
+])
+def test_bump_file(old, new, changed, content, expected, temp_path):
+    path = temp_path / '__init__.py'
+    path.write_text('\n'.join(content))
+    assert bump_file(path=path, old=old, new=new) is changed
+    assert list(path.read_text().split('\n')) == list(expected)

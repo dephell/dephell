@@ -16,38 +16,50 @@ FILE_NAMES = (
     '_version.py',
     '_about.py',
 )
-REX_VERSION = re.compile(VERSION_PATTERN)
+REX_VERSION = re.compile(VERSION_PATTERN, re.VERBOSE | re.IGNORECASE)
 PREFIXES = {'__version__', 'VERSION', 'version'}
 
 
-def bump_file(path: Path, version: Version) -> bool:
+def bump_file(path: Path, old: str, new: str) -> bool:
     file_bumped = False
     new_content = []
     with path.open('r') as stream:
         for line in stream:
             prefix, sep, _version = line.partition('=')
             if not sep:
+                new_content.append(line)
                 continue
             if prefix.strip() not in PREFIXES:
+                new_content.append(line)
                 continue
-            new_line, count = REX_VERSION.subn(str(version), line)
+
+            # replace old version
+            new_line = line.replace(old, new, 1)
+            if new_line != line:
+                new_content.append(new_line)
+                file_bumped = True
+                continue
+
+            # replace any version
+            new_line, count = REX_VERSION.subn(new, line)
             if count == 1:
                 new_content.append(new_line)
                 file_bumped = True
-            else:
-                new_content.append(line)
+                continue
+
+            new_content.append(line)
     if file_bumped:
-        path.write_text('\n'.join(new_content))
+        path.write_text(''.join(new_content))
     return file_bumped
 
 
-def bump_project(project: Root, version: Version) -> List[Path]:
+def bump_project(project: Root, old: str, new: str) -> List[Path]:
     bumped_files = []
     for package in project.packages:
         for path in package:
             if path.name not in FILE_NAMES:
                 continue
-            file_bumped = bump_file(path=path, version=version)
+            file_bumped = bump_file(path=path, old=old, new=new)
             if file_bumped:
                 bumped_files.append(path)
     return bumped_files
@@ -68,7 +80,7 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
     if isinstance(version, str):
         version = Version(version)
 
-    if scheme in ('semver', 'pep'):
+    if scheme in ('semver', 'romver', 'pep'):
         parts = version.release + (0, 0)
         if rule in constants.VERSION_MAJOR:
             return '{}.0.0'.format(parts[0] + 1)
@@ -77,7 +89,7 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
         if rule in constants.VERSION_PATCH:
             return '{}.{}.{}'.format(parts[0], parts[1], parts[2] + 1)
 
-        if scheme == 'semver':
+        if scheme in ('semver', 'romver'):
             if rule in constants.VERSION_PRE:
                 pre = version.pre[1] if version.pre else 0
                 return '{}.{}.{}-rc.{}'.format(*parts[:3], pre + 1)
