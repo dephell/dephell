@@ -122,7 +122,8 @@ class PoetryConverter(BaseConverter):
             if isinstance(value, tuple):
                 value = list(value)
             if value:
-                section[field] = value
+                if section[field].value != value:
+                    section[field] = value
             elif field in section:
                 del section[field]
 
