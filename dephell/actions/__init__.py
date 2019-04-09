@@ -8,10 +8,12 @@ from ._editorconfig import make_editorconfig
 from ._entrypoints import get_entrypoints
 from ._json import make_json
 from ._python import get_python, get_python_env
+from ._roman import arabic2roman, roman2arabic
 from ._venv import get_venv
 
 
 __all__ = [
+    'arabic2roman',
     'attach_deps',
     'get_downloads_by_category',
     'get_entrypoints',
@@ -23,4 +25,5 @@ __all__ = [
     'make_editorconfig',
     'make_json',
     'make_zsh_autocomplete',
+    'roman2arabic',
 ]
