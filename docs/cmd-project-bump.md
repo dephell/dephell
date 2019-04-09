@@ -34,16 +34,34 @@ INFO file bumped (path=/home/gram/Documents/dephell/dephell/__version__.py)
 1. [semver](https://semver.org/) -- most recommend versioning scheme. Allows your users (and machines) by version easily understand when you have broken something in your project, have added some new features or have fixed some bugs. If you don't know what to use, use it.
 1. [comver](https://github.com/staltz/comver) -- this is semver without `patch` number. All changes that don't broke anything increments `minor` version number. You can use it if in your project it's difficult to separate bug fixes and features.
 1. [calver](https://calver.org/) -- it's when you use current date (year and month) instead of version. For example, `2018.12`. DepHell uses 4-numbers year as major number to explicitly indicate that your project uses CalVer. Also you can pass `micro` rule to add day in the version number. If previous release was today then `micro` rule will just increment this number. You can use this versioning if you don't want to care about versioning at all. However, this is strongly discouraged for any projects that can be used as dependency for third-party code.
-1. [romver](http://dafoster.net/articles/2015/03/14/semantic-versioning-vs-romantic-versioning/) -- romantic versioning (not [Sentimental Versioning](http://sentimentalversioning.org/), please) is when humans and marketing more important for you than machines. Bumping `major`, `minor` or `patch` number shows importance of changes and says nothing about type of this changes. Every update can break everything. As calver, never use this versioning in tools that can be used in any third-party code. But it's OK for products for users like Firefox.
+1. [romver](http://dafoster.net/articles/2015/03/14/semantic-versioning-vs-romantic-versioning/) -- romantic versioning (not [Sentimental Versioning](http://sentimentalversioning.org/), please) is when humans and marketing more important for you than machines. Bumping `major`, `minor` or `patch` number shows importance of changes and says nothing about type of this changes. Every update can break everything. As calver, never use this versioning in tools that can be used in any third-party code. But it's OK for products for users like Firefox. DepHell allows only `major`, `minor` and `patch` rules for RomVer because this versioning for humans, and humans don't understand complicated combinations of `pre`, `post` and `local`.
 1. [roman](https://en.wikipedia.org/wiki/Roman_numerals) -- roman numbers versioning. Never use it. It won't work after third release. However, you can try it for your internal project. Just for fun. Don't say anyone that I've recommended it to you.
 
-## Popular projects that use these versioning schemes
+## Projects that use these versioning schemes
 
 1. pep:
 1. semver:
+    + [six](https://pypi.org/project/six/#history)
+    + [botocore](https://pypi.org/project/botocore/#history)
+    + [python-dateutil](https://pypi.org/project/python-dateutil/#history)
+    + [requests](https://pypi.org/project/requests/#history)
+    + [chardet](https://pypi.org/project/chardet/#history)
+    + [rsa](https://pypi.org/project/rsa/#history)
 1. comver:
+    + [PyYAML](https://pypi.org/project/PyYAML/#history)
+    + [idna](https://pypi.org/project/idna/#history)
+    + [docutils](https://pypi.org/project/docutils/#history)
+    + [terminator](https://launchpad.net/terminator)
 1. calver:
+    + [pytz](https://pypi.org/project/pytz/#history)
+    + [certify](https://pypi.org/project/certifi/#history)
+    + [PyCharm](https://www.jetbrains.com/pycharm/download/previous.html)
+    + [Ubuntu](http://releases.ubuntu.com/)
 1. romver:
-    + [pip](https://pypi.org/project/pip/#history)
+    + [pip](https://pypi.org/project/pip/#history) (`1.5.6` → `6.0`)
+    + [pipenv](https://pypi.org/project/pipenv/#history) (`0.2.8` → `3.0.0`)
 1. roman:
     + [Mac OS X](https://en.wikipedia.org/wiki/MacOS)
+    + [WordPerfect Office](https://en.wikipedia.org/wiki/WordPerfect#WordPerfect_Office)
+    + [3.V album by Zebra band](https://en.wikipedia.org/wiki/3.V)
+    + [состояние птиц](https://bsos.bandcamp.com/)
