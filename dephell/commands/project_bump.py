@@ -73,7 +73,7 @@ class ProjectBumpCommand(BaseCommand):
             self.logger.info('file bumped', extra=dict(path=str(path)))
 
         # update version in project metadata
-        if root is not None:
+        if root is not None and root.version != '0.0.0':
             root.version = new_version
             loader.dump(
                 project=root,
