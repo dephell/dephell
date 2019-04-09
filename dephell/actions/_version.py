@@ -1,7 +1,7 @@
 import re
 from datetime import date
 from pathlib import Path
-from typing import Iterator, Union
+from typing import Iterator, Union, Optional
 
 from dephell_discover import Root
 from packaging.version import Version, VERSION_PATTERN
@@ -20,6 +20,29 @@ REX_VERSION = re.compile(VERSION_PATTERN, re.VERBOSE | re.IGNORECASE)
 PREFIXES = {'__version__', 'VERSION', 'version'}
 
 
+def get_version_from_file(path: Path) -> Optional[str]:
+    with path.open('r') as stream:
+        for line in stream:
+            prefix, sep, version = line.partition('=')
+            if not sep:
+                continue
+            if prefix.rstrip() not in PREFIXES:
+                continue
+            return version.strip().strip('\'"')
+    return None
+
+
+def get_version_from_project(project: Root) -> Optional[str]:
+    for package in project.packages:
+        for path in package:
+            if path.name not in FILE_NAMES:
+                continue
+            version = get_version_from_file(path=path)
+            if version:
+                return version
+    return None
+
+
 def bump_file(path: Path, old: str, new: str) -> bool:
     file_bumped = False
     new_content = []
@@ -34,11 +57,12 @@ def bump_file(path: Path, old: str, new: str) -> bool:
                 continue
 
             # replace old version
-            new_line = line.replace(old, new, 1)
-            if new_line != line:
-                new_content.append(new_line)
-                file_bumped = True
-                continue
+            if old:
+                new_line = line.replace(old, new, 1)
+                if new_line != line:
+                    new_content.append(new_line)
+                    file_bumped = True
+                    continue
 
             # replace any version
             new_line, count = REX_VERSION.subn(new, line)
@@ -66,6 +90,8 @@ def bump_project(project: Root, old: str, new: str) -> Iterator[Path]:
 def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver') -> str:
     if scheme not in constants.VERSION_SCHEMES:
         raise ValueError('invalid scheme: {}'.format(scheme))
+    if rule == 'init':
+        return constants.VERSION_INIT[scheme]
     if rule not in constants.VERSION_SCHEMES[scheme]:
         if REX_VERSION.fullmatch(rule):
             return rule

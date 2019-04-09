@@ -1,5 +1,5 @@
 import pytest
-from dephell.actions import bump_version, bump_file
+from dephell.actions import bump_version, bump_file, get_version_from_file
 
 
 @pytest.mark.parametrize('scheme, rule, old, new', [
@@ -72,3 +72,13 @@ def test_bump_file(old, new, changed, content, expected, temp_path):
     path.write_text('\n'.join(content))
     assert bump_file(path=path, old=old, new=new) is changed
     assert list(path.read_text().split('\n')) == list(expected)
+
+
+@pytest.mark.parametrize('expected, content', [
+    ('1.2', ('from a import b', 'c = "1.1"', '__version__ = "1.2"')),
+])
+def test_get_version_from_file(expected, content, temp_path):
+    path = temp_path / '__init__.py'
+    path.write_text('\n'.join(content))
+    found = get_version_from_file(path=path)
+    assert found == expected

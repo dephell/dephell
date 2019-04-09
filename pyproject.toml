@@ -8,6 +8,9 @@ from = {format = "poetry", path = "pyproject.toml"}
 # and convert into setup.py
 to = {format = "setuppy", path = "setup.py"}
 
+# explicitly specify your versioning scheme to let your users know what they can expect
+versioning = "semver"
+
 # Make lockfile
 # $ dephell deps convert --env=lock
 [tool.dephell.lock]
