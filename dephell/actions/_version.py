@@ -29,7 +29,7 @@ def bump_file(path: Path, old: str, new: str) -> bool:
             if not sep:
                 new_content.append(line)
                 continue
-            if prefix.strip() not in PREFIXES:
+            if prefix.rstrip() not in PREFIXES:
                 new_content.append(line)
                 continue
 
