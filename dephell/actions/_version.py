@@ -62,8 +62,8 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
         raise ValueError('rule {} is unsupported by scheme {}'.format(rule, scheme))
 
     if scheme == 'roman':
-        version = arabic2roman(version)
-        return roman2arabic(version + 1)
+        version = roman2arabic(version)
+        return arabic2roman(version + 1)
 
     if isinstance(version, str):
         version = Version(version)
@@ -104,6 +104,7 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
                 return '{}.{}.{}{}.dev{}'.format(*parts[:3], suffix, (version.dev or 0) + 1)
             if rule in constants.VERSION_LOCAL:
                 old = str(version).split('+')[0]
+                local = int(version.local) if version.local else 0
                 return '{}+{}'.format(old, local + 1)
 
     if scheme == 'comver':

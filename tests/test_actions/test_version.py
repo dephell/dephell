@@ -1,0 +1,45 @@
+import pytest
+from dephell.actions import bump_version
+
+
+@pytest.mark.parametrize('scheme, rule, old, new', [
+    # pep base version
+    ('pep', 'major',    '1.2.3', '2.0.0'),
+    ('pep', 'minor',    '1.2.3', '1.3.0'),
+    ('pep', 'patch',    '1.2.3', '1.2.4'),
+
+    # semver base version
+    ('semver', 'major', '1.2.3', '2.0.0'),
+    ('semver', 'minor', '1.2.3', '1.3.0'),
+    ('semver', 'patch', '1.2.3', '1.2.4'),
+
+    # comver base version
+    ('comver', 'major', '1.2', '2.0'),
+    ('comver', 'minor', '1.2', '1.3'),
+
+    # pep add special part
+    ('pep', 'pre',      '1.2.3', '1.2.3rc1'),
+    ('pep', 'post',     '1.2.3', '1.2.3.post1'),
+    ('pep', 'dev',      '1.2.3', '1.2.4.dev1'),
+    ('pep', 'local',    '1.2.3', '1.2.4+1'),
+
+    # pep bump special part
+    ('pep', 'pre',      '1.2.3rc1', '1.2.3rc2'),
+    ('pep', 'post',     '1.2.3.post1', '1.2.3.post2'),
+    ('pep', 'dev',      '1.2.3.dev1', '1.2.4.dev2'),
+    ('pep', 'local',    '1.2.3+1', '1.2.4+2'),
+
+    # semver add special part
+    ('semver', 'pre',   '1.2.3', '1.2.3-rc.1'),
+    ('semver', 'local', '1.2.3', '1.2.4+1'),
+
+    # semver bump special part
+    ('semver', 'pre',   '1.2.3-rc.1', '1.2.3-rc.2'),
+    ('semver', 'local', '1.2.3+1', '1.2.4+2'),
+
+    # roman versioning
+    ('roman', 'major',  'X', 'XI'),
+    ('roman', 'major',  'XII', 'XIV'),
+])
+def test_bump_version(scheme, rule, old, new):
+    bump_version(scheme=scheme, rule=rule, version=old) == new
