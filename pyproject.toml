@@ -50,7 +50,7 @@ command = "sphinx-build -M html docs docs/build"
 
 [tool.poetry]
 name = "dephell"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
@@ -98,15 +98,15 @@ graphviz = {optional = true}
 yapf = {optional = true}
 
 # dephell ecosystem
-dephell_archive = "*"     # https://github.com/dephell/dephell_archive
-dephell_discover = "*"    # https://github.com/dephell/dephell_discover
-dephell_licenses = "*"    # https://github.com/dephell/dephell_licenses
-dephell_links = "*"       # https://github.com/dephell/dephell_links
-dephell_markers = "*"     # https://github.com/dephell/dephell_markers
-dephell_pythons = "*"     # https://github.com/dephell/dephell_pythons
-dephell_shells = "*"      # https://github.com/dephell/dephell_shells
-dephell_specifier = "*"   # https://github.com/dephell/dephell_specifier
-dephell_venvs = "*"       # https://github.com/dephell/dephell_venvs
+dephell-archive = "*"
+dephell-discover = "*"
+dephell-licenses = "*"
+dephell-links = "*"
+dephell-markers = "*"
+dephell-pythons = "*"
+dephell-shells = "*"
+dephell-specifier = "*"
+dephell-venvs = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
