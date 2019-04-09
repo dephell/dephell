@@ -1,7 +1,7 @@
 import re
 from datetime import date
 from pathlib import Path
-from typing import List, Union
+from typing import Iterator, Union
 
 from dephell_discover import Root
 from packaging.version import Version, VERSION_PATTERN
@@ -53,16 +53,14 @@ def bump_file(path: Path, old: str, new: str) -> bool:
     return file_bumped
 
 
-def bump_project(project: Root, old: str, new: str) -> List[Path]:
-    bumped_files = []
+def bump_project(project: Root, old: str, new: str) -> Iterator[Path]:
     for package in project.packages:
         for path in package:
             if path.name not in FILE_NAMES:
                 continue
             file_bumped = bump_file(path=path, old=old, new=new)
             if file_bumped:
-                bumped_files.append(path)
-    return bumped_files
+                yield path
 
 
 def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver') -> str:
