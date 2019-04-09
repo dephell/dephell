@@ -53,7 +53,7 @@ command = "sphinx-build -M html docs docs/build"
 
 [tool.poetry]
 name = "dephell"
-version = "0.3.2"
+version = "0.1.0.post1.dev1"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"

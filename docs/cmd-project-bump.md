@@ -10,6 +10,7 @@ INFO file bumped (path=/home/gram/Documents/dephell/dephell/__version__.py)
 
 ## Rules
 
+1. `init` -- write initial version for current versioning scheme.
 1. `major` or `breaking` -- increment first number of version. In `pep`, `semver`, and `comver` it means breaking changes that can broke third-party code that depends on your project. Example: `1.2.3` → `2.0.0`.
 1. `minor` or `feature` -- increment second number of version. In `pep`, and `semver` it means non-breaking new features. Example: `1.2.3` → `1.2.0`.
 1. `patch`, `fix` or `micro` -- increment third number of version. In `pep`, and `semver` it means bugfixes that don't add new features or break anything. For `calver` it usually means hotfixes that must be delivered ASAP. Example: `1.2.3` → `1.2.4`.
@@ -39,7 +40,6 @@ INFO file bumped (path=/home/gram/Documents/dephell/dephell/__version__.py)
 
 ## Projects that use these versioning schemes
 
-1. pep:
 1. semver:
     + [six](https://pypi.org/project/six/#history)
     + [botocore](https://pypi.org/project/botocore/#history)
@@ -65,3 +65,65 @@ INFO file bumped (path=/home/gram/Documents/dephell/dephell/__version__.py)
     + [WordPerfect Office](https://en.wikipedia.org/wiki/WordPerfect#WordPerfect_Office)
     + [3.V album by Zebra band](https://en.wikipedia.org/wiki/3.V)
     + [состояние птиц](https://bsos.bandcamp.com/)
+
+## Command examples
+
+SemVer:
+
+```bash
+$ dephell project bump init
+INFO generated new version (old=0.0.0, new=0.1.0)
+
+$ dephell project bump fix
+INFO generated new version (old=0.1.0, new=0.1.1)
+
+$ dephell project bump minor
+INFO generated new version (old=0.1.1, new=0.2.0)
+
+$ dephell project bump major
+INFO generated new version (old=0.2.0, new=1.0.0)
+
+$ dephell project bump pre
+INFO generated new version (old=1.0.0, new=1.0.0-rc.1)
+
+$ dephell project bump post
+ERROR ValueError: rule post is unsupported by scheme semver
+
+$ dephell project bump local
+INFO generated new version (old=1.0.0-rc.1, new=1.0.0-rc.1+1)
+
+$ dephell project bump +ubuntu1
+INFO generated new version (old=1.0.0-rc.1+1, new=1.0.0-rc.1+ubuntu1)
+```
+
+CalVer:
+
+```bash
+$ dephell project bump --versioning=calver init
+INFO generated new version (old=1.0.0-rc.1+ubuntu1, new=2019.4)
+
+# today
+$ dephell project bump --versioning=calver micro
+INFO generated new version (old=2019.4, new=2019.4.9)
+
+# if execute `micro` again: today + 1
+$ dephell project bump --versioning=calver micro
+INFO generated new version (old=2019.4.9, new=2019.4.10)
+```
+
+PEP:
+
+```bash
+$ dephell project bump --versioning=pep init
+INFO generated new version (old=2019.4.10, new=0.1.0)
+
+$ dephell project bump --versioning=pep pre
+INFO generated new version (old=0.1.0, new=0.1.0rc1)
+
+$ dephell project bump --versioning=pep post
+INFO generated new version (old=0.1.0rc1, new=0.1.0.post1)
+
+# `dev` can be attached to `pre` or `post` too
+$ dephell project bump --versioning=pep dev
+INFO generated new version (old=0.1.0.post1, new=0.1.0.post1.dev1)
+```
