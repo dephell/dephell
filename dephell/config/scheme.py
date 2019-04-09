@@ -60,7 +60,8 @@ SCHEME = {
             'ttl': dict(type='integer', required=True),
         },
     ),
-    'project':  dict(type='string', required=True),
-    'bin':      dict(type='string', required=True),
-    'command':  dict(type='string', required=False),
+    'project':      dict(type='string', required=True),
+    'bin':          dict(type='string', required=True),
+    'versioning':   dict(type='string', required=True),
+    'command':      dict(type='string', required=False),
 }

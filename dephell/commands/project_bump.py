@@ -6,6 +6,7 @@ from ..actions import bump_version, bump_project
 from ..config import builders
 from .base import BaseCommand
 from ..converters import CONVERTERS
+from ..models import Requirement
 
 
 class ProjectBumpCommand(BaseCommand):
@@ -49,5 +50,9 @@ class ProjectBumpCommand(BaseCommand):
 
         # update version in project metadata
         root.version = new_version
-        loader.dump(project=root, path=self.config['from']['path'])
+        loader.dump(
+            project=root,
+            path=self.config['from']['path'],
+            reqs=[Requirement(dep=dep, lock=loader.lock) for dep in root.dependencies],
+        )
         return True
