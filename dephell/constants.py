@@ -77,7 +77,7 @@ EXTENSIONS = MappingProxyType(OrderedDict([
 
 
 # about name aliases: https://github.com/semver/semver/issues/411
-VERSION_MAJOR = ('major', 'breaking', 'human')
+VERSION_MAJOR = ('major', 'breaking')
 VERSION_MINOR = ('minor', 'feature')
 VERSION_PATCH = ('patch', 'fix', 'micro')
 VERSION_PRE = ('pre', 'rc', 'alpha')

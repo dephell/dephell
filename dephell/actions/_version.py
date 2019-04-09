@@ -88,10 +88,21 @@ def bump_project(project: Root, old: str, new: str) -> Iterator[Path]:
 
 
 def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver') -> str:
+    # check scheme
     if scheme not in constants.VERSION_SCHEMES:
         raise ValueError('invalid scheme: {}'.format(scheme))
+
     if rule == 'init':
         return constants.VERSION_INIT[scheme]
+
+    # explicitly specified local version
+    if rule[0] == '+':
+        if 'local' not in constants.VERSION_SCHEMES[scheme]:
+            raise ValueError('local numbers are unsupported by scheme ' + scheme)
+        version = str(version).split('+')[0]
+        return version + rule
+
+    # check rule
     if rule not in constants.VERSION_SCHEMES[scheme]:
         if REX_VERSION.fullmatch(rule):
             return rule
@@ -162,6 +173,9 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
         if rule in constants.VERSION_MAJOR:
             return '{}.{}'.format(today.year, today.month)
         if rule in constants.VERSION_PATCH:
-            micro = (version.release + (0, 0))[2]
-            micro = today.day if micro < today.day else micro + 1
-            return '{}.{}.{}'.format(version.release[0], version.release[1], micro)
+            if version.release[0] == today.year and version.release[1] == today.month:
+                micro = (version.release + (0, 0))[2]
+                micro = today.day if micro < today.day else micro + 1
+            else:
+                micro = today.day
+            return '{}.{}.{}'.format(today.year, today.month, micro)

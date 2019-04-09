@@ -68,6 +68,12 @@
 
 .. toctree::
     :maxdepth: 1
+    :caption: Project
+
+    cmd-project-bump
+
+.. toctree::
+    :maxdepth: 1
     :caption: Virtual environment
 
     cmd-venv-create
