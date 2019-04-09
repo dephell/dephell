@@ -127,3 +127,10 @@ INFO generated new version (old=0.1.0rc1, new=0.1.0.post1)
 $ dephell project bump --versioning=pep dev
 INFO generated new version (old=0.1.0.post1, new=0.1.0.post1.dev1)
 ```
+
+Custom version:
+
+```bash
+$ dephell project bump 0.3.2
+INFO generated new version (old=0.1.0.post1.dev1, new=0.3.2)
+```
