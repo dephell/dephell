@@ -1,12 +1,20 @@
 # dephell project bump
 
-Bump project version. Versioning scheme specified as `--versioning` and bumping rule or new version specified as positional argument. For example, bump major version number by semver rules:
+Bump project version. Versioning scheme specified as `--versioning` and bumping rule or new version specified as positional argument. For example, bump minor version number by semver rules:
 
 ```bash
-$ dephell project bump minor
+$ dephell project bump --versioning=semver minor
 INFO generated new version (old=0.3.2, new=0.4.0)
 INFO file bumped (path=/home/gram/Documents/dephell/dephell/__version__.py)
 ```
+
+Steps:
+
+1. Try to detect version from `from` file.
+1. Try to detect version from project source code.
+1. Generate new version.
+1. Write new version in source code. DepHell looks for `__version__` variable in project source and writes new version in it.
+1. Write new version in `from` file.
 
 ## Rules
 
