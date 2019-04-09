@@ -1,5 +1,6 @@
 # built-in
 from collections import OrderedDict
+from datetime import date
 from enum import Enum, unique
 from types import MappingProxyType
 
@@ -98,4 +99,12 @@ VERSION_SCHEMES = MappingProxyType(dict(
     calver=VERSION_MAJOR + VERSION_PATCH,
     # Mac OS X reference
     roman=VERSION_MAJOR,
+))
+VERSION_INIT = MappingProxyType(dict(
+    pep='0.1.0',
+    semver='0.1.0',
+    comver='0.1',
+    romver='0.1.0',
+    calver='{}.{}'.format(date.today().year, date.today().month),
+    roman='I',
 ))
