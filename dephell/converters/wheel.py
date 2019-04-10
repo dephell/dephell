@@ -112,16 +112,16 @@ class _Writer:
         self._records = []
         base_path = '{}-{}.dist-info/'.format(project.name, str(project.version))
         with path.open('w+b') as stream:
-            with ZipFile(stream, mode='w', compression=ZIP_DEFLATED) as zip:
+            with ZipFile(stream, mode='w', compression=ZIP_DEFLATED) as archive:
                 # write metafiles
                 for fname, getter in getters.items():
-                    self._write_content(zip=zip, path=base_path + fname, content=getter())
+                    self._write_content(archive=archive, path=base_path + fname, content=getter())
 
                 # write packages
                 for package in chain(project.package.packages, project.package.data):
                     for full_path in package:
                         self._write_file(
-                            zip=zip,
+                            archive=archive,
                             path=package.module.replace('.', '/') + '/' + full_path.name,
                             fpath=full_path,
                         )
@@ -133,14 +133,14 @@ class _Writer:
                         if not file_path.is_file():
                             continue
                         self._write_file(
-                            zip=zip,
+                            archive=archive,
                             path=base_path + file_path.name,
                             fpath=file_path,
                         )
 
                 # write RECORD
                 self._write_content(
-                    zip=zip,
+                    archive=archive,
                     path=base_path + 'RECORD',
                     content=self.make_records(path=base_path + 'RECORD'),
                 )
@@ -148,21 +148,21 @@ class _Writer:
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         return EggInfoConverter().dumps(reqs=reqs, project=project, content=content)
 
-    def _write_content(self, zip, path: str, content: str) -> None:
+    def _write_content(self, archive, path: str, content: str) -> None:
         content = content.encode('utf-8')
 
         # write content into archive
         zip_info = ZipInfo(path)
-        zip.writestr(zip_info, content, compress_type=ZIP_DEFLATED)
+        archive.writestr(zip_info, content, compress_type=ZIP_DEFLATED)
 
         # calculate hashsum
         digest = sha256(content).digest()
         digest = urlsafe_b64encode(digest).decode().rstrip('=')
         self._records.append((path, digest, len(content)))
 
-    def _write_file(self, zip, path: str, fpath: Path) -> None:
+    def _write_file(self, archive, path: str, fpath: Path) -> None:
         # write content into archive
-        zip.write(filename=str(fpath), arcname=path, compress_type=ZIP_DEFLATED)
+        archive.write(filename=str(fpath), arcname=path, compress_type=ZIP_DEFLATED)
 
         # calculate hashsum
         # https://stackoverflow.com/questions/22058048/hashing-a-file-in-python
