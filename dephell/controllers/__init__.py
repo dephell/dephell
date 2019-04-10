@@ -5,6 +5,7 @@ from .graph import Graph
 from .mutator import Mutator
 from .readme import Readme
 from .resolver import Resolver
+from .safety import Safety
 
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     'Mutator',
     'Readme',
     'Resolver',
+    'Safety',
 ]
