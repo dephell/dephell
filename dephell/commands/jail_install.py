@@ -4,10 +4,9 @@ from argparse import ArgumentParser, REMAINDER
 from pathlib import Path
 
 # app
-from ..actions import get_entrypoints
+from ..actions import get_entrypoints, get_resolver
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
@@ -35,7 +34,7 @@ class JailInstallCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
+        resolver = get_resolver(' '.join(self.args.name))
         name = next(iter(resolver.graph.get_layer(0))).dependencies[0].name
 
         # resolve (and merge)

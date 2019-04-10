@@ -1,6 +1,8 @@
 # built-in
 from argparse import ArgumentParser
 
+from packaging.utils import canonicalize_name
+
 # app
 from ..actions import make_json, get_total_downloads, get_downloads_by_category
 from ..config import builders
@@ -27,7 +29,7 @@ class PackageDownloadsCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        name = self.args.name.lower().replace('_', '-')
+        name = canonicalize_name(self.args.name)
         data = dict(
             total=get_total_downloads(name=name),
             pythons=get_downloads_by_category(category='pythons', name=name),

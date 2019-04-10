@@ -2,10 +2,9 @@
 from argparse import ArgumentParser, REMAINDER
 
 # app
-from ..actions import get_python_env
+from ..actions import get_python_env, get_resolver
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
 from .base import BaseCommand
@@ -32,7 +31,7 @@ class PackageInstallCommand(BaseCommand):
 
     def __call__(self) -> bool:
         # resolve
-        resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
+        resolver = get_resolver(' '.join(self.args.name))
         self.logger.info('build dependencies graph...')
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:

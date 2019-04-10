@@ -3,10 +3,10 @@ from argparse import ArgumentParser, REMAINDER
 from typing import List
 
 # app
-from ..actions import attach_deps, make_json
+from ..actions import attach_deps, make_json, get_resolver
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import CONVERTERS, PIPConverter
+from ..converters import CONVERTERS
 from .base import BaseCommand
 
 
@@ -39,7 +39,7 @@ class DepsTreeCommand(BaseCommand):
 
     def __call__(self):
         if self.args.name:
-            resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
+            resolver = get_resolver(' '.join(self.args.name))
         else:
             loader = CONVERTERS[self.config['from']['format']]
             resolver = loader.load_resolver(path=self.config['from']['path'])

@@ -3,6 +3,8 @@ import shutil
 from argparse import ArgumentParser
 from pathlib import Path
 
+from packaging.utils import canonicalize_name
+
 # app
 from ..config import builders
 from dephell_venvs import VEnvs
@@ -24,12 +26,13 @@ class JailRemoveCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs='+')
+        parser.add_argument('name', help='jails names to uninstall')
         return parser
 
     def __call__(self) -> bool:
         venvs = VEnvs(path=self.config['venv'])
         for name in self.args.name:
+            name = canonicalize_name(name)
             venv = venvs.get_by_name(name)
             if not venv.exists():
                 self.logger.error('jail does not exist', extra=dict(package=name))

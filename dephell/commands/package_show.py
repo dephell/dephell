@@ -2,11 +2,9 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_python_env, make_json
-from ..controllers import DependencyMaker
+from ..actions import get_python_env, make_json, get_package
 from ..config import builders
 from ..converters import InstalledConverter
-from ..models import RootDependency
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
 
@@ -30,7 +28,7 @@ class PackageShowCommand(BaseCommand):
         return parser
 
     def __call__(self):
-        dep = DependencyMaker.from_requirement(source=RootDependency(), req=self.args.name)[0]
+        dep = get_package(self.args.name)
         repo = WareHouseRepo()
         releases = repo.get_releases(dep)
 
