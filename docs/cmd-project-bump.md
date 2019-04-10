@@ -8,7 +8,14 @@ INFO generated new version (old=0.3.2, new=0.4.0)
 INFO file bumped (path=/home/gram/Documents/dephell/dephell/__version__.py)
 ```
 
-Steps:
+It's recommend to explicitly add `versioning` in config to let your users know which scheme you're using in your project:
+
+```toml
+[tool.dephell.main]
+versioning = "semver"
+```
+
+Command steps:
 
 1. Try to detect version from `from` file.
 1. Try to detect version from project source code.
@@ -19,7 +26,7 @@ Steps:
 ## Rules
 
 1. `init` -- write initial version for current versioning scheme.
-1. `major` or `breaking` -- increment first number of version. In `pep`, `semver`, and `comver` it means breaking changes that can broke third-party code that depends on your project. Example: `1.2.3` → `2.0.0`.
+1. `major` or `breaking` -- increment first number of version. In `pep`, `semver`, and `comver` it means breaking changes that can broke third-party code that depends on your project. Example: `1.2.3` → `2.0.0`. Zero major version has special meaning: before `1.0.0` release any increment of `minor` number can break anything.
 1. `minor` or `feature` -- increment second number of version. In `pep`, and `semver` it means non-breaking new features. Example: `1.2.3` → `1.2.0`.
 1. `patch`, `fix` or `micro` -- increment third number of version. In `pep`, and `semver` it means bugfixes that don't add new features or break anything. For `calver` it usually means hotfixes that must be delivered ASAP. Example: `1.2.3` → `1.2.4`.
 1. `pre`, `rc` or `alpha` -- increment pre-release number. Semantic depends on versioning scheme. A pre-release version indicates that the version is unstable and anything can be changed until release.
