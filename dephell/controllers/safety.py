@@ -1,3 +1,4 @@
+import re
 from typing import Dict, List, Tuple, Optional, Union
 
 import attr
@@ -11,14 +12,15 @@ from ..utils import cached_property
 
 
 DUMP_URL = 'https://github.com/pyupio/safety-db/raw/master/data/insecure_full.json'
+REX_LINK = re.compile(r'https?\:\/\/[a-z]+[^\s\"]+')
 
 
 @attr.s(slots=True)
 class SafetyVulnInfo:
     name = attr.ib(type=str)
     description = attr.ib(type=str)
+    links = attr.ib(type=Tuple[str, ...])
     specifier = attr.ib(type=RangeSpecifier)
-
     cve = attr.ib(type=Optional[str], default=None)
 
 
@@ -44,9 +46,12 @@ class Safety:
         for name, subrecords in records.items():
             package_vulns = []
             for record in subrecords:
+                links = tuple(REX_LINK.findall(record['advisory']))
+                description = REX_LINK.sub('', record['advisory'])
                 package_vulns.append(SafetyVulnInfo(
                     name=name,
-                    description=record['advisory'],
+                    description=description,
+                    links=links,
                     specifier=RangeSpecifier(' || '.join(record['specs'])),
                     cve=record['cve'],
                 ))

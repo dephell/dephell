@@ -6,6 +6,7 @@ from xml.etree import ElementTree
 import attr
 import requests
 from cached_property import cached_property
+from dephell_specifier import RangeSpecifier
 from packaging.version import Version, VERSION_PATTERN
 
 
@@ -22,6 +23,10 @@ class SnykVulnInfo:
     description = attr.ib(type=str)
     version = attr.ib(type=Optional[Version])
     links = attr.ib(type=Tuple[str, ...])
+
+    @property
+    def specifier(self) -> RangeSpecifier:
+        return RangeSpecifier('<' + self.version)
 
 
 @attr.s()
