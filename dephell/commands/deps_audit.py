@@ -1,12 +1,11 @@
 # built-in
-from argparse import ArgumentParser
+from argparse import ArgumentParser, REMAINDER
 
 # app
-from ..actions import get_python_env, make_json
+from ..actions import get_python_env, make_json, get_packages
 from ..config import builders
 from ..controllers import Safety, Snyk
 from ..converters import CONVERTERS, InstalledConverter
-from ..repositories import WareHouseRepo
 from .base import BaseCommand
 
 
@@ -26,33 +25,49 @@ class DepsAuditCommand(BaseCommand):
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
+        parser.add_argument('name', nargs=REMAINDER, help='package name and version')
         return parser
 
     def __call__(self):
-        root = None
+        packages = None
 
-        loader_config = self.config.get('to') or self.config.get('from')
-        if loader_config is not None:
-            loader = CONVERTERS[loader_config['format']]
-            if loader.lock:
-                self.logger.info('get dependencies from lockfile', extra=dict(
-                    format=loader_config['format'],
-                    path=loader_config['path'],
-                ))
-                root = loader.load(path=loader_config['path'])
+        # get packages from CLI
+        if self.args.name:
+            packages = get_packages(req=' '.join(self.args.name))
+            for dep in packages:
+                if not str(dep.constraint).startswith('=='):
+                    self.logger.error('please, specify version for package', extra=dict(
+                        package=dep.name,
+                        constraint=str(dep.constraint),
+                    ))
+                    return False
 
-        if root is None:
+        # get packages from lockfile
+        if packages is None:
+            loader_config = self.config.get('to') or self.config.get('from')
+            if loader_config is not None:
+                loader = CONVERTERS[loader_config['format']]
+                if loader.lock:
+                    self.logger.info('get dependencies from lockfile', extra=dict(
+                        format=loader_config['format'],
+                        path=loader_config['path'],
+                    ))
+                    root = loader.load(path=loader_config['path'])
+                    packages = root.dependencies
+
+        # get installed packages
+        if packages is None:
             # get executable
             python = get_python_env(config=self.config)
             self.logger.debug('choosen python', extra=dict(path=str(python.path)))
             root = InstalledConverter().load(paths=python.lib_paths)
+            packages = root.dependencies
 
         safety = Safety()
         snyk = Snyk()
-        repo = WareHouseRepo()
 
         data = []
-        for dep in root.dependencies:
+        for dep in packages:
             versions = str(dep.constraint).replace('=', '').split(' || ')
             for version in versions:
                 vulns = safety.get(name=dep.name, version=version)
@@ -60,7 +75,7 @@ class DepsAuditCommand(BaseCommand):
                     vulns = snyk.get(name=dep.name, version=version)
                 if not vulns:
                     continue
-                releases = repo.get_releases(dep)
+                releases = dep.repo.get_releases(dep)
                 for vuln in vulns:
                     data.append(dict(
                         # local info
@@ -75,5 +90,7 @@ class DepsAuditCommand(BaseCommand):
                         vulnerable=str(vuln.specifier),
                     ))
 
+        if not data:
+            self.logger.info('dependencies has no known vulnerabilities (yet)')
         print(make_json(data=data, key=self.config.get('filter')))
         return True
