@@ -52,6 +52,7 @@ Command steps:
 1. [calver](https://calver.org/) -- it's when you use current date (year and month) instead of version. For example, `2018.12`. DepHell uses 4-numbers year as major number to explicitly indicate that your project uses CalVer. Also you can pass `micro` rule to add day in the version number. If previous release was today then `micro` rule will just increment this number. You can use this versioning if you don't want to care about versioning at all. However, this is strongly discouraged for any projects that can be used as dependency for third-party code.
 1. [romver](http://dafoster.net/articles/2015/03/14/semantic-versioning-vs-romantic-versioning/) -- romantic versioning (not [Sentimental Versioning](http://sentimentalversioning.org/), please) is when humans and marketing more important for you than machines. Bumping `major`, `minor` or `patch` number shows importance of changes and says nothing about type of this changes. Every update can break everything. As calver, never use this versioning in tools that can be used in any third-party code. But it's OK for products for users like Firefox. DepHell allows only `major`, `minor` and `patch` rules for RomVer because this versioning for humans, and humans don't understand complicated combinations of `pre`, `post` and `local`.
 1. [roman](https://en.wikipedia.org/wiki/Roman_numerals) -- roman numbers versioning. Never use it. It won't work after third release. However, you can try it for your internal project. Just for fun. Don't say anyone that I've recommended it to you.
+1. [zerover](https://0ver.org/) -- kind of `semver`, but your `major` number always 0. Sounds like joke, but this is the best versioning for experimental projects that can broke anything in any release. So, if it's about your project then explicitly specify `zerover` versioning in your DepHell config. It says to your users that they can't upgrade without running quite strong integration tests.
 
 ## Projects that use these versioning schemes
 
@@ -65,7 +66,6 @@ Command steps:
 1. comver:
     + [PyYAML](https://pypi.org/project/PyYAML/#history)
     + [idna](https://pypi.org/project/idna/#history)
-    + [docutils](https://pypi.org/project/docutils/#history)
     + [terminator](https://launchpad.net/terminator)
 1. calver:
     + [pytz](https://pypi.org/project/pytz/#history)
@@ -80,6 +80,13 @@ Command steps:
     + [WordPerfect Office](https://en.wikipedia.org/wiki/WordPerfect#WordPerfect_Office)
     + [3.V album by Zebra band](https://en.wikipedia.org/wiki/3.V)
     + [состояние птиц](https://bsos.bandcamp.com/)
+1. zerover:
+    + [html5lib](https://github.com/html5lib/html5lib-python/issues/282) 0.999999999
+    + [docutils](https://pypi.org/project/docutils/#history) 0.14 (16 years from first release)
+    + [pyasn1](https://pypi.org/project/pyasn1/#history) 0.4.5 (13 years from first release)
+    + [pandas](https://pypi.org/project/pandas/#history) 0.24.2 (10 years from first release)
+    + [colorama](https://pypi.org/project/colorama/#history) 0.4.1 (9 years from first release)
+    + See more 0ver projects on [0ver.org](https://0ver.org/#notable-zerover-projects).
 
 ## Command examples
 
@@ -141,6 +148,26 @@ INFO generated new version (old=0.1.0rc1, new=0.1.0.post1)
 # `dev` can be attached to `pre` or `post` too
 $ dephell project bump --versioning=pep dev
 INFO generated new version (old=0.1.0.post1, new=0.1.0.post1.dev1)
+```
+
+ZeroVer:
+
+```bash
+$ dephell project bump --versioning=zerover major
+ERROR ValueError: rule major is unsupported by scheme zerover
+
+$ dephell project bump --versioning=zerover minor
+INFO generated new version (old=0.3.2, new=0.4.0)
+```
+
+Roman:
+
+```bash
+$ dephell project bump --versioning=roman init
+INFO generated new version (old=0.3.2, new=I)
+
+$ dephell project bump --versioning=roman major
+INFO generated new version (old=I, new=II)
 ```
 
 Custom version:

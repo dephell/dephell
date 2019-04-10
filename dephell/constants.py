@@ -92,13 +92,14 @@ VERSION_SCHEMES = MappingProxyType(dict(
     semver=VERSION_MAJOR + VERSION_MINOR + VERSION_PATCH + VERSION_PRE + VERSION_LOCAL,
     # https://github.com/staltz/comver
     comver=VERSION_MAJOR + VERSION_MINOR + VERSION_PRE + VERSION_LOCAL,
-    # http://blog.legacyteam.info/2015/12/romver-romantic-versioning/
     # http://dafoster.net/articles/2015/03/14/semantic-versioning-vs-romantic-versioning/
     romver=VERSION_MAJOR + VERSION_MINOR + VERSION_PRE,
     # https://calver.org/
     calver=VERSION_MAJOR + VERSION_PATCH,
     # Mac OS X reference
     roman=VERSION_MAJOR,
+    # https://0ver.org/
+    zerover=VERSION_MINOR + VERSION_PATCH + VERSION_PRE + VERSION_LOCAL,
 ))
 VERSION_INIT = MappingProxyType(dict(
     pep='0.1.0',

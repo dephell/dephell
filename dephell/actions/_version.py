@@ -115,8 +115,10 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
     if isinstance(version, str):
         version = Version(version)
 
-    if scheme in ('semver', 'romver', 'pep'):
+    if scheme in ('semver', 'romver', 'pep', 'zerover'):
         parts = version.release + (0, 0)
+        if scheme == 'zerover':
+            parts = (0, ) + parts[1:]
         if rule in constants.VERSION_MAJOR:
             return '{}.0.0'.format(parts[0] + 1)
         if rule in constants.VERSION_MINOR:
@@ -124,7 +126,7 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
         if rule in constants.VERSION_PATCH:
             return '{}.{}.{}'.format(parts[0], parts[1], parts[2] + 1)
 
-        if scheme in ('semver', 'romver'):
+        if scheme in ('semver', 'romver', 'zerover'):
             if rule in constants.VERSION_PRE:
                 pre = version.pre[1] if version.pre else 0
                 return '{}.{}.{}-rc.{}'.format(*parts[:3], pre + 1)
