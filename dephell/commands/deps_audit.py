@@ -71,8 +71,7 @@ class DepsAuditCommand(BaseCommand):
             versions = str(dep.constraint).replace('=', '').split(' || ')
             for version in versions:
                 vulns = safety.get(name=dep.name, version=version)
-                if not vulns:
-                    vulns = snyk.get(name=dep.name, version=version)
+                vulns += snyk.get(name=dep.name, version=version)
                 if not vulns:
                     continue
                 releases = dep.repo.get_releases(dep)

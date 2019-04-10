@@ -14,7 +14,7 @@ from packaging.version import VERSION_PATTERN, Version
 
 RSS_URL = 'https://snyk.io/vuln/feed.xml?type=pip'
 REX_VERSION = re.compile(VERSION_PATTERN, re.VERBOSE | re.IGNORECASE)
-REX_TAG = re.compile(r'<[a-z]+.*?>')
+REX_TAG = re.compile(r'<\/?[a-z]+.*?>')
 REX_LINK = re.compile(r'https?\:\/\/[a-z]+[^\s\"]+')
 
 
@@ -28,7 +28,7 @@ class SnykVulnInfo:
 
     @property
     def specifier(self) -> RangeSpecifier:
-        return RangeSpecifier('<' + self.version)
+        return RangeSpecifier('<' + str(self.version))
 
 
 @attr.s()
@@ -50,6 +50,7 @@ class Snyk:
                 continue
             item = {field.tag: field.text for field in item}
             desc = self._parse_description(item['description'])
+            desc['links'].append(item['link'])
 
             versions = [Version(version) for version in desc['versions'] if version]
             version = max(versions) if versions else None
@@ -75,9 +76,17 @@ class Snyk:
                 result['name'] = clean.split()[1]
                 continue
             if ' or higher' in clean:
-                result['versions'] = sum(REX_VERSION.findall(clean), ())
+                result['versions'] = self._get_versions(clean)
             result['links'].extend(REX_LINK.findall(line))
         return result
+
+    @staticmethod
+    def _get_versions(text) -> List[str]:
+        versions = []
+        for word in text.split():
+            if REX_VERSION.fullmatch(word):
+                versions.append(word)
+        return versions
 
     def get(self, name: str, version: Union[str, Version]) -> List[SnykVulnInfo]:
         if type(version) is str:
