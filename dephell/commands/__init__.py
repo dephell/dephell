@@ -1,6 +1,5 @@
 # app
 from .autocomplete import AutocompleteCommand
-from .build import BuildCommand
 from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
 from .deps_licenses import DepsLicensesCommand
@@ -22,6 +21,7 @@ from .package_install import PackageInstallCommand
 from .package_list import PackageListCommand
 from .package_search import PackageSearchCommand
 from .package_show import PackageShowCommand
+from .project_build import BuildCommand
 from .project_bump import ProjectBumpCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
