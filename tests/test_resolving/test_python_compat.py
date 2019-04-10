@@ -1,5 +1,3 @@
-
-
 # external
 import pytest
 from dephell_markers import Markers

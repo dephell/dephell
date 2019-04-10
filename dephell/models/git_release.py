@@ -1,5 +1,3 @@
-
-
 # external
 import attr
 
