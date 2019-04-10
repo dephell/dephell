@@ -20,7 +20,7 @@ class JailRemoveCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-jail-remove.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell jail remove',
             description=cls.__doc__,

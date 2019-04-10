@@ -17,7 +17,7 @@ class PackageInstallCommand(BaseCommand):
     """
 
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell package install',
             description=cls.__doc__,

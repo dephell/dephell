@@ -16,7 +16,7 @@ class DepsConvertCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell deps convert',
             description=cls.__doc__,

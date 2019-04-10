@@ -15,7 +15,7 @@ class GenerateEditorconfigCommand(BaseCommand):
     https://editorconfig.org/
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell generate editorconfig',
             description=cls.__doc__,

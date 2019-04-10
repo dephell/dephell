@@ -14,7 +14,7 @@ class PackageSearchCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-package-search.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell package search',
             description=cls.__doc__,

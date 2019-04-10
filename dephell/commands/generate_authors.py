@@ -14,7 +14,7 @@ class GenerateAuthorsCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-generate-authors.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell generate authors',
             description=cls.__doc__,

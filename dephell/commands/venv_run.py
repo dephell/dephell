@@ -22,7 +22,7 @@ class VenvRunCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-venv-run.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell venv run',
             description=cls.__doc__,

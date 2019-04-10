@@ -17,7 +17,7 @@ class VenvCreateCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-venv-create.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell venv create',
             description=cls.__doc__,

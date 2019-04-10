@@ -22,7 +22,7 @@ class JailInstallCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-jail-install.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell jail install',
             description=cls.__doc__,

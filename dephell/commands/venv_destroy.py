@@ -16,7 +16,7 @@ class VenvDestroyCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-venv-destroy.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell venv destroy',
             description=cls.__doc__,

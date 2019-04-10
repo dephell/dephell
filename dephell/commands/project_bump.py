@@ -19,7 +19,7 @@ class ProjectBumpCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-project-bump.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell project bump',
             description=cls.__doc__,

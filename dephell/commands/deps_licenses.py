@@ -16,7 +16,7 @@ class DepsLicensesCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-deps-licenses.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell deps licenses',
             description=cls.__doc__,

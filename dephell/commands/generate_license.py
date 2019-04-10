@@ -18,7 +18,7 @@ class GenerateLicenseCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-generate-license.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell generate license',
             description=cls.__doc__,

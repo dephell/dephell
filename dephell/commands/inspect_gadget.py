@@ -48,7 +48,7 @@ class InspectGadgetCommand(BaseCommand):
     This command shouldn't be documented.
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell inspect config',
             description=cls.__doc__,

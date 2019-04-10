@@ -15,7 +15,7 @@ class DepsOutdatedCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-deps-outdated.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell deps outdated',
             description=cls.__doc__,

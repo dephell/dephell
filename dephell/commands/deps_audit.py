@@ -15,7 +15,7 @@ class DepsAuditCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-deps-audit.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell deps audit',
             description=cls.__doc__,

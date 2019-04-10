@@ -19,7 +19,7 @@ class BaseCommand:
             self.config = config
 
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         raise NotImplementedError
 
     @classmethod
