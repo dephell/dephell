@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Tuple, Optional, Union
+from typing import Dict, List, Tuple, Union
 
 import attr
 import requests
@@ -21,7 +21,6 @@ class SafetyVulnInfo:
     description = attr.ib(type=str)
     links = attr.ib(type=Tuple[str, ...])
     specifier = attr.ib(type=RangeSpecifier)
-    cve = attr.ib(type=Optional[str], default=None)
 
 
 @attr.s()
@@ -48,12 +47,14 @@ class Safety:
             for record in subrecords:
                 links = tuple(REX_LINK.findall(record['advisory']))
                 description = REX_LINK.sub('', record['advisory'])
+                if record['cve']:
+                    link = 'https://nvd.nist.gov/vuln/detail/' + record['cve']
+                    links += (link, )
                 package_vulns.append(SafetyVulnInfo(
                     name=name,
                     description=description,
                     links=links,
                     specifier=RangeSpecifier(' || '.join(record['specs'])),
-                    cve=record['cve'],
                 ))
             vulns[name] = tuple(package_vulns)
         return vulns

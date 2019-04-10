@@ -5,8 +5,8 @@ from .graph import Graph
 from .mutator import Mutator
 from .readme import Readme
 from .resolver import Resolver
-from .safety import Safety
-from .snyk import Snyk
+from .safety import Safety, SafetyVulnInfo
+from .snyk import Snyk, SnykVulnInfo
 
 
 __all__ = [
@@ -17,5 +17,7 @@ __all__ = [
     'Readme',
     'Resolver',
     'Safety',
+    'SafetyVulnInfo',
     'Snyk',
+    'SnykVulnInfo',
 ]
