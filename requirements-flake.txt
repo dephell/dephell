@@ -1,5 +1,6 @@
 flake8
 
+flake8-comprehensions   # https://github.com/adamchainz/flake8-comprehensions
 flake8-alfred           # https://github.com/datatheorem/flake8-alfred
 flake8-blind-except     # https://github.com/elijahandrews/flake8-blind-except
 flake8-bugbear          # https://github.com/PyCQA/flake8-bugbear
