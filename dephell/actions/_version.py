@@ -1,13 +1,17 @@
+# built-in
 import re
 from datetime import date
 from pathlib import Path
-from typing import Iterator, Union, Optional
+from typing import Iterator, Optional, Union
 
+# external
 from dephell_discover import Root
-from packaging.version import Version, VERSION_PATTERN
+from packaging.version import VERSION_PATTERN, Version
 
+# app
 from .. import constants
 from ._roman import arabic2roman, roman2arabic
+
 
 FILE_NAMES = (
     '__init__.py',

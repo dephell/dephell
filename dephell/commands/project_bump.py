@@ -2,13 +2,15 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+# external
+from dephell_discover import Root as PackageRoot
+
 # app
-from ..actions import bump_version, bump_project, get_version_from_project
+from ..actions import bump_project, bump_version, get_version_from_project
 from ..config import builders
-from .base import BaseCommand
 from ..converters import CONVERTERS
 from ..models import Requirement
-from dephell_discover import Root as PackageRoot
+from .base import BaseCommand
 
 
 class ProjectBumpCommand(BaseCommand):

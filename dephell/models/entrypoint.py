@@ -1,6 +1,6 @@
 
 
-# project
+# external
 import attr
 
 

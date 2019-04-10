@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_python_env, make_json, get_package
+from ..actions import get_package, get_python_env, make_json
 from ..config import builders
 from ..converters import InstalledConverter
 from ..repositories import WareHouseRepo

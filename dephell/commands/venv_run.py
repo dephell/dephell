@@ -1,8 +1,11 @@
 # built-in
-import subprocess
 import shlex
-from argparse import ArgumentParser, REMAINDER
+import subprocess
+from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
+
+# project
+from dephell_venvs import VEnvs
 
 # app
 from ..actions import get_python, get_resolver
@@ -11,7 +14,6 @@ from ..controllers import analize_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager
 from .base import BaseCommand
-from dephell_venvs import VEnvs
 
 
 class VenvRunCommand(BaseCommand):

@@ -4,7 +4,7 @@ import re
 from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple, Union, Dict, Iterable
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from xmlrpc.client import ServerProxy
 
@@ -13,9 +13,10 @@ import attr
 import requests
 from aiohttp import ClientSession
 from dephell_markers import Markers
-from dephell_licenses import licenses, License
-from packaging.requirements import Requirement, InvalidRequirement
+from packaging.requirements import InvalidRequirement, Requirement
 
+# project
+from dephell_licenses import License, licenses
 
 # app
 from ..cache import JSONCache, TextCache

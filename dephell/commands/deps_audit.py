@@ -1,8 +1,8 @@
 # built-in
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 
 # app
-from ..actions import get_python_env, make_json, get_packages
+from ..actions import get_packages, get_python_env, make_json
 from ..config import builders
 from ..controllers import Safety, Snyk
 from ..converters import CONVERTERS, InstalledConverter

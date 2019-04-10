@@ -4,12 +4,10 @@ from pathlib import Path
 from typing import Tuple
 
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
-
-# project
-import attr
 
 # app
 from ..utils import cached_property

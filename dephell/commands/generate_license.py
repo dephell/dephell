@@ -1,10 +1,10 @@
 # built-in
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from datetime import datetime
 from getpass import getuser
 from pathlib import Path
 
-# external
+# project
 from dephell_licenses import licenses
 
 # app

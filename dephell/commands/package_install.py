@@ -1,5 +1,5 @@
 # built-in
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 
 # app
 from ..actions import get_python_env, get_resolver

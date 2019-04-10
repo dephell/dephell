@@ -4,9 +4,9 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # app
+from ..__version__ import __version__
 from ..actions import make_json
 from ..config import builders
-from ..__version__ import __version__
 from .base import BaseCommand
 
 

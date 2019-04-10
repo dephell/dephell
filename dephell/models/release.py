@@ -3,12 +3,10 @@ from datetime import datetime
 from typing import Optional
 
 # external
+import attr
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
 from packaging.version import parse
-
-# project
-import attr
 
 # app
 from ..utils import cached_property

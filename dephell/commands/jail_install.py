@@ -1,18 +1,19 @@
 # built-in
 import shutil
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 
+# project
+from dephell_venvs import VEnvs
+
 # app
-from ..actions import get_entrypoints, get_resolver
+from ..actions import get_entrypoints, get_python, get_resolver
 from ..config import builders
 from ..controllers import analize_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
-from dephell_venvs import VEnvs
 from .base import BaseCommand
-from ..actions import get_python
 
 
 class JailInstallCommand(BaseCommand):

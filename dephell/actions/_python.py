@@ -2,8 +2,8 @@
 from dephell_pythons import Python, Pythons
 
 # app
-from ..converters import CONVERTERS
 from ..config import Config
+from ..converters import CONVERTERS
 from ._venv import get_venv
 
 

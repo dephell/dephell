@@ -1,13 +1,14 @@
 # built-in
 from logging import getLogger
-from typing import Optional, Tuple, Iterator, Iterable, Set, Sequence
+from typing import Iterable, Iterator, Optional, Sequence, Set, Tuple
 
+# external
 import attr
 
 # app
 from ..config import config
-from ..utils import lazy_product
 from ..models import Dependency, Group, RootDependency
+from ..utils import lazy_product
 from .dependency import DependencyMaker
 from .graph import Graph
 

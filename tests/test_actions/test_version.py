@@ -1,5 +1,8 @@
+# external
 import pytest
-from dephell.actions import bump_version, bump_file, get_version_from_file
+
+# project
+from dephell.actions import bump_file, bump_version, get_version_from_file
 
 
 @pytest.mark.parametrize('scheme, rule, old, new', [

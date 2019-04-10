@@ -2,8 +2,9 @@
 from collections import defaultdict
 from datetime import date, timedelta
 from itertools import zip_longest
-from typing import Iterable, Iterator, Dict, List
+from typing import Dict, Iterable, Iterator, List
 
+# external
 import attr
 import requests
 

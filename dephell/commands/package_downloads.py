@@ -1,10 +1,11 @@
 # built-in
 from argparse import ArgumentParser
 
+# external
 from packaging.utils import canonicalize_name
 
 # app
-from ..actions import make_json, get_total_downloads, get_downloads_by_category
+from ..actions import get_downloads_by_category, get_total_downloads, make_json
 from ..config import builders
 from .base import BaseCommand
 

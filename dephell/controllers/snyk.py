@@ -1,13 +1,15 @@
+# built-in
 import re
 from collections import defaultdict
-from typing import Tuple, Optional, Union, List, Dict
+from typing import Dict, List, Optional, Tuple, Union
 from xml.etree import ElementTree
 
+# external
 import attr
 import requests
 from cached_property import cached_property
 from dephell_specifier import RangeSpecifier
-from packaging.version import Version, VERSION_PATTERN
+from packaging.version import VERSION_PATTERN, Version
 
 
 RSS_URL = 'https://snyk.io/vuln/feed.xml?type=pip'

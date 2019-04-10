@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
+# built-in
 import os
 import sys
 from datetime import date
 from pathlib import Path
 
+# project
+import sphinx_rtd_theme
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
-import sphinx_rtd_theme
 
 
 sys.path.append(os.path.abspath('../'))

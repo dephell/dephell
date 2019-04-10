@@ -1,12 +1,14 @@
+# built-in
 import re
 from typing import Dict, List, Tuple, Union
 
+# external
 import attr
 import requests
-from packaging.version import Version
 from dephell_specifier import RangeSpecifier
+from packaging.version import Version
 
-
+# app
 from ..cache import JSONCache
 from ..utils import cached_property
 

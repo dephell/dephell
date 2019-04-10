@@ -5,7 +5,7 @@ from itertools import chain
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
-from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
+from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 # external
 from dephell_archive import ArchivePath

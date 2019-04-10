@@ -1,9 +1,13 @@
+# built-in
 from logging import getLogger
 from typing import Tuple
 
+# project
+from dephell_venvs import VEnv
+
+# app
 from ..converters import EggInfoConverter
 from ..models import EntryPoint
-from dephell_venvs import VEnv
 
 
 logger = getLogger('dephell.actions')

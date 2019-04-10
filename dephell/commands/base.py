@@ -3,7 +3,7 @@ import os.path
 from logging import getLogger
 
 # app
-from ..config import config, Config
+from ..config import Config, config
 
 
 class BaseCommand:

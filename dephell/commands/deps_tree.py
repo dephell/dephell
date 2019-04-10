@@ -1,9 +1,9 @@
 # built-in
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from typing import List
 
 # app
-from ..actions import attach_deps, make_json, get_resolver
+from ..actions import attach_deps, get_resolver, make_json
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS

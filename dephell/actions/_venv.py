@@ -1,8 +1,11 @@
+# built-in
 from pathlib import Path
+
+# project
+from dephell_venvs import VEnv, VEnvs
 
 # app
 from ..config import Config
-from dephell_venvs import VEnvs, VEnv
 
 
 def get_venv(config: Config) -> VEnv:

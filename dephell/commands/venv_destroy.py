@@ -2,9 +2,11 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+# project
+from dephell_venvs import VEnvs
+
 # app
 from ..config import builders
-from dephell_venvs import VEnvs
 from .base import BaseCommand
 
 

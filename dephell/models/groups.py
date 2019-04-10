@@ -2,7 +2,7 @@
 import asyncio
 from typing import Optional
 
-# project
+# external
 import attr
 
 # app

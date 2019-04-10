@@ -1,7 +1,9 @@
+# built-in
 from typing import List
 
-from ..converters import PIPConverter
+# app
 from ..controllers import Resolver
+from ..converters import PIPConverter
 from ..models import Dependency
 
 

@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_python_env, attach_deps
+from ..actions import attach_deps, get_python_env
 from ..config import builders
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS, InstalledConverter

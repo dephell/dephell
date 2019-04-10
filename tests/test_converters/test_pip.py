@@ -6,9 +6,9 @@ from packaging.requirements import Requirement as PackagingRequirement
 # project
 from dephell.controllers import DependencyMaker
 from dephell.converters.pip import PIPConverter
-from dephell_links import VCSLink
 from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
+from dephell_links import VCSLink
 
 
 def test_format():

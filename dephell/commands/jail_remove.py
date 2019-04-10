@@ -3,11 +3,14 @@ import shutil
 from argparse import ArgumentParser
 from pathlib import Path
 
+# external
 from packaging.utils import canonicalize_name
+
+# project
+from dephell_venvs import VEnvs
 
 # app
 from ..config import builders
-from dephell_venvs import VEnvs
 from .base import BaseCommand
 
 

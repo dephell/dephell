@@ -1,7 +1,9 @@
+# built-in
 import json
 import sys
 from pathlib import Path
 
+# project
 from dephell.commands import DepsOutdatedCommand
 from dephell.config import Config
 from dephell_venvs import VEnv

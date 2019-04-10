@@ -4,9 +4,9 @@ from argparse import ArgumentParser
 # app
 from ..actions import get_python_env, make_json
 from ..config import builders
+from ..converters import CONVERTERS, InstalledConverter
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
-from ..converters import CONVERTERS, InstalledConverter
 
 
 class DepsOutdatedCommand(BaseCommand):
