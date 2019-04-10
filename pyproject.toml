@@ -27,6 +27,12 @@ from = {format = "pip", path = "requirements-flake.txt"}
 # run this command
 command = "flake8"
 
+[tool.dephell.typing]
+from = {format = "poetry", path = "pyproject.toml"}
+# mypy isn't specified in dependencies,
+# but `dephell venv run` command will install it automatically
+command = "mypy --ignore-missing-imports --allow-redefinition dephell"
+
 # Install project dependencies and pytest in the separated venv and run it:
 # $ dephell venv create --env=pytest
 # $ dephell deps install --env=pytest
