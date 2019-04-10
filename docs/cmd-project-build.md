@@ -1,4 +1,4 @@
-# dephell build
+# dephell project build
 
 Build package for project:
 
@@ -13,7 +13,7 @@ After all you can use [twine](https://github.com/pypa/twine/) to upload it on Py
 ## Example
 
 ```bash
-$ dephell build --from pyproject.toml
+$ dephell project build --from pyproject.toml
 $ twine upload dist/*
 ```
 

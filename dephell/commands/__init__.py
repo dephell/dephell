@@ -1,6 +1,5 @@
 # app
 from .autocomplete import AutocompleteCommand
-from .build import BuildCommand
 from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
 from .deps_licenses import DepsLicensesCommand
@@ -22,6 +21,8 @@ from .package_install import PackageInstallCommand
 from .package_list import PackageListCommand
 from .package_search import PackageSearchCommand
 from .package_show import PackageShowCommand
+from .project_build import ProjectBuildCommand
+from .project_bump import ProjectBumpCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
 from .venv_run import VenvRunCommand
@@ -30,7 +31,6 @@ from .venv_shell import VenvShellCommand
 
 __all__ = [
     'AutocompleteCommand',
-    'BuildCommand',
     'commands',
     'DepsConvertCommand',
     'DepsInstallCommand',
@@ -53,6 +53,8 @@ __all__ = [
     'PackageListCommand',
     'PackageSearchCommand',
     'PackageShowCommand',
+    'ProjectBuildCommand',
+    'ProjectBumpCommand',
     'VenvCreateCommand',
     'VenvDestroyCommand',
     'VenvRunCommand',
@@ -62,7 +64,6 @@ __all__ = [
 
 commands = {
     'autocomplete': AutocompleteCommand,
-    'build': BuildCommand,
     'deps convert': DepsConvertCommand,
     'deps install': DepsInstallCommand,
     'deps licenses': DepsLicensesCommand,
@@ -87,6 +88,8 @@ commands = {
     'package list': PackageListCommand,
     'package search': PackageSearchCommand,
     'package show': PackageShowCommand,
+    'project build': ProjectBuildCommand,
+    'project bump': ProjectBumpCommand,
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,
     'venv run': VenvRunCommand,

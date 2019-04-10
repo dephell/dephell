@@ -168,6 +168,9 @@ class Requirement:
         Required for poetry. Shows that req has some extras except dev or main.
         In poetry it has quite different meaning, but let's think about it in this way.
         """
+        # install everything on dev environment
+        if 'dev' in self.dep.envs:
+            return False
         return bool(self.dep.envs - {'dev', 'main'})
 
     # magic methods

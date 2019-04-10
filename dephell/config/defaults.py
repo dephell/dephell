@@ -39,4 +39,5 @@ DEFAULT = dict(
     # other
     bin=str(Path.home() / '.local' / 'bin'),
     project=str(Path('.').resolve()),
+    versioning='semver',
 )

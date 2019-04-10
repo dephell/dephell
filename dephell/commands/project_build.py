@@ -19,15 +19,15 @@ DUMPERS = (
 )
 
 
-class BuildCommand(BaseCommand):
+class ProjectBuildCommand(BaseCommand):
     """Create dist archives for project.
 
-    https://dephell.readthedocs.io/en/latest/cmd-build.html
+    https://dephell.readthedocs.io/en/latest/cmd-project-build.html
     """
     @classmethod
     def get_parser(cls):
         parser = ArgumentParser(
-            prog='dephell build',
+            prog='dephell project build',
             description=cls.__doc__,
         )
         builders.build_config(parser)

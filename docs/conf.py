@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+from datetime import date
 from pathlib import Path
 
 from recommonmark.parser import CommonMarkParser
@@ -26,7 +27,7 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 project = 'DepHell'
-copyright = '2019, Gram (@orsinium)'
+copyright = '{}, Gram (@orsinium)'.format(date.today().year)
 author = 'Gram (@orsinium)'
 
 version = '0.4'
