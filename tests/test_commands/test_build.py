@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from dephell.commands import BuildCommand
+from dephell.commands import ProjectBuildCommand
 from dephell.config import Config
 
 
@@ -14,7 +14,7 @@ def test_build_command(temp_path: Path):
         'from': dict(format='poetry', path=metainfo_path),
         'project': str(temp_path),
     })
-    command = BuildCommand(argv=[], config=config)
+    command = ProjectBuildCommand(argv=[], config=config)
     result = command()
     assert result is True
     assert (temp_path / 'setup.py').exists()
