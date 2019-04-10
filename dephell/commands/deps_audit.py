@@ -79,7 +79,7 @@ class DepsAuditCommand(BaseCommand):
                     data.append(dict(
                         # local info
                         name=dep.name,
-                        installed=version,
+                        current=version,
                         # pypi info
                         latest=str(releases[0].version),
                         updated=str(releases[0].time.date()),
@@ -89,7 +89,9 @@ class DepsAuditCommand(BaseCommand):
                         vulnerable=str(vuln.specifier),
                     ))
 
-        if not data:
-            self.logger.info('dependencies has no known vulnerabilities (yet)')
-        print(make_json(data=data, key=self.config.get('filter')))
+        if data:
+            print(make_json(data=data, key=self.config.get('filter')))
+            return False
+
+        self.logger.info('dependencies has no known vulnerabilities (yet)')
         return True

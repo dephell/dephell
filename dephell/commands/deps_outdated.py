@@ -61,7 +61,10 @@ class DepsOutdatedCommand(BaseCommand):
                 updated=str(releases[0].time.date()),
                 description=dep.description,
             ))
-        if not data:
-            self.logger.info('all dependencies is up-to-date')
-        print(make_json(data=data, key=self.config.get('filter')))
+
+        if data:
+            print(make_json(data=data, key=self.config.get('filter')))
+            return False
+
+        self.logger.info('all dependencies is up-to-date')
         return True

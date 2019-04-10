@@ -29,6 +29,7 @@ Functions:
 
 + `each()` or `#` -- convert list of dicts to dict of lists and vice versa. For example, `[{a: 1, b: 2}, {a: 3, b: 4}]` will be converted into `{a: [1, 3], b: [2, 4]}`.
 + `first()` or `0` -- get first element from list.
++ `flatten()` or `flat()` -- squash list of lists into one-level (flat) list.
 + `last()` or `latest()` -- get last element from list.
 + `len()`, `length()` or `size()` -- get count of elements in a list.
 + `max()` -- get maximum value from a list.
