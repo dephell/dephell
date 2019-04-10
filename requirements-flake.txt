@@ -21,8 +21,10 @@ flake8-logging-format
 flake8-pep3101
 # ^ https://github.com/gforcada/flake8-pep3101
 
-flake8-string-format
+# flake8-string-format
 # ^ https://github.com/xZise/flake8-string-format
+# disabled:
+# https://github.com/xZise/flake8-string-format/issues/16
 
 flake8-mutable
 # ^ https://github.com/ebeweber/flake8-mutable

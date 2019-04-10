@@ -100,7 +100,7 @@ RULES = (
 def make_editorconfig(path: Path) -> str:
     matched = []
     non_matched = []
-    for i, rule in enumerate(RULES):
+    for rule in RULES:
         if rule.match(path):
             matched.append(rule)
         else:

@@ -43,7 +43,7 @@ class cached_property(object):  # noqa: N801
     with an ordinary attribute. Deleting the attribute resets the property.
     """
     def __init__(self, func):
-        self.__doc__ = getattr(func, '__doc__')
+        self.__doc__ = func.__doc__
         self.func = func
 
     def __get__(self, obj, cls):

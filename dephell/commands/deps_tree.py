@@ -68,7 +68,7 @@ class DepsTreeCommand(BaseCommand):
                     constraint=str(dep.constraint) or '*',
                     best=str(dep.group.best_release.version),
                     latest=str(dep.groups.releases[0].version),
-                    dependencies=[subdep.name for subdep in dep.dependencies]
+                    dependencies=[subdep.name for subdep in dep.dependencies],
                 ))
             print(make_json(result, key=self.config.get('filter')))
             return True

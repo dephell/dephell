@@ -73,7 +73,7 @@ class Resolver:
         if silent:
             spinner = nullcontext(type('Mock', (), {}))
         else:
-            spinner = yaspin(text="resolving...")
+            spinner = yaspin(text='resolving...')
 
         with spinner as spinner:
             while True:
