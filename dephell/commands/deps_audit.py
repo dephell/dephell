@@ -28,7 +28,7 @@ class DepsAuditCommand(BaseCommand):
         parser.add_argument('name', nargs=REMAINDER, help='package name and version')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         packages = None
 
         # get packages from CLI

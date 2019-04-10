@@ -28,6 +28,6 @@ class InspectConfigCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         print(make_json(data=self.config._data, key=self.config.get('filter')))
         return True

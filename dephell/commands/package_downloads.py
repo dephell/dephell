@@ -29,7 +29,7 @@ class PackageDownloadsCommand(BaseCommand):
         parser.add_argument('name', help='package name')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         name = canonicalize_name(self.args.name)
         data = dict(
             total=get_total_downloads(name=name),

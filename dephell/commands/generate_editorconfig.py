@@ -25,7 +25,7 @@ class GenerateEditorconfigCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         project_path = Path(self.config['project'])
         text = make_editorconfig(path=project_path)
         (project_path / '.editorconfig').write_text(text)

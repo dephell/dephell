@@ -27,7 +27,7 @@ class PackageShowCommand(BaseCommand):
         parser.add_argument('name', help='package name (and version)')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         dep = get_package(self.args.name)
         repo = WareHouseRepo()
         releases = repo.get_releases(dep)

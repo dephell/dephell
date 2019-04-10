@@ -32,7 +32,7 @@ class ProjectBumpCommand(BaseCommand):
         parser.add_argument('name', help='bumping rule name or new version')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         old_version = None
         root = None
         package = PackageRoot(path=Path(self.config['project']))

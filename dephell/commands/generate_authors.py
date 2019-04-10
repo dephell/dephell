@@ -24,7 +24,7 @@ class GenerateAuthorsCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         result = subprocess.run(
             ['git', 'log', '--pretty="%ae|%an%n%ce|%cn"'],
             stdout=subprocess.PIPE,

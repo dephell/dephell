@@ -29,7 +29,7 @@ class DepsLicensesCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         loader = CONVERTERS[self.config['from']['format']]
         resolver = loader.load_resolver(path=self.config['from']['path'])
         attach_deps(resolver=resolver, config=self.config, merge=False)

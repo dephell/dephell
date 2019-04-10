@@ -37,7 +37,7 @@ class DepsTreeCommand(BaseCommand):
         parser.add_argument('name', nargs=REMAINDER, help='package to get dependencies from')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         if self.args.name:
             resolver = get_resolver(' '.join(self.args.name))
         else:

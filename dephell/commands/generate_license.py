@@ -29,7 +29,7 @@ class GenerateLicenseCommand(BaseCommand):
         parser.add_argument('name', nargs=REMAINDER, help='license name')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         # get license object
         name = ' '.join(self.args.name).strip()
         if not name:

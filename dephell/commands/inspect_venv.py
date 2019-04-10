@@ -27,7 +27,7 @@ class InspectVenvCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         venv = get_venv(config=self.config)
         shells = Shells(bin_path=venv.bin_path)
 

@@ -56,6 +56,6 @@ class InspectGadgetCommand(BaseCommand):
         builders.build_config(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         print(GADGET)
         return True

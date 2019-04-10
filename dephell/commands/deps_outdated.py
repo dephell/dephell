@@ -27,7 +27,7 @@ class DepsOutdatedCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         root = None
 
         loader_config = self.config.get('to') or self.config.get('from')

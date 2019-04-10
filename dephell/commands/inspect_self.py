@@ -26,7 +26,7 @@ class InspectSelfCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         data = dict(
             path=str(Path(__file__).parent.parent),
             python=sys.executable,

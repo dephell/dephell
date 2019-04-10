@@ -26,7 +26,7 @@ class PackageSearchCommand(BaseCommand):
         parser.add_argument('name', nargs=REMAINDER, help='package name or other search keywords')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         repo = WareHouseRepo()
         results = repo.search(self.args.name)
         print(make_json(data=results, key=self.config.get('filter')))

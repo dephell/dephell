@@ -43,3 +43,6 @@ class BaseCommand:
             self.logger.error('invalid config')
             print(self.config.format_errors())
         return is_valid
+
+    def __call__(self) -> bool:
+        raise NotImplementedError
