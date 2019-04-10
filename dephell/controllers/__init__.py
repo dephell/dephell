@@ -6,6 +6,7 @@ from .mutator import Mutator
 from .readme import Readme
 from .resolver import Resolver
 from .safety import Safety
+from .snyk import Snyk
 
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     'Readme',
     'Resolver',
     'Safety',
+    'Snyk',
 ]

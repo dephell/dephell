@@ -14,7 +14,7 @@ DUMP_URL = 'https://github.com/pyupio/safety-db/raw/master/data/insecure_full.js
 
 
 @attr.s(slots=True)
-class VulnInfo:
+class SafetyVulnInfo:
     name = attr.ib(type=str)
     description = attr.ib(type=str)
     specifier = attr.ib(type=RangeSpecifier)
@@ -24,10 +24,14 @@ class VulnInfo:
 
 @attr.s()
 class Safety:
+    """
+    https://pyup.io/
+    https://github.com/pyupio/safety-db
+    """
     url = attr.ib(type=str, default=DUMP_URL)
 
     @cached_property
-    def vulns(self) -> Dict[str, Tuple[VulnInfo, ...]]:
+    def vulns(self) -> Dict[str, Tuple[SafetyVulnInfo, ...]]:
         cache = JSONCache('safety', ttl=3600 * 24)
         records = cache.load()
         if records is None:
@@ -40,7 +44,7 @@ class Safety:
         for name, subrecords in records.items():
             package_vulns = []
             for record in subrecords:
-                package_vulns.append(VulnInfo(
+                package_vulns.append(SafetyVulnInfo(
                     name=name,
                     description=record['advisory'],
                     specifier=RangeSpecifier(' || '.join(record['specs'])),
@@ -49,7 +53,7 @@ class Safety:
             vulns[name] = tuple(package_vulns)
         return vulns
 
-    def get(self, name: str, version: Union[str, Version]) -> List[VulnInfo]:
+    def get(self, name: str, version: Union[str, Version]) -> List[SafetyVulnInfo]:
         if type(version) is str:
             version = Version(version)
         vulns = []
