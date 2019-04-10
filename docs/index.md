@@ -86,7 +86,7 @@
     :caption: Other commands
 
     cmd-autocomplete
-    cmd-build
+    cmd-project-build
 
 .. toctree::
     :maxdepth: 1
