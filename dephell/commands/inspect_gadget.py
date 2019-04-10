@@ -48,7 +48,7 @@ class InspectGadgetCommand(BaseCommand):
     This command shouldn't be documented.
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell inspect config',
             description=cls.__doc__,
@@ -56,6 +56,6 @@ class InspectGadgetCommand(BaseCommand):
         builders.build_config(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         print(GADGET)
         return True

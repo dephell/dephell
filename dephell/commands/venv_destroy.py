@@ -2,9 +2,11 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+# project
+from dephell_venvs import VEnvs
+
 # app
 from ..config import builders
-from dephell_venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -14,7 +16,7 @@ class VenvDestroyCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-venv-destroy.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell venv destroy',
             description=cls.__doc__,

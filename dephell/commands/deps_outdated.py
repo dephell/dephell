@@ -4,9 +4,9 @@ from argparse import ArgumentParser
 # app
 from ..actions import get_python_env, make_json
 from ..config import builders
+from ..converters import CONVERTERS, InstalledConverter
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
-from ..converters import CONVERTERS, InstalledConverter
 
 
 class DepsOutdatedCommand(BaseCommand):
@@ -15,7 +15,7 @@ class DepsOutdatedCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-deps-outdated.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell deps outdated',
             description=cls.__doc__,
@@ -27,7 +27,7 @@ class DepsOutdatedCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         root = None
 
         loader_config = self.config.get('to') or self.config.get('from')
@@ -61,5 +61,10 @@ class DepsOutdatedCommand(BaseCommand):
                 updated=str(releases[0].time.date()),
                 description=dep.description,
             ))
-        print(make_json(data=data, key=self.config.get('filter')))
+
+        if data:
+            print(make_json(data=data, key=self.config.get('filter')))
+            return False
+
+        self.logger.info('all dependencies is up-to-date')
         return True

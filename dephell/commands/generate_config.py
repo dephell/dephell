@@ -19,7 +19,7 @@ class GenerateConfigCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-generate-config.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell generate config',
             description=cls.__doc__,
@@ -55,7 +55,7 @@ class GenerateConfigCommand(BaseCommand):
 
         return table
 
-    def __call__(self):
+    def __call__(self) -> bool:
         config_path = Path(self.config['config'])
         exists = config_path.exists()
         if exists:

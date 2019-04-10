@@ -1,9 +1,10 @@
 # built-in
 import os.path
+from argparse import ArgumentParser
 from logging import getLogger
 
 # app
-from ..config import config, Config
+from ..config import Config, config
 
 
 class BaseCommand:
@@ -19,7 +20,7 @@ class BaseCommand:
             self.config = config
 
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         raise NotImplementedError
 
     @classmethod
@@ -43,3 +44,6 @@ class BaseCommand:
             self.logger.error('invalid config')
             print(self.config.format_errors())
         return is_valid
+
+    def __call__(self) -> bool:
+        raise NotImplementedError

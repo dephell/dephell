@@ -16,7 +16,7 @@ class PackageListCommand(BaseCommand):
     """
 
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell package list',
             description=cls.__doc__,
@@ -27,7 +27,7 @@ class PackageListCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
         root = InstalledConverter().load(paths=python.lib_paths)

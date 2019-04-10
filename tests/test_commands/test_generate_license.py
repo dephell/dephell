@@ -1,6 +1,8 @@
+# built-in
 from datetime import date
 from pathlib import Path
 
+# project
 from dephell.commands import GenerateLicenseCommand
 from dephell.config import Config
 

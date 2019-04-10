@@ -16,7 +16,7 @@ class DepsConvertCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell deps convert',
             description=cls.__doc__,
@@ -30,7 +30,7 @@ class DepsConvertCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         loader = CONVERTERS[self.config['from']['format']]
         dumper = CONVERTERS[self.config['to']['format']]
 

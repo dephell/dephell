@@ -1,6 +1,8 @@
+# built-in
 import json
 from pathlib import Path
 
+# project
 from dephell.commands import InspectConfigCommand
 from dephell.config import Config
 

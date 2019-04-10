@@ -1,11 +1,9 @@
-
-
 # external
+import pytest
 from dephell_markers import Markers
 from dephell_specifier import RangeSpecifier
 
 # project
-import pytest
 from dephell.models import Dependency, Group, Release
 
 

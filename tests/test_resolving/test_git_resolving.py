@@ -4,9 +4,9 @@ from datetime import datetime
 
 # project
 from dephell.controllers import DependencyMaker
-from dephell_links import VCSLink
 from dephell.models import GitRelease, RootDependency
 from dephell.repositories.git.git import GitRepo
+from dephell_links import VCSLink
 
 
 class PatchedGitRepo(GitRepo):

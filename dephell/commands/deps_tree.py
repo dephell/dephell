@@ -1,12 +1,12 @@
 # built-in
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from typing import List
 
 # app
-from ..actions import attach_deps, make_json
+from ..actions import attach_deps, get_resolver, make_json
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import CONVERTERS, PIPConverter
+from ..converters import CONVERTERS
 from .base import BaseCommand
 
 
@@ -16,7 +16,7 @@ class DepsTreeCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-deps-tree.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell deps tree',
             description=cls.__doc__,
@@ -37,9 +37,9 @@ class DepsTreeCommand(BaseCommand):
         parser.add_argument('name', nargs=REMAINDER, help='package to get dependencies from')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         if self.args.name:
-            resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
+            resolver = get_resolver(' '.join(self.args.name))
         else:
             loader = CONVERTERS[self.config['from']['format']]
             resolver = loader.load_resolver(path=self.config['from']['path'])
@@ -68,7 +68,7 @@ class DepsTreeCommand(BaseCommand):
                     constraint=str(dep.constraint) or '*',
                     best=str(dep.group.best_release.version),
                     latest=str(dep.groups.releases[0].version),
-                    dependencies=[subdep.name for subdep in dep.dependencies]
+                    dependencies=[subdep.name for subdep in dep.dependencies],
                 ))
             print(make_json(result, key=self.config.get('filter')))
             return True

@@ -1,6 +1,8 @@
 # project
-from dephell.converters.pip import PIPConverter
+# external
 from packaging.version import Version
+
+from dephell.converters.pip import PIPConverter
 
 
 loader = PIPConverter(lock=False)

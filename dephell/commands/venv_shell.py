@@ -5,11 +5,13 @@ from pathlib import Path
 # external
 from dephell_shells import Shells
 
-# app
-from ..config import builders
+# project
 from dephell_venvs import VEnvs
-from .base import BaseCommand
+
+# app
 from ..actions import get_python
+from ..config import builders
+from .base import BaseCommand
 
 
 class VenvShellCommand(BaseCommand):
@@ -19,7 +21,7 @@ class VenvShellCommand(BaseCommand):
     """
 
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell venv shell',
             description=cls.__doc__,

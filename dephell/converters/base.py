@@ -11,6 +11,7 @@ from ..models import RootDependency
 
 
 class BaseConverter:
+    lock = False
 
     # inspection
 

@@ -16,7 +16,7 @@ class DepsLicensesCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-deps-licenses.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell deps licenses',
             description=cls.__doc__,
@@ -29,7 +29,7 @@ class DepsLicensesCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         loader = CONVERTERS[self.config['from']['format']]
         resolver = loader.load_resolver(path=self.config['from']['path'])
         attach_deps(resolver=resolver, config=self.config, merge=False)

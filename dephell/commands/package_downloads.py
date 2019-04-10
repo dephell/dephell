@@ -1,8 +1,11 @@
 # built-in
 from argparse import ArgumentParser
 
+# external
+from packaging.utils import canonicalize_name
+
 # app
-from ..actions import make_json, get_total_downloads, get_downloads_by_category
+from ..actions import get_downloads_by_category, get_total_downloads, make_json
 from ..config import builders
 from .base import BaseCommand
 
@@ -14,7 +17,7 @@ class PackageDownloadsCommand(BaseCommand):
     """
 
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell package downloads',
             description=cls.__doc__,
@@ -26,8 +29,8 @@ class PackageDownloadsCommand(BaseCommand):
         parser.add_argument('name', help='package name')
         return parser
 
-    def __call__(self):
-        name = self.args.name.lower().replace('_', '-')
+    def __call__(self) -> bool:
+        name = canonicalize_name(self.args.name)
         data = dict(
             total=get_total_downloads(name=name),
             pythons=get_downloads_by_category(category='pythons', name=name),

@@ -19,9 +19,19 @@ def _each(value):
     return new_value
 
 
+def _flatten(value):
+    if not isinstance(value, (list, tuple)):
+        return [value]
+    new_value = []
+    for element in value:
+        new_value.extend(_flatten(element))
+    return new_value
+
+
 FILTERS = {
     'each()': _each,
     'first()': lambda v: v[0],
+    'flatten()': _flatten,
     'last()': lambda v: v[-1],
     'len()': lambda v: len(v),
     'max()': lambda v: max(v),
@@ -34,6 +44,7 @@ FILTERS = {
 
     # aliases
     '#': _each,
+    'flat()': _flatten,
     'latest()': lambda v: v[-1],
     'length()': lambda v: len(v),
     'reversed()': lambda v: v[::-1],

@@ -1,10 +1,6 @@
-
-
 # external
-from packaging.utils import canonicalize_name
-
-# project
 import attr
+from packaging.utils import canonicalize_name
 
 # app
 from ..utils import cached_property

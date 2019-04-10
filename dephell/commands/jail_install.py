@@ -1,19 +1,19 @@
 # built-in
 import shutil
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 
+# project
+from dephell_venvs import VEnvs
+
 # app
-from ..actions import get_entrypoints
+from ..actions import get_entrypoints, get_python, get_resolver
 from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
 from ..utils import is_windows
-from dephell_venvs import VEnvs
 from .base import BaseCommand
-from ..actions import get_python
 
 
 class JailInstallCommand(BaseCommand):
@@ -22,7 +22,7 @@ class JailInstallCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-jail-install.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell jail install',
             description=cls.__doc__,
@@ -35,7 +35,7 @@ class JailInstallCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        resolver = PIPConverter(lock=False).loads_resolver(' '.join(self.args.name))
+        resolver = get_resolver(' '.join(self.args.name))
         name = next(iter(resolver.graph.get_layer(0))).dependencies[0].name
 
         # resolve (and merge)

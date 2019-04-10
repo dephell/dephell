@@ -1,5 +1,7 @@
+# built-in
 from collections import defaultdict
 
+# external
 from jinja2 import Environment, PackageLoader
 
 

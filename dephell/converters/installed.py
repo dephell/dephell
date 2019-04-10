@@ -3,11 +3,11 @@ import sys
 from pathlib import Path
 
 # app
+from ..controllers import DependencyMaker
+from ..models import RootDependency
 from .base import BaseConverter
 from .egginfo import EggInfoConverter
 from .wheel import WheelConverter
-from ..models import RootDependency
-from ..controllers import DependencyMaker
 
 
 class InstalledConverter(BaseConverter):

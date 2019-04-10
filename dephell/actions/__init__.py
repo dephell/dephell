@@ -1,12 +1,14 @@
 """Actions are functions that used only in commands
 """
 
+# app
 from ._autocomplete import make_bash_autocomplete, make_zsh_autocomplete
 from ._converting import attach_deps
-from ._downloads import get_total_downloads, get_downloads_by_category
+from ._downloads import get_downloads_by_category, get_total_downloads
 from ._editorconfig import make_editorconfig
 from ._entrypoints import get_entrypoints
 from ._json import make_json
+from ._package import get_package, get_packages, get_resolver
 from ._python import get_python, get_python_env
 from ._roman import arabic2roman, roman2arabic
 from ._venv import get_venv
@@ -21,8 +23,11 @@ __all__ = [
     'bump_version',
     'get_downloads_by_category',
     'get_entrypoints',
+    'get_package',
+    'get_packages',
     'get_python_env',
     'get_python',
+    'get_resolver',
     'get_total_downloads',
     'get_venv',
     'get_version_from_file',

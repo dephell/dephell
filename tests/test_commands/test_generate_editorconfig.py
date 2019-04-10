@@ -1,5 +1,7 @@
+# built-in
 from pathlib import Path
 
+# project
 from dephell.commands import GenerateEditorconfigCommand
 from dephell.config import Config
 

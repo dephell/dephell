@@ -3,11 +3,9 @@ from copy import deepcopy
 from typing import Tuple
 
 # external
+import attr
 from dephell_markers import Markers
 from packaging.utils import canonicalize_name
-
-# project
-import attr
 
 # app
 from ..repositories import GitRepo

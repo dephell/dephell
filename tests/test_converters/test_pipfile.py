@@ -4,9 +4,9 @@ from pathlib import Path
 # project
 from dephell.controllers import DependencyMaker
 from dephell.converters import PIPFileConverter
-from dephell_links import VCSLink
 from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
+from dephell_links import VCSLink
 
 
 def test_load():
@@ -24,6 +24,7 @@ def test_load():
 
     assert deps['nose'].envs == {'dev'}
     assert deps['requests'].envs == {'main'}
+
 
 def test_load_git_based_dep():
     converter = PIPFileConverter()

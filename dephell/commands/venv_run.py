@@ -1,18 +1,19 @@
 # built-in
-import subprocess
 import shlex
-from argparse import ArgumentParser, REMAINDER
+import subprocess
+from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 
-# app
-from ..config import builders
+# project
 from dephell_venvs import VEnvs
-from .base import BaseCommand
+
+# app
+from ..actions import get_python, get_resolver
+from ..config import builders
 from ..controllers import analize_conflict
-from ..converters import PIPConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
-from ..actions import get_python
+from .base import BaseCommand
 
 
 class VenvRunCommand(BaseCommand):
@@ -21,7 +22,7 @@ class VenvRunCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-venv-run.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell venv run',
             description=cls.__doc__,
@@ -71,7 +72,7 @@ class VenvRunCommand(BaseCommand):
 
     def _install(self, name: str, python_path: Path) -> bool:
         # resolve
-        resolver = PIPConverter(lock=False).loads_resolver(name)
+        resolver = get_resolver(name)
         self.logger.info('build dependencies graph...')
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:

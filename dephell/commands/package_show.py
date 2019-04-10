@@ -2,11 +2,9 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_python_env, make_json
-from ..controllers import DependencyMaker
+from ..actions import get_package, get_python_env, make_json
 from ..config import builders
 from ..converters import InstalledConverter
-from ..models import RootDependency
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
 
@@ -17,7 +15,7 @@ class PackageShowCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-package-show.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell package show',
             description=cls.__doc__,
@@ -29,8 +27,8 @@ class PackageShowCommand(BaseCommand):
         parser.add_argument('name', help='package name (and version)')
         return parser
 
-    def __call__(self):
-        dep = DependencyMaker.from_requirement(source=RootDependency(), req=self.args.name)[0]
+    def __call__(self) -> bool:
+        dep = get_package(self.args.name)
         repo = WareHouseRepo()
         releases = repo.get_releases(dep)
 

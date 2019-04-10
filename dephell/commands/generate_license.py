@@ -1,10 +1,10 @@
 # built-in
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from datetime import datetime
 from getpass import getuser
 from pathlib import Path
 
-# external
+# project
 from dephell_licenses import licenses
 
 # app
@@ -18,7 +18,7 @@ class GenerateLicenseCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-generate-license.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell generate license',
             description=cls.__doc__,
@@ -29,7 +29,7 @@ class GenerateLicenseCommand(BaseCommand):
         parser.add_argument('name', nargs=REMAINDER, help='license name')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         # get license object
         name = ' '.join(self.args.name).strip()
         if not name:

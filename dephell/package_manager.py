@@ -6,7 +6,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Set
 
-# project
+# external
 import attr
 
 # app

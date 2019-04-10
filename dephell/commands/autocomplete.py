@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+# external
 from appdirs import user_data_dir
 from dephell_shells import Shells
 
@@ -18,7 +19,7 @@ class AutocompleteCommand(BaseCommand):
     """
 
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell autocomplete',
             description=cls.__doc__,

@@ -1,5 +1,5 @@
 # built-in
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 
 # app
 from ..actions import make_json
@@ -14,7 +14,7 @@ class PackageSearchCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-package-search.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell package search',
             description=cls.__doc__,
@@ -26,7 +26,7 @@ class PackageSearchCommand(BaseCommand):
         parser.add_argument('name', nargs=REMAINDER, help='package name or other search keywords')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         repo = WareHouseRepo()
         results = repo.search(self.args.name)
         print(make_json(data=results, key=self.config.get('filter')))

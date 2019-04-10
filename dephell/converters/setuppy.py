@@ -10,10 +10,11 @@ from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 
 # app
+from ..context_tools import chdir
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
-from ..context_tools import chdir
 from .base import BaseConverter
+
 
 try:
     from yapf.yapflib.style import CreateGoogleStyle

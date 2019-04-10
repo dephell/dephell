@@ -1,14 +1,14 @@
 # built-in
 from logging import getLogger
-from typing import Optional, ContextManager
+from typing import ContextManager, Optional
 
-# external
+# project
 from yaspin import yaspin
 
 # app
-from .conflict import analize_conflict
-from ..models import RootDependency
 from ..context_tools import nullcontext
+from ..models import RootDependency
+from .conflict import analize_conflict
 
 
 logger = getLogger('dephell.resolver')
@@ -73,7 +73,7 @@ class Resolver:
         if silent:
             spinner = nullcontext(type('Mock', (), {}))
         else:
-            spinner = yaspin(text="resolving...")
+            spinner = yaspin(text='resolving...')
 
         with spinner as spinner:
             while True:

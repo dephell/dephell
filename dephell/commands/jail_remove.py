@@ -3,9 +3,14 @@ import shutil
 from argparse import ArgumentParser
 from pathlib import Path
 
+# external
+from packaging.utils import canonicalize_name
+
+# project
+from dephell_venvs import VEnvs
+
 # app
 from ..config import builders
-from dephell_venvs import VEnvs
 from .base import BaseCommand
 
 
@@ -15,7 +20,7 @@ class JailRemoveCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-jail-remove.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell jail remove',
             description=cls.__doc__,
@@ -24,12 +29,13 @@ class JailRemoveCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs='+')
+        parser.add_argument('name', help='jails names to uninstall')
         return parser
 
     def __call__(self) -> bool:
         venvs = VEnvs(path=self.config['venv'])
         for name in self.args.name:
+            name = canonicalize_name(name)
             venv = venvs.get_by_name(name)
             if not venv.exists():
                 self.logger.error('jail does not exist', extra=dict(package=name))

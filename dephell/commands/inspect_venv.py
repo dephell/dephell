@@ -16,7 +16,7 @@ class InspectVenvCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-inspect-venv.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell inspect venv',
             description=cls.__doc__,
@@ -27,7 +27,7 @@ class InspectVenvCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         venv = get_venv(config=self.config)
         shells = Shells(bin_path=venv.bin_path)
 

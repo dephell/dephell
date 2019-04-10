@@ -2,13 +2,15 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+# external
+from dephell_discover import Root as PackageRoot
+
 # app
-from ..actions import bump_version, bump_project, get_version_from_project
+from ..actions import bump_project, bump_version, get_version_from_project
 from ..config import builders
-from .base import BaseCommand
 from ..converters import CONVERTERS
 from ..models import Requirement
-from dephell_discover import Root as PackageRoot
+from .base import BaseCommand
 
 
 class ProjectBumpCommand(BaseCommand):
@@ -17,7 +19,7 @@ class ProjectBumpCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-project-bump.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell project bump',
             description=cls.__doc__,
@@ -30,7 +32,7 @@ class ProjectBumpCommand(BaseCommand):
         parser.add_argument('name', help='bumping rule name or new version')
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         old_version = None
         root = None
         package = PackageRoot(path=Path(self.config['project']))

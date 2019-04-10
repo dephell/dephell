@@ -7,9 +7,11 @@ from typing import List, Optional
 import tomlkit
 from dephell_specifier import RangeSpecifier
 
+# project
+from dephell_links import DirLink
+
 # app
 from ..controllers import DependencyMaker
-from dephell_links import DirLink
 from ..models import Constraint, Dependency, RootDependency
 from .base import BaseConverter
 

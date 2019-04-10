@@ -1,6 +1,4 @@
-
-
-# project
+# external
 import attr
 
 # app

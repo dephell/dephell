@@ -4,9 +4,9 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # app
+from ..__version__ import __version__
 from ..actions import make_json
 from ..config import builders
-from ..__version__ import __version__
 from .base import BaseCommand
 
 
@@ -16,7 +16,7 @@ class InspectSelfCommand(BaseCommand):
     https://dephell.readthedocs.io/en/latest/cmd-inspect-self.html
     """
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
             prog='dephell inspect self',
             description=cls.__doc__,
@@ -26,7 +26,7 @@ class InspectSelfCommand(BaseCommand):
         builders.build_other(parser)
         return parser
 
-    def __call__(self):
+    def __call__(self) -> bool:
         data = dict(
             path=str(Path(__file__).parent.parent),
             python=sys.executable,
