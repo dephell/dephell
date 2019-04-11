@@ -7,7 +7,7 @@ $ dephell generate license MIT
 $ dephell generate license Apache-2.0
 ```
 
-## Which license should I choose?
+## Which license should I choose
 
 For open source software use [MIT License](https://en.wikipedia.org/wiki/MIT_License). For proprietary software pay to a lawyer to help you make right choose in your case. You can discover other licenses on the [choosealicense.com](https://choosealicense.com/), but all of them has some limitations in real world that can harm your project:
 

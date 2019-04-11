@@ -12,7 +12,7 @@ project = "./dephell"
 
 To make sure which of these options accepted by some command use `dephell COMMAND --help`. For example, `dephell deps convert --help`.
 
-## Select config file and environment.
+## Select config file and environment
 
 + `-c`, `--config` -- path to config file.
 + `-e`, `--env` -- environment in config.

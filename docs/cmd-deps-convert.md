@@ -26,7 +26,7 @@ You can specify input and output in three different ways:
 1. Other:
     1. [setup.py](https://docs.python.org/3/distutils/setupscript.html) (`setuppy`)
     1. [pyproject.toml build-system requires](https://www.python.org/dev/peps/pep-0518/#build-system-table) (`pyproject`)
-    1. Installed packages (`installed`). It works like [pip freeze](https://pip.pypa.io/en/stable/reference/pip_freeze/). Dephell can only read from this format, of course. If you want to install packages, use (install command)[cmd-deps-install].
+    1. Installed packages (`installed`). It works like [pip freeze](https://pip.pypa.io/en/stable/reference/pip_freeze/). Dephell can only read from this format, of course. If you want to install packages, use [install command](cmd-deps-install).
 
 ## Examples
 
@@ -51,7 +51,6 @@ dephell deps convert
 ```
 
 See [configuration documentation](config) for more details.
-
 
 ## See also
 
