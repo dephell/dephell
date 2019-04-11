@@ -40,6 +40,10 @@ class DepsAddCommand(BaseCommand):
         new_resolver = get_resolver(reqs=self.args.name)
         new_root = new_resolver.graph._roots[0]
 
+        # set envs
+        for dep in new_root.dependencies:
+            dep.envs = set(self.config['envs'])
+
         # mix them up
         self.logger.debug('merge...')
         resolver.graph.add(new_root)
