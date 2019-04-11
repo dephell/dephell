@@ -104,8 +104,15 @@ class ProjectTestCommand(BaseCommand):
                         raise FileNotFoundError(str(path))
                     if path.is_file():
                         shutil.copyfile(str(path), str(root_path / path.name))
-                    if path.is_dir():
-                        shutil.copytree(str(path), str(root_path / path.name))
+                        continue
+                    for subpath in path.glob('**/*'):
+                        if not subpath.is_file():
+                            continue
+                        if '__pycache__' in subpath.parts:
+                            continue
+                        new_path = root_path.joinpath(subpath.relative_to(path))
+                        new_path.parent.mkdir(exist_ok=True, parents=True)
+                        shutil.copyfile(str(subpath), str(new_path))
 
                 # install project
                 self.logger.info('install project', extra=dict(path=str(wheel_path)))
@@ -137,10 +144,14 @@ class ProjectTestCommand(BaseCommand):
 
                 # run tests
                 self.logger.info('run tests', extra=dict(command=command))
-                with chdir(root_path):
-                    result = subprocess.run([str(executable)] + command[1:])
-                    if result.returncode != 0:
-                        self.logger.error('command failed, stopping')
-                        return False
+                result = subprocess.run(
+                    [str(executable)] + command[1:],
+                    cwd=str(root_path),
+                )
+                if result.returncode != 0:
+                    self.logger.error('command failed, stopping')
+                    return False
+
+                return False
 
         return True
