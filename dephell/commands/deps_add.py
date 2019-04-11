@@ -43,7 +43,7 @@ class DepsAddCommand(BaseCommand):
         # mix them up
         self.logger.debug('merge...')
         resolver.graph.add(new_root)
-        resolved = resolver.resolve(silent=self.config['silent'])
+        resolved = resolver.resolve(level=1, silent=self.config['silent'])
         if not resolved:
             conflict = analize_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
