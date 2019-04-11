@@ -7,9 +7,10 @@ from xml.etree import ElementTree
 # external
 import attr
 import requests
-from cached_property import cached_property
 from dephell_specifier import RangeSpecifier
 from packaging.version import VERSION_PATTERN, Version
+
+from ..utils import cached_property
 
 
 RSS_URL = 'https://snyk.io/vuln/feed.xml?type=pip'

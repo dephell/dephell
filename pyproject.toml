@@ -43,7 +43,7 @@ from = {format = "setuppy", path = "setup.py"}
 # install main dependencies and `tests` extra dependencies
 envs = ["main", "tests"]
 # run command `pytest`
-command = "pytest"
+command = "pytest -x tests/"
 
 # Generate documentation:
 # $ dephell venv create --env=docs
