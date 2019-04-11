@@ -35,7 +35,7 @@ class JailInstallCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        resolver = get_resolver(' '.join(self.args.name))
+        resolver = get_resolver(reqs=self.args.name)
         name = next(iter(resolver.graph.get_layer(0))).dependencies[0].name
 
         # resolve (and merge)

@@ -31,7 +31,7 @@ class PackageInstallCommand(BaseCommand):
 
     def __call__(self) -> bool:
         # resolve
-        resolver = get_resolver(' '.join(self.args.name))
+        resolver = get_resolver(reqs=self.args.name)
         self.logger.info('build dependencies graph...')
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:

@@ -72,7 +72,7 @@ class VenvRunCommand(BaseCommand):
 
     def _install(self, name: str, python_path: Path) -> bool:
         # resolve
-        resolver = get_resolver(name)
+        resolver = get_resolver(reqs=[name])
         self.logger.info('build dependencies graph...')
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
