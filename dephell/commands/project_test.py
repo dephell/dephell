@@ -13,7 +13,6 @@ from dephell_venvs import VEnv
 # app
 from ..actions import attach_deps
 from ..config import builders
-from ..context_tools import chdir
 from ..controllers import analize_conflict
 from ..converters import CONVERTERS, WheelConverter
 from ..models import Requirement
@@ -102,15 +101,21 @@ class ProjectTestCommand(BaseCommand):
                     path = Path(path)
                     if not path.exists():
                         raise FileNotFoundError(str(path))
+
+                    # copy file
                     if path.is_file():
                         shutil.copyfile(str(path), str(root_path / path.name))
                         continue
+
+                    # copy dir
                     for subpath in path.glob('**/*'):
                         if not subpath.is_file():
                             continue
                         if '__pycache__' in subpath.parts:
                             continue
-                        new_path = root_path.joinpath(subpath.relative_to(path))
+                        new_path = subpath.resolve().relative_to(self.config['project'])
+                        new_path = root_path.joinpath(new_path)
+                        self.logger.debug('copy', extra=dict(old=str(subpath), new=str(new_path)))
                         new_path.parent.mkdir(exist_ok=True, parents=True)
                         shutil.copyfile(str(subpath), str(new_path))
 
