@@ -31,7 +31,7 @@ class InstalledConverter(BaseConverter):
                 path = Path(path)
             for converter, pattern in parsers:
                 for info_path in path.glob(pattern):
-                    subroot = converter.load(info_path)
+                    subroot = converter.load_dir(info_path)
                     deps = DependencyMaker.from_root(dep=subroot, root=root)
                     for dep in deps:
                         if dep.name in all_deps:

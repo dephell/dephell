@@ -125,6 +125,7 @@ class DependencyMaker:
             raw_name=dep.raw_name,
             constraint='==' + dep.version,
             source=root,
+            locations={dep.package.packages[0].path},
 
             authors=dep.authors,
             classifiers=dep.classifiers,

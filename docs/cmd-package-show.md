@@ -19,21 +19,16 @@ $ dephell package show jsonschema
     "homepage": "https://github.com/Julian/jsonschema",
     "package": "https://pypi.org/project/jsonschema/"
   },
+  "locations": [
+    "/home/gram/.local/lib/python3.7/site-packages/jsonschema",
+    "/usr/local/lib/python3.7/site-packages/jsonschema"
+  ],
   "name": "jsonschema",
   "updated": "2019-03-01"
 }
 ```
 
 If virtual environment for current project and environment exists this command will get package version for this virtual environment. Otherwise, this command will get package versions from all paths from `sys.path` for current Python. This is the reason why `version.installed` is a list.
-
-If you want to find package location on your system use [locate](https://alvinalexander.com/blog/post/linux-unix/use-linux-locate-command):
-
-```bash
-$ locate jsonschema/__init__.py
-/home/gram/.local/lib/python3.5/site-packages/jsonschema/__init__.py
-/home/gram/.local/lib/python3.7/site-packages/jsonschema/__init__.py
-/usr/local/lib/python3.7/site-packages/jsonschema/__init__.py
-```
 
 ## See also
 

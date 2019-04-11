@@ -77,7 +77,7 @@ class _Reader:
                 content = stream.read()
             root = converter.parse_entrypoints(content, root=root)
 
-        root.package = PackageRoot(path=path.parent)
+        root.package = PackageRoot(path=path.parent, name=root.name)
         return root
 
     def loads(self, content: str) -> RootDependency:

@@ -37,6 +37,7 @@ class Dependency:
     marker = attr.ib(type=Markers, factory=Markers, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
     inherited_envs = attr.ib(type=set, factory=set, repr=False)  # envs of parents
+    locations = attr.ib(type=set, factory=set, repr=False)  # package places on disk
 
     extra = None
 
@@ -221,6 +222,7 @@ class Dependency:
             self.envs.remove('dev')
 
         self.constraint &= dep.constraint
+        self.locations |= dep.locations
         self.groups.actualize()
         return self
 

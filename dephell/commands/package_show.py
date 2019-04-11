@@ -37,13 +37,17 @@ class PackageShowCommand(BaseCommand):
 
         root = InstalledConverter().load(paths=python.lib_paths)
         local_versions = []
+        local_places = []
         for subdep in root.dependencies:
             if subdep.name == dep.name:
                 local_versions = str(subdep.constraint).replace('=', '').split(' || ')
+                local_places.extend(map(str, subdep.locations))
 
         data = dict(
             name=dep.name,
             description=dep.description,
+            locations=sorted(local_places),
+
             latest=str(releases[0].version),
             installed=local_versions,
 
