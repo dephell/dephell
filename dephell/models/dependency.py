@@ -175,8 +175,9 @@ class Dependency:
             result += str(self.constraint)
 
         marker = deepcopy(self.marker)
-        for env in self.envs - {'main'}:
-            marker &= Markers('extra == "{}"'.format(env))
+        if self.envs - {'main'}:
+            extra_markers = {'extra == "{}"'.format(env) for env in self.envs - {'main'}}
+            marker &= Markers(' or '.join(extra_markers))
         if marker:
             result += '; ' + str(marker)
         return result
