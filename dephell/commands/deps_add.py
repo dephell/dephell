@@ -34,11 +34,11 @@ class DepsAddCommand(BaseCommand):
     def __call__(self) -> bool:
         # get current deps
         converter = CONVERTERS[self.config['from']['format']]
-        resolver = converter.load(path=self.config['from']['path'])
+        resolver = converter.load_resolver(path=self.config['from']['path'])
 
         # get new deps
         new_resolver = get_resolver(reqs=self.args.name)
-        new_root = new_resolver.graph.get_layer(0)[0]
+        new_root = new_resolver.graph._roots[0]
 
         # mix them up
         self.logger.debug('merge...')
