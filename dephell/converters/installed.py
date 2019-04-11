@@ -18,7 +18,12 @@ class InstalledConverter(BaseConverter):
 
     def load(self, path: Union[Path, str] = None, paths: Iterable[Union[Path, str]] = None,
              names: Iterable[str] = None) -> RootDependency:
-        names = {canonicalize_name(name).replace('-', '_') for name in names}
+
+        if names:
+            names = {canonicalize_name(name).replace('-', '_') for name in names}
+        else:
+            names = set()
+
         if paths is None:
             if path is not None:
                 paths = [path]

@@ -44,6 +44,8 @@ from = {format = "setuppy", path = "setup.py"}
 envs = ["main", "tests"]
 # run command `pytest`
 command = "pytest -x tests/"
+# files that requred for tests. Used in `dephell project test` command
+tests = ["tests", "README.md"]
 
 # Generate documentation:
 # $ dephell venv create --env=docs

@@ -157,6 +157,4 @@ class ProjectTestCommand(BaseCommand):
                     self.logger.error('command failed, stopping')
                     return False
 
-                return False
-
         return True
