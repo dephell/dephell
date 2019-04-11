@@ -36,6 +36,7 @@ class Dependency:
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(type=Markers, factory=Markers, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
+    inherited_envs = attr.ib(type=set, factory=set, repr=False)  # envs of parents
 
     extra = None
 
@@ -84,7 +85,8 @@ class Dependency:
                 deps.extend(DependencyMaker.from_requirement(self, dep))
         # propagate envs to deps of this dep
         for dep in deps:
-            dep.envs.update(self.envs)
+            dep.inherited_envs.update(self.envs)
+            dep.inherited_envs.update(self.inherited_envs)
         return tuple(deps)
 
     @dependencies.setter

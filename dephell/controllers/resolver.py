@@ -135,6 +135,8 @@ class Resolver:
                 continue
             if dep.envs & envs:
                 continue
+            if dep.inherited_envs & envs:
+                continue
             # without `soft=True` all deps of this dep will be marked as unapplied
             # and ignored in Requirement.from_graph.
             # It's bad behavior because deps of this dep can be required for other
@@ -148,7 +150,7 @@ class Resolver:
         for dep in layer:
             if not dep.applied:
                 continue
-            if not dep.envs & envs:
+            if not (dep.envs | dep.inherited_envs) & envs:
                 continue
             self.apply(dep)
 
