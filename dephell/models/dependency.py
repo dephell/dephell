@@ -82,7 +82,12 @@ class Dependency:
             if isinstance(dep, Dependency):
                 deps.append(dep)
             else:
-                deps.extend(DependencyMaker.from_requirement(self, dep))
+                deps.extend(DependencyMaker.from_requirement(
+                    source=self,
+                    req=dep,
+                    # subdependencies has no direct envs, let's force it
+                    envs=set(),
+                ))
         # propagate envs to deps of this dep
         for dep in deps:
             dep.inherited_envs.update(self.envs)
