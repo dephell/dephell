@@ -23,7 +23,7 @@ This lookup is used in commands that can create virtual environment:
 ## Virtual environment (venv) lookup
 
 1. If virtual environment for current project (can be specified with `--config`) and environment (can be specified with `--env`) exists then this virtual environment will be used. This is the reason why you have to [create virtual environment](cmd-venv-create) before dependencies installation. Can be overwritten by `--venv` parameter.
-2. If some venv is active then it will be used.
+1. If some venv is active then it will be used.
 
 This lookup is used in command [dephell inspect venv](cmd-inspect-venv).
 

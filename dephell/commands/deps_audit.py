@@ -1,5 +1,5 @@
 # built-in
-from argparse import REMAINDER, ArgumentParser
+from argparse import ArgumentParser
 
 # app
 from ..actions import get_packages, get_python_env, make_json
@@ -25,7 +25,7 @@ class DepsAuditCommand(BaseCommand):
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs=REMAINDER, help='package name and version')
+        parser.add_argument('name', nargs='*', help='package name and version')
         return parser
 
     def __call__(self) -> bool:
@@ -33,7 +33,7 @@ class DepsAuditCommand(BaseCommand):
 
         # get packages from CLI
         if self.args.name:
-            packages = get_packages(req=' '.join(self.args.name))
+            packages = get_packages(reqs=self.args.name)
             for dep in packages:
                 if not str(dep.constraint).startswith('=='):
                     self.logger.error('please, specify version for package', extra=dict(

@@ -39,7 +39,7 @@ class DepsTreeCommand(BaseCommand):
 
     def __call__(self) -> bool:
         if self.args.name:
-            resolver = get_resolver(' '.join(self.args.name))
+            resolver = get_resolver(reqs=self.args.name)
         else:
             loader = CONVERTERS[self.config['from']['format']]
             resolver = loader.load_resolver(path=self.config['from']['path'])

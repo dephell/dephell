@@ -3,8 +3,8 @@
 Dephell makes config from 3 layers:
 
 1. Default parameters.
-2. Section from config file.
-3. CLI arguments.
+1. Section from config file.
+1. CLI arguments.
 
 ## Config file
 
@@ -54,6 +54,8 @@ $ dephell venv create --env=pytest
 $ dephell deps install --env=pytest
 $ dephell venv run --env=pytest
 ```
+
+Also, by default, DepHell uses `--env` to generate path to the virtual environment, so different `--envs` have different virtual environments.
 
 ## See also
 

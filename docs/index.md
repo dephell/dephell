@@ -25,6 +25,7 @@
     :maxdepth: 1
     :caption: Project dependencies
 
+    cmd-deps-add
     cmd-deps-audit
     cmd-deps-convert
     cmd-deps-install

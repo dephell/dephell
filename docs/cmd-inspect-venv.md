@@ -9,6 +9,7 @@ $ dephell inspect venv
   "bin": "/home/gram/.local/share/dephell/venvs/dephell-nLn6/main/bin",
   "exists": true,
   "lib": "/home/gram/.local/share/dephell/venvs/dephell-nLn6/main/lib/python3.7/site-packages",
+  "lib_size": "32.93Mb",
   "project": "/home/gram/Documents/dephell",
   "python": "/home/gram/.local/share/dephell/venvs/dephell-nLn6/main/bin/python3.7",
   "venv": "/home/gram/.local/share/dephell/venvs/dephell-nLn6/main"

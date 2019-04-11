@@ -1,6 +1,9 @@
 # built-in
 import sys
 from pathlib import Path
+from typing import Union, Iterable
+
+from packaging.utils import canonicalize_name
 
 # app
 from ..controllers import DependencyMaker
@@ -13,7 +16,9 @@ from .wheel import WheelConverter
 class InstalledConverter(BaseConverter):
     lock = True
 
-    def load(self, path=None, paths=None) -> RootDependency:
+    def load(self, path: Union[Path, str] = None, paths: Iterable[Union[Path, str]] = None,
+             names: Iterable[str] = None) -> RootDependency:
+        names = {canonicalize_name(name).replace('-', '_') for name in names}
         if paths is None:
             if path is not None:
                 paths = [path]
@@ -31,7 +36,10 @@ class InstalledConverter(BaseConverter):
                 path = Path(path)
             for converter, pattern in parsers:
                 for info_path in path.glob(pattern):
-                    subroot = converter.load(info_path)
+                    name = info_path.with_suffix('').name.split('-')[0]
+                    if name not in names:
+                        continue
+                    subroot = converter.load_dir(info_path)
                     deps = DependencyMaker.from_root(dep=subroot, root=root)
                     for dep in deps:
                         if dep.name in all_deps:

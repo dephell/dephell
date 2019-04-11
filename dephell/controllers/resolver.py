@@ -59,7 +59,7 @@ class Resolver:
             child_name = child.name
             child = self.graph.get(child_name)
             if child is None:
-                logger.warning('child not found', extra=dict(dep=dep.name, child=child_name))
+                logger.debug('child not found', extra=dict(dep=dep.name, child=child_name))
                 continue
             # unapply current dependency for child
             child.unapply(dep.name)
@@ -135,6 +135,8 @@ class Resolver:
                 continue
             if dep.envs & envs:
                 continue
+            if dep.inherited_envs & envs:
+                continue
             # without `soft=True` all deps of this dep will be marked as unapplied
             # and ignored in Requirement.from_graph.
             # It's bad behavior because deps of this dep can be required for other
@@ -148,7 +150,7 @@ class Resolver:
         for dep in layer:
             if not dep.applied:
                 continue
-            if not dep.envs & envs:
+            if not (dep.envs | dep.inherited_envs) & envs:
                 continue
             self.apply(dep)
 

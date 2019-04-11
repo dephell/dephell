@@ -127,4 +127,4 @@ pygments-github-lexers = "*"
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
 tests = ["pytest"]
-docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]
+docs = ["pygments-github-lexers", "recommonmark", "sphinx", "sphinx-rtd-theme"]

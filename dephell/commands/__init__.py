@@ -1,5 +1,6 @@
 # app
 from .autocomplete import AutocompleteCommand
+from .deps_add import DepsAddCommand
 from .deps_audit import DepsAuditCommand
 from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
@@ -33,6 +34,7 @@ from .venv_shell import VenvShellCommand
 __all__ = [
     'AutocompleteCommand',
     'commands',
+    'DepsAddCommand',
     'DepsAuditCommand',
     'DepsConvertCommand',
     'DepsInstallCommand',
@@ -66,6 +68,7 @@ __all__ = [
 
 commands = {
     'autocomplete': AutocompleteCommand,
+    'deps add': DepsAddCommand,
     'deps audit': DepsAuditCommand,
     'deps convert': DepsConvertCommand,
     'deps install': DepsInstallCommand,

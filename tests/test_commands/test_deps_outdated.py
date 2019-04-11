@@ -25,7 +25,7 @@ def test_deps_outdated_command_file(temp_path: Path, capsys):
 
     captured = capsys.readouterr()
     output = json.loads(captured.out)
-    assert result is True
+    assert result is False
     assert len(output) == 1
     assert output[0]['name'] == 'six'
     assert output[0]['installed'] == ['1.11.0']
@@ -51,6 +51,6 @@ def test_deps_outdated_command_venv(temp_path: Path, capsys):
 
     captured = capsys.readouterr()
     output = json.loads(captured.out)
-    assert result is True
+    assert result is False
     names = {line['name'] for line in output}
     assert len(names - {'pip', 'setuptools'}) == 0

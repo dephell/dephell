@@ -1,6 +1,6 @@
 # built-in
 from collections import OrderedDict, defaultdict
-from typing import Optional, Set, Tuple
+from typing import Optional, Set, Tuple, Iterable
 
 # app
 from ..utils import cached_property
@@ -13,16 +13,18 @@ class Requirement:
         'description', 'optional',
     )
 
-    def __init__(self, dep, lock: bool):
+    def __init__(self, dep, lock: bool, roots: Iterable[str] = None):
         self.dep = dep
         self.lock = lock
         self.extra_deps = tuple()
+        self._roots = set(roots or [])
 
     @classmethod
     def from_graph(cls, graph, *, lock: bool) -> Tuple['Requirement', ...]:
         result = OrderedDict()
         extras = defaultdict(list)
         applied = graph.applied
+        roots = [root.name for root in graph.get_layer(0)]
 
         # if roots wasn't applied then apply them
         if len(graph._layers) == 1:
@@ -38,13 +40,12 @@ class Requirement:
                 if dep.constraint.empty:
                     continue
                 if dep.extra is None:
-                    req = cls(dep=dep, lock=lock)
+                    req = cls(dep=dep, lock=lock, roots=roots)
                     result[dep.name] = req
                 else:
                     extras[dep.base_name].append(dep)
 
         # add extras
-        roots = [root.name for root in graph._roots]
         for name, deps in extras.items():
             if name not in result and name in roots:
                 continue
@@ -89,13 +90,19 @@ class Requirement:
     def description(self) -> str:
         return self.dep.description
 
-    @property
+    @cached_property
     def version(self) -> Optional[str]:
         if self.link:
             return None  # mypy wants it
         if self.lock:
             return '==' + str(self.release.version)
-        return str(self.dep.constraint)
+
+        constraint = self.dep.constraint.copy()
+        # drop all constraints not from roots
+        if self._roots:
+            for name in (constraint.sources - self._roots):
+                constraint.unapply(name)
+        return str(constraint)
 
     @cached_property
     def extras(self) -> Tuple[str, ...]:

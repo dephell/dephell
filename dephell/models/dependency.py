@@ -36,6 +36,8 @@ class Dependency:
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(type=Markers, factory=Markers, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
+    inherited_envs = attr.ib(type=set, factory=set, repr=False)  # envs of parents
+    locations = attr.ib(type=set, factory=set, repr=False)  # package places on disk
 
     extra = None
 
@@ -81,10 +83,16 @@ class Dependency:
             if isinstance(dep, Dependency):
                 deps.append(dep)
             else:
-                deps.extend(DependencyMaker.from_requirement(self, dep))
+                deps.extend(DependencyMaker.from_requirement(
+                    source=self,
+                    req=dep,
+                    # subdependencies has no direct envs, let's force it
+                    envs=set(),
+                ))
         # propagate envs to deps of this dep
         for dep in deps:
-            dep.envs.update(self.envs)
+            dep.inherited_envs.update(self.envs)
+            dep.inherited_envs.update(self.inherited_envs)
         return tuple(deps)
 
     @dependencies.setter
@@ -168,8 +176,9 @@ class Dependency:
             result += str(self.constraint)
 
         marker = deepcopy(self.marker)
-        for env in self.envs - {'main'}:
-            marker &= Markers('extra == "{}"'.format(env))
+        if self.envs - {'main'}:
+            extra_markers = {'extra == "{}"'.format(env) for env in self.envs - {'main'}}
+            marker &= Markers(' or '.join(extra_markers))
         if marker:
             result += '; ' + str(marker)
         return result
@@ -213,6 +222,7 @@ class Dependency:
             self.envs.remove('dev')
 
         self.constraint &= dep.constraint
+        self.locations |= dep.locations
         self.groups.actualize()
         return self
 

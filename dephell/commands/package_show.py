@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_package, get_python_env, make_json
+from ..actions import get_package, get_python_env, make_json, get_path_size, format_size
 from ..config import builders
 from ..converters import InstalledConverter
 from ..repositories import WareHouseRepo
@@ -35,22 +35,30 @@ class PackageShowCommand(BaseCommand):
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
-        root = InstalledConverter().load(paths=python.lib_paths)
+        root = InstalledConverter().load(paths=python.lib_paths, names={self.args.name})
         local_versions = []
+        local_places = []
         for subdep in root.dependencies:
             if subdep.name == dep.name:
                 local_versions = str(subdep.constraint).replace('=', '').split(' || ')
+                local_places.extend(subdep.locations)
 
         data = dict(
             name=dep.name,
             description=dep.description,
             latest=str(releases[0].version),
-            installed=local_versions,
-
             license=getattr(dep.license, 'id', dep.license),
             links=dep.links,
             updated=str(releases[0].time.date()),
             authors=[str(author) for author in dep.authors],
         )
+
+        if local_versions:
+            data.update(dict(
+                installed=local_versions,
+                locations=sorted(map(str, local_places)),
+                size=format_size(sum(get_path_size(place) for place in local_places)),
+            ))
+
         print(make_json(data=data, key=self.config.get('filter')))
         return True
