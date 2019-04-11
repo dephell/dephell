@@ -35,7 +35,7 @@ class PackageShowCommand(BaseCommand):
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
-        root = InstalledConverter().load(paths=python.lib_paths)
+        root = InstalledConverter().load(paths=python.lib_paths, names={self.args.name})
         local_versions = []
         local_places = []
         for subdep in root.dependencies:
