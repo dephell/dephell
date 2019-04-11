@@ -24,6 +24,7 @@ $ dephell package show jsonschema
     "/usr/local/lib/python3.7/site-packages/jsonschema"
   ],
   "name": "jsonschema",
+  "size": "620.11Kb",
   "updated": "2019-03-01"
 }
 ```

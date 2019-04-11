@@ -46,17 +46,19 @@ class PackageShowCommand(BaseCommand):
         data = dict(
             name=dep.name,
             description=dep.description,
-
-            locations=sorted(map(str, local_places)),
-            size=format_size(sum(get_path_size(place) for place in local_places)),
-
             latest=str(releases[0].version),
-            installed=local_versions,
-
             license=getattr(dep.license, 'id', dep.license),
             links=dep.links,
             updated=str(releases[0].time.date()),
             authors=[str(author) for author in dep.authors],
         )
+
+        if local_versions:
+            data.update(dict(
+                installed=local_versions,
+                locations=sorted(map(str, local_places)),
+                size=format_size(sum(get_path_size(place) for place in local_places)),
+            ))
+
         print(make_json(data=data, key=self.config.get('filter')))
         return True

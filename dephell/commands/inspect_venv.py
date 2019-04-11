@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from dephell_shells import Shells
 
 # app
-from ..actions import get_venv, make_json
+from ..actions import get_venv, make_json, get_path_size, format_size
 from ..config import builders
 from .base import BaseCommand
 
@@ -42,6 +42,7 @@ class InspectVenvCommand(BaseCommand):
                 activate=str(venv.bin_path / shells.current.activate),
                 bin=str(venv.bin_path),
                 lib=str(venv.lib_path),
+                lib_size=format_size(get_path_size(venv.lib_path)),
                 python=str(venv.python_path),
             ))
         print(make_json(data=data, key=self.config.get('filter')))

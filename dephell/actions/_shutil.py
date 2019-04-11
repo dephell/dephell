@@ -15,7 +15,7 @@ def get_path_size(path: Path) -> int:
 
 
 def format_size(size: int) -> str:
-    for delimeter, suffix in ((2 ** 20, 'M'), (1024, 'K')):
+    for delimeter, suffix in ((2 ** 20, 'Mb'), (1024, 'Kb')):
         formatted = size / delimeter
         if formatted >= 1:
             return '{:.2f}{}'.format(formatted, suffix)
