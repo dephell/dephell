@@ -32,6 +32,10 @@ SCHEME = {
         type='list',
         required=True,
     ),
+    'tests': dict(
+        type='list',
+        required=True,
+    ),
 
     'warehouse':    dict(type='string', required=True),
     'bitbucket':    dict(type='string', required=True),

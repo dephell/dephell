@@ -10,6 +10,7 @@ data_dir = Path(user_data_dir('dephell'))
 
 DEFAULT = dict(
     envs=['main'],
+    tests=['tests'],
 
     # resolver
     prereleases=False,

@@ -90,13 +90,7 @@ class _Reader:
 
 class _Writer:
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
-        if isinstance(path, str):
-            path = Path(path)
-        if path.suffix not in ('.whl', '.zip'):
-            path /= '{name}-{version}-py3-none-any.whl'.format(
-                name=project.name.replace('-', '_'),
-                version=str(project.version),
-            )
+        path = self._get_path(path=path, project=project)
         path.parent.mkdir(exist_ok=True, parents=True)
         if path.exists():
             path.unlink()
@@ -147,6 +141,17 @@ class _Writer:
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         return EggInfoConverter().dumps(reqs=reqs, project=project, content=content)
+
+    @staticmethod
+    def _get_path(path, project):
+        if isinstance(path, str):
+            path = Path(path)
+        if path.suffix not in ('.whl', '.zip'):
+            path /= '{name}-{version}-py3-none-any.whl'.format(
+                name=project.name.replace('-', '_'),
+                version=str(project.version),
+            )
+        return path
 
     def _write_content(self, archive, path: str, content: str) -> None:
         content = content.encode('utf-8')
