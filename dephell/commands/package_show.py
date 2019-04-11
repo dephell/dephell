@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_package, get_python_env, make_json
+from ..actions import get_package, get_python_env, make_json, get_path_size, format_size
 from ..config import builders
 from ..converters import InstalledConverter
 from ..repositories import WareHouseRepo
@@ -41,12 +41,14 @@ class PackageShowCommand(BaseCommand):
         for subdep in root.dependencies:
             if subdep.name == dep.name:
                 local_versions = str(subdep.constraint).replace('=', '').split(' || ')
-                local_places.extend(map(str, subdep.locations))
+                local_places.extend(subdep.locations)
 
         data = dict(
             name=dep.name,
             description=dep.description,
-            locations=sorted(local_places),
+
+            locations=sorted(map(str, local_places)),
+            size=format_size(sum(get_path_size(place) for place in local_places)),
 
             latest=str(releases[0].version),
             installed=local_versions,
