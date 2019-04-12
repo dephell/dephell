@@ -33,19 +33,17 @@ from = {format = "poetry", path = "pyproject.toml"}
 # but `dephell venv run` command will install it automatically
 command = "mypy --ignore-missing-imports --allow-redefinition dephell"
 
-# Install project dependencies and pytest in the separated venv and run it:
-# $ dephell venv create --env=pytest
-# $ dephell deps install --env=pytest
-# $ dephell venv run --env=pytest
+# Test project package in the separated venv:
+# $ dephell project test --env=pytest
 [tool.dephell.pytest]
-# read dependencies from setup.py
-from = {format = "setuppy", path = "setup.py"}
-# install main dependencies and `tests` extra dependencies
-envs = ["main", "tests"]
+# read dependencies from poetry format
+from = {format = "poetry", path = "pyproject.toml"}
+# copy files that requred for tests
+tests = ["tests", "README.md"]
 # run command `pytest`
-command = "pytest"
+command = "pytest -x tests/"
 
-# Generate documentation:
+# Install `docs` extra dependencies  in the separated venv and run sphinx:
 # $ dephell venv create --env=docs
 # $ dephell deps install --env=docs
 # $ dephell venv run --env=docs
@@ -59,7 +57,7 @@ command = "sphinx-build -M html docs docs/build"
 
 [tool.poetry]
 name = "dephell"
-version = "0.3.2"
+version = "0.4.0"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
@@ -94,7 +92,7 @@ cerberus = "*"
 jinja2 = "*"
 m2r = "*"
 packaging = "*"
-pip = "*"
+pip = ">=18.0"
 requests = "*"
 tomlkit = "*"
 yaspin = "*"
@@ -127,4 +125,4 @@ pygments-github-lexers = "*"
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
 tests = ["pytest"]
-docs = ["pygments-github-lexers", "recommonmark", "sphinx", "sphinx-rtd-theme"]
+docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]

@@ -5,7 +5,7 @@ from pathlib import Path
 
 # app
 from ..__version__ import __version__
-from ..actions import make_json
+from ..actions import make_json, get_path_size, format_size
 from ..config import builders
 from .base import BaseCommand
 
@@ -31,6 +31,7 @@ class InspectSelfCommand(BaseCommand):
             path=str(Path(__file__).parent.parent),
             python=sys.executable,
             version=__version__,
+            cache=format_size(get_path_size(Path(self.config['cache']['path']))),
         )
         print(make_json(data=data, key=self.config.get('filter')))
         return True

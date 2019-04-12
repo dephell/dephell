@@ -25,6 +25,7 @@ from .package_search import PackageSearchCommand
 from .package_show import PackageShowCommand
 from .project_build import ProjectBuildCommand
 from .project_bump import ProjectBumpCommand
+from .project_test import ProjectTestCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
 from .venv_run import VenvRunCommand
@@ -59,6 +60,7 @@ __all__ = [
     'PackageShowCommand',
     'ProjectBuildCommand',
     'ProjectBumpCommand',
+    'ProjectTestCommand',
     'VenvCreateCommand',
     'VenvDestroyCommand',
     'VenvRunCommand',
@@ -96,6 +98,7 @@ commands = {
     'package show': PackageShowCommand,
     'project build': ProjectBuildCommand,
     'project bump': ProjectBumpCommand,
+    'project test': ProjectTestCommand,
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,
     'venv run': VenvRunCommand,
