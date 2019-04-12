@@ -68,4 +68,5 @@ dephell project test --traceback --env=pytest --python=3.7
 
 1. [dephell venv run](cmd-venv-run) to run tests for current codebase without complicated isolation.
 1. [dephell deps convert](cmd-deps-convert) for details how DepHell converts dependencies from one format to another.
+1. [Python lookup](python-lookup) for details how you can specify Python version for commands.
 1. [Full list of config parameters](params)

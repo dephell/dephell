@@ -1,13 +1,14 @@
 # DepHell
 
-**DepHell** -- dependency management for Python.
+**DepHell** -- project management for Python.
 
-+ Manage dependencies: convert between formats, install, lock, resolve conflicts.
-+ Manage virtual environments: create, remove, run shell, run commands inside.
-+ Install CLI tools into isolated environments.
-+ Build packages (to upload on PyPI).
-+ Discover licenses of all project dependencies.
-+ Generate .editorconfig, LICENSE, AUTHORS.
++ Manage dependencies: [convert between formats](cmd-deps-convert), [install](cmd-deps-install), lock, [add new](cmd-deps-add), resolve conflicts.
++ Manage virtual environments: [create](cmd-venv-create), [remove](cmd-venv-destroy), [inspect](cmd-inspect-venv), [run shell](cmd-venv-shell), [run commands inside](cmd-venv-run).
++ [Install CLI tools](cmd-jail-install) into isolated environments.
++ Manage packages: [install](cmd-package-install), [list](cmd-package-list), [search](cmd-package-search) on PyPI.
++ [Build](cmd-project-build) packages (to upload on PyPI), [test](cmd-project-test), [bump project version](cmd-project-bump).
++ [Discover licenses](cmd-deps-licenses) of all project dependencies, show [outdated](cmd-deps-outdated) packages, [find security issues](cmd-deps-audit).
++ Generate [.editorconfig](cmd-generate-editorconfig), [LICENSE](cmd-generate-license), [AUTHORS](cmd-generate-authors).
 
 ```eval_rst
 .. toctree::
