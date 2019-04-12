@@ -19,6 +19,7 @@
     params
     filters
     python-lookup
+    badge
 
 
 .. toctree::

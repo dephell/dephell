@@ -1,5 +1,8 @@
 # ![DepHell](./assets/logo.png)
 
+[![MIT License](https://img.shields.io/pypi/l/dephell.svg)](https://github.com/dephell/dephell/blob/master/LICENSE)
+[![Powered by DepHell](./assets/badge.svg)](./docs/badge.md)
+
 **DepHell** -- dependency management for Python.
 
 + Manage dependencies: convert between formats, install, lock, resolve conflicts.
