@@ -75,16 +75,21 @@ class ProjectTestCommand(BaseCommand):
         # choose pythons
         self.logger.info('get interpreters')
         pythons = Pythons()
-        choosen_pythons = dict()
-        pyrhon_constraint = resolver.graph.metainfo.python
-        for python in pythons:
-            version = str(python.get_short_version())
-            if version in choosen_pythons:
-                continue
-            if python.version not in pyrhon_constraint:
-                continue
-            choosen_pythons[version] = python
-        choosen_pythons = tuple(choosen_pythons.values())
+        if 'python' in self.config:
+            # get from config
+            choosen_pythons = (pythons.get_best(self.config['python']), )
+        else:
+            # get from project
+            choosen_pythons = dict()
+            pyrhon_constraint = resolver.graph.metainfo.python
+            for python in pythons:
+                version = str(python.get_short_version())
+                if version in choosen_pythons:
+                    continue
+                if python.version not in pyrhon_constraint:
+                    continue
+                choosen_pythons[version] = python
+            choosen_pythons = tuple(choosen_pythons.values())
 
         for python in choosen_pythons:
             with TemporaryDirectory() as path:
