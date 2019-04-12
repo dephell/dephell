@@ -57,7 +57,7 @@ command = "sphinx-build -M html docs docs/build"
 
 [tool.poetry]
 name = "dephell"
-version = "0.3.2"
+version = "0.4.0"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
@@ -125,4 +125,4 @@ pygments-github-lexers = "*"
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
 tests = ["pytest"]
-docs = ["pygments-github-lexers", "recommonmark", "sphinx", "sphinx-rtd-theme"]
+docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]

@@ -27,6 +27,13 @@ See [installation documentation](https://dephell.readthedocs.io/en/latest/instal
 
 ## Usage
 
+First of all, install DepHell and activate autocomplete:
+
+```bash
+python3 -m pip install --user dephell[full]
+dephell autocomplete
+```
+
 Let's get [sampleproject](https://github.com/pypa/sampleproject) and make it better.
 
 ```bash
@@ -200,4 +207,4 @@ INFO builded
 
 Now, we can upload these packages on [PyPI](https://pypi.org/) with [twine](https://github.com/pypa/twine/).
 
-This is some most useful commands. See [documentation](https://dephell.readthedocs.io/) for more details.
+This is some of the most useful commands. See [documentation](https://dephell.readthedocs.io/) for more details.
