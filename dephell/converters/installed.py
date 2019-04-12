@@ -16,6 +16,9 @@ from .wheel import WheelConverter
 class InstalledConverter(BaseConverter):
     lock = True
 
+    # https://bugs.launchpad.net/ubuntu/+source/python-pip/+bug/1635463
+    _blacklist = {'pkg-resources'}
+
     def load(self, path: Union[Path, str] = None, paths: Iterable[Union[Path, str]] = None,
              names: Iterable[str] = None) -> RootDependency:
         if names:
@@ -44,6 +47,8 @@ class InstalledConverter(BaseConverter):
                     subroot = converter.load_dir(info_path)
                     deps = DependencyMaker.from_root(dep=subroot, root=root)
                     for dep in deps:
+                        if dep.name in self._blacklist:
+                            continue
                         if dep.name in all_deps:
                             all_deps[dep.name] |= dep
                         else:
