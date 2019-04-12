@@ -48,4 +48,10 @@ def test_deps_outdated_command_venv(temp_path: Path, capsys):
 
     command = DepsOutdatedCommand(argv=[], config=config)
     result = command()
-    assert result is True
+
+    assert type(result) is bool
+    if result is False:
+        captured = capsys.readouterr()
+        output = json.loads(captured.out)
+        names = {line['name'] for line in output}
+        assert len(names - {'pip', 'setuptools'}) == 0

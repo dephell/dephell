@@ -18,11 +18,8 @@ class InstalledConverter(BaseConverter):
 
     def load(self, path: Union[Path, str] = None, paths: Iterable[Union[Path, str]] = None,
              names: Iterable[str] = None) -> RootDependency:
-
         if names:
             names = {canonicalize_name(name).replace('-', '_') for name in names}
-        else:
-            names = set()
 
         if paths is None:
             if path is not None:
@@ -42,7 +39,7 @@ class InstalledConverter(BaseConverter):
             for converter, pattern in parsers:
                 for info_path in path.glob(pattern):
                     name = info_path.with_suffix('').name.split('-')[0]
-                    if name not in names:
+                    if names is not None and name not in names:
                         continue
                     subroot = converter.load_dir(info_path)
                     deps = DependencyMaker.from_root(dep=subroot, root=root)
