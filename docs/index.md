@@ -72,7 +72,9 @@
     :maxdepth: 1
     :caption: Project
 
+    cmd-project-build
     cmd-project-bump
+    cmd-project-test
 
 .. toctree::
     :maxdepth: 1
@@ -88,7 +90,6 @@
     :caption: Other commands
 
     cmd-autocomplete
-    cmd-project-build
 
 .. toctree::
     :maxdepth: 1
