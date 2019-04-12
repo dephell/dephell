@@ -147,7 +147,7 @@ class GitRepo(Interface):
         data = self._call('show', '-s', r'--format="%cI"', rev)
         date = data[-1].strip().strip('"')  # '2018-09-03T13:51:53+03:00'
         # Python 3.6 cannot parse timezone with `:`.
-        date = date[:-3] + date[-2:]    # '2018-09-03T13:51:53+0300'
+        date = date[:-3] + date[-2:]        # '2018-09-03T13:51:53+0300'
         return datetime.strptime(date, '%Y-%m-%dT%H:%M:%S%z')
 
     def _get_rev_hash(self, rev: str):

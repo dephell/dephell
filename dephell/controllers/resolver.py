@@ -1,6 +1,6 @@
 # built-in
 from logging import getLogger
-from typing import ContextManager, Optional
+from typing import Optional
 
 # project
 from yaspin import yaspin
@@ -81,8 +81,7 @@ class Resolver:
                 if resolved is not None:
                     return resolved
 
-    def _resolve(self, debug: bool, silent: bool, level: Optional[int],
-                 spinner: ContextManager) -> Optional[bool]:
+    def _resolve(self, debug: bool, silent: bool, level: Optional[int], spinner) -> Optional[bool]:
         if silent:
             logger.debug('next iteration', extra=dict(
                 layers=len(self.graph._layers),
