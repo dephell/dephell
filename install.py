@@ -23,7 +23,7 @@ try:
     from appdirs import user_data_dir
 except ImportError:
     print('install appdirs')
-    main(['install', '--user', 'appdirs'])
+    main(['install', 'appdirs'])
     from appdirs import user_data_dir
 
 
@@ -33,7 +33,8 @@ create(str(path), with_pip=True)
 
 
 print('install dephell')
-pip_path = list(path.glob('*/pip3'))[0]
+pip_paths = list(path.glob('*/pip3')) + list(path.glob('*/pip'))
+pip_path = pip_paths[0]
 result = subprocess.run([str(pip_path), 'install', 'dephell[full]'])
 if result.returncode != 0:
     exit(result.returncode)
