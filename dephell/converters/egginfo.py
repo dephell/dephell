@@ -58,6 +58,12 @@ class _Reader:
                 raise FileExistsError('too many egg-info', *paths)
         path = paths[0]
 
+        # sometimes pypy stores only pkg-info as *.egg-info file
+        if not (path / 'PKG-INFO').exists():
+            with path.open('r') as stream:
+                content = stream.read()
+            return self.parse_info(content)
+
         # pkg-info
         with (path / 'PKG-INFO').open('r') as stream:
             content = stream.read()
