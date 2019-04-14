@@ -7,6 +7,8 @@ from pathlib import Path
 from ..__version__ import __version__
 from ..actions import make_json, get_path_size, format_size
 from ..config import builders
+from ..constants import DEPHELL_ECOSYSTEM
+from ..converters import InstalledConverter
 from .base import BaseCommand
 
 
@@ -27,10 +29,16 @@ class InspectSelfCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        installed = InstalledConverter().load(names=DEPHELL_ECOSYSTEM)
+        versions = dict()
+        for dep in installed.dependencies:
+            versions[dep.name] = str(dep.constraint).replace('=', '')
+
         data = dict(
             path=str(Path(__file__).parent.parent),
             python=sys.executable,
             version=__version__,
+            versions=versions,
             cache=format_size(get_path_size(Path(self.config['cache']['path']))),
         )
         print(make_json(data=data, key=self.config.get('filter')))

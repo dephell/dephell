@@ -109,3 +109,16 @@ VERSION_INIT = MappingProxyType(dict(
     calver='{}.{}'.format(date.today().year, date.today().month),
     roman='I',
 ))
+
+
+DEPHELL_ECOSYSTEM = (
+    'dephell_archive',
+    'dephell_discover',
+    'dephell_licenses',
+    'dephell_links',
+    'dephell_markers',
+    'dephell_pythons',
+    'dephell_shells',
+    'dephell_specifier',
+    'dephell_venvs',
+)
