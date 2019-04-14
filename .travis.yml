@@ -1,0 +1,26 @@
+language: python
+
+before_install:
+  - sudo apt-get install -y tree
+  - env
+  - tree
+
+  # - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.6/bin/python
+  - /opt/python/3.6/bin/python install.py
+install:
+  - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python" --level=DEBUG
+  - dephell deps install --env=$ENV --level=DEBUG
+script:
+  - dephell venv run --env=$ENV --level=DEBUG
+
+matrix:
+  include:
+    - python: "3.5"
+      env: ENV=pytest
+    - python: "3.6"
+      env: ENV=pytest
+    - python: "3.7-dev"
+      env: ENV=pytest
+
+    - python: "3.6"
+      env: ENV=flake8

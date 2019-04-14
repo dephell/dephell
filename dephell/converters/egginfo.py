@@ -31,7 +31,7 @@ class _Reader:
         path = Path(str(path))
         if path.is_dir():
             # load from *.egg-info dir
-            if path.suffix == '.egg-info':
+            if (path / 'PKG-INFO').exists():
                 return self.load_dir(path)
             # find *.egg-info in current dir
             paths = list(path.glob('*.egg-info'))

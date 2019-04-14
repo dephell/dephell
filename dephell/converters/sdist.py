@@ -69,7 +69,7 @@ class SDistConverter(BaseConverter):
         if isinstance(path, str):
             path = Path(path)
         if not path.name.endswith('.tar.gz'):
-            path /= '{}-{}.tar.gz'.format(project.name, str(project.version))
+            path /= '{}-{}.tar.gz'.format(project.name.replace('-', '_'), str(project.version))
         path.parent.mkdir(exist_ok=True, parents=True)
         if path.exists():
             path.unlink()
