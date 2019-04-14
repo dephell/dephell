@@ -2,14 +2,13 @@ language: python
 
 before_install:
   # show a little bit more information about environment
-  - sudo apt-get install -y tree
+  - sudo apt-get install -y tree pypy-lib
   - env
   - tree
   # install DepHell
   # - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.6/bin/python
   # https://github.com/travis-ci/travis-ci/issues/8589
   - /opt/python/3.6/bin/python install.py
-  - if [[ $TRAVIS_PYTHON_VERSION="pypy3.5" ]] then sudo apt-get install -y pypy-lib; fi
 install:
   - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python" --level=DEBUG --traceback
   - dephell deps install --env=$ENV --level=DEBUG --traceback
