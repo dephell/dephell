@@ -11,6 +11,12 @@ before_install:
   - /opt/python/3.6/bin/python install.py
   - dephell inspect self
 install:
+  - python -m venv --without-pip lol
+  - dir ./lol/bin/
+  - ./lol/bin/python -Im ensurepip --upgrade --default-pip
+  - dir ./lol/bin/
+  - python -m venv lal
+
   - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python" --level=DEBUG --traceback
   - dephell deps install --env=$ENV --level=DEBUG --traceback
 script:
