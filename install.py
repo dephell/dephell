@@ -1,9 +1,11 @@
 # built-in
 import subprocess
 from pathlib import Path
+from os import environ, pathsep
 from venv import create
 
 
+# install pip
 try:
     import pip  # noQA: F401
 except ImportError:
@@ -11,45 +13,66 @@ except ImportError:
     from ensurepip import bootstrap
     bootstrap()
 
-try:
-    from pip._internal import main
-except ImportError:
-    print('update pip')
-    from ensurepip import bootstrap
-    bootstrap(upgrade=True)
 
+# get dephell's jail path
+def get_data_dir() -> Path:
+    try:
+        from appdirs import user_data_dir
+    except ImportError:
 
-try:
-    from appdirs import user_data_dir
-except ImportError:
-    print('install appdirs')
-    main(['install', 'appdirs'])
-    from appdirs import user_data_dir
+        path = Path.home() / '.local' / 'share'
+        if path.exists():
+            return path / 'dephell'
+
+        try:
+            from pip._internal import main
+        except ImportError:
+            from pip import main
+
+        main(['install', 'appdirs'])
+        from appdirs import user_data_dir
+
+    return Path(user_data_dir('dephell'))
 
 
 print('make venv')
-path = Path(user_data_dir('dephell')) / 'venvs' / 'dephell'
+path = get_data_dir() / 'venvs' / 'dephell'
 create(str(path), with_pip=True)
 
-print('install pip in venv')
+
+print('update pip')
 python_path = list(path.glob('*/python3'))[0]
-result = subprocess.run([str(python_path), '-m', 'ensurepip'])
+result = subprocess.run([str(python_path), '-m', 'pip', 'install', '-U', 'pip'])
 if result.returncode != 0:
     exit(result.returncode)
 
 
 print('install dephell')
-pip_path = list(path.glob('*/pip3'))[0]
-result = subprocess.run([str(pip_path), 'install', 'dephell[full]'])
+result = subprocess.run([str(python_path), '-m', 'pip', 'install', 'dephell[full]'])
 if result.returncode != 0:
     exit(result.returncode)
 
+
+def get_bin_dir() -> Path:
+    path = Path.home() / '.local' / 'bin'
+    if path.exists():
+        return path
+    paths = [Path(path) for path in environ.get('PATH', '').split(pathsep)]
+    for path in paths:
+        if path.exists() and '.local' in path.parts:
+            return path
+    for path in paths:
+        if path.exists():
+            return path
+    raise LookupError('cannot find place to install binary', paths)
+
+
 print('copy binary dephell')
-local_path = pip_path.parent / 'dephell'
+local_path = python_path.parent / 'dephell'
 if not local_path.exists():
     print('DepHell binary not found')
     exit(1)
-global_path = Path.home() / '.local' / 'bin' / 'dephell'
+global_path = get_bin_dir() / 'dephell'
 if global_path.exists() or global_path.is_symlink():
     global_path.unlink()
 global_path.symlink_to(local_path)

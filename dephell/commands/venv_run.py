@@ -67,8 +67,18 @@ class VenvRunCommand(BaseCommand):
             if not result:
                 return False
 
+        if not executable.exists():
+            self.logge.error('package installed, but executable is not found')
+            return False
+
+        self.logger.info('running...')
         result = subprocess.run([str(executable)] + command[1:])
-        return not result.returncode
+        if result.returncode != 0:
+            self.logger.error('command failed', extra=dict(code=result.returncode))
+            return False
+
+        self.logger.info('command successfully completed')
+        return True
 
     def _install(self, name: str, python_path: Path) -> bool:
         # resolve

@@ -41,7 +41,7 @@ from = {format = "poetry", path = "pyproject.toml"}
 # copy files that requred for tests
 tests = ["tests", "README.md"]
 # run command `pytest`
-command = "pytest -x tests/"
+command = "pytest tests/"
 
 # Install `docs` extra dependencies  in the separated venv and run sphinx:
 # $ dephell venv create --env=docs
