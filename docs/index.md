@@ -99,4 +99,5 @@
 
     use-poetry-lock
     use-licenses
+    use-tree-git
 ```
