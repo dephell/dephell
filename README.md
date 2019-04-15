@@ -1,6 +1,7 @@
 # ![DepHell](./assets/logo.png)
 
 [![MIT License](https://img.shields.io/pypi/l/dephell.svg)](https://github.com/dephell/dephell/blob/master/LICENSE)
+[![Travis CI](https://travis-ci.org/dephell/dephell.svg?branch=master)](https://travis-ci.org/dephell/dephell)
 [![Powered by DepHell](./assets/badge.svg)](./docs/badge.md)
 
 **DepHell** -- dependency management for Python.
