@@ -72,9 +72,7 @@ class SetupPyConverter(BaseConverter):
     def load(cls, path) -> RootDependency:
         path = Path(str(path))
 
-        info = None
-        with chdir(path.parent):
-            info = cls._execute(path=path)
+        info = cls._execute(path=path)
         if info is None:
             with chdir(path.parent):
                 info = run_setup(path.name)
@@ -239,10 +237,11 @@ class SetupPyConverter(BaseConverter):
             '__name__': '__main__',
             'open': lambda fname, *args, **kwargs: StringIO(fname),
         }
-        try:
-            exec(compile(new_source, path.name, 'exec'), globe)
-        except Exception as e:
-            logger.error('{}: {}'.format(type(e).__name__, str(e)))
+        with chdir(path.parent):
+            try:
+                exec(compile(new_source, path.name, 'exec'), globe)
+            except Exception as e:
+                logger.error('{}: {}'.format(type(e).__name__, str(e)))
 
         dist = globe.get('_dist')
         if dist is None:

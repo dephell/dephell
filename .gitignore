@@ -7,9 +7,9 @@ dist/
 build/
 pip-wheel-metadata/
 
-Pipfile.lock
-poetry.lock
-poetry.lock.toml
+/Pipfile.lock
+/poetry.lock
+/poetry.lock.toml
 
 .tox
 .mypy_cache
@@ -17,5 +17,5 @@ poetry.lock.toml
 .dephell_cache/
 .dephell_report/
 
-README.rst
-setup.py
+/README.rst
+/setup.py
