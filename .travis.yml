@@ -2,7 +2,7 @@ language: python
 
 before_install:
   # show a little bit more information about environment
-  - sudo apt-get install -y tree pypy-lib
+  - sudo apt-get install -y tree
   - env
   - tree
   # install DepHell
@@ -27,5 +27,5 @@ matrix:
     - python: "pypy3.5"
       env: ENV=pytest
 
-    # - python: "3.6"
-    #   env: ENV=flake8
+    - python: "3.6"
+      env: ENV=flake8
