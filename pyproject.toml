@@ -43,6 +43,12 @@ tests = ["tests", "README.md"]
 # run command `pytest`
 command = "pytest tests/"
 
+[tool.dephell.pypy]
+from = {format = "poetry", path = "pyproject.toml"}
+# force python interpreter for env
+python = "pypy3"
+command = "pytest -x tests/"
+
 # Install `docs` extra dependencies  in the separated venv and run sphinx:
 # $ dephell venv create --env=docs
 # $ dephell deps install --env=docs
