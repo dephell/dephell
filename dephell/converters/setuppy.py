@@ -1,13 +1,16 @@
 # built-in
 from collections import defaultdict
 from distutils.core import run_setup
+from io import StringIO
 from itertools import chain
+from logging import getLogger
 from pathlib import Path
 from typing import Optional
 
 # external
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
+from setuptools.dist import Distribution
 
 # app
 from ..context_tools import chdir
@@ -25,6 +28,9 @@ try:
     from autopep8 import fix_code
 except ImportError:
     fix_code = None
+
+
+logger = getLogger('dephell.converters.setuppy')
 
 
 TEMPLATE = """
@@ -65,8 +71,11 @@ class SetupPyConverter(BaseConverter):
     @classmethod
     def load(cls, path) -> RootDependency:
         path = Path(str(path))
-        with chdir(path.parent):
-            info = run_setup(path.name)
+
+        info = cls._execute(path=path)
+        if info is None:
+            with chdir(path.parent):
+                info = run_setup(path.name)
 
         root = RootDependency(
             raw_name=cls._get(info, 'name'),
@@ -99,7 +108,7 @@ class SetupPyConverter(BaseConverter):
 
         # entrypoints
         entrypoints = []
-        for group, content in getattr(info, 'entry_points', {}).items():
+        for group, content in (getattr(info, 'entry_points', {}) or {}).items():
             for entrypoint in content:
                 entrypoints.append(EntryPoint.parse(text=entrypoint, group=group))
         root.entrypoints = tuple(entrypoints)
@@ -214,6 +223,31 @@ class SetupPyConverter(BaseConverter):
         return content
 
     # private methods
+
+    @staticmethod
+    def _execute(path: Path):
+        source = path.read_text('utf-8')
+        new_source = source.replace('setup(', '_dist = dict(')
+        if new_source == source:
+            logger.error('cannot modify source')
+            return None
+
+        globe = {
+            '__file__': str(path),
+            '__name__': '__main__',
+            'open': lambda fname, *args, **kwargs: StringIO(fname),
+        }
+        with chdir(path.parent):
+            try:
+                exec(compile(new_source, path.name, 'exec'), globe)
+            except Exception as e:
+                logger.error('{}: {}'.format(type(e).__name__, str(e)))
+
+        dist = globe.get('_dist')
+        if dist is None:
+            logger.error('distribution was not called')
+            return None
+        return Distribution(dist)
 
     @staticmethod
     def _get(msg, name: str) -> str:

@@ -1,5 +1,6 @@
 # built-in
 import os
+import sys
 from contextlib import contextmanager
 
 
@@ -29,8 +30,20 @@ def nullcontext(value=None):
 def env_var(key, value):
     old_value = os.environ.get(key)
     os.environ[key] = value
-    yield
-    if old_value is None:
-        del os.environ[key]
-    else:
-        os.environ[key] = old_value
+    try:
+        yield
+    finally:
+        if old_value is None:
+            del os.environ[key]
+        else:
+            os.environ[key] = old_value
+
+
+@contextmanager
+def override_argv(value):
+    old_value = sys.argv
+    sys.argv = value
+    try:
+        yield
+    finally:
+        sys.argv = old_value

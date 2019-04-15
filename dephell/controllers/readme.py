@@ -18,7 +18,7 @@ import os.path
 
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, '${fname}'), encoding='utf-8') as stream:
+with open(os.path.join(here, '${fname}'), 'r', 'utf-8') as stream:
     readme = stream.read()
 """
 

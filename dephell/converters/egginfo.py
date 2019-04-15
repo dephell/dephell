@@ -48,6 +48,8 @@ class _Reader:
             return self.loads(stream.read())
 
     def load_dir(self, *paths) -> RootDependency:
+        # drop duplicates
+        paths = list({str(path): path for path in paths}.values())
         if not paths:
             raise FileNotFoundError('cannot find egg-info')
         # maybe it's possible, so we will have to process it
@@ -55,8 +57,14 @@ class _Reader:
             min_parts = min(len(path.parts) for path in paths)
             paths = [path for path in paths if len(path.parts) == min_parts]
             if len(paths) > 1:
-                raise FileExistsError('too many egg-info', *paths)
+                raise FileExistsError('too many egg-info', paths)
         path = paths[0]
+
+        # sometimes pypy stores only pkg-info as *.egg-info file
+        if not (path / 'PKG-INFO').exists():
+            with path.open('r') as stream:
+                content = stream.read()
+            return self.parse_info(content)
 
         # pkg-info
         with (path / 'PKG-INFO').open('r') as stream:
