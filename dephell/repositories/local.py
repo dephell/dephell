@@ -6,6 +6,7 @@ from .base import Interface
 from ..constants import FILES
 from ..config import Config
 from ..models.release import Release
+from ..cache import RequirementsCache
 
 
 class LocalRepo(Interface):
@@ -40,10 +41,17 @@ class LocalRepo(Interface):
         return tuple(reversed(releases))
 
     async def get_dependencies(self, name: str, version: str, extra: Optional[str] = None) -> tuple:
+        cache = RequirementsCache('local_deps', name, str(version))
+        deps = cache.load()
+        if deps:
+            return deps
+
         root = self.get_root(name=name, version=version)
         deps = root.dependencies
         if extra:
             deps = tuple(dep for dep in deps if extra in dep.envs)
+
+        cache.dump(root=root)
         return deps
 
     def get_root(self, name: str, version: str):

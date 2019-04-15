@@ -15,6 +15,7 @@ from ...models.git_release import GitRelease
 from ...models.release import Release
 from ...utils import cached_property
 from ..base import Interface
+from ..local import LocalRepo
 
 
 logger = getLogger(__name__)
@@ -90,32 +91,25 @@ class GitRepo(Interface):
         return tuple(releases)
 
     async def get_dependencies(self, name: str, version, extra: Optional[str] = None) -> tuple:
-        # TODO: exta support for git
-        if extra is not None:
-            return ()
-
+        # get from cache
         cache = RequirementsCache('git_deps', name, str(version))
         deps = cache.load()
         if deps:
+            if extra:
+                deps = tuple(dep for dep in deps if extra in dep.envs)
             return deps
 
+        # load deps
         self._setup()
         self._call('checkout', self._version_to_rev(version))
-        path = self.path / 'setup.py'
-        if not path.exists():
-            return ()
-
-        # sorry for that
-        from ...converters import SetupPyConverter
-
-        try:
-            root = SetupPyConverter().load(path)
-        except BaseException:
-            logger.exception('cannot read setup.py')
-            return ()
-
+        root = LocalRepo(path=self.path).get_root(name=name, version=version)
         cache.dump(root=root)
-        return tuple(root.dependencies)
+
+        # filter extras
+        deps = root.dependencies
+        if extra:
+            deps = tuple(dep for dep in deps if extra in dep.envs)
+        return tuple(deps)
 
     def get_nearest_version(self, ref: str):
         # get version in that this commit has included
