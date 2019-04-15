@@ -87,6 +87,7 @@ class DepsTreeCommand(BaseCommand):
             best=str(dep.group.best_release.version),
             latest=str(dep.groups.releases[0].version),
         )]
-        for subdep in sorted(dep.dependencies):
+        deps = {dep.name: dep for dep in dep.dependencies}.values()  # drop duplicates
+        for subdep in sorted(deps):
             lines.extend(cls._make_tree(subdep, level=level + 1))
         return lines
