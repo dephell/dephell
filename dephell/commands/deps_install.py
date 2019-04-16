@@ -1,6 +1,5 @@
 # built-in
 from argparse import ArgumentParser
-from itertools import chain
 from types import SimpleNamespace
 from typing import Tuple
 
