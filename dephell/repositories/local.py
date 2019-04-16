@@ -68,12 +68,12 @@ class LocalRepo(Interface):
             raise LookupError('cannot find loader for file ' + str(self.path))
 
         # get from wheel or sdist
-        PATTERNS = (
+        patterns = (
             ('-*-*-*.whl', WheelConverter()),
             ('.tar.gz', SDistConverter()),
             ('.tgz', SDistConverter()),
         )
-        for suffix, converter in PATTERNS:
+        for suffix, converter in patterns:
             paths = tuple(self.path.glob('**/{name}-{version}{suffix}'.format(
                 name=name.replace('-', '_'),
                 version=str(version),
@@ -110,7 +110,8 @@ class LocalRepo(Interface):
 
         raise LookupError('cannot find dependencies in ' + str(self.path))
 
-    def update_dep_from_root(cls, dep, root) -> None:
+    @staticmethod
+    def update_dep_from_root(dep, root) -> None:
         if not dep.description:
             dep.description = root.description
         if not dep.authors:
