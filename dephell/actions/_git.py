@@ -14,7 +14,7 @@ def _run(command, project: Path) -> bool:
         stderr=subprocess.PIPE,
         cwd=str(project),
     )
-    if result != 0:
+    if result.returncode != 0:
         stderr = result.stderr.decode().strip()
         if stderr:
             logger.debug(stderr)
