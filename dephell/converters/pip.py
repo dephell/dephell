@@ -1,5 +1,6 @@
 # built-in
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Optional
 from urllib.parse import urlparse
 
@@ -60,6 +61,13 @@ class PIPConverter(BaseConverter):
 
         for req in reqs:
             # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py
+            if req.req is None:
+                req.req = SimpleNamespace(
+                    name=req.link.url.split('/')[-1],
+                    specifier='*',
+                    marker=None,
+                    extras=None,
+                )
             deps.extend(DependencyMaker.from_requirement(
                 source=root,
                 req=req.req,

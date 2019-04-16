@@ -17,20 +17,23 @@ class LocalRepo(Interface):
 
     def get_releases(self, dep) -> Tuple[Release, ...]:
         releases = []
-        for path in (self.path / 'dist').iterdir():
-            version = path.name
-            for suffix in ('.gz', '.bz', '.zip', '.tar', '.whl', '.tgz'):
-                if version.endswith(suffix):
-                    version = version[:-len(suffix)]
-            if version.startswith(dep.name) or version.startswith(dep.name.replace('-', '_')):
-                version = version[len(dep.name):]
-            releases.append(Release(
-                raw_name=dep.raw_name,
-                version=version,
-                time=datetime.fromtimestamp(path.stat().st_mtime),
-            ))
 
-        root = self.get_root(name=dep.name, version=dep.version)
+        dist_path = (self.path / 'dist')
+        if dist_path.exists():
+            for path in dist_path.iterdir():
+                version = path.name
+                for suffix in ('.gz', '.bz', '.zip', '.tar', '.whl', '.tgz'):
+                    if version.endswith(suffix):
+                        version = version[:-len(suffix)]
+                if version.startswith(dep.name) or version.startswith(dep.name.replace('-', '_')):
+                    version = version[len(dep.name):]
+                releases.append(Release(
+                    raw_name=dep.raw_name,
+                    version=version,
+                    time=datetime.fromtimestamp(path.stat().st_mtime),
+                ))
+
+        root = self.get_root(name=dep.name, version='0.0.0')
         self.update_dep_from_root(dep=dep, root=root)
         releases.append(Release(
             raw_name=root.raw_name,

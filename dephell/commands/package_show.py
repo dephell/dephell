@@ -5,7 +5,6 @@ from argparse import ArgumentParser
 from ..actions import get_package, get_python_env, make_json, get_path_size, format_size
 from ..config import builders
 from ..converters import InstalledConverter
-from ..repositories import WareHouseRepo
 from .base import BaseCommand
 
 
@@ -29,8 +28,7 @@ class PackageShowCommand(BaseCommand):
 
     def __call__(self) -> bool:
         dep = get_package(self.args.name)
-        repo = WareHouseRepo()
-        releases = repo.get_releases(dep)
+        releases = dep.repo.get_releases(dep)
 
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
