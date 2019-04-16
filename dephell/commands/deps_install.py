@@ -54,12 +54,13 @@ class DepsInstallCommand(BaseCommand):
             print(conflict)
             return False
 
-        # filter deps by envs
-        resolver.apply_envs(set(self.config['envs']))
-
         # get executable
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
+
+        # filter deps by envs and markers
+        resolver.apply_envs(set(self.config['envs']))
+        resolver.apply_markers(python=python)
 
         install, remove = self._get_install_remove(graph=resolver.graph, python=python)
 
@@ -84,7 +85,10 @@ class DepsInstallCommand(BaseCommand):
             if code != 0:
                 return False
 
-        self.logger.info('installed')
+        if not install and not remove:
+            self.logger.info('everything is up-to-date')
+        else:
+            self.logger.info('installed')
         return True
 
     def _get_install_remove(self, graph, python) -> Tuple[list, list]:

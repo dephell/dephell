@@ -49,9 +49,6 @@ class DepsCheckCommand(BaseCommand):
             print(conflict)
             return False
 
-        # filter deps by envs
-        resolver.apply_envs(set(self.config['envs']))
-
         # get executable
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
@@ -59,6 +56,10 @@ class DepsCheckCommand(BaseCommand):
         # get installed packages
         installed_root = InstalledConverter().load(paths=python.lib_paths)
         installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
+
+        # filter deps by envs and markers
+        resolver.apply_envs(set(self.config['envs']))
+        resolver.apply_markers(python=python)
 
         data = []
         reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
