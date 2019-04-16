@@ -67,6 +67,7 @@
     cmd-package-downloads
     cmd-package-install
     cmd-package-list
+    cmd-package-releases
     cmd-package-search
     cmd-package-show
 
