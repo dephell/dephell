@@ -29,10 +29,12 @@
 
     cmd-deps-add
     cmd-deps-audit
+    cmd-deps-check
     cmd-deps-convert
     cmd-deps-install
     cmd-deps-licenses
     cmd-deps-outdated
+    cmd-deps-sync
     cmd-deps-tree
 
 .. toctree::
