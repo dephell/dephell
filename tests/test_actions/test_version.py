@@ -64,11 +64,6 @@ def test_bump_version(scheme, rule, old, new):
         ('from a import b', 'c = "1.2"', '__version__ = "1.0"'),
         ('from a import b', 'c = "1.2"', '__version__ = "1.3"'),
     ),
-    (
-        '1.2', '1.3', True,
-        ('from a import b', 'c = "1.2"', '__version__ = \'1.0\''),
-        ('from a import b', 'c = "1.2"', '__version__ = \'1.3\''),
-    ),
 ])
 def test_bump_file(old, new, changed, content, expected, temp_path):
     path = temp_path / '__init__.py'
