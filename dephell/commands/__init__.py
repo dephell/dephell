@@ -18,6 +18,7 @@ from .inspect_venv import InspectVenvCommand
 from .jail_install import JailInstallCommand
 from .jail_list import JailListCommand
 from .jail_remove import JailRemoveCommand
+from .jail_try import JailTryCommand
 from .package_downloads import PackageDownloadsCommand
 from .package_install import PackageInstallCommand
 from .package_list import PackageListCommand
@@ -54,6 +55,7 @@ __all__ = [
     'JailInstallCommand',
     'JailListCommand',
     'JailRemoveCommand',
+    'JailTryCommand',
     'PackageDownloadsCommand',
     'PackageInstallCommand',
     'PackageListCommand',
@@ -80,7 +82,6 @@ commands = {
     'deps outdated': DepsOutdatedCommand,
     'deps tree': DepsTreeCommand,
     # 'deps remove': ...,
-    # 'deps sync': ...,
     'generate authors': GenerateAuthorsCommand,
     'generate config': GenerateConfigCommand,
     'generate editorconfig': GenerateEditorconfigCommand,
@@ -92,6 +93,7 @@ commands = {
     'jail install': JailInstallCommand,
     'jail list': JailListCommand,
     'jail remove': JailRemoveCommand,
+    'jail try': JailTryCommand,
     # 'jail update': ...,
     'package downloads': PackageDownloadsCommand,
     'package install': PackageInstallCommand,
