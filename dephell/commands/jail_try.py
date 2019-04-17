@@ -125,10 +125,15 @@ class JailTryCommand(BaseCommand):
 
     @staticmethod
     def _get_startup_packages(lib_path: Path, packages) -> Set[str]:
-        names = {path.name for path in lib_path.iterdir()}
-        import pdb; pdb.set_trace()
-        print(names)
-        names = {name.strip('.')[0] for name in names if '.' not in name or name.endswith('.py')}
+        names = set()
+        for path in lib_path.iterdir():
+            name = path.name
+            if name == '__pycache__':
+                continue
+            if name.endswith('.py'):
+                names.add(name)
+            elif path.is_dir() and '.' not in name:
+                names.add(name)
 
         if packages:
             packages = set(packages)
