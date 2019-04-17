@@ -2,7 +2,8 @@
 from logging import getLogger
 from typing import Optional
 
-# project
+# external
+from packaging.markers import Marker
 from yaspin import yaspin
 
 # app
@@ -34,6 +35,9 @@ class Resolver:
                 # then ignore these deps
                 continue
             else:
+                # if dep is locked, but not used, let's just unlock it
+                if other_dep.locked and not other_dep.used:
+                    other_dep.unlock()
                 # merge deps
                 try:
                     other_dep += new_dep
@@ -152,6 +156,27 @@ class Resolver:
             if not (dep.envs | dep.inherited_envs) & envs:
                 continue
             self.apply(dep)
+
+    def apply_markers(self, python) -> None:
+        implementation = python.implementation
+        if implementation == 'python':
+            implementation = 'cpython'
+
+        for dep in self.graph:
+            if not dep.applied:
+                continue
+            if not dep.marker:
+                continue
+
+            fit = Marker(str(dep.marker)).evaluate(dict(
+                python_version=str(python.version),
+                implementation_name=implementation,
+            ))
+            if fit:
+                continue
+
+            self.unapply(dep, soft=True)
+            dep.applied = False
 
     def _apply_deps(self, deps, debug: bool = False) -> bool:
         for dep in deps:

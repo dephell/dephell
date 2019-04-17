@@ -29,10 +29,12 @@
 
     cmd-deps-add
     cmd-deps-audit
+    cmd-deps-check
     cmd-deps-convert
     cmd-deps-install
     cmd-deps-licenses
     cmd-deps-outdated
+    cmd-deps-sync
     cmd-deps-tree
 
 .. toctree::
@@ -67,6 +69,7 @@
     cmd-package-downloads
     cmd-package-install
     cmd-package-list
+    cmd-package-releases
     cmd-package-search
     cmd-package-show
 
@@ -99,4 +102,5 @@
 
     use-poetry-lock
     use-licenses
+    use-tree-git
 ```

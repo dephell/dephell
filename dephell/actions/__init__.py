@@ -7,6 +7,7 @@ from ._converting import attach_deps
 from ._downloads import get_downloads_by_category, get_total_downloads
 from ._editorconfig import make_editorconfig
 from ._entrypoints import get_entrypoints
+from ._git import git_tag, git_commit
 from ._json import make_json
 from ._package import get_package, get_packages, get_resolver
 from ._python import get_python, get_python_env
@@ -35,6 +36,8 @@ __all__ = [
     'get_venv',
     'get_version_from_file',
     'get_version_from_project',
+    'git_tag',
+    'git_commit',
     'make_bash_autocomplete',
     'make_editorconfig',
     'make_json',

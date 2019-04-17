@@ -17,7 +17,7 @@ from .groups import Groups
 @attr.s(cmp=False)
 class Dependency:
     raw_name = attr.ib(type=str)
-    constraint = attr.ib(type=Constraint, repr=False)
+    constraint = attr.ib(type=Constraint)
     repo = attr.ib(repr=False)
     link = attr.ib(default=None, repr=False)
 

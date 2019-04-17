@@ -1,5 +1,7 @@
 # built-in
 from argparse import ArgumentParser
+from types import SimpleNamespace
+from typing import Tuple
 
 # app
 from ..actions import attach_deps, get_python_env
@@ -16,6 +18,8 @@ class DepsInstallCommand(BaseCommand):
 
     https://dephell.readthedocs.io/en/latest/cmd-deps-install.html
     """
+    sync = False
+
     @classmethod
     def get_parser(cls) -> ArgumentParser:
         parser = ArgumentParser(
@@ -50,37 +54,15 @@ class DepsInstallCommand(BaseCommand):
             print(conflict)
             return False
 
-        # filter deps by envs
-        resolver.apply_envs(set(self.config['envs']))
-
         # get executable
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
-        # get installed packages
-        installed_root = InstalledConverter().load(paths=python.lib_paths)
-        installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
+        # filter deps by envs and markers
+        resolver.apply_envs(set(self.config['envs']))
+        resolver.apply_markers(python=python)
 
-        # plan what we will install and what we will remove
-        install = []
-        remove = []
-        for req in Requirement.from_graph(graph=resolver.graph, lock=True):
-            # not installed, install
-            if req.name not in installed:
-                install.append(req)
-                continue
-            # installed the same version, skip
-            version = req.version.strip('=')
-            if version == installed[req.name]:
-                continue
-            # installed old version, remove it and install new
-            self.logger.debug('dependency will be updated', extra=dict(
-                dependency=req.name,
-                old=installed[req.name],
-                new=version,
-            ))
-            remove.append(req)
-            install.append(req)
+        install, remove = self._get_install_remove(graph=resolver.graph, python=python)
 
         # remove
         manager = PackageManager(executable=python.path)
@@ -103,5 +85,42 @@ class DepsInstallCommand(BaseCommand):
             if code != 0:
                 return False
 
-        self.logger.info('installed')
+        if not install and not remove:
+            self.logger.info('everything is up-to-date')
+        else:
+            self.logger.info('installed')
         return True
+
+    def _get_install_remove(self, graph, python) -> Tuple[list, list]:
+        # get installed packages
+        installed_root = InstalledConverter().load(paths=python.lib_paths)
+        installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
+
+        # plan what we will install and what we will remove
+        install = []
+        remove = []
+        reqs = Requirement.from_graph(graph=graph, lock=True)
+        for req in reqs:
+            # not installed, install
+            if req.name not in installed:
+                install.append(req)
+                continue
+            # installed the same version, skip
+            version = req.version.strip('=')
+            if version == installed[req.name]:
+                continue
+            # installed old version, remove it and install new
+            self.logger.debug('dependency will be updated', extra=dict(
+                dependency=req.name,
+                old=installed[req.name],
+                new=version,
+            ))
+            remove.append(req)
+            install.append(req)
+
+        # remove packages not in graph
+        if self.sync:
+            names = set(installed) - {req.name for req in reqs}
+            remove.extend(SimpleNamespace(name=name) for name in names)
+
+        return install, remove

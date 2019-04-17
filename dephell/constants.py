@@ -34,10 +34,10 @@ FORMATS = (
 )
 
 FILES = (
+    'setup.py',
+    'pyproject.toml', 'pyproject.lock',
     'requirements.in', 'requirements.txt',
     'Pipfile', 'Pipfile.lock',
-    'pyproject.toml', 'pyproject.lock',
-    'setup.py',
 )
 
 SUFFIXES = ('.txt', '.in', '.lock', '.toml', '.egg-info', '.py', '.json')
