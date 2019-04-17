@@ -6,7 +6,7 @@ from pathlib import Path
 from dephell_discover import Root as PackageRoot
 
 # app
-from ..actions import bump_project, bump_version, get_version_from_project
+from ..actions import bump_project, bump_version, get_version_from_project, git_commit, git_tag
 from ..config import builders
 from ..converters import CONVERTERS
 from ..models import Requirement
@@ -71,16 +71,39 @@ class ProjectBumpCommand(BaseCommand):
         ))
 
         # update version in project files
+        paths = []
         for path in bump_project(project=package, old=old_version, new=new_version):
+            paths.append(path)
             self.logger.info('file bumped', extra=dict(path=str(path)))
 
         # update version in project metadata
         if root is not None and root.version != '0.0.0':
+            paths.append(Path(self.config['from']['path']))
             root.version = new_version
             loader.dump(
                 project=root,
                 path=self.config['from']['path'],
                 reqs=[Requirement(dep=dep, lock=loader.lock) for dep in root.dependencies],
             )
+
+        # set git tag
+        project = Path(self.config['project'])
+        if (project / '.git').exists():
+            self.logger.info('commit and tag')
+            ok = git_commit(
+                message='bump version to {}'.format(str(new_version)),
+                paths=paths,
+                project=project,
+            )
+            if not ok:
+                self.logger.error('cannot commit files')
+                return False
+            ok = git_tag(
+                name='v.' + str(new_version),
+                project=project,
+            )
+            if not ok:
+                self.logger.error('cannot add tag into git repo')
+                return False
 
         return True

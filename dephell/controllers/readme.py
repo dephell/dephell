@@ -18,8 +18,8 @@ import os.path
 
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, '${fname}'), 'r', 'utf-8') as stream:
-    readme = stream.read()
+with open(os.path.join(here, '${fname}'), 'rb') as stream:
+    readme = stream.read().decode('utf8')
 """
 
 REX_README_NAME = re.compile(r'(README\.[a-z]+)')

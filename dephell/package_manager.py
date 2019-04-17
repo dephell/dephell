@@ -4,7 +4,7 @@ import sys
 from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Set
+from typing import Iterable, Set
 
 # external
 import attr
@@ -22,7 +22,7 @@ class PackageManager:
     executable = attr.ib(type=Path)
     secured = attr.ib(type=Set[str], default={'setuptools', 'pip'}, repr=False)
 
-    def install(self, reqs: List[Requirement]) -> int:
+    def install(self, reqs: Iterable[Requirement]) -> int:
         args = ['--no-deps']
         if self.executable.samefile(sys.executable):
             args.append('--user')
@@ -35,7 +35,7 @@ class PackageManager:
             logger.debug(path.read_text())
             return self.run('install', *args, '-r', str(path))
 
-    def remove(self, reqs: List[Requirement]) -> int:
+    def remove(self, reqs: Iterable[Requirement]) -> int:
         names = [req.name for req in reqs if req.name not in self.secured]
         if not names:
             return 0

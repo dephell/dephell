@@ -4,7 +4,6 @@ from argparse import ArgumentParser
 # app
 from ..actions import get_package, make_json
 from ..config import builders
-from ..repositories import WareHouseRepo
 from .base import BaseCommand
 
 
@@ -28,8 +27,7 @@ class PackageReleasesCommand(BaseCommand):
 
     def __call__(self) -> bool:
         dep = get_package(self.args.name)
-        repo = WareHouseRepo()
-        releases = repo.get_releases(dep)
+        releases = dep.repo.get_releases(dep)
 
         data = []
         for release in releases:

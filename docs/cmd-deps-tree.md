@@ -41,7 +41,7 @@ $ dephell deps tree --type=graph aiohttp==3.5.4
 
 It will create next graph in `.dephell_report` directory:
 
-![](../assets/graph_example.png)
+![](../assets/graph-example.png)
 
 ## JSON output
 
@@ -88,6 +88,7 @@ dephell deps tree --type=json --filter="#.name+constraint.each()" aiohttp==3.5.4
 
 ## See also
 
+1. [Command usage example for git repo](use-tree-git).
 1. [How to filter commands JSON output](filters).
 1. [dephell package outdated](cmd-package-list) to show outdated packages in a lockfile or project virtual environment.
 1. [dephell package list](cmd-package-list) to show information about installed packages.

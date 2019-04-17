@@ -2,10 +2,12 @@
 from .autocomplete import AutocompleteCommand
 from .deps_add import DepsAddCommand
 from .deps_audit import DepsAuditCommand
+from .deps_check import DepsCheckCommand
 from .deps_convert import DepsConvertCommand
 from .deps_install import DepsInstallCommand
 from .deps_licenses import DepsLicensesCommand
 from .deps_outdated import DepsOutdatedCommand
+from .deps_sync import DepsSyncCommand
 from .deps_tree import DepsTreeCommand
 from .generate_authors import GenerateAuthorsCommand
 from .generate_config import GenerateConfigCommand
@@ -38,10 +40,12 @@ __all__ = [
     'commands',
     'DepsAddCommand',
     'DepsAuditCommand',
+    'DepsCheckCommand',
     'DepsConvertCommand',
     'DepsInstallCommand',
     'DepsLicensesCommand',
     'DepsOutdatedCommand',
+    'DepsSyncCommand',
     'DepsTreeCommand',
     'GenerateAuthorsCommand',
     'GenerateConfigCommand',
@@ -74,10 +78,12 @@ commands = {
     'autocomplete': AutocompleteCommand,
     'deps add': DepsAddCommand,
     'deps audit': DepsAuditCommand,
+    'deps check': DepsCheckCommand,
     'deps convert': DepsConvertCommand,
     'deps install': DepsInstallCommand,
     'deps licenses': DepsLicensesCommand,
     'deps outdated': DepsOutdatedCommand,
+    'deps sync': DepsSyncCommand,
     'deps tree': DepsTreeCommand,
     # 'deps remove': ...,
     # 'deps sync': ...,
