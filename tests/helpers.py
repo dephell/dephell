@@ -80,7 +80,7 @@ def check(root, resolved=True, missed=None, **deps):
         target='dephell.controllers.dependency.get_repo',
         return_value=resolver.graph._roots[0].repo,
     ):
-        result = resolver.resolve(debug=True)
+        result = resolver.resolve(debug=True, silent=True)
 
     reqs = Requirement.from_graph(resolver.graph, lock=True)
     reqs = {req.name: req for req in reqs}

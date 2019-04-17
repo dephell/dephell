@@ -22,7 +22,8 @@ REPLACEMENTS = (
 
     ('<ul>', '\n'),
     ('<ol>', '\n'),
-    ('<li>', ' * '),
+    ('<li>', ' + '),
+    ('<hr/>', '\n' + '—' * 80 + '\n'),
 )
 REX_BEGINING = re.compile(r'(\n[ \t]+)')
 

@@ -35,6 +35,9 @@ class Resolver:
                 # then ignore these deps
                 continue
             else:
+                # if dep is locked, but not used, let's just unlock it
+                if other_dep.locked and not other_dep.used:
+                    other_dep.unlock()
                 # merge deps
                 try:
                     other_dep += new_dep
