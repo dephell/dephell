@@ -36,6 +36,7 @@ class Mutator:
         checker = (
             self._check_in_conflict,
             self._check_in_subgraph,
+            self._check_not_empty,
             self._check_soft,
         )
         for check in checker:
@@ -58,15 +59,20 @@ class Mutator:
         snapshot = sorted(group.name + '|' + str(group.number) for group in groups)
         return tuple(snapshot)
 
-    def _check_soft(self, groups: Sequence[Group], deps: Sequence[Dependency], conflict: Dependency) -> bool:
+    def _check_soft(self, groups: Sequence[Group], deps: Sequence[Dependency],
+                    conflict: Dependency) -> bool:
+        return self._make_snapshot(groups) not in self._snapshots
+
+    def _check_not_empty(self, groups: Sequence[Group], deps: Sequence[Dependency],
+                         conflict: Dependency) -> bool:
         for group in groups:
             if group.empty:
                 return False
-        return self._make_snapshot(groups) not in self._snapshots
+        return self._check_soft(groups=groups, deps=deps, conflict=conflict)
 
     def _check_in_subgraph(self, groups: Sequence[Group], deps: Sequence[Dependency],
                            conflict: Dependency) -> bool:
-        if not self._check_soft(groups=groups, deps=deps, conflict=conflict):
+        if not self._check_not_empty(groups=groups, deps=deps, conflict=conflict):
             return False
         # any new group has to change state of the subgraph
         state = {dep.name: dict(dep.constraint.specs) for dep in deps if not isinstance(dep, RootDependency)}
@@ -94,7 +100,7 @@ class Mutator:
 
     def _check_in_conflict(self, groups: Sequence[Group], deps: Sequence[Dependency],
                            conflict: Dependency) -> bool:
-        if not self._check_soft(groups=groups, deps=deps, conflict=conflict):
+        if not self._check_not_empty(groups=groups, deps=deps, conflict=conflict):
             return False
         state = {dep.name: dict(dep.constraint.specs) for dep in deps if not isinstance(dep, RootDependency)}
         state[conflict.name] = dict(conflict.constraint.specs)
