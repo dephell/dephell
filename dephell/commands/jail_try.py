@@ -35,6 +35,7 @@ class JailTryCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
+        parser.add_argument('--command', help='command to execute.')
         parser.add_argument('name', nargs=REMAINDER, help='packages to install')
         return parser
 
