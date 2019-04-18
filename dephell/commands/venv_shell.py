@@ -1,4 +1,5 @@
 # built-in
+import os
 from argparse import ArgumentParser
 from pathlib import Path
 
@@ -9,8 +10,9 @@ from dephell_shells import Shells
 from dephell_venvs import VEnvs
 
 # app
-from ..actions import get_python
+from ..actions import get_python, read_dotenv
 from ..config import builders
+from ..context_tools import env_vars
 from .base import BaseCommand
 
 
@@ -34,6 +36,7 @@ class VenvShellCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        # get and create venv
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
@@ -42,6 +45,17 @@ class VenvShellCommand(BaseCommand):
             self.logger.debug('choosen python', extra=dict(version=python.version))
             venv.create(python_path=python.path)
 
+        # get env vars
+        vars = os.environ.copy()
+        if 'vars' in self.config:
+            vars.update(self.config['vars'])
+        vars = read_dotenv(
+            path=Path(self.config['project']),
+            vars=vars,
+        )
+
         shells = Shells(bin_path=venv.bin_path)
-        shells.run()
+        with env_vars(vars):
+            shells.run()
+        self.logger.info('shell closed')
         return True
