@@ -61,6 +61,7 @@
     cmd-jail-install
     cmd-jail-list
     cmd-jail-remove
+    cmd-jail-try
 
 .. toctree::
     :maxdepth: 1
