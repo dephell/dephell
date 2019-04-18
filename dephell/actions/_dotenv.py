@@ -4,17 +4,21 @@ from string import Template
 from typing import Dict
 
 
-def read_dotenv(path: Path) -> Dict[str, str]:
+def read_dotenv(path: Path, vars: Dict[str, str] = None) -> Dict[str, str]:
     if path.is_dir():
         path = path / '.env'
     if not path.exists():
         return dict()
-    vars = dict()
+
+    if vars is None:
+        vars = dict()
+    else:
+        vars = vars.copy()
 
     with path.open('r', encoding='utf-8') as stream:
         for line in stream:
             line = line.strip()
-            if not line or line[0] in ('//', '#'):
+            if not line or line[0] == '#':
                 continue
             key, value = line.split('=', 1)
 
@@ -29,6 +33,7 @@ def read_dotenv(path: Path) -> Dict[str, str]:
             # clean and substitute value
             value = ' '.join(shlex.split(value, comments=True))
             if '$' in value:
+                value = value.replace(r'\$', '$$')  # escaping
                 value = Template(value).safe_substitute(vars)
 
             vars[key] = value
