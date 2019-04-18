@@ -54,6 +54,12 @@ SCHEME = {
     # venv
     'venv':     dict(type='string', required=True),
     'python':   dict(type='string', required=False),
+    'vars': dict(
+        type='dict',
+        keyschema={'type': 'string'},
+        valueschema={'type': 'string'},
+        required=False,
+    ),
 
     # other
     'cache': dict(

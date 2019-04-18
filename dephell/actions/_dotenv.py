@@ -5,15 +5,15 @@ from typing import Dict
 
 
 def read_dotenv(path: Path, vars: Dict[str, str] = None) -> Dict[str, str]:
-    if path.is_dir():
-        path = path / '.env'
-    if not path.exists():
-        return dict()
-
     if vars is None:
         vars = dict()
     else:
         vars = vars.copy()
+
+    if path.is_dir():
+        path = path / '.env'
+    if not path.exists():
+        return vars
 
     with path.open('r', encoding='utf-8') as stream:
         for line in stream:

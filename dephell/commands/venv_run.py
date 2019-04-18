@@ -1,6 +1,7 @@
 # built-in
 import shlex
 import subprocess
+import os
 from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 
@@ -8,8 +9,9 @@ from pathlib import Path
 from dephell_venvs import VEnvs
 
 # app
-from ..actions import get_python, get_resolver
+from ..actions import get_python, get_resolver, read_dotenv
 from ..config import builders
+from ..context_tools import env_vars
 from ..controllers import analize_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager
@@ -36,6 +38,7 @@ class VenvRunCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        # get command
         command = self.args.name
         if not command:
             command = self.config.get('command')
@@ -45,6 +48,7 @@ class VenvRunCommand(BaseCommand):
         if isinstance(command, str):
             command = shlex.split(command)
 
+        # get and make venv
         venvs = VEnvs(path=self.config['venv'])
         venv = venvs.get(Path(self.config['project']), env=self.config.env)
         if not venv.exists():
@@ -58,6 +62,7 @@ class VenvRunCommand(BaseCommand):
             venv.create(python_path=python.path)
             self.logger.info('venv created', extra=dict(path=venv.path))
 
+        # install executable
         executable = venv.bin_path / command[0]
         if not executable.exists():
             self.logger.warning('executable is not found in venv, trying to install...', extra=dict(
@@ -66,13 +71,23 @@ class VenvRunCommand(BaseCommand):
             result = self._install(name=command[0], python_path=venv.python_path)
             if not result:
                 return False
-
         if not executable.exists():
             self.logger.error('package installed, but executable is not found')
             return False
 
+        # get env vars
+        vars = os.environ.copy()
+        if 'vars' in self.config:
+            vars.update(self.config['vars'])
+        vars = read_dotenv(
+            path=Path(self.config['project']),
+            vars=vars,
+        )
+
+        # run
         self.logger.info('running...')
-        result = subprocess.run([str(executable)] + command[1:])
+        with env_vars(vars):
+            result = subprocess.run([str(executable)] + command[1:])
         if result.returncode != 0:
             self.logger.error('command failed', extra=dict(code=result.returncode))
             return False
