@@ -28,13 +28,14 @@ def nullcontext(value=None):
 
 
 @contextmanager
-def env_vars(vars: Dict[str, str]):
+def override_env_vars(env_vars: Dict[str, str]):
     old_vars = os.environ.copy()
-    os.environ.update(vars)
+    os.environ.update(env_vars)
     try:
         yield
     finally:
-        os.environ = old_vars
+        os.environ.clear()
+        os.environ.update(old_vars)
 
 
 @contextmanager

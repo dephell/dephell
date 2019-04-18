@@ -12,7 +12,7 @@ from dephell_venvs import VEnvs
 # app
 from ..actions import get_python, read_dotenv
 from ..config import builders
-from ..context_tools import env_vars
+from ..context_tools import override_env_vars
 from .base import BaseCommand
 
 
@@ -46,16 +46,16 @@ class VenvShellCommand(BaseCommand):
             venv.create(python_path=python.path)
 
         # get env vars
-        vars = os.environ.copy()
+        env_vars = os.environ.copy()
         if 'vars' in self.config:
-            vars.update(self.config['vars'])
-        vars = read_dotenv(
+            env_vars.update(self.config['vars'])
+        env_vars = read_dotenv(
             path=Path(self.config['project']),
-            vars=vars,
+            env_vars=env_vars,
         )
 
         shells = Shells(bin_path=venv.bin_path)
-        with env_vars(vars):
+        with override_env_vars(env_vars):
             shells.run()
         self.logger.info('shell closed')
         return True

@@ -5,16 +5,16 @@ from string import Template
 from typing import Dict
 
 
-def read_dotenv(path: Path, vars: Dict[str, str] = None) -> Dict[str, str]:
-    if vars is None:
-        vars = dict()
+def read_dotenv(path: Path, env_vars: Dict[str, str] = None) -> Dict[str, str]:
+    if env_vars is None:
+        env_vars = dict()
     else:
-        vars = vars.copy()
+        env_vars = env_vars.copy()
 
     if path.is_dir():
         path = path / '.env'
     if not path.exists():
-        return vars
+        return env_vars
 
     with path.open('r', encoding='utf-8') as stream:
         for line in stream:
@@ -36,8 +36,8 @@ def read_dotenv(path: Path, vars: Dict[str, str] = None) -> Dict[str, str]:
             value = decode(value, 'unicode-escape')
             if '$' in value:
                 value = value.replace(r'\$', '$$')  # escaping
-                value = Template(value).safe_substitute(vars)
+                value = Template(value).safe_substitute(env_vars)
 
-            vars[key] = value
+            env_vars[key] = value
 
-    return vars
+    return env_vars

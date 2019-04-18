@@ -11,7 +11,7 @@ from dephell_venvs import VEnvs
 # app
 from ..actions import get_python, get_resolver, read_dotenv
 from ..config import builders
-from ..context_tools import env_vars
+from ..context_tools import override_env_vars
 from ..controllers import analize_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager
@@ -76,17 +76,17 @@ class VenvRunCommand(BaseCommand):
             return False
 
         # get env vars
-        vars = os.environ.copy()
+        env_vars = os.environ.copy()
         if 'vars' in self.config:
-            vars.update(self.config['vars'])
-        vars = read_dotenv(
+            env_vars.update(self.config['vars'])
+        env_vars = read_dotenv(
             path=Path(self.config['project']),
-            vars=vars,
+            env_vars=env_vars,
         )
 
         # run
         self.logger.info('running...')
-        with env_vars(vars):
+        with override_env_vars(env_vars):
             result = subprocess.run([str(executable)] + command[1:])
         if result.returncode != 0:
             self.logger.error('command failed', extra=dict(code=result.returncode))

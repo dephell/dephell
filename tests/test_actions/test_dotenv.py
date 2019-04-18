@@ -21,7 +21,7 @@ from dephell.actions import read_dotenv
     (["FOO='bar'"], {'FOO': 'bar'}),
 
     # key formats
-    (["FOO.BAR=foobar"], {'FOO.BAR': 'foobar'}),
+    (['FOO.BAR=foobar'], {'FOO.BAR': 'foobar'}),
 
     # empty
     (['FOO='], {'FOO': ''}),
