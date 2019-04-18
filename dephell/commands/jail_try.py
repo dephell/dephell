@@ -132,12 +132,12 @@ class JailTryCommand(BaseCommand):
             if name == '__pycache__':
                 continue
             if name.endswith('.py'):
-                names.add(name)
+                names.add(name.split('.')[0])
             elif path.is_dir() and '.' not in name:
                 names.add(name)
 
         if packages:
-            packages = set(packages)
+            packages = {package.lower().replace('-', '_') for package in packages}
             if len(names & packages) == len(packages):
                 return packages
 

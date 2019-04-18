@@ -18,4 +18,6 @@ def get_package(req: str) -> Dependency:
 
 
 def get_resolver(reqs: Iterable[str] = None) -> Resolver:
-    return PIPConverter(lock=False).loads_resolver('\n'.join(reqs))
+    root = PIPConverter(lock=False).loads_resolver('\n'.join(reqs))
+    root.name = 'root'
+    return root
