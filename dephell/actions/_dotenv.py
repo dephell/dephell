@@ -1,4 +1,5 @@
 import shlex
+from codecs import decode
 from pathlib import Path
 from string import Template
 from typing import Dict
@@ -32,6 +33,7 @@ def read_dotenv(path: Path, vars: Dict[str, str] = None) -> Dict[str, str]:
 
             # clean and substitute value
             value = ' '.join(shlex.split(value, comments=True))
+            value = decode(value, 'unicode-escape')
             if '$' in value:
                 value = value.replace(r'\$', '$$')  # escaping
                 value = Template(value).safe_substitute(vars)

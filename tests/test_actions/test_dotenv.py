@@ -36,6 +36,10 @@ from dephell.actions import read_dotenv
     (['FOO=test', r'BAR="foo\$FOO"'], {'FOO': 'test', 'BAR': 'foo$FOO'}),
     (['FOO=test', r'BAR="foo\${FOO}"'], {'FOO': 'test', 'BAR': 'foo${FOO}'}),
 
+    # escape sequences
+    ([r'take="me\nout"'], {'take': 'me\nout'}),
+    ([r'take="me\out"'], {'take': r'me\out'}),
+
     # comments
     (['take=me # out'], {'take': 'me'}),
     (['take="me # to" # church'], {'take': 'me # to'}),
