@@ -31,7 +31,7 @@ class JailInstallCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', nargs=REMAINDER, help='package to install')
+        parser.add_argument('name', nargs=REMAINDER, help='packages to install')
         return parser
 
     def __call__(self) -> bool:

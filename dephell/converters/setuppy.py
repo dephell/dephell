@@ -2,7 +2,6 @@
 from collections import defaultdict
 from distutils.core import run_setup
 from io import StringIO
-from itertools import chain
 from logging import getLogger
 from pathlib import Path
 from typing import Optional
@@ -114,12 +113,8 @@ class SetupPyConverter(BaseConverter):
         root.entrypoints = tuple(entrypoints)
 
         # dependencies
-        reqs = chain(
-            cls._get_list(info, 'requires'),
-            cls._get_list(info, 'install_requires'),
-        )
         deps = []
-        for req in reqs:
+        for req in cls._get_list(info, 'install_requires'):
             req = Requirement(req)
             deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)

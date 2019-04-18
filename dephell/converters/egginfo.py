@@ -132,11 +132,7 @@ class _Reader:
 
         # dependencies
         deps = []
-        reqs = chain(
-            cls._get_list(info, 'Requires'),
-            cls._get_list(info, 'Requires-Dist'),
-        )
-        for req in reqs:
+        for req in cls._get_list(info, 'Requires-Dist'):
             req = PackagingRequirement(req)
             deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)

@@ -60,7 +60,7 @@ class VenvRunCommand(BaseCommand):
 
         executable = venv.bin_path / command[0]
         if not executable.exists():
-            self.logger.warning('executable does not found in venv, trying to install...', extra=dict(
+            self.logger.warning('executable is not found in venv, trying to install...', extra=dict(
                 executable=command[0],
             ))
             result = self._install(name=command[0], python_path=venv.python_path)
@@ -68,7 +68,7 @@ class VenvRunCommand(BaseCommand):
                 return False
 
         if not executable.exists():
-            self.logge.error('package installed, but executable is not found')
+            self.logger.error('package installed, but executable is not found')
             return False
 
         self.logger.info('running...')

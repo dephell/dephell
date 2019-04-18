@@ -27,13 +27,8 @@ class DepsTreeCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument(
-            '--type',
-            nargs='?',
-            choices=('pretty', 'json', 'graph'),
-            default='pretty',
-            help='format for tree output.',
-        )
+        parser.add_argument('--type', choices=('pretty', 'json', 'graph'), default='pretty',
+                            help='format for tree output.')
         parser.add_argument('name', nargs=REMAINDER, help='package to get dependencies from')
         return parser
 

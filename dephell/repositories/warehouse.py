@@ -143,7 +143,11 @@ class WareHouseRepo(Interface):
                     msg = 'cannot parse requirement: "{}" from {} {}'
                     logger.warning(msg.format(dep, name, version))
 
-            dep_extra = req.marker and Markers(req.marker).extra
+            try:
+                dep_extra = req.marker and Markers(req.marker).extra
+            except ValueError:  # unsupported operation for version marker python_version: in
+                dep_extra = None
+
             # it's not extra and we want not extra too
             if dep_extra is None and extra is None:
                 result.append(req)
@@ -269,12 +273,13 @@ class WareHouseRepo(Interface):
         if not files_info:
             return ()
 
-        # Dirty hack to make DepHell much faster.
-        # If releases contains wheel then PyPI can parse requirements from it,
-        # but hasn't found iany requirements. So, release has no requirements.
-        for file_info in files_info:
-            if file_info['packagetype'] == 'bdist_wheel':
-                return ()
+        # # Dirty hack to make DepHell much faster.
+        # # If releases contains wheel then PyPI can parse requirements from it,
+        # # but hasn't found iany requirements. So, release has no requirements.
+        # # UPD: it doesn't work for prompt_toolkit
+        # for file_info in files_info:
+        #     if file_info['packagetype'] == 'bdist_wheel':
+        #         return ()
 
         from ..converters import SDistConverter, WheelConverter
 
