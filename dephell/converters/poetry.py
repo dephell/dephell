@@ -50,7 +50,7 @@ class PoetryConverter(BaseConverter):
                     value = tuple(value)
                 setattr(root, field, value)
         if 'authors' in section:
-            root.authors = tuple(Author.parse(author) for author in section['authors'])
+            root.authors = tuple(Author.parse(str(author)) for author in section['authors'])
         if 'readme' in section:
             path = Path(section['readme'])
             if path.exists():
