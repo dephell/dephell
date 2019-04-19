@@ -165,6 +165,8 @@ class PoetryConverter(BaseConverter):
             for req in reqs:
                 if is_dev is req.is_dev:
                     section[section_name][req.name] = self._format_req(req=req)
+            if not section[section_name].value:
+                del section[section_name]
 
         # extras
         extras = defaultdict(list)
