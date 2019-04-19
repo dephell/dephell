@@ -2,6 +2,7 @@
 import os
 import sys
 from contextlib import contextmanager
+from typing import Dict
 
 
 @contextmanager
@@ -27,16 +28,14 @@ def nullcontext(value=None):
 
 
 @contextmanager
-def env_var(key, value):
-    old_value = os.environ.get(key)
-    os.environ[key] = value
+def override_env_vars(env_vars: Dict[str, str]):
+    old_vars = os.environ.copy()
+    os.environ.update(env_vars)
     try:
         yield
     finally:
-        if old_value is None:
-            del os.environ[key]
-        else:
-            os.environ[key] = old_value
+        os.environ.clear()
+        os.environ.update(old_vars)
 
 
 @contextmanager

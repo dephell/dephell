@@ -4,6 +4,7 @@
 # app
 from ._autocomplete import make_bash_autocomplete, make_zsh_autocomplete
 from ._converting import attach_deps
+from ._dotenv import read_dotenv
 from ._downloads import get_downloads_by_category, get_total_downloads
 from ._editorconfig import make_editorconfig
 from ._entrypoints import get_entrypoints
@@ -36,11 +37,12 @@ __all__ = [
     'get_venv',
     'get_version_from_file',
     'get_version_from_project',
-    'git_tag',
     'git_commit',
+    'git_tag',
     'make_bash_autocomplete',
     'make_editorconfig',
     'make_json',
     'make_zsh_autocomplete',
+    'read_dotenv',
     'roman2arabic',
 ]

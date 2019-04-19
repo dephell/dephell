@@ -11,7 +11,7 @@ from typing import Set
 from dephell_venvs import VEnv
 
 # app
-from ..context_tools import env_var
+from ..context_tools import override_env_vars
 from ..actions import get_python, get_resolver
 from ..config import builders
 from ..controllers import analize_conflict
@@ -95,7 +95,7 @@ class JailTryCommand(BaseCommand):
 
             # run
             self.logger.info('running...')
-            with env_var(key='PYTHONSTARTUP', value=str(startup_path)):
+            with override_env_vars({'PYTHONSTARTUP': str(startup_path)}):
                 result = subprocess.run([str(executable)] + command[1:])
             if result.returncode != 0:
                 self.logger.error('command failed', extra=dict(code=result.returncode))

@@ -16,3 +16,9 @@ Supported shells:
 ```bash
 $ dephell venv shell --env=docs
 ```
+
+This command build environment variables in the same way as [dephell venv run](cmd-venv-run).
+
+## See also
+
+1. [dephell venv run](cmd-venv-run) to run single command in a virtual environment.
