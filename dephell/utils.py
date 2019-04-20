@@ -1,7 +1,10 @@
 # built-in
-import os
-import platform
 from itertools import product
+
+from dephell_specifier import RangeSpecifier
+from packaging.version import Version
+
+from .constants import PYTHONS
 
 
 def lazy_product(*all_groups):
@@ -43,3 +46,30 @@ class cached_property(object):  # noqa: N801
             return self
         value = obj.__dict__[self.func.__name__] = self.func(obj)
         return value
+
+
+def peppify_python(spec: RangeSpecifier) -> RangeSpecifier:
+    if '||' not in str(spec):
+        return spec
+    pythons = sorted(Version(python) for python in PYTHONS)
+
+    left = None
+    for python in pythons:
+        if python in spec:
+            left = python
+            break
+
+    right = None
+    for python in pythons:
+        if python in spec:
+            right = python
+    if right is not None:
+        right = (pythons + [None])[pythons.index(right) + 1]
+
+    if left is None and right is None:
+        return RangeSpecifier()
+    if left is None:
+        return RangeSpecifier('<' + str(right))
+    if right is None:
+        return RangeSpecifier('>=' + str(left))
+    return RangeSpecifier('>={},<{}'.format(left, right))
