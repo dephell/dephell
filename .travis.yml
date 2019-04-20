@@ -33,6 +33,8 @@ matrix:
       before_install:
         - /usr/local/bin/python3 install.py
         - dephell inspect self
+        - python3 -m pip install dephell_pythons
+        - python3 -m dephell_pythons
       install:
         - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback
         - dephell deps install --env=$ENV --level=DEBUG --traceback
