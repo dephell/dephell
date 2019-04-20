@@ -28,16 +28,13 @@ matrix:
       env: ENV=pytest
 
     - os: osx
-      python: "3.5"
-      env: ENV=pytest
-    - os: osx
-      python: "3.6"
-      env: ENV=pytest
-    - os: osx
-      python: "3.7-dev"
-      env: ENV=pytest
-    - os: osx
-      python: "pypy3.5"
+      language: generic
+      before_install:
+        - git clone https://github.com/MacPython/terryfy.git
+        - source ./terryfy/travis_tools.sh
+        - get_python_environment homebrew 3.6
+        - python install.py
+        - dephell inspect self
       env: ENV=pytest
 
     - python: "3.6"
