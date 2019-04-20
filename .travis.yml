@@ -27,5 +27,18 @@ matrix:
     - python: "pypy3.5"
       env: ENV=pytest
 
+    - os: osx
+      python: "3.5"
+      env: ENV=pytest
+    - os: osx
+      python: "3.6"
+      env: ENV=pytest
+    - os: osx
+      python: "3.7-dev"
+      env: ENV=pytest
+    - os: osx
+      python: "pypy3.5"
+      env: ENV=pytest
+
     - python: "3.6"
       env: ENV=flake8
