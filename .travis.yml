@@ -35,6 +35,9 @@ matrix:
       before_install:
         - /usr/local/bin/python3 install.py
         - dephell inspect self
+      install:
+        - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback
+        - dephell deps install --env=$ENV --level=DEBUG --traceback
 
     - python: "3.6"
       env: ENV=flake8
