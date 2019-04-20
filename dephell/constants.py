@@ -1,4 +1,6 @@
 # built-in
+import os
+import platform
 from collections import OrderedDict
 from datetime import date
 from enum import Enum, unique
@@ -18,6 +20,8 @@ class JoinTypes(Enum):
     AND = 1
     OR = 2
 
+
+IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')
 
 FORMATS = (
     'egginfo',
