@@ -50,7 +50,7 @@ class PoetryConverter(BaseConverter):
                     value = tuple(value)
                 setattr(root, field, value)
         if 'authors' in section:
-            root.authors = tuple(Author.parse(author) for author in section['authors'])
+            root.authors = tuple(Author.parse(str(author)) for author in section['authors'])
         if 'readme' in section:
             path = Path(section['readme'])
             if path.exists():
@@ -165,6 +165,8 @@ class PoetryConverter(BaseConverter):
             for req in reqs:
                 if is_dev is req.is_dev:
                     section[section_name][req.name] = self._format_req(req=req)
+            if not section[section_name].value:
+                del section[section_name]
 
         # extras
         extras = defaultdict(list)
