@@ -27,8 +27,6 @@ matrix:
     - python: "pypy3.5"
       env: ENV=pytest
 
-    # 2.7.15: /usr/local/bin/python
-    # 3.6.5:  /usr/local/bin/python3
     - os: osx
       language: generic
       env: ENV=pytest
