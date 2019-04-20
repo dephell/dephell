@@ -21,7 +21,7 @@ class Dep:
     raw_name = 'DepHell'
 
 
-@pytest.mark.skipif('TRAVIS_PYTHON_VERSION' in environ, reason='Travis CI has broken git repo')
+@pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
 def test_releases():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
     repo = GitRepo(link)
@@ -35,7 +35,7 @@ def test_releases():
     assert str(releases[1].version) == '0.1.5'
 
 
-@pytest.mark.skipif('TRAVIS_PYTHON_VERSION' in environ, reason='Travis CI has broken git repo')
+@pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
 def test_deps():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
     repo = GitRepo(link)
@@ -46,7 +46,7 @@ def test_deps():
     assert set(dep.name for dep in deps) == {'attrs', 'cached-property', 'packaging', 'requests'}
 
 
-@pytest.mark.skipif('TRAVIS_PYTHON_VERSION' in environ, reason='Travis CI has broken git repo')
+@pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
 def test_metaversion():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
     repo = GitRepo(link)
