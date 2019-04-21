@@ -118,7 +118,7 @@ dephell-links = "*"
 dephell-markers = "*"
 dephell-pythons = "*"
 dephell-shells = "*"
-dephell-specifier = "*"
+dephell-specifier = ">=0.1.4"
 dephell-venvs = "*"
 
 [tool.poetry.dev-dependencies]
