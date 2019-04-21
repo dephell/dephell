@@ -106,4 +106,6 @@ class ProjectBumpCommand(BaseCommand):
                 self.logger.error('cannot add tag into git repo')
                 return False
 
+            self.logger.info('tag created, do not forget to push it: git push --tags')
+
         return True

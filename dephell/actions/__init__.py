@@ -14,6 +14,7 @@ from ._package import get_package, get_packages, get_resolver
 from ._python import get_python, get_python_env
 from ._roman import arabic2roman, roman2arabic
 from ._shutil import get_path_size, format_size
+from ._travis import make_travis
 from ._venv import get_venv
 from ._version import bump_file, bump_project, bump_version, get_version_from_file, get_version_from_project
 
@@ -42,6 +43,7 @@ __all__ = [
     'make_bash_autocomplete',
     'make_editorconfig',
     'make_json',
+    'make_travis',
     'make_zsh_autocomplete',
     'read_dotenv',
     'roman2arabic',
