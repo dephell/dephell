@@ -85,16 +85,16 @@ def make_json(data, key: str = None, sep: Optional[str] = '-') -> str:
     json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
     # print all config
     if not key:
-        return json.dumps(data, **json_params)
+        return json.dumps(data, **json_params)  # type: ignore
 
     if sep is None:
-        return json.dumps(data[key], **json_params)
+        return json.dumps(data[key], **json_params)  # type: ignore
 
     keys = key.replace('.', sep).split(sep)
     value = reduce(getitem, keys, data)
     # print config section
     if isinstance(value, (dict, list)):
-        return json.dumps(value, **json_params)
+        return json.dumps(value, **json_params)  # type: ignore
 
     # print one value
     return str(value)
