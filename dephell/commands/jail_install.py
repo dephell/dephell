@@ -9,10 +9,10 @@ from dephell_venvs import VEnvs
 # app
 from ..actions import get_entrypoints, get_python, get_resolver
 from ..config import builders
+from ..constants import IS_WINDOWS
 from ..controllers import analize_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager
-from ..utils import is_windows
 from .base import BaseCommand
 
 
@@ -95,7 +95,7 @@ class JailInstallCommand(BaseCommand):
     def _publish_script(src: Path, dst: Path):
         if dst.exists() or dst.is_symlink():
             dst.unlink()
-        if is_windows():
+        if IS_WINDOWS:
             shutil.copy(str(src), str(dst))
         else:
             # Python 3.5 cannot resove non-existing paths.

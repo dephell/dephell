@@ -250,7 +250,7 @@ class _Writer:
         if project.license:
             content.append(('License', project.license))
         if project.python:
-            content.append(('Requires-Python', str(project.python)))
+            content.append(('Requires-Python', str(project.python.peppify())))
         if project.keywords:
             content.append(('Keywords', ','.join(project.keywords)))
         for classifier in project.classifiers:

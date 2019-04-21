@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 from typing import Union, Iterable
 
+from dephell_discover import Root as PackageRoot
 from packaging.utils import canonicalize_name
 
 # app
@@ -39,6 +40,31 @@ class InstalledConverter(BaseConverter):
         for path in paths:
             if isinstance(path, str):
                 path = Path(path)
+
+            if path.suffix == '.egg':
+                name = path.with_suffix('').name.split('-')[0]
+                if names is not None and name not in names:
+                    continue
+
+                # read *.egg dir
+                egg_path = path / 'EGG-INFO'
+                if not egg_path.exists():
+                    continue
+                subroot = EggInfoConverter().load_dir(egg_path)
+                subroot.package = PackageRoot(path=path, name=root.name)
+                if not subroot.package.packages:  # we cannot read single *.py file yet
+                    continue
+                deps = DependencyMaker.from_root(dep=subroot, root=root)
+                for dep in deps:
+                    if dep.name in self._blacklist:
+                        continue
+                    if dep.name in all_deps:
+                        all_deps[dep.name] |= dep
+                    else:
+                        all_deps[dep.name] = dep
+                continue
+
+            # read site-packages / dist-packages
             for converter, pattern in parsers:
                 for info_path in path.glob(pattern):
                     name = info_path.with_suffix('').name.split('-')[0]
