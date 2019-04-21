@@ -29,7 +29,7 @@ class JailRemoveCommand(BaseCommand):
         builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('name', help='jails names to uninstall')
+        parser.add_argument('name', nargs='+', help='jails names to uninstall')
         return parser
 
     def __call__(self) -> bool:
