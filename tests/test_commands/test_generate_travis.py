@@ -12,7 +12,7 @@ def test_make_travis_pytest(temp_path):
         [tool.dephell.some_env]
         from = {format = "setuppy", path = "setup.py"}
         command = "pytest -x"
-        """
+        """,
     ))
 
     config = Config()

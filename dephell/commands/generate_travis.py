@@ -39,7 +39,7 @@ class GenerateTravisCommand(BaseCommand):
                 self.logger.error('cannot generate .travis.yml without config')
                 return False
 
-        with open(path, 'r', encoding='utf8') as stream:
+        with path.open('r', encoding='utf8') as stream:
             config = tomlkit.parse(stream.read())
         config = dict(config['tool']['dephell'])
         content = make_travis(config=config)
