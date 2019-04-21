@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_package, get_python_env, make_json, get_path_size, format_size
+from ..actions import format_size, get_package, get_path_size, get_python_env, make_json
 from ..config import builders
 from ..converters import InstalledConverter
 from .base import BaseCommand

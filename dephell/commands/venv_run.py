@@ -1,11 +1,11 @@
 # built-in
+import os
 import shlex
 import subprocess
-import os
 from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 
-# project
+# external
 from dephell_venvs import VEnvs
 
 # app

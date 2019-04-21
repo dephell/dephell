@@ -1,10 +1,12 @@
 # built-in
 from pathlib import Path
 
+# external
+from dephell_venvs import VEnv
+
 # project
 from dephell.commands import JailInstallCommand
 from dephell.config import Config
-from dephell_venvs import VEnv
 
 
 def test_jail_install_command(temp_path: Path):

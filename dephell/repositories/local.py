@@ -1,12 +1,14 @@
+# built-in
 from datetime import datetime
 from pathlib import Path
-from typing import Union, Optional, Tuple
+from typing import Optional, Tuple, Union
 
-from .base import Interface
-from ..constants import FILES
-from ..config import Config
-from ..models.release import Release
+# app
 from ..cache import RequirementsCache
+from ..config import Config
+from ..constants import FILES
+from ..models.release import Release
+from .base import Interface
 
 
 class LocalRepo(Interface):

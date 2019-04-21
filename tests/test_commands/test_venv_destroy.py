@@ -2,10 +2,12 @@
 import sys
 from pathlib import Path
 
+# external
+from dephell_venvs import VEnv
+
 # project
 from dephell.commands import VenvDestroyCommand
 from dephell.config import Config
-from dephell_venvs import VEnv
 
 
 def test_venv_destroy_command(temp_path: Path):

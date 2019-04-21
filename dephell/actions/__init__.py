@@ -8,12 +8,12 @@ from ._dotenv import read_dotenv
 from ._downloads import get_downloads_by_category, get_total_downloads
 from ._editorconfig import make_editorconfig
 from ._entrypoints import get_entrypoints
-from ._git import git_tag, git_commit
+from ._git import git_commit, git_tag
 from ._json import make_json
 from ._package import get_package, get_packages, get_resolver
 from ._python import get_python, get_python_env
 from ._roman import arabic2roman, roman2arabic
-from ._shutil import get_path_size, format_size
+from ._shutil import format_size, get_path_size
 from ._travis import make_travis
 from ._venv import get_venv
 from ._version import bump_file, bump_project, bump_version, get_version_from_file, get_version_from_project

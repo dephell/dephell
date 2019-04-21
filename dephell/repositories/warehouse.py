@@ -12,11 +12,9 @@ from xmlrpc.client import ServerProxy
 import attr
 import requests
 from aiohttp import ClientSession
+from dephell_licenses import License, licenses
 from dephell_markers import Markers
 from packaging.requirements import InvalidRequirement, Requirement
-
-# project
-from dephell_licenses import License, licenses
 
 # app
 from ..cache import JSONCache, TextCache

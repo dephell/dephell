@@ -5,7 +5,7 @@ from pathlib import Path
 
 # app
 from ..__version__ import __version__
-from ..actions import make_json, get_path_size, format_size
+from ..actions import format_size, get_path_size, make_json
 from ..config import builders
 from ..constants import DEPHELL_ECOSYSTEM
 from ..converters import InstalledConverter

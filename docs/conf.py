@@ -5,7 +5,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-# project
+# external
 import sphinx_rtd_theme
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify

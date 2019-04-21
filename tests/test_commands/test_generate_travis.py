@@ -1,5 +1,7 @@
+# built-in
 from textwrap import dedent
 
+# project
 from dephell.commands import GenerateTravisCommand
 from dephell.config import Config
 

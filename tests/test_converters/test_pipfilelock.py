@@ -1,11 +1,13 @@
 # built-in
 import json
 
+# external
+from dephell_links import VCSLink
+
 # project
 from dephell.converters import PIPFileLockConverter
 from dephell.models import Requirement
 from dephell.repositories import GitRepo
-from dephell_links import VCSLink
 
 
 def test_load():

@@ -4,10 +4,8 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # external
-from packaging.utils import canonicalize_name
-
-# project
 from dephell_venvs import VEnvs
+from packaging.utils import canonicalize_name
 
 # app
 from ..config import builders

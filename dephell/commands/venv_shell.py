@@ -5,8 +5,6 @@ from pathlib import Path
 
 # external
 from dephell_shells import Shells
-
-# project
 from dephell_venvs import VEnvs
 
 # app

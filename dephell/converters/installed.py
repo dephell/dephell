@@ -1,8 +1,9 @@
 # built-in
 import sys
 from pathlib import Path
-from typing import Union, Iterable
+from typing import Iterable, Union
 
+# external
 from dephell_discover import Root as PackageRoot
 from packaging.utils import canonicalize_name
 

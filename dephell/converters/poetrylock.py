@@ -5,10 +5,8 @@ from typing import List, Optional
 
 # external
 import tomlkit
-from dephell_specifier import RangeSpecifier
-
-# project
 from dephell_links import DirLink
+from dephell_specifier import RangeSpecifier
 
 # app
 from ..controllers import DependencyMaker
