@@ -33,7 +33,7 @@ class GenerateTravisCommand(BaseCommand):
         if self.args.config:
             path = Path(self.args.config)
         else:
-            path = Path('pyproject.toml')
+            path = Path(self.config['project']) / 'pyproject.toml'
             if not path.exists():
                 self.logger.error('cannot generate .travis.yml without config')
                 return False
