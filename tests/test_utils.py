@@ -1,9 +1,5 @@
-import pytest
-
-from dephell_specifier import RangeSpecifier
-
 # project
-from dephell.utils import lazy_product, peppify_python
+from dephell.utils import lazy_product
 
 
 def test_lazy_product_order():
