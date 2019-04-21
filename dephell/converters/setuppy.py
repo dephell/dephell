@@ -142,7 +142,7 @@ class SetupPyConverter(BaseConverter):
         if project.description:
             content.append(('description', project.description))
         if project.python:
-            content.append(('python_requires', str(project.python)))
+            content.append(('python_requires', str(project.python.peppify())))
 
         # links
         fields = (
