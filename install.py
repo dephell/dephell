@@ -1,7 +1,7 @@
 # built-in
 import subprocess
-from pathlib import Path
 from os import environ, pathsep
+from pathlib import Path
 from venv import create
 
 

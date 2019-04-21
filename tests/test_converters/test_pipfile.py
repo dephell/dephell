@@ -1,12 +1,14 @@
 # built-in
 from pathlib import Path
 
+# external
+from dephell_links import VCSLink
+
 # project
 from dephell.controllers import DependencyMaker
 from dephell.converters import PIPFileConverter
 from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
-from dephell_links import VCSLink
 
 
 def test_load():

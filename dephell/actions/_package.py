@@ -1,5 +1,5 @@
 # built-in
-from typing import List, Iterable
+from typing import Iterable, List
 
 # app
 from ..controllers import Resolver

@@ -1,12 +1,12 @@
 # built-in
+import shlex
 import shutil
 import subprocess
-import shlex
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-# project
+# external
 from dephell_pythons import Pythons
 from dephell_venvs import VEnv
 

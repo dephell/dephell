@@ -3,7 +3,7 @@ import shutil
 from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 
-# project
+# external
 from dephell_venvs import VEnvs
 
 # app

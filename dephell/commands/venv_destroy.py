@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-# project
+# external
 from dephell_venvs import VEnvs
 
 # app

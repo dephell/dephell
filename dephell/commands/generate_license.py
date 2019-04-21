@@ -4,7 +4,7 @@ from datetime import datetime
 from getpass import getuser
 from pathlib import Path
 
-# project
+# external
 from dephell_licenses import licenses
 
 # app

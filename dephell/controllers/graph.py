@@ -4,6 +4,7 @@ from logging import getLogger
 from typing import Optional
 
 # app
+from ..models.dependency import Dependency
 from ..models.root import RootDependency
 
 
@@ -63,6 +64,8 @@ class Layer:
 
 
 class Graph:
+    conflict = None  # type: Optional[Dependency]
+
     def __init__(self, *roots):
         for root in roots:
             if not root.dependencies:

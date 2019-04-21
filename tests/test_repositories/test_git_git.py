@@ -1,13 +1,14 @@
 # built-in
 import asyncio
-from pathlib import Path
 from os import environ
+from pathlib import Path
 
+# external
 import pytest
+from dephell_links import VCSLink
 
 # project
 from dephell.repositories.git.git import GitRepo
-from dephell_links import VCSLink
 
 
 loop = asyncio.get_event_loop()

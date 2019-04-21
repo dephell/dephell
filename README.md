@@ -12,7 +12,7 @@
 + Manage packages: [install](https://dephell.readthedocs.io/en/latest/cmd-package-install.html), [list](https://dephell.readthedocs.io/en/latest/cmd-package-list.html), [search](https://dephell.readthedocs.io/en/latest/cmd-package-search.html) on PyPI.
 + [Build](https://dephell.readthedocs.io/en/latest/cmd-project-build.html) packages (to upload on PyPI), [test](https://dephell.readthedocs.io/en/latest/cmd-project-test.html), [bump project version](https://dephell.readthedocs.io/en/latest/cmd-project-bump.html).
 + [Discover licenses](https://dephell.readthedocs.io/en/latest/cmd-deps-licenses.html) of all project dependencies, show [outdated](https://dephell.readthedocs.io/en/latest/cmd-deps-outdated.html) packages, [find security issues](https://dephell.readthedocs.io/en/latest/cmd-deps-audit.html).
-+ Generate [.editorconfig](https://dephell.readthedocs.io/en/latest/cmd-generate-editorconfig.html), [LICENSE](https://dephell.readthedocs.io/en/latest/cmd-generate-license.html), [AUTHORS](https://dephell.readthedocs.io/en/latest/cmd-generate-authors.html).
++ Generate [.editorconfig](https://dephell.readthedocs.io/en/latest/cmd-generate-editorconfig.html), [LICENSE](https://dephell.readthedocs.io/en/latest/cmd-generate-license.html), [AUTHORS](https://dephell.readthedocs.io/en/latest/cmd-generate-authors.html), [.travis.yml](https://dephell.readthedocs.io/en/latest/cmd-generate-travis.html).
 
 See [documentation](https://dephell.readthedocs.io/) for more details.
 
@@ -25,6 +25,26 @@ python3 -m pip install --user dephell[full]
 ```
 
 See [installation documentation](https://dephell.readthedocs.io/en/latest/installation.html) for better ways.
+
+## Supported formats
+
+1. Archives:
+    1. [*.egg-info](https://setuptools.readthedocs.io/en/latest/formats.html) (`egginfo`)
+    1. [*.tar.gz](https://packaging.python.org/glossary/#term-distribution-package) (`sdist`)
+    1. [*.whl](https://pythonwheels.com) (`wheel`)
+1. [pip](https://pip.pypa.io/en/stable/):
+    1. [requirements.txt](https://pip.pypa.io/en/stable/user_guide/#requirements-files) (`pip`)
+    1. [requirements.lock](https://nvie.com/posts/pin-your-packages/) (`piplock`)
+1. [pipenv](https://pipenv.readthedocs.io/en/latest/):
+    1. [Pipfile](https://github.com/pypa/pipfile) (`pipfile`)
+    1. [Pipfile.lock](https://stackoverflow.com/a/49867443/8704691) (`pipfilelock`)
+1. [poetry](https://github.com/sdispater/poetry):
+    1. [pyproject.toml](https://poetry.eustace.io/docs/pyproject/) (`poetry`)
+    1. [poetry.lock](https://poetry.eustace.io/docs/basic-usage/#installing-without-poetrylock) (`poetrylock`)
+1. Other:
+    1. [setup.py](https://docs.python.org/3/distutils/setupscript.html) (`setuppy`)
+    1. [pyproject.toml build-system requires](https://www.python.org/dev/peps/pep-0518/#build-system-table) (`pyproject`)
+    1. Installed packages (`installed`). It works like [pip freeze](https://pip.pypa.io/en/stable/reference/pip_freeze/). Dephell can only read from this format, of course. If you want to install packages, use [install command](cmd-deps-install).
 
 ## Usage
 
@@ -209,3 +229,21 @@ INFO builded
 Now, we can upload these packages on [PyPI](https://pypi.org/) with [twine](https://github.com/pypa/twine/).
 
 This is some of the most useful commands. See [documentation](https://dephell.readthedocs.io/) for more details.
+
+## Compatibility
+
+DepHell tested on Linux and Mac OS X with Python 3.5, 3.6, 3.7. And one of the coolest things that DepHell ran by DepHell on Travis CI.
+
+## How can I help
+
+1. Star project on Github. Developers believe in the stars.
+1. Tell your fellows that [Gram](http://github.com/orsinium) made [cool thing](https://github.com/dephell/dephell) for you.
+1. [Open an issue](https://github.com/dephell/dephell/issues/new) if you have thoughts how to make DepHell better.
+1. Things that you can contribute in any project in [DepHell ecosystem](https://github.com/dephell):
+    1. Fix grammar and typos.
+    1. Document new things.
+    1. Tests, we always need more tests.
+    1. Make READMEs more nice and friendly.
+    1. Anything what you want. If it is a new feature, please, open an issue before writing code.
+
+Thank you :heart:

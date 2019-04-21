@@ -2,10 +2,12 @@
 import sys
 from pathlib import Path
 
+# external
+from dephell_venvs import VEnv
+
 # project
 from dephell.commands import PackageInstallCommand
 from dephell.config import Config
-from dephell_venvs import VEnv
 
 
 def test_package_install_command(temp_path: Path):

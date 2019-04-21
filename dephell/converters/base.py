@@ -87,6 +87,8 @@ class BaseConverter:
         if content is not None:
             return 'root-{length}'.format(length=len(content))
 
+        raise ValueError('please, specify path or content')
+
     @staticmethod
     def _split_extra_and_marker(text: str) -> Tuple[str, Optional[str]]:
         text = text.lstrip('[').lstrip('[')

@@ -2,7 +2,7 @@
 from logging import getLogger
 from typing import Tuple
 
-# project
+# external
 from dephell_venvs import VEnv
 
 # app

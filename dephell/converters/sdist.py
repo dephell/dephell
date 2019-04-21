@@ -36,19 +36,21 @@ class SDistConverter(BaseConverter):
             archive = ArchivePath(archive_path=path, cache_path=Path(cache))
 
             # read *.egg-info
-            paths = list(chain(
+            paths = chain(
                 archive.glob('*.egg-info'),
                 archive.glob('*/*.egg-info'),
                 archive.glob('src/*.egg-info'),
                 archive.glob('src/*/*.egg-info'),
-            ))
+            )
+            paths = [path for path in paths if 'tests' not in path.parts]
             if paths:
                 root = converter.load_dir(*paths)
                 root.readme = Readme.discover(path=archive)
                 return root
 
             # read metainfo from PKG-INFO
-            paths = list(archive.glob('**/PKG-INFO'))
+            paths = archive.glob('**/PKG-INFO')
+            paths = [path for path in paths if 'tests' not in path.parts]
             if paths:
                 with paths[0].open('r') as stream:
                     root = converter.parse_info(content=stream.read())
@@ -56,6 +58,7 @@ class SDistConverter(BaseConverter):
             # read dependencies from requires.txt
             if root is None or not root.dependencies:
                 paths = list(archive.glob('**/requires.txt'))
+                paths = [path for path in paths if 'tests' not in path.parts]
                 if paths:
                     with paths[0].open('r') as stream:
                         root = converter.parse_requires(content=stream.read(), root=root)

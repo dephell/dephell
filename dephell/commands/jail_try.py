@@ -1,19 +1,18 @@
 # built-in
-import subprocess
 import shlex
+import subprocess
 from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Set
 
-
-# project
+# external
 from dephell_venvs import VEnv
 
 # app
-from ..context_tools import override_env_vars
 from ..actions import get_python, get_resolver
 from ..config import builders
+from ..context_tools import override_env_vars
 from ..controllers import analize_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager

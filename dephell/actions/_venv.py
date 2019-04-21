@@ -1,7 +1,7 @@
 # built-in
 from pathlib import Path
 
-# project
+# external
 from dephell_venvs import VEnv, VEnvs
 
 # app

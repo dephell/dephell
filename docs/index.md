@@ -8,7 +8,7 @@
 + Manage packages: [install](cmd-package-install), [list](cmd-package-list), [search](cmd-package-search) on PyPI.
 + [Build](cmd-project-build) packages (to upload on PyPI), [test](cmd-project-test), [bump project version](cmd-project-bump).
 + [Discover licenses](cmd-deps-licenses) of all project dependencies, show [outdated](cmd-deps-outdated) packages, [find security issues](cmd-deps-audit).
-+ Generate [.editorconfig](cmd-generate-editorconfig), [LICENSE](cmd-generate-license), [AUTHORS](cmd-generate-authors).
++ Generate [.editorconfig](cmd-generate-editorconfig), [LICENSE](cmd-generate-license), [AUTHORS](cmd-generate-authors), [.travis.yml](cmd-generate-travis).
 
 ```eval_rst
 .. toctree::
@@ -45,6 +45,7 @@
     cmd-generate-config
     cmd-generate-editorconfig
     cmd-generate-license
+    cmd-generate-travis
 
 .. toctree::
     :maxdepth: 1

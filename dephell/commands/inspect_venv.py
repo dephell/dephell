@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from dephell_shells import Shells
 
 # app
-from ..actions import get_venv, make_json, get_path_size, format_size
+from ..actions import format_size, get_path_size, get_venv, make_json
 from ..config import builders
 from .base import BaseCommand
 

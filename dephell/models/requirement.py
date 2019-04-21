@@ -1,6 +1,6 @@
 # built-in
 from collections import OrderedDict, defaultdict
-from typing import Optional, Set, Tuple, Iterable
+from typing import Iterable, Optional, Set, Tuple
 
 # app
 from ..utils import cached_property
