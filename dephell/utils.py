@@ -60,16 +60,25 @@ def peppify_python(spec: RangeSpecifier) -> RangeSpecifier:
             break
 
     right = None
+    excluded = []
     for python in pythons:
         if python in spec:
             right = python
+        elif left is None or python > left:
+            excluded.append(python)
     if right is not None:
         right = (pythons + [None])[pythons.index(right) + 1]
 
+    if right is not None:
+        excluded = [python for python in excluded if python < right]
+    excluded = ','.join('!={}.*'.format(python) for python in excluded)
+    if excluded:
+        excluded = ',' + excluded
+
     if left is None and right is None:
-        return RangeSpecifier()
+        return RangeSpecifier(excluded[1:])
     if left is None:
-        return RangeSpecifier('<' + str(right))
+        return RangeSpecifier('<' + str(right) + excluded)
     if right is None:
-        return RangeSpecifier('>=' + str(left))
-    return RangeSpecifier('>={},<{}'.format(left, right))
+        return RangeSpecifier('>=' + str(left) + excluded)
+    return RangeSpecifier('>={},<{}'.format(left, right) + excluded)
