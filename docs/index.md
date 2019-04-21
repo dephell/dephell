@@ -45,6 +45,7 @@
     cmd-generate-config
     cmd-generate-editorconfig
     cmd-generate-license
+    cmd-generate-travis
 
 .. toctree::
     :maxdepth: 1

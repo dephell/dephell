@@ -41,7 +41,7 @@ PYTEST = """
       language: generic
       env: ENV={env}
       before_install:
-        - /usr/local/bin/python3 install.py
+        - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /usr/local/bin/python3
         - dephell inspect self
       install:
         - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback
