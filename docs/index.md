@@ -71,7 +71,9 @@
     cmd-package-downloads
     cmd-package-install
     cmd-package-list
+    cmd-package-purge
     cmd-package-releases
+    cmd-package-remove
     cmd-package-search
     cmd-package-show
 
