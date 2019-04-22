@@ -1,5 +1,5 @@
 # external
-from dephell_pythons import Finder, Python, Pythons
+from dephell_pythons import Python, Pythons
 
 # app
 from ..config import Config
@@ -7,7 +7,7 @@ from ..converters import CONVERTERS
 from ._venv import get_venv
 
 
-def get_python(config: Config, allow_shims: bool = True) -> Python:
+def get_python(config: Config) -> Python:
     """Get prefered Python.
 
     Lookup order:
@@ -18,7 +18,7 @@ def get_python(config: Config, allow_shims: bool = True) -> Python:
 
     Use it when you want to create new venv.
     """
-    pythons = Pythons(finder=Finder(allow_shims=allow_shims))
+    pythons = Pythons()
 
     # defined in config
     python = config.get('python')
@@ -45,4 +45,4 @@ def get_python_env(config: Config) -> Python:
     venv = get_venv(config=config)
     if venv.exists():
         return venv.python
-    return get_python(config=config, allow_shims=False)
+    return get_python(config=config)
