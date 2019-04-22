@@ -41,3 +41,13 @@ Commands that use this lookup:
 + [dephell package install](cmd-package-install)
 + [dephell package list](cmd-package-list)
 + [dephell package show](cmd-package-show)
+
+
+If you want to force DepHell ignore project venvs and use global interpreter you can pass into command non-existent venv:
+
+```bash
+$ dephell package install --venv=none homoglyphs
+INFO build dependencies graph...
+INFO installation... (executable=/usr/local/bin/python3.7, packages=1)
+...
+```
