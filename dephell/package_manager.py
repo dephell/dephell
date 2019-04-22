@@ -12,6 +12,7 @@ import attr
 # app
 from .converters import PIPConverter
 from .models import Requirement
+from .utils import cached_property
 
 
 logger = getLogger('dephell')
@@ -22,9 +23,17 @@ class PackageManager:
     executable = attr.ib(type=Path)
     secured = attr.ib(type=Set[str], default={'setuptools', 'pip'}, repr=False)
 
+    # properties
+
+    @cached_property
+    def is_global(self) -> bool:
+        return not (self.executable / 'pyvenv.cfg').exists()
+
+    # methods
+
     def install(self, reqs: Iterable[Requirement]) -> int:
         args = ['--no-deps']
-        if self.executable.samefile(sys.executable):
+        if self.is_global:
             args.append('--user')
         converter = PIPConverter(lock=True)
         with TemporaryDirectory() as path:
