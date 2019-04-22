@@ -244,6 +244,7 @@ DepHell tested on Linux and Mac OS X with Python 3.5, 3.6, 3.7. And one of the c
     1. Document new things.
     1. Tests, we always need more tests.
     1. Make READMEs more nice and friendly.
+    1. See issues by [help wanted](https://github.com/dephell/dephell/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) label to find things that you can fix.
     1. Anything what you want. If it is a new feature, please, open an issue before writing code.
 
 Thank you :heart:
