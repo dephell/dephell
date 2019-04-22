@@ -237,7 +237,7 @@ DepHell tested on Linux and Mac OS X with Python 3.5, 3.6, 3.7. And one of the c
 ## How can I help
 
 1. Star project on Github. Developers believe in the stars.
-1. Tell your fellows that [Gram](http://github.com/orsinium) made [cool thing](https://github.com/dephell/dephell) for you.
+1. Tell your fellows that [Gram](http://github.com/orsinium) has made [cool thing](https://github.com/dephell/dephell) for you.
 1. [Open an issue](https://github.com/dephell/dephell/issues/new) if you have thoughts how to make DepHell better.
 1. Things that you can contribute in any project in [DepHell ecosystem](https://github.com/dephell):
     1. Fix grammar and typos.
