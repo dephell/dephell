@@ -1,4 +1,4 @@
-# ![DepHell](./assets/logo.png)
+![DepHell](./assets/logo.png)
 
 [![MIT License](https://img.shields.io/pypi/l/dephell.svg)](https://github.com/dephell/dephell/blob/master/LICENSE)
 [![Travis CI](https://travis-ci.org/dephell/dephell.svg?branch=master)](https://travis-ci.org/dephell/dephell)
@@ -6,7 +6,7 @@
 
 **DepHell** -- project management for Python.
 
-+ Manage dependencies: [convert between formats](https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html), [install](https://dephell.readthedocs.io/en/latest/cmd-deps-install.html), lock, [add new](https://dephell.readthedocs.io/en/latest/cmd-deps-add.html), resolve conflicts.
++ Manage dependencies: [convert between formats](https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html), [instаll](https://dephell.readthedocs.io/en/latest/cmd-deps-install.html), lock, [add new](https://dephell.readthedocs.io/en/latest/cmd-deps-add.html), resolve conflicts.
 + Manage virtual environments: [create](https://dephell.readthedocs.io/en/latest/cmd-venv-create.html), [remove](https://dephell.readthedocs.io/en/latest/cmd-venv-destroy.html), [inspect](https://dephell.readthedocs.io/en/latest/cmd-inspect-venv.html), [run shell](https://dephell.readthedocs.io/en/latest/cmd-venv-shell.html), [run commands inside](https://dephell.readthedocs.io/en/latest/cmd-venv-run.html).
 + [Install CLI tools](https://dephell.readthedocs.io/en/latest/cmd-jail-install.html) into isolated environments.
 + Manage packages: [install](https://dephell.readthedocs.io/en/latest/cmd-package-install.html), [list](https://dephell.readthedocs.io/en/latest/cmd-package-list.html), [search](https://dephell.readthedocs.io/en/latest/cmd-package-search.html) on PyPI.
@@ -38,7 +38,7 @@ See [installation documentation](https://dephell.readthedocs.io/en/latest/instal
 1. [pipenv](https://pipenv.readthedocs.io/en/latest/):
     1. [Pipfile](https://github.com/pypa/pipfile) (`pipfile`)
     1. [Pipfile.lock](https://stackoverflow.com/a/49867443/8704691) (`pipfilelock`)
-1. [poetry](https://github.com/sdispater/poetry):
+1. [pоetry](https://github.com/sdispater/poetry):
     1. [pyproject.toml](https://poetry.eustace.io/docs/pyproject/) (`poetry`)
     1. [poetry.lock](https://poetry.eustace.io/docs/basic-usage/#installing-without-poetrylock) (`poetrylock`)
 1. Other:

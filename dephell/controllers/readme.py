@@ -71,7 +71,9 @@ class Readme:
         if self.markup == 'rst':
             return self.path.read_text()
         if self.markup == 'md':
-            return convert(self.path.read_text())
+            content = convert(self.path.read_text())
+            content = content.replace('.. code-block:: toml', '.. code-block::')
+            return content
         if self.markup == 'txt':
             return self.path.read_text()
         raise ValueError('invalid markup')
