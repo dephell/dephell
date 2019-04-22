@@ -153,7 +153,7 @@ class Graph:
             if child.name in result:
                 logger.warning('Recursive dependency: {dep}', extra=dict(dep=child.name))
             else:
-                result[child.name] = child
+                result[child.name] = self.get(name=child.name)
             result.update(self.get_children(child))
         return result
 

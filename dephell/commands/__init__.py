@@ -25,6 +25,7 @@ from .jail_try import JailTryCommand
 from .package_downloads import PackageDownloadsCommand
 from .package_install import PackageInstallCommand
 from .package_list import PackageListCommand
+from .package_purge import PackagePurgeCommand
 from .package_releases import PackageReleasesCommand
 from .package_remove import PackageRemoveCommand
 from .package_search import PackageSearchCommand
@@ -66,6 +67,7 @@ __all__ = [
     'PackageDownloadsCommand',
     'PackageInstallCommand',
     'PackageListCommand',
+    'PackagePurgeCommand',
     'PackageReleasesCommand',
     'PackageRemoveCommand',
     'PackageSearchCommand',
@@ -109,6 +111,7 @@ commands = {
     'package downloads': PackageDownloadsCommand,
     'package install': PackageInstallCommand,
     'package list': PackageListCommand,
+    'package purge': PackagePurgeCommand,
     'package releases': PackageReleasesCommand,
     'package remove': PackageRemoveCommand,
     'package search': PackageSearchCommand,
