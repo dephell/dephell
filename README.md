@@ -4,7 +4,7 @@
 [![Travis CI](https://travis-ci.org/dephell/dephell.svg?branch=master)](https://travis-ci.org/dephell/dephell)
 [![Powered by DepHell](./assets/badge.svg)](./docs/badge.md)
 
-**DepHell** -- dependency management for Python.
+**DepHell** -- project management for Python.
 
 + Manage dependencies: [convert between formats](https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html), [install](https://dephell.readthedocs.io/en/latest/cmd-deps-install.html), lock, [add new](https://dephell.readthedocs.io/en/latest/cmd-deps-add.html), resolve conflicts.
 + Manage virtual environments: [create](https://dephell.readthedocs.io/en/latest/cmd-venv-create.html), [remove](https://dephell.readthedocs.io/en/latest/cmd-venv-destroy.html), [inspect](https://dephell.readthedocs.io/en/latest/cmd-inspect-venv.html), [run shell](https://dephell.readthedocs.io/en/latest/cmd-venv-shell.html), [run commands inside](https://dephell.readthedocs.io/en/latest/cmd-venv-run.html).
@@ -18,7 +18,7 @@ See [documentation](https://dephell.readthedocs.io/) for more details.
 
 ## Installation
 
-Simplest way:
+The simplest way:
 
 ```bash
 python3 -m pip install --user dephell[full]
@@ -182,7 +182,7 @@ $ dephell deps tree
   - six [required: >=1.10.0, locked: 1.12.0, latest: 1.12.0]
 ```
 
-Hm... It is many or not? Let's look on their size.
+Hm... Is it many or not? Let's look on their size.
 
 ```bash
 $ dephell inspect venv --filter=lib_size
