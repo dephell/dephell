@@ -113,14 +113,16 @@ class _Reader:
 
         # links
         fields = (
-            ('home', 'Home-Page'),
+            ('homepage', 'Home-Page'),
             ('download', 'Download-URL'),
-            ('project', 'Project-URL'),
         )
         for key, name in fields:
             link = cls._get(info, name)
             if link:
                 root.links[key] = link
+        for link in cls._get_list(info, 'Project-URL'):
+            key, url = link.split(', ')
+            root.links[key] = url
 
         # authors
         for name in ('author', 'maintainer'):
@@ -226,14 +228,16 @@ class _Writer:
             content.append(('Summary', project.description))
 
         # links
-        fields = (
-            ('home', 'Home-Page'),
-            ('download', 'Download-URL'),
-            ('project', 'Project-URL'),
+        fields = dict(
+            homepage='Home-Page',
+            download='Download-URL',
         )
-        for key, name in fields:
-            if key in project.links:
-                content.append((name, project.links[key]))
+        for key, url in project.links.items():
+            if key in fields:
+                content.append((fields[key], url))
+            else:
+                key = key[0].upper() + key[1:]
+                content.append(('Project-URL', '{}, {}'.format(key, url)))
 
         # authors
         if project.authors:
