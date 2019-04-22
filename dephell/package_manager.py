@@ -27,7 +27,8 @@ class PackageManager:
 
     @cached_property
     def is_global(self) -> bool:
-        return not (self.executable / 'pyvenv.cfg').exists()
+        venv_root = self.executable.parent.parent
+        return not (venv_root / 'pyvenv.cfg').exists()
 
     # methods
 
