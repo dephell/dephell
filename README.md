@@ -141,7 +141,7 @@ Also, we can just activate virtual environment for project and run any commands 
 dephell venv shell
 ```
 
-Ugh, we has tests, but has no `pytest` in our dependencies file. Let's add it:
+Ugh, we have tests, but have no `pytest` in our dependencies file. Let's add it:
 
 ```bash
 dephell deps add --envs dev test -- pytest
