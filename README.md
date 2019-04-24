@@ -6,6 +6,18 @@
 
 **DepHell** -- project management for Python.
 
+Why it is better than all other tools:
+
+1. **Format agnostic**. You can use DepHell with your favorite format: setup.py, requirements.txt, Pipfile, poetry. DepHell supports them all and much more.
+1. **Use you favorite tool on any project**. Want to install poetry based project, but don't like poetry? Just say DepHell to convert peoject metainfo into setup.py and install it with pip. Or directly work with project from DepHell, because DepHell can do everything what you usually want to do with packages.
+1. **DepHell doesn't try to replace your favorite tools**. If you use poetry, you have to use poetry's file formats and commands. However, DepHell can be combined with any other tool or even combine all these tools together through formats converting.
+1. **Easily extendable**. Pipfile should be just another one supported format for pip. However, pip really old and big project with many bad decisions, so, PyPA team can't just add new features in pip without fear to broke everything. This is how pipenv has been created, but pipenv has inherited almost all problems of pip and isn't extendable too. DepHell has strong modularity and can be easily extended by new formats and commands.
+1. **Developers friendly**. We aren't going to place all our modules into [`_internal`](https://github.com/pypa/pip/tree/master/src/pip/_internal). Also, DepHell has [big ecosystem](https://github.com/dephell) with separated libraries to help you use some DepHell's parts without pain and big dependencies for your project.
+1. **All-in-one-solution**. DepHell can manage dependencies, virtual environments, tests, CLI tools, packages, generate configs, show licenses for dependencies, make security audit, get downloads statistic from pypi, search packages and much more. None of your tools can do it all.
+
+
+Features:
+
 + Manage dependencies: [convert between formats](https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html), [instаll](https://dephell.readthedocs.io/en/latest/cmd-deps-install.html), lock, [add new](https://dephell.readthedocs.io/en/latest/cmd-deps-add.html), resolve conflicts.
 + Manage virtual environments: [create](https://dephell.readthedocs.io/en/latest/cmd-venv-create.html), [remove](https://dephell.readthedocs.io/en/latest/cmd-venv-destroy.html), [inspect](https://dephell.readthedocs.io/en/latest/cmd-inspect-venv.html), [run shell](https://dephell.readthedocs.io/en/latest/cmd-venv-shell.html), [run commands inside](https://dephell.readthedocs.io/en/latest/cmd-venv-run.html).
 + [Install CLI tools](https://dephell.readthedocs.io/en/latest/cmd-jail-install.html) into isolated environments.
