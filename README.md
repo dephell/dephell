@@ -14,6 +14,7 @@ Why it is better than all other tools:
 1. **Easily extendable**. Pipfile should be just another one supported format for pip. However, pip really old and big project with many bad decisions, so, PyPA team can't just add new features in pip without fear to broke everything. This is how pipenv has been created, but pipenv has inherited almost all problems of pip and isn't extendable too. DepHell has strong modularity and can be easily extended by new formats and commands.
 1. **Developers friendly**. We aren't going to place all our modules into [`_internal`](https://github.com/pypa/pip/tree/master/src/pip/_internal). Also, DepHell has [big ecosystem](https://github.com/dephell) with separated libraries to help you use some DepHell's parts without pain and big dependencies for your project.
 1. **All-in-one-solution**. DepHell can manage dependencies, virtual environments, tests, CLI tools, packages, generate configs, show licenses for dependencies, make security audit, get downloads statistic from pypi, search packages and much more. None of your tools can do it all.
+1. **Smart dependency resolution**. Sometimes pip and pipenv can't lock your dependencies. Try to execute `pipenv install oslo.utils==1.4.0`. Pipenv can't handle it, but DepHell can: `dephell deps add --from=Pipfile oslo.utils==1.4.0` to add new dependency and `dephell deps convert --from=Pipfile --to=Pipfile.lock` to lock it.
 
 
 Features:
