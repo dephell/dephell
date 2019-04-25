@@ -78,13 +78,25 @@ class ProjectBumpCommand(BaseCommand):
 
         # update version in project metadata
         if root is not None and root.version != '0.0.0':
-            paths.append(Path(self.config['from']['path']))
-            root.version = new_version
-            loader.dump(
-                project=root,
-                path=self.config['from']['path'],
-                reqs=[Requirement(dep=dep, lock=loader.lock) for dep in root.dependencies],
-            )
+            # we can reproduce metadata only for poetry yet
+            if self.config['from']['format'] == 'poetry':
+                paths.append(Path(self.config['from']['path']))
+                root.version = new_version
+                loader.dump(
+                    project=root,
+                    path=self.config['from']['path'],
+                    reqs=[Requirement(dep=dep, lock=loader.lock) for dep in root.dependencies],
+                )
+            else:
+                path = Path(self.config['from']['path'])
+                with path.open('r', encoding='utf8') as stream:
+                    content = stream.read()
+                new_content = content.replace(str(root.version), str(new_version))
+                if new_content == content:
+                    self.logger.warning('cannot bump version in metadata file')
+                else:
+                    with path.open('w', encoding='utf8') as stream:
+                        stream.write(new_content)
 
         # set git tag
         project = Path(self.config['project'])
