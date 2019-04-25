@@ -1,5 +1,5 @@
 # project
-from dephell.controllers import Graph, Mutator, Resolver, analize_conflict
+from dephell.controllers import Graph, Mutator, Resolver, analyze_conflict
 
 # app
 from ..helpers import Fake, make_root
@@ -16,7 +16,7 @@ def merge(*roots, merged=True, deps=None):
         assert merged == resolved
     except AssertionError:
         if resolved is False:
-            print(analize_conflict(resolver=resolver))
+            print(analyze_conflict(resolver=resolver))
         raise
 
     if deps:

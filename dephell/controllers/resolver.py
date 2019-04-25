@@ -9,7 +9,7 @@ from yaspin import yaspin
 # app
 from ..context_tools import nullcontext
 from ..models import RootDependency
-from .conflict import analize_conflict
+from .conflict import analyze_conflict
 
 
 logger = getLogger('dephell.resolver')
@@ -191,7 +191,7 @@ class Resolver:
             self.graph.conflict = conflict.copy()
 
             if debug:
-                print(analize_conflict(
+                print(analyze_conflict(
                     resolver=self,
                     suffix=str(self.mutator.mutations),
                 ))

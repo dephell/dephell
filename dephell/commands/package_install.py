@@ -4,7 +4,7 @@ from argparse import REMAINDER, ArgumentParser
 # app
 from ..actions import get_python_env, get_resolver
 from ..config import builders
-from ..controllers import analize_conflict
+from ..controllers import analyze_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager
 from .base import BaseCommand
@@ -36,7 +36,7 @@ class PackageInstallCommand(BaseCommand):
         self.logger.info('build dependencies graph...')
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
-            conflict = analize_conflict(resolver=resolver)
+            conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False

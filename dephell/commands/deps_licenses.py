@@ -5,7 +5,7 @@ from collections import defaultdict
 # app
 from ..actions import attach_deps, make_json
 from ..config import builders
-from ..controllers import analize_conflict
+from ..controllers import analyze_conflict
 from ..converters import CONVERTERS
 from .base import BaseCommand
 
@@ -37,7 +37,7 @@ class DepsLicensesCommand(BaseCommand):
         # resolve (and merge)
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
-            conflict = analize_conflict(resolver=resolver)
+            conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False

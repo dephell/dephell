@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 # app
 from ..actions import attach_deps, get_python_env, make_json
 from ..config import builders
-from ..controllers import analize_conflict
+from ..controllers import analyze_conflict
 from ..converters import CONVERTERS, InstalledConverter
 from ..models import Requirement
 from .base import BaseCommand
@@ -44,7 +44,7 @@ class DepsCheckCommand(BaseCommand):
         self.logger.info('build dependencies graph...')
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
-            conflict = analize_conflict(resolver=resolver)
+            conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False
