@@ -25,12 +25,12 @@ REPLACEMENTS = (
     ('<li>', ' + '),
     ('<hr/>', '\n' + '—' * 80 + '\n'),
 )
-REX_BEGINING = re.compile(r'(\n[ \t]+)')
+REX_BEGINNING = re.compile(r'(\n[ \t]+)')
 
 
 # https://github.com/dephell/dephell/issues/11
 def html2text(text: str) -> str:
-    text = REX_BEGINING.sub('', text)
+    text = REX_BEGINNING.sub('', text)
     for tag, char in REPLACEMENTS:
         text = text.replace(tag, char)
     for tag, _ in REPLACEMENTS:
