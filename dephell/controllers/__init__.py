@@ -1,5 +1,5 @@
 # app
-from .conflict import analize_conflict
+from .conflict import analyze_conflict
 from .dependency import DependencyMaker
 from .graph import Graph
 from .mutator import Mutator
@@ -10,7 +10,7 @@ from .snyk import Snyk, SnykVulnInfo
 
 
 __all__ = [
-    'analize_conflict',
+    'analyze_conflict',
     'DependencyMaker',
     'Graph',
     'Mutator',

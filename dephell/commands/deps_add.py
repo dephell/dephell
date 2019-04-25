@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 # app
 from ..actions import get_resolver
 from ..config import builders
-from ..controllers import analize_conflict
+from ..controllers import analyze_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
@@ -49,7 +49,7 @@ class DepsAddCommand(BaseCommand):
         resolver.graph.add(new_root)
         resolved = resolver.resolve(level=1, silent=self.config['silent'])
         if not resolved:
-            conflict = analize_conflict(resolver=resolver)
+            conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False

@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 # app
 from ..actions import attach_deps
 from ..config import builders
-from ..controllers import analize_conflict
+from ..controllers import analyze_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
@@ -45,7 +45,7 @@ class DepsConvertCommand(BaseCommand):
         # attach
         merged = attach_deps(resolver=resolver, config=self.config, merge=not should_be_resolved)
         if not merged:
-            conflict = analize_conflict(resolver=resolver)
+            conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False
@@ -55,7 +55,7 @@ class DepsConvertCommand(BaseCommand):
             self.logger.debug('resolving...')
             resolved = resolver.resolve(silent=self.config['silent'])
             if not resolved:
-                conflict = analize_conflict(resolver=resolver)
+                conflict = analyze_conflict(resolver=resolver)
                 self.logger.warning('conflict was found')
                 print(conflict)
                 return False

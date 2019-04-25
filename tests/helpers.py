@@ -7,7 +7,7 @@ from unittest.mock import patch
 from packaging.requirements import Requirement as PackagingRequirement
 
 # project
-from dephell.controllers import DependencyMaker, Graph, Mutator, Resolver, analize_conflict
+from dephell.controllers import DependencyMaker, Graph, Mutator, Resolver, analyze_conflict
 from dephell.models import Release, Requirement, RootDependency
 from dephell.repositories import ReleaseRepo
 
@@ -89,7 +89,7 @@ def check(root, resolved=True, missed=None, **deps):
         assert result is resolved
     except AssertionError:
         if result is False:
-            print(analize_conflict(resolver=resolver))
+            print(analyze_conflict(resolver=resolver))
         raise
 
     assert resolver.graph.applied

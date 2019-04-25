@@ -40,7 +40,7 @@ def html2text(text: str) -> str:
     return text.strip() + '\n'
 
 
-def analize_conflict(resolver, suffix: str = '') -> str:
+def analyze_conflict(resolver, suffix: str = '') -> str:
     try:
         resolver.graph.draw(suffix=suffix)
     except ImportError as e:

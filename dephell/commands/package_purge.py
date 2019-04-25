@@ -6,7 +6,7 @@ from packaging.utils import canonicalize_name
 # app
 from ..actions import get_python_env
 from ..config import builders
-from ..controllers import analize_conflict, Resolver, Mutator, Graph
+from ..controllers import analyze_conflict, Resolver, Mutator, Graph
 from ..converters import InstalledConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
@@ -52,7 +52,7 @@ class PackagePurgeCommand(BaseCommand):
         )
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
-            conflict = analize_conflict(resolver=resolver)
+            conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False

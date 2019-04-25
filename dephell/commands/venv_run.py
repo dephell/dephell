@@ -12,7 +12,7 @@ from dephell_venvs import VEnvs
 from ..actions import get_python, get_resolver, read_dotenv
 from ..config import builders
 from ..context_tools import override_env_vars
-from ..controllers import analize_conflict
+from ..controllers import analyze_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager
 from .base import BaseCommand
@@ -101,7 +101,7 @@ class VenvRunCommand(BaseCommand):
         self.logger.info('build dependencies graph...')
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
-            conflict = analize_conflict(resolver=resolver)
+            conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False

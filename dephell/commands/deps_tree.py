@@ -5,7 +5,7 @@ from typing import List
 # app
 from ..actions import attach_deps, get_resolver, make_json
 from ..config import builders
-from ..controllers import analize_conflict
+from ..controllers import analyze_conflict
 from ..converters import CONVERTERS
 from .base import BaseCommand
 
@@ -44,7 +44,7 @@ class DepsTreeCommand(BaseCommand):
         self.logger.debug('resolving...')
         resolved = resolver.resolve(silent=self.config['silent'])
         if not resolved:
-            conflict = analize_conflict(resolver=resolver)
+            conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
             print(conflict)
             return False
