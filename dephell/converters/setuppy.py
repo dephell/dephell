@@ -53,10 +53,10 @@ setup(
 """
 
 
-def _patched_open(file, mode='r', *args, **kwargs):
+def _patched_open(fname, mode='r', *args, **kwargs):
     if 'b' in mode:
-        return BytesIO(file.encode('utf8'))
-    return StringIO(file)
+        return BytesIO(fname.encode('utf8'))
+    return StringIO(fname)
 
 
 class SetupPyConverter(BaseConverter):
