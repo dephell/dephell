@@ -1,7 +1,6 @@
 import datetime
 import time
 import os
-from collections import OrderedDict
 from types import MappingProxyType, SimpleNamespace
 from typing import Dict, List, Any
 
@@ -21,13 +20,13 @@ CONTENT_URL = 'https://raw.githubusercontent.com/{repo}/{rev}/{path}'
 class CondaRepo:
     channels = attr.ib(type=List[str])
 
-    cookbooks = MappingProxyType(OrderedDict(
+    cookbooks = MappingProxyType({
         # https://github.com/conda-forge/textdistance-feedstock/blob/master/recipe/meta.yaml
         # https://github.com/conda-forge/ukbparse-feedstock/blob/master/recipe/meta.yaml
-        ('conda-forge', dict(repo='conda-forge/{name}-feedstock', path='recipe/meta.yaml')),
+        'conda-forge': dict(repo='conda-forge/{name}-feedstock', path='recipe/meta.yaml'),
         # https://github.com/bioconda/bioconda-recipes/blob/master/recipes/anvio/meta.yaml
-        ('bioconda', dict(repo='bioconda/bioconda-recipes', path='recipes/{name}/meta.yaml')),
-    ))
+        'bioconda': dict(repo='bioconda/bioconda-recipes', path='recipes/{name}/meta.yaml'),
+    })
 
     def _get_revs(self, name: str) -> List[Dict[str, str]]:
         cookbooks = []
@@ -35,14 +34,14 @@ class CondaRepo:
             cookbook = self.cookbooks.get(channel)
             if cookbook:
                 cookbooks.append(dict(
-                    repo=cookbook['repo'].format('name'),
-                    path=cookbook['path'].format('name'),
+                    repo=cookbook['repo'].format(name=name),
+                    path=cookbook['path'].format(name=name),
                 ))
         if not cookbooks:
             cookbook = self.cookbooks['conda-forge']
             cookbooks.append(dict(
-                repo=cookbook['repo'].format('name'),
-                path=cookbook['path'].format('name'),
+                repo=cookbook['repo'].format(name=name),
+                path=cookbook['path'].format(name=name),
             ))
 
         revs = []
@@ -55,8 +54,8 @@ class CondaRepo:
                 revs.append(dict(
                     rev=commit['sha'],
                     time=datetime.datetime.strptime(
-                        date_string=commit['commit']['author']['date'],
-                        format='%Y-%m-%dT%H:%M:%S',
+                        commit['commit']['author']['date'],
+                        '%Y-%m-%dT%H:%M:%SZ',
                     ),
                     repo=cookbook['repo'],
                     path=cookbook['path'],
@@ -95,13 +94,14 @@ class CondaRepo:
         releases = dict()
         for rev in revs:
             meta = self._get_meta(rev=rev['rev'], repo=rev['repo'], path=rev['path'])
-            if meta['package']['version'] in releases:
+            version = meta['package']['version']
+            if version in releases:
                 continue
 
             # make release
             release = Release(
                 raw_name=dep.raw_name,
-                version=meta['package']['version'],
+                version=version,
                 time=rev['time'],
             )
             digest = meta.get('source', {}).get('sha256')
@@ -113,6 +113,7 @@ class CondaRepo:
             for req in meta.get('requirements', {}).get('run', []):
                 deps.append(Requirement(req))
             release.dependencies = tuple(deps)
+            releases[version] = release
 
         return tuple(sorted(releases.values(), reverse=True))
 
