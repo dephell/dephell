@@ -73,9 +73,9 @@ class CondaRepo:
         # render
         env = Environment()
         env.globals.update(dict(
-            compiler='DepHell',
-            pin_subpackage=lambda m, subpackage_name, **kwargs: subpackage_name,
-            pin_compatible=lambda m, subpackage_name, **kwargs: subpackage_name,
+            compiler=lambda name: name,
+            pin_subpackage=lambda subpackage_name, **kwargs: subpackage_name,
+            pin_compatible=lambda subpackage_name, **kwargs: subpackage_name,
             cdt=lambda package_name, **kwargs: package_name + '-cos6-aarch64',
             load_file_regex=lambda *args, **kwargs: None,
             datetime=datetime,
