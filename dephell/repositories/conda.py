@@ -6,6 +6,7 @@ from typing import Dict, List, Any
 
 import attr
 import requests
+import yaml
 from jinja2 import Environment
 from packaging.requirements import Requirement
 
@@ -63,8 +64,6 @@ class CondaRepo:
         return revs
 
     def _get_meta(self, rev: str, repo: str, path: str) -> Dict[str, Any]:
-        import yaml
-
         # download
         url = CONTENT_URL.format(repo=repo, path=path, rev=rev)
         response = requests.get(url)
