@@ -16,6 +16,15 @@ from ..models.release import Release
 HISTORY_URL = 'https://api.github.com/repos/{repo}/commits?path={path}'
 CONTENT_URL = 'https://raw.githubusercontent.com/{repo}/{rev}/{path}'
 
+# https://conda.anaconda.org/conda-forge/linux-64
+# https://conda.anaconda.org/conda-forge/noarch
+# https://repo.anaconda.com/pkgs/main/linux-64
+# https://repo.anaconda.com/pkgs/main/noarch
+# https://repo.anaconda.com/pkgs/free/linux-64
+# https://repo.anaconda.com/pkgs/free/noarch
+# https://repo.anaconda.com/pkgs/r/linux-64
+# https://repo.anaconda.com/pkgs/r/noarch
+
 
 @attr.s()
 class CondaRepo:
