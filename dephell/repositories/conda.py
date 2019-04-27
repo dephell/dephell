@@ -37,7 +37,7 @@ except ImportError:
 REX_SELECTOR = re.compile(r'(.+?)\s*(#.*)?\[([^\[\]]+)\](?(2)[^\(\)]*)$')
 
 
-HISTORY_URL = 'https://api.github.com/repos/{repo}/commits?path={path}'
+HISTORY_URL = 'https://api.github.com/repos/{repo}/commits?path={path}&per_page=100'
 CONTENT_URL = 'https://raw.githubusercontent.com/{repo}/{rev}/{path}'
 
 # https://conda.anaconda.org/conda-forge/linux-64
@@ -69,6 +69,7 @@ class CondaRepo:
         revs = self._get_revs(name=dep.name)
         releases = dict()
         for rev in revs:
+            # get metainfo
             try:
                 meta = self._get_meta(rev=rev['rev'], repo=rev['repo'], path=rev['path'])
             except SyntaxError as e:
@@ -90,14 +91,67 @@ class CondaRepo:
             # get deps
             deps = []
             for req in meta.get('requirements', {}).get('run', []):
+                parsed = self.parse_req(req)
+                req = parsed['name'] + parsed.get('version', '')
                 deps.append(Requirement(req))
             release.dependencies = tuple(deps)
+
             releases[version] = release
 
         return tuple(sorted(releases.values(), reverse=True))
 
     async def get_dependencies(self, *args, **kwargs):
         raise NotImplementedError('use get_releases to get deps')
+
+    @staticmethod
+    def parse_req(req: str) -> Dict[str, str]:
+        req = req.split('#', 1)[0]
+        req = req.split(' if ', 1)[0]
+        req = req.rsplit(':', 2)[-1]
+
+        # TODO: parse url
+
+        # extract name
+        req = req.strip()
+        positions = [req.find(char) for char in '=<>!~ ']
+        positions = [pos for pos in positions if pos >= 0]
+        if positions:
+            version_start = min(positions)
+            name, req = req[:version_start], req[version_start:]
+        else:
+            name, req = req, ''
+        name = name.strip()
+        req = req.strip()
+        if not req:
+            return dict(name=name)
+
+        # extract version and build
+        # idk how this regex works
+        # source: conda/models/match_spec.py
+        match = re.search(r'((?:.+?)[^><!,|]?)(?:(?<![=!|,<>~])(?:[ =])([^-=,|<>~]+?))?$', req)
+        if match:
+            version, build = match.groups()
+            if version is None:
+                version = ''
+            if build is None:
+                build = ''
+        else:
+            version, build = req, ''
+        version = version.strip()
+        build = build.strip()
+
+        # transform version to specifier
+        if version[0] == '=' and version[1] != '=':
+            version = '==' + version[1:]
+        elif version[0] not in '=<>!~':
+            version = '==' + version
+
+        result = dict(name=name)
+        if version:
+            result['version'] = version
+        if build:
+            result['build'] = build
+        return result
 
     # hidden methods
 
