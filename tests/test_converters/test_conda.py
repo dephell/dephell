@@ -1,7 +1,9 @@
+from ruamel.yaml import YAML
+
 # project
-# from dephell.controllers import DependencyMaker
+from dephell.controllers import DependencyMaker
 from dephell.converters.conda import CondaConverter
-# from dephell.models import Requirement, RootDependency
+from dephell.models import Requirement, RootDependency
 
 
 def test_conda_loads():
@@ -20,3 +22,19 @@ def test_conda_loads():
     assert str(root.python) == '==3.6.*'
     deps = {dep.name: str(dep.constraint) for dep in root.dependencies}
     assert deps == {'matplotlib': '==2.0.2', 'numpy': '*'}
+
+
+def test_conda_dumps_new():
+    root = RootDependency(raw_name='check-me')
+
+    deps = []
+    deps.extend(DependencyMaker.from_requirement(source=root, req='matplotlib==2.0.2'))
+    deps.extend(DependencyMaker.from_requirement(source=root, req='numpy'))
+
+    reqs = [Requirement(dep=dep, lock=False) for dep in deps]
+    content = CondaConverter().dumps(reqs=reqs, project=root)
+
+    doc = YAML(typ='safe').load(content)
+    assert doc['name'] == 'check-me'
+    assert doc['channels'] == ['defaults']
+    assert doc['dependencies'] == ['matplotlib=2.0.2', 'numpy']

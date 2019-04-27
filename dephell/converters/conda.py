@@ -1,3 +1,4 @@
+from io import StringIO
 from pathlib import Path
 from typing import Optional
 
@@ -55,7 +56,7 @@ class CondaConverter(BaseConverter):
             if isinstance(req.dep.repo, CondaRepo):
                 channels.update(req.dep.repo.channels)
         # remove old channels
-        for index, channel in reversed(enumerate(doc['channels'])):
+        for index, channel in reversed(list(enumerate(doc['channels']))):
             if channel not in channels:
                 del doc['channels'][index]
         # add new channels
@@ -72,12 +73,12 @@ class CondaConverter(BaseConverter):
             doc['dependencies'] = []
         deps = {req.name: req.version.strip('<>=') for req in reqs}
         # remove old deps
-        for index, dep in reversed(enumerate(doc['dependencies'])):
+        for index, dep in reversed(list(enumerate(doc['dependencies']))):
             name, _sep, version = dep.partition('=')
             if name not in deps:
                 del doc['dependencies'][index]
         # add new deps
-        for name, version in deps.items():
+        for name, version in sorted(deps.items()):
             dep = '{}={}'.format(name, version).rstrip('=*')
             if dep not in doc['dependencies']:
                 doc['dependencies'].append(dep)
@@ -85,4 +86,7 @@ class CondaConverter(BaseConverter):
         if not doc['dependencies']:
             del doc['dependencies']
 
-        return yaml.dump(doc)
+        stream = StringIO()
+        yaml.dump(doc, stream)
+        stream.seek(0)
+        return stream.read()

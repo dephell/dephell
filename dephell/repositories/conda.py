@@ -6,9 +6,9 @@ from typing import Dict, List, Any
 
 import attr
 import requests
-import yaml
 from jinja2 import Environment
 from packaging.requirements import Requirement
+from ruamel.yaml import YAML
 
 from ..models.release import Release
 
@@ -95,7 +95,8 @@ class CondaRepo:
             os=SimpleNamespace(environ=os.environ, sep=os.path.sep),
             environ=os.environ,
         )
-        return yaml.safe_load(content)
+        yaml = YAML(typ='safe')
+        return yaml.load(content)
 
     def get_releases(self, dep) -> tuple:
         revs = self._get_revs(name=dep.name)
