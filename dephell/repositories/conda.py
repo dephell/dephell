@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import time
+from logging import getLogger
 from platform import uname, python_version
 from types import MappingProxyType, SimpleNamespace
 from typing import Dict, List, Any
@@ -49,6 +50,9 @@ CONTENT_URL = 'https://raw.githubusercontent.com/{repo}/{rev}/{path}'
 # https://repo.anaconda.com/pkgs/r/noarch
 
 
+logger = getLogger('dephell.repositories.conda')
+
+
 @attr.s()
 class CondaRepo:
     channels = attr.ib(type=List[str])
@@ -65,7 +69,10 @@ class CondaRepo:
         revs = self._get_revs(name=dep.name)
         releases = dict()
         for rev in revs:
-            meta = self._get_meta(rev=rev['rev'], repo=rev['repo'], path=rev['path'])
+            try:
+                meta = self._get_meta(rev=rev['rev'], repo=rev['repo'], path=rev['path'])
+            except SyntaxError as e:
+                logger.warning(str(e))
             version = meta['package']['version']
             if version in releases:
                 continue
@@ -174,11 +181,6 @@ class CondaRepo:
                     return pyyaml.load(content)
                 except Exception:
                     pass
-            print()
-            print()
-            print(content)
-            print()
-            print()
             raise SyntaxError('cannot parse recipe: {}'.format(url)) from e
 
     @cached_property
@@ -204,7 +206,7 @@ class CondaRepo:
             win64=system == 'win' and is_64,
             x86=True,
             x86_64=is_64,
-            os=os,
+            # os=os,
             environ=os.environ,
             nomkl=False,
 
