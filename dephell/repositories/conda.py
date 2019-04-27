@@ -1,6 +1,9 @@
 import datetime
-import time
 import os
+import re
+import sys
+import time
+from platform import uname, python_version
 from types import MappingProxyType, SimpleNamespace
 from typing import Dict, List, Any
 
@@ -11,6 +14,26 @@ from packaging.requirements import Requirement
 from ruamel.yaml import YAML
 
 from ..models.release import Release
+from ..utils import cached_property
+
+
+try:
+    import yaml as pyyaml
+except ImportError:
+    pyyaml = None
+
+
+# source: conda-build/metadata.py
+# Selectors must be either:
+# - at end of the line
+# - embedded (anywhere) within a comment
+#
+# Notes:
+# - [([^\[\]]+)\] means "find a pair of brackets containing any
+#                 NON-bracket chars, and capture the contents"
+# - (?(2)[^\(\)]*)$ means "allow trailing characters iff group 2 (#.*) was found."
+#                 Skip markdown link syntax.
+REX_SELECTOR = re.compile(r'(.+?)\s*(#.*)?\[([^\[\]]+)\](?(2)[^\(\)]*)$')
 
 
 HISTORY_URL = 'https://api.github.com/repos/{repo}/commits?path={path}'
@@ -37,6 +60,39 @@ class CondaRepo:
         # https://github.com/bioconda/bioconda-recipes/blob/master/recipes/anvio/meta.yaml
         'bioconda': dict(repo='bioconda/bioconda-recipes', path='recipes/{name}/meta.yaml'),
     })
+
+    def get_releases(self, dep) -> tuple:
+        revs = self._get_revs(name=dep.name)
+        releases = dict()
+        for rev in revs:
+            meta = self._get_meta(rev=rev['rev'], repo=rev['repo'], path=rev['path'])
+            version = meta['package']['version']
+            if version in releases:
+                continue
+
+            # make release
+            release = Release(
+                raw_name=dep.raw_name,
+                version=version,
+                time=rev['time'],
+            )
+            digest = meta.get('source', {}).get('sha256')
+            if digest:
+                release.hashes = (digest, )
+
+            # get deps
+            deps = []
+            for req in meta.get('requirements', {}).get('run', []):
+                deps.append(Requirement(req))
+            release.dependencies = tuple(deps)
+            releases[version] = release
+
+        return tuple(sorted(releases.values(), reverse=True))
+
+    async def get_dependencies(self, *args, **kwargs):
+        raise NotImplementedError('use get_releases to get deps')
+
+    # hidden methods
 
     def _get_revs(self, name: str) -> List[Dict[str, str]]:
         cookbooks = []
@@ -95,36 +151,70 @@ class CondaRepo:
             os=SimpleNamespace(environ=os.environ, sep=os.path.sep),
             environ=os.environ,
         )
-        yaml = YAML(typ='safe')
-        return yaml.load(content)
 
-    def get_releases(self, dep) -> tuple:
-        revs = self._get_revs(name=dep.name)
-        releases = dict()
-        for rev in revs:
-            meta = self._get_meta(rev=rev['rev'], repo=rev['repo'], path=rev['path'])
-            version = meta['package']['version']
-            if version in releases:
+        # clean
+        lines = []
+        for line in content.split('\n'):
+            match = REX_SELECTOR.match(line)
+            if not match:
+                lines.append(line)
                 continue
+            selector = match.group(3)
+            if eval(selector, self._config):
+                lines.append(line)
+        content = '\n'.join(lines)
 
-            # make release
-            release = Release(
-                raw_name=dep.raw_name,
-                version=version,
-                time=rev['time'],
-            )
-            digest = meta.get('source', {}).get('sha256')
-            if digest:
-                release.hashes = (digest, )
+        # parse
+        yaml = YAML(typ='safe')
+        try:
+            return yaml.load(content)
+        except Exception as e:
+            if pyyaml is not None:
+                try:
+                    return pyyaml.load(content)
+                except Exception:
+                    pass
+            print()
+            print()
+            print(content)
+            print()
+            print()
+            raise SyntaxError('cannot parse recipe: {}'.format(url)) from e
 
-            # get deps
-            deps = []
-            for req in meta.get('requirements', {}).get('run', []):
-                deps.append(Requirement(req))
-            release.dependencies = tuple(deps)
-            releases[version] = release
+    @cached_property
+    def _config(self):
+        is_64 = sys.maxsize > 2**32
+        translation = {
+            'Linux': 'linux',
+            'Windows': 'win',
+            'darwin': 'osx',
+        }
+        system = translation.get(uname().system, 'linux')
+        py = int(''.join(python_version().split('.')[:2]))
 
-        return tuple(sorted(releases.values(), reverse=True))
+        return dict(
+            linux=system == 'linux',
+            linux32=system == 'linux' and not is_64,
+            linux64=system == 'linux' and is_64,
+            arm=False,
+            osx=system == 'osx',
+            unix=system in ('linux', 'osx'),
+            win=system == 'win',
+            win32=system == 'win' and not is_64,
+            win64=system == 'win' and is_64,
+            x86=True,
+            x86_64=is_64,
+            os=os,
+            environ=os.environ,
+            nomkl=False,
 
-    async def get_dependencies(self, *args, **kwargs):
-        raise NotImplementedError('use get_releases to get deps')
+            py=py,
+            py3k=bool(30 <= py < 40),
+            py2k=bool(20 <= py < 30),
+            py26=bool(py == 26),
+            py27=bool(py == 27),
+            py33=bool(py == 33),
+            py34=bool(py == 34),
+            py35=bool(py == 35),
+            py36=bool(py == 36),
+        )
