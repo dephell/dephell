@@ -32,6 +32,7 @@ class CondaConverter(BaseConverter):
             root.attach_dependencies(DependencyMaker.from_params(
                 raw_name=name,
                 constraint=spec,
+                source=root,
                 repo=repo,
             ))
         return root

@@ -18,6 +18,7 @@ class ReturnCodes(Enum):
 IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')
 
 FORMATS = (
+    'conda',
     'egginfo',
     'pip',
     'pipfile',
@@ -32,6 +33,7 @@ FORMATS = (
 )
 
 FILES = (
+    'environment.yml', 'environment.yaml'
     'setup.py',
     'pyproject.toml', 'pyproject.lock',
     'requirements.in', 'requirements.txt',
