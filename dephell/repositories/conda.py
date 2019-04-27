@@ -74,7 +74,7 @@ class CondaRepo:
                 meta = self._get_meta(rev=rev['rev'], repo=rev['repo'], path=rev['path'])
             except SyntaxError as e:
                 logger.warning(str(e))
-            version = meta['package']['version']
+            version = str(meta['package']['version'])
             if version in releases:
                 continue
 
@@ -273,4 +273,6 @@ class CondaRepo:
             py34=bool(py == 34),
             py35=bool(py == 35),
             py36=bool(py == 36),
+            py37=bool(py == 37),
+            py38=bool(py == 38),
         )
