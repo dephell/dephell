@@ -17,17 +17,15 @@ class CondaConverter(BaseConverter):
         return path.name in ('environment.yml', 'environment.yaml')
 
     # https://github.com/ericmjl/conda-envs/blob/master/deeplearning.yml
-    def load(self, path) -> RootDependency:
-        if isinstance(path, str):
-            path = Path(path)
-        with path.open('r', encoding='utf8') as stream:
-            doc = YAML().safe_load(stream)
-        root = RootDependency(raw_name=doc.get('name') or self._get_name(path=path))
+    def loads(self, content: str) -> RootDependency:
+        doc = YAML(typ='safe').load(content)
+        root = RootDependency(raw_name=doc.get('name') or self._get_name(content=content))
         repo = CondaRepo(channels=doc.get('channels', []))
         for req in doc.get('dependencies', []):
             name, _sep, spec = req.partition('=')
             spec = '==' + spec if spec else '*'
             if name == 'python':
+                spec = '.'.join((spec.split('.') + ['*', '*'])[:3])
                 root.python = RangeSpecifier(spec)
                 continue
             root.attach_dependencies(DependencyMaker.from_params(
@@ -39,9 +37,9 @@ class CondaConverter(BaseConverter):
 
     def dumps(self, reqs, project: Optional[RootDependency] = None,
               content: Optional[str] = None) -> str:
-        yaml = YAML()
+        yaml = YAML(typ='safe')
         if content:
-            doc = yaml.safe_load(content)
+            doc = yaml.load(content)
         else:
             doc = dict()
 

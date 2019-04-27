@@ -39,7 +39,7 @@ class PIPFileConverter(BaseConverter):
                 return True
         return False
 
-    def loads(self, content) -> RootDependency:
+    def loads(self, content: str) -> RootDependency:
         doc = tomlkit.parse(content)
         deps = []
         root = RootDependency(self._get_name(content=content))
