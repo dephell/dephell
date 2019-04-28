@@ -44,15 +44,6 @@ REX_SELECTOR = re.compile(r'(.+?)\s*(#.*)?\[([^\[\]]+)\](?(2)[^\(\)]*)$')
 HISTORY_URL = 'https://api.github.com/repos/{repo}/commits?path={path}&per_page=100'
 CONTENT_URL = 'https://raw.githubusercontent.com/{repo}/{rev}/{path}'
 
-# https://conda.anaconda.org/conda-forge/linux-64
-# https://conda.anaconda.org/conda-forge/noarch
-# https://repo.anaconda.com/pkgs/main/linux-64
-# https://repo.anaconda.com/pkgs/main/noarch
-# https://repo.anaconda.com/pkgs/free/linux-64
-# https://repo.anaconda.com/pkgs/free/noarch
-# https://repo.anaconda.com/pkgs/r/linux-64
-# https://repo.anaconda.com/pkgs/r/noarch
-
 
 logger = getLogger('dephell.repositories.conda')
 loop = asyncio.get_event_loop()
