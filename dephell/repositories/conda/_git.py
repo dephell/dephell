@@ -14,12 +14,12 @@ import requests
 from aiohttp import ClientSession
 from dephell_specifier import RangeSpecifier
 from jinja2 import Environment
-from packaging.requirements import Requirement
 from ruamel.yaml import YAML
 
 from ...cache import JSONCache
 from ...config import config
 from ...models.release import Release
+from ...models.simple_dependency import SimpleDependency
 from ...utils import cached_property
 from ._base import CondaBaseRepo
 
@@ -107,7 +107,10 @@ class CondaGitRepo(CondaBaseRepo):
                     release.python = RangeSpecifier(parsed.get('version', '*'))
                     continue
                 req = parsed['name'] + parsed.get('version', '')
-                deps.append(Requirement(req))
+                deps.append(SimpleDependency(
+                    name=parsed['name'],
+                    specifier=parsed.get('version', '*'),
+                ))
             release.dependencies = tuple(deps)
 
             releases[version] = release

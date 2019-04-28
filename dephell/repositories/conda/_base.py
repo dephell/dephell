@@ -48,10 +48,17 @@ class CondaBaseRepo(Interface):
         build = build.strip()
 
         # transform version to specifier
-        if version[0] == '=' and version[1] != '=':
-            version = '==' + version[1:]
-        elif version[0] not in '=<>!~':
-            version = '==' + version
+        versions = []
+        for version in version.split('|'):
+            version = version.strip()
+            if version[0] == '=' and version[1] != '=':
+                version = '==' + version[1:]
+            elif version[0] not in '=<>!~':
+                version = '==' + version
+            if len(version) >= 2 and version[-1] == '*' and version[-2] != '.':
+                version = version[:-1] + '.*'
+            versions.append(version)
+        version = ' || '.join(versions)
 
         result = dict(name=name)
         if version:

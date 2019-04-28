@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Iterator
 import attr
 import requests
 from dephell_specifier import RangeSpecifier
-from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 
@@ -17,6 +16,7 @@ from ._base import CondaBaseRepo
 from ...cache import JSONCache
 from ...config import config
 from ...models.release import Release
+from ...models.simple_dependency import SimpleDependency
 from ...utils import cached_property
 
 
@@ -57,8 +57,10 @@ class CondaCloudRepo(CondaBaseRepo):
                 if parsed['name'] == 'python':
                     release.python = RangeSpecifier(parsed.get('version', '*'))
                     continue
-                req = parsed['name'] + parsed.get('version', '')
-                deps.append(Requirement(req))
+                deps.append(SimpleDependency(
+                    name=parsed['name'],
+                    specifier=parsed.get('version', '*'),
+                ))
             release.dependencies = tuple(deps)
 
             releases.append(release)
