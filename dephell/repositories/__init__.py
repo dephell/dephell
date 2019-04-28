@@ -19,8 +19,16 @@ __all__ = [
     'WareHouseRepo',
 ]
 
+_repos = dict(
+    conda=CondaRepo,
+    pypi=WareHouseRepo,
+)
 
-def get_repo(link=None):
+
+def get_repo(link=None, name: str = None):
+    if name is not None:
+        return _repos[name]()
+
     if link is None:
         return WareHouseRepo()
     if getattr(link, 'vcs', '') == 'git':

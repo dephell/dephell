@@ -27,7 +27,7 @@ class PackageShowCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        dep = get_package(self.args.name)
+        dep = get_package(self.args.name, repo=self.config.get('repo'))
         releases = dep.repo.get_releases(dep)
 
         python = get_python_env(config=self.config)

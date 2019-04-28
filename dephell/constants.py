@@ -52,6 +52,7 @@ PAIRS = (
 )
 
 STRATEGIES = ('min', 'max')
+REPOSITORIES = ('pypi', 'conda')
 
 LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'EXCEPTION')
 LOG_FORMATTERS = ('short', 'full')
