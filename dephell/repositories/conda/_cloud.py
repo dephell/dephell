@@ -1,7 +1,7 @@
 import json
 import sys
 from bz2 import BZ2Decompressor
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from datetime import datetime
 from platform import uname
 from typing import Any, Dict, List, Iterator
@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Iterator
 import attr
 import requests
 from dephell_specifier import RangeSpecifier
+from packaging.version import parse
 from packaging.utils import canonicalize_name
 
 
@@ -39,8 +40,26 @@ class CondaCloudRepo(CondaBaseRepo):
 
     def get_releases(self, dep) -> tuple:
         raw_releases = self._json.get(dep.name)
-        if raw_releases is None:
+        if not raw_releases:
             return ()
+        raw_releases = OrderedDict(sorted(
+            raw_releases.items(),
+            key=lambda rel: parse(rel[0]),
+            reverse=True,
+        ))
+
+        # update dep
+        release_info = next(iter(raw_releases.values()))
+        if not dep.license:
+            dep.license = self._get_license(release_info['license'])
+        if not dep.links:
+            dep.links = dict(
+                anaconda='https://anaconda.org/{channel}/{name}'.format(
+                    channel=release_info['channel'],
+                    name=dep.name,
+                ),
+            )
+
         releases = []
         for version, release_info in raw_releases.items():
             release = Release(
@@ -89,6 +108,8 @@ class CondaCloudRepo(CondaBaseRepo):
     @cached_property
     def _json(self) -> Dict[str, Dict[str, Dict[str, Any]]]:
         channels = list(self.channels)
+        if not channels:
+            channels.append('conda-forge')
         if 'defaults' not in channels:
             channels.append('defaults')
 
