@@ -18,8 +18,8 @@ from packaging.requirements import Requirement
 from ruamel.yaml import YAML
 
 from ._base import CondaBaseRepo
-from ..models.release import Release
-from ..utils import cached_property
+from ...models.release import Release
+from ...utils import cached_property
 
 
 try:
@@ -60,7 +60,7 @@ loop = asyncio.get_event_loop()
 
 @attr.s()
 class CondaGitRepo(CondaBaseRepo):
-    channels = attr.ib(type=List[str])
+    channels = attr.ib(type=List[str], factory=list)
 
     propagate = True
     cookbooks = MappingProxyType({

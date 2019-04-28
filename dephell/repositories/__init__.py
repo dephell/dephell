@@ -2,7 +2,7 @@
 from dephell_links import DirLink, FileLink
 
 # app
-from .conda import CondaGitRepo
+from .conda import CondaGitRepo, CondaRepo
 from .git.git import GitRepo
 from .local import LocalRepo
 from .release import ReleaseRepo
@@ -11,6 +11,7 @@ from .warehouse import WareHouseRepo
 
 __all__ = [
     'CondaGitRepo',
+    'CondaRepo',
     'get_repo',
     'GitRepo',
     'ReleaseRepo',
