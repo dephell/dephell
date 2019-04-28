@@ -68,6 +68,7 @@ class WareHouseRepo(Interface):
     url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
+    propagate = True
     hash = None
     link = None
 

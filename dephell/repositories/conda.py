@@ -12,10 +12,12 @@ import asyncio
 import attr
 import requests
 from aiohttp import ClientSession
+from dephell_specifier import RangeSpecifier
 from jinja2 import Environment
 from packaging.requirements import Requirement
 from ruamel.yaml import YAML
 
+from .base import Interface
 from ..models.release import Release
 from ..utils import cached_property
 
@@ -57,9 +59,10 @@ loop = asyncio.get_event_loop()
 
 
 @attr.s()
-class CondaRepo:
+class CondaRepo(Interface):
     channels = attr.ib(type=List[str])
 
+    propagate = True
     cookbooks = MappingProxyType({
         # https://github.com/conda-forge/textdistance-feedstock/blob/master/recipe/meta.yaml
         # https://github.com/conda-forge/ukbparse-feedstock/blob/master/recipe/meta.yaml
@@ -103,6 +106,9 @@ class CondaRepo:
             deps = []
             for req in meta.get('requirements', {}).get('run', []):
                 parsed = self.parse_req(req)
+                if parsed['name'] == 'python':
+                    release.python = RangeSpecifier(parsed.get('version', '*'))
+                    continue
                 req = parsed['name'] + parsed.get('version', '')
                 deps.append(Requirement(req))
             release.dependencies = tuple(deps)

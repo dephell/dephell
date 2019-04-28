@@ -4,6 +4,8 @@ from typing import Optional
 
 
 class Interface(metaclass=abc.ABCMeta):
+    propagate = False
+
     @abc.abstractmethod
     def get_releases(self, dep) -> tuple:
         pass

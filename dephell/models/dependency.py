@@ -89,10 +89,17 @@ class Dependency:
                     # subdependencies has no direct envs, let's force it
                     envs=set(),
                 ))
+
         # propagate envs to deps of this dep
         for dep in deps:
             dep.inherited_envs.update(self.envs)
             dep.inherited_envs.update(self.inherited_envs)
+
+        # propagate repo
+        if self.repo.propagate:
+            for dep in deps:
+                dep.repo = self.repo
+
         return tuple(deps)
 
     @dependencies.setter
