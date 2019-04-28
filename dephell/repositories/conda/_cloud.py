@@ -13,6 +13,8 @@ from packaging.requirements import Requirement
 
 
 from ._base import CondaBaseRepo
+from ...cache import JSONCache
+from ...config import config
 from ...models.release import Release
 from ...utils import cached_property
 
@@ -87,8 +89,15 @@ class CondaCloudRepo(CondaBaseRepo):
         if 'defaults' not in channels:
             channels.append('defaults')
 
-        deps = defaultdict(dict)
+        all_deps = dict()
         for channel in channels:
+            cache = JSONCache('conda', 'cloud', 'channel', ttl=config['cache']['ttl'])
+            channel_deps = cache.load()
+            if channel_deps is not None:
+                all_deps.update(channel_deps)
+                continue
+
+            channel_deps = defaultdict(dict)
             for url in self._get_urls(channel=channel):
                 response = requests.get(url)
                 response.raise_for_status()
@@ -98,8 +107,8 @@ class CondaCloudRepo(CondaBaseRepo):
                     # release info
                     name = info.pop('name')
                     version = info.pop('version')
-                    if version not in deps[name]:
-                        deps[name][version] = dict(
+                    if version not in channel_deps[name]:
+                        channel_deps[name][version] = dict(
                             depends=info['depends'],
                             license=info.get('license', 'unknown'),
                             timestamp=info.get('timestamp', 0) // 1000,
@@ -107,10 +116,13 @@ class CondaCloudRepo(CondaBaseRepo):
                             files=[],
                         )
                     # file info
-                    deps[name][version]['files'].append(dict(
+                    channel_deps[name][version]['files'].append(dict(
                         url=base_url + '/' + fname,
                         sha256=info.get('sha256', None),
                         size=info['size'],
                     ))
 
-        return dict(deps)
+            cache.dump(channel_deps)
+            all_deps.update(channel_deps)
+
+        return dict(all_deps)
