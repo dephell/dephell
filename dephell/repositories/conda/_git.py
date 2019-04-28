@@ -46,6 +46,13 @@ REX_SELECTOR = re.compile(r'(.+?)\s*(#.*)?\[([^\[\]]+)\](?(2)[^\(\)]*)$')
 HISTORY_URL = 'https://api.github.com/repos/{repo}/commits?path={path}&per_page=100'
 CONTENT_URL = 'https://raw.githubusercontent.com/{repo}/{rev}/{path}'
 
+URL_FIELDS = {
+    'home': 'homepage',
+    'dev_url': 'repository',
+    'doc_url': 'documentation',
+    'license_url': 'license',
+}
+
 
 logger = getLogger('dephell.repositories.conda')
 loop = asyncio.get_event_loop()
@@ -73,14 +80,25 @@ class CondaGitRepo(CondaBaseRepo):
         if raw_releases is None:
             coroutines = []
             for rev in revs:
-                coroutines.append(self._get_meta(
-                    rev=rev['rev'],
-                    repo=rev['repo'],
-                    path=rev['path'],
-                ))
+                coroutines.append(self._get_meta(**rev))
             gathered = asyncio.gather(*coroutines)
             raw_releases = loop.run_until_complete(gathered)
             cache.dump(raw_releases)
+
+        # update dep
+        release_info = raw_releases[0]
+        if 'about' in release_info:
+            if not dep.description:
+                dep.description = release_info.get('about', {}).get('summary')
+            if not dep.license:
+                license = release_info.get('about', {}).get('license')
+                if license:
+                    dep.license = self._get_license(license)
+            if not dep.links:
+                dep.links = dict()
+                for field, value in release_info['about'].items():
+                    if field in URL_FIELDS:
+                        dep.links[URL_FIELDS[field]] = value
 
         for meta in raw_releases:
             if meta is None:
@@ -93,7 +111,7 @@ class CondaGitRepo(CondaBaseRepo):
             release = Release(
                 raw_name=dep.raw_name,
                 version=version,
-                time=rev['time'],
+                time=datetime.datetime.strptime(meta['time'], '%Y-%m-%dT%H:%M:%SZ'),
             )
             digest = meta.get('source', {}).get('sha256')
             if digest:
@@ -147,16 +165,13 @@ class CondaGitRepo(CondaBaseRepo):
             for commit in response.json():
                 revs.append(dict(
                     rev=commit['sha'],
-                    time=datetime.datetime.strptime(
-                        commit['commit']['author']['date'],
-                        '%Y-%m-%dT%H:%M:%SZ',
-                    ),
+                    time=commit['commit']['author']['date'],
                     repo=cookbook['repo'],
                     path=cookbook['path'],
                 ))
         return revs
 
-    async def _get_meta(self, rev: str, repo: str, path: str) -> Optional[Dict[str, Any]]:
+    async def _get_meta(self, rev: str, repo: str, path: str, **kwargs) -> Optional[Dict[str, Any]]:
         # download
         url = CONTENT_URL.format(repo=repo, path=path, rev=rev)
         async with ClientSession() as session:
@@ -199,19 +214,22 @@ class CondaGitRepo(CondaBaseRepo):
 
         # parse
         yaml = YAML(typ='safe')
+        meta = None
         try:
-            return yaml.load(content)
+            meta = yaml.load(content)
         except Exception as e:
             if pyyaml is not None:
                 try:
-                    return pyyaml.load(content)
+                    meta = pyyaml.load(content)
                 except Exception:
-                    pass
-            logger.warning('cannot parse recipe', extra=dict(
-                url=url,
-                error=str(e),
-            ))
-        return None
+                    logger.warning('cannot parse recipe', extra=dict(
+                        url=url,
+                        error=str(e),
+                    ))
+        if meta is None:
+            return None
+        meta.update(kwargs)
+        return meta
 
     @cached_property
     def _config(self):

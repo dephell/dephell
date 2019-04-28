@@ -1,5 +1,7 @@
 import re
-from typing import Dict
+from typing import Dict, Union
+
+from dephell_licenses import License, licenses
 
 from ..base import Interface
 
@@ -66,3 +68,15 @@ class CondaBaseRepo(Interface):
         if build:
             result['build'] = build
         return result
+
+    @staticmethod
+    def _get_license(name: str) -> Union[License, str]:
+        license = licenses.get_by_id(name)
+        if license is not None:
+            return license
+
+        license = licenses.get_by_name(name)
+        if license is not None:
+            return license
+
+        return name
