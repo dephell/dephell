@@ -89,12 +89,13 @@ class CondaCloudRepo(CondaBaseRepo):
         if 'defaults' not in channels:
             channels.append('defaults')
 
-        all_deps = dict()
+        all_deps = defaultdict(dict)
         for channel in channels:
-            cache = JSONCache('conda', 'cloud', 'channel', ttl=config['cache']['ttl'])
+            cache = JSONCache('conda', 'cloud', channel, ttl=config['cache']['ttl'])
             channel_deps = cache.load()
             if channel_deps is not None:
-                all_deps.update(channel_deps)
+                for dep, releases in channel_deps.items():
+                    all_deps[dep].update(releases)
                 continue
 
             channel_deps = defaultdict(dict)
@@ -123,6 +124,7 @@ class CondaCloudRepo(CondaBaseRepo):
                     ))
 
             cache.dump(channel_deps)
-            all_deps.update(channel_deps)
+            for dep, releases in channel_deps.items():
+                all_deps[dep].update(releases)
 
         return dict(all_deps)

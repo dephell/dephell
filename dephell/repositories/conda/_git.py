@@ -17,9 +17,11 @@ from jinja2 import Environment
 from packaging.requirements import Requirement
 from ruamel.yaml import YAML
 
-from ._base import CondaBaseRepo
+from ...cache import JSONCache
+from ...config import config
 from ...models.release import Release
 from ...utils import cached_property
+from ._base import CondaBaseRepo
 
 
 try:
@@ -67,16 +69,21 @@ class CondaGitRepo(CondaBaseRepo):
         releases = dict()
 
         # get metainfo
-        coroutines = []
-        for rev in revs:
-            coroutines.append(self._get_meta(
-                rev=rev['rev'],
-                repo=rev['repo'],
-                path=rev['path'],
-            ))
-        gathered = asyncio.gather(*coroutines)
+        cache = JSONCache('conda', 'git', dep.name, ttl=config['cache']['ttl'])
+        raw_releases = cache.load()
+        if raw_releases is None:
+            coroutines = []
+            for rev in revs:
+                coroutines.append(self._get_meta(
+                    rev=rev['rev'],
+                    repo=rev['repo'],
+                    path=rev['path'],
+                ))
+            gathered = asyncio.gather(*coroutines)
+            raw_releases = loop.run_until_complete(gathered)
+            cache.dump(raw_releases)
 
-        for meta in loop.run_until_complete(gathered):
+        for meta in raw_releases:
             if meta is None:
                 continue
             version = str(meta['package']['version'])
