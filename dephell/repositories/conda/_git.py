@@ -17,7 +17,7 @@ from jinja2 import Environment
 from packaging.requirements import Requirement
 from ruamel.yaml import YAML
 
-from .base import Interface
+from ._base import CondaBaseRepo
 from ..models.release import Release
 from ..utils import cached_property
 
@@ -59,7 +59,7 @@ loop = asyncio.get_event_loop()
 
 
 @attr.s()
-class CondaRepo(Interface):
+class CondaGitRepo(CondaBaseRepo):
     channels = attr.ib(type=List[str])
 
     propagate = True
@@ -119,56 +119,6 @@ class CondaRepo(Interface):
 
     async def get_dependencies(self, *args, **kwargs):
         raise NotImplementedError('use get_releases to get deps')
-
-    @staticmethod
-    def parse_req(req: str) -> Dict[str, str]:
-        req = req.split('#', 1)[0]
-        req = req.split(' if ', 1)[0]
-        req = req.rsplit(':', 2)[-1]
-
-        # TODO: parse url
-
-        # extract name
-        req = req.strip()
-        positions = [req.find(char) for char in '=<>!~ ']
-        positions = [pos for pos in positions if pos >= 0]
-        if positions:
-            version_start = min(positions)
-            name, req = req[:version_start], req[version_start:]
-        else:
-            name, req = req, ''
-        name = name.strip()
-        req = req.strip()
-        if not req:
-            return dict(name=name)
-
-        # extract version and build
-        # idk how this regex works
-        # source: conda/models/match_spec.py
-        match = re.search(r'((?:.+?)[^><!,|]?)(?:(?<![=!|,<>~])(?:[ =])([^-=,|<>~]+?))?$', req)
-        if match:
-            version, build = match.groups()
-            if version is None:
-                version = ''
-            if build is None:
-                build = ''
-        else:
-            version, build = req, ''
-        version = version.strip()
-        build = build.strip()
-
-        # transform version to specifier
-        if version[0] == '=' and version[1] != '=':
-            version = '==' + version[1:]
-        elif version[0] not in '=<>!~':
-            version = '==' + version
-
-        result = dict(name=name)
-        if version:
-            result['version'] = version
-        if build:
-            result['build'] = build
-        return result
 
     # hidden methods
 
