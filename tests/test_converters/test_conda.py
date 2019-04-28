@@ -21,7 +21,7 @@ def test_conda_loads():
     assert str(root.name) == 'deeplearning'
     assert str(root.python) == '==3.6.*'
     deps = {dep.name: str(dep.constraint) for dep in root.dependencies}
-    assert deps == {'matplotlib': '==2.0.2', 'numpy': '*'}
+    assert deps == {'matplotlib': '==2.0.2', 'numpy': ''}
 
 
 def test_conda_dumps_new():
@@ -37,4 +37,4 @@ def test_conda_dumps_new():
     doc = YAML(typ='safe').load(content)
     assert doc['name'] == 'check-me'
     assert doc['channels'] == ['defaults']
-    assert doc['dependencies'] == ['matplotlib=2.0.2', 'numpy']
+    assert doc['dependencies'] == ['matplotlib ==2.0.2', 'numpy']
