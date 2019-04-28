@@ -10,6 +10,7 @@ REX_VERSION_BUILD = re.compile(r'((?:.+?)[^><!,|]?)(?:(?<![=!|,<>~])(?:[ =])([^-
 
 
 class CondaBaseRepo(Interface):
+    propagate = True
 
     @staticmethod
     def parse_req(req: str) -> Dict[str, str]:

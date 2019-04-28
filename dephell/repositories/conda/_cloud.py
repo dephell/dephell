@@ -10,6 +10,7 @@ import attr
 import requests
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
 
 
 from ._base import CondaBaseRepo
@@ -106,7 +107,7 @@ class CondaCloudRepo(CondaBaseRepo):
                 base_url = url.rsplit('/', 1)[0]
                 for fname, info in json.loads(content)['packages'].items():
                     # release info
-                    name = info.pop('name')
+                    name = canonicalize_name(info.pop('name'))
                     version = info.pop('version')
                     if version not in channel_deps[name]:
                         channel_deps[name][version] = dict(

@@ -55,7 +55,6 @@ loop = asyncio.get_event_loop()
 class CondaGitRepo(CondaBaseRepo):
     channels = attr.ib(type=List[str], factory=list)
 
-    propagate = True
     cookbooks = MappingProxyType({
         # https://github.com/conda-forge/textdistance-feedstock/blob/master/recipe/meta.yaml
         # https://github.com/conda-forge/ukbparse-feedstock/blob/master/recipe/meta.yaml
