@@ -6,10 +6,12 @@ import time
 from logging import getLogger
 from platform import uname, python_version
 from types import MappingProxyType, SimpleNamespace
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
+import asyncio
 import attr
 import requests
+from aiohttp import ClientSession
 from jinja2 import Environment
 from packaging.requirements import Requirement
 from ruamel.yaml import YAML
@@ -51,6 +53,7 @@ CONTENT_URL = 'https://raw.githubusercontent.com/{repo}/{rev}/{path}'
 
 
 logger = getLogger('dephell.repositories.conda')
+loop = asyncio.get_event_loop()
 
 
 @attr.s()
@@ -68,12 +71,20 @@ class CondaRepo:
     def get_releases(self, dep) -> tuple:
         revs = self._get_revs(name=dep.name)
         releases = dict()
+
+        # get metainfo
+        coroutines = []
         for rev in revs:
-            # get metainfo
-            try:
-                meta = self._get_meta(rev=rev['rev'], repo=rev['repo'], path=rev['path'])
-            except SyntaxError as e:
-                logger.warning(str(e))
+            coroutines.append(self._get_meta(
+                rev=rev['rev'],
+                repo=rev['repo'],
+                path=rev['path'],
+            ))
+        gathered = asyncio.gather(*coroutines)
+
+        for meta in loop.run_until_complete(gathered):
+            if meta is None:
+                continue
             version = str(meta['package']['version'])
             if version in releases:
                 continue
@@ -189,11 +200,16 @@ class CondaRepo:
                 ))
         return revs
 
-    def _get_meta(self, rev: str, repo: str, path: str) -> Dict[str, Any]:
+    async def _get_meta(self, rev: str, repo: str, path: str) -> Optional[Dict[str, Any]]:
         # download
         url = CONTENT_URL.format(repo=repo, path=path, rev=rev)
-        response = requests.get(url)
-        response.raise_for_status()
+        async with ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status != 200:
+                    raise ValueError('invalid response: {} {} ({})'.format(
+                        response.status, response.reason, url,
+                    ))
+                content = await response.text()
 
         # render
         env = Environment()
@@ -207,7 +223,7 @@ class CondaRepo:
             time=time,
             target_platform='linux-64',
         ))
-        template = env.from_string(response.text)
+        template = env.from_string(content)
         content = template.render(
             os=SimpleNamespace(environ=os.environ, sep=os.path.sep),
             environ=os.environ,
@@ -235,7 +251,11 @@ class CondaRepo:
                     return pyyaml.load(content)
                 except Exception:
                     pass
-            raise SyntaxError('cannot parse recipe: {}'.format(url)) from e
+            logger.warning('cannot parse recipe', extra=dict(
+                url=url,
+                error=str(e),
+            ))
+        return None
 
     @cached_property
     def _config(self):
