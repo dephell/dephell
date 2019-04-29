@@ -118,8 +118,8 @@ jinja2 = "*"
 m2r = "*"
 packaging = "*"
 pip = ">=18.0"
+pyyaml = "*"  # TODO: replace by ruamel.yaml when migrate from poetry format to flit
 requests = "*"
-ruamel-yaml = "*"
 tomlkit = "*"
 yaspin = "*"
 
