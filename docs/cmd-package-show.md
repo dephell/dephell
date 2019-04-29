@@ -53,20 +53,42 @@ $ dephell package show --repo=conda_git make
 }
 ```
 
-Search builded packages in [Anaconda Cloud](https://anaconda.org/) (provides less info, works slower):
+Search builded packages in [Anaconda Cloud](https://anaconda.org/):
 
 ```bash
 $ dephell package show --repo=conda_cloud make
 {
   "authors": [],
-  "description": "",
+  "description": "GNU Make is a tool which controls the generation of executables and other non-source files of a program from the program's source files.",
   "latest": "4.2.1",
   "license": "GPLv3",
   "links": {
-    "anaconda": "https://anaconda.org/defaults/make"
+    "anaconda": "https://anaconda.org/conda-forge/make",
+    "documentation": "https://www.gnu.org/software/make/manual/",
+    "homepage": "https://www.gnu.org/software/make/",
+    "source": "https://ftp.gnu.org/gnu/make/make-4.2.1.tar.bz2"
   },
   "name": "make",
-  "updated": "2018-04-04"
+  "updated": "1970-01-01"
+}
+```
+
+```bash
+$ dephell package show --repo=conda_cloud textdistance
+{
+  "authors": [],
+  "description": "TextDistance – python library for comparing distance between two or more sequences by many algorithms.",
+  "latest": "4.1.0",
+  "license": "LGPL-3.0",
+  "links": {
+    "anaconda": "https://anaconda.org/conda-forge/textdistance",
+    "documentation": "https://pypi.org/project/textdistance/#description",
+    "homepage": "https://github.com/orsinium/textdistance",
+    "repository": "https://github.com/orsinium/textdistance",
+    "source": "https://pypi.io/packages/source/t/textdistance/textdistance-4.1.0.tar.gz"
+  },
+  "name": "textdistance",
+  "updated": "2019-03-13"
 }
 ```
 

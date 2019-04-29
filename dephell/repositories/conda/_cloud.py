@@ -36,6 +36,7 @@ URL_FIELDS = {
     'dev_url': 'repository',
     'doc_url': 'documentation',
     'license_url': 'license',
+    'source_url': 'source',
 }
 
 logger = getLogger('dephell.repositories.conda.cloud')
@@ -46,8 +47,14 @@ class CondaCloudRepo(CondaBaseRepo):
     channels = attr.ib(type=List[str], factory=list)
 
     # https://conda.anaconda.org/{channel}/channeldata.json
-    _repo_url = 'https://conda.anaconda.org/{channel}/{arch}/repodata.json.bz2'
-    _default_url = 'https://repo.anaconda.com/pkgs/{channel}/{arch}/repodata.json.bz2'
+    _user_urls = dict(
+        repo='https://conda.anaconda.org/{channel}/{arch}/repodata.json.bz2',
+        chan='https://conda.anaconda.org/{channel}/channeldata.json',
+    )
+    _main_urls = dict(
+        repo='https://repo.anaconda.com/pkgs/{channel}/{arch}/repodata.json.bz2',
+        chan='https://repo.anaconda.com/pkgs/main/channeldata.json',
+    )
     _search_url = 'https://api.anaconda.org/search'
 
     _allowed_values = dict(
@@ -62,7 +69,9 @@ class CondaCloudRepo(CondaBaseRepo):
     )
 
     def get_releases(self, dep) -> tuple:
-        raw_releases = self._json.get(dep.name)
+        self._update_dep(dep=dep)
+
+        raw_releases = self._releases.get(dep.name)
         if not raw_releases:
             return ()
         raw_releases = OrderedDict(sorted(
@@ -70,18 +79,6 @@ class CondaCloudRepo(CondaBaseRepo):
             key=lambda rel: parse(rel[0]),
             reverse=True,
         ))
-
-        # update dep
-        release_info = next(iter(raw_releases.values()))
-        if not dep.license:
-            dep.license = self._get_license(release_info['license'])
-        if not dep.links:
-            dep.links = dict(
-                anaconda='https://anaconda.org/{channel}/{name}'.format(
-                    channel=release_info['channel'],
-                    name=dep.name,
-                ),
-            )
 
         releases = []
         for version, release_info in raw_releases.items():
@@ -151,6 +148,11 @@ class CondaCloudRepo(CondaBaseRepo):
 
     # hidden methods
 
+    def _get_chan_url(self, channel: str) -> str:
+        if channel == 'defaults':
+            return self._main_urls['chan'].format(channel=channel)
+        return self._user_urls['chan'].format(channel=channel)
+
     def _get_urls(self, channel: str) -> Iterator[str]:
         translation = {
             'Linux': 'linux',
@@ -162,20 +164,77 @@ class CondaCloudRepo(CondaBaseRepo):
         for arch in (system, 'noarch'):
             if channel == 'defaults':
                 for channel in ('main', 'free'):
-                    yield self._default_url.format(arch=arch, channel=channel)
+                    yield self._main_urls['repo'].format(arch=arch, channel=channel)
             else:
-                yield self._repo_url.format(arch=arch, channel=channel)
+                yield self._user_urls['repo'].format(arch=arch, channel=channel)
+
+    def _update_dep(self, dep) -> None:
+        info = self._packages.get(dep.name)
+        if not info:
+            return
+        if not dep.links:
+            dep.links = info['links']
+        if not dep.license and 'license' in info:
+            dep.license = self._get_license(info['license'])
+        if not dep.description and 'summary' in info:
+            dep.description = info['summary']
+
+    # hidden properties
 
     @cached_property
-    def _json(self) -> Dict[str, Dict[str, Dict[str, Any]]]:
+    def _channels(self) -> List[str]:
         channels = list(self.channels)
         if not channels:
             channels.append('conda-forge')
         if 'defaults' not in channels:
             channels.append('defaults')
+        return channels[::-1]
 
+    @cached_property
+    def _packages(self) -> Dict[str, Dict[str, Any]]:
+        all_packages = dict()
+        for channel in self._channels:
+            cache = JSONCache('conda', 'cloud', channel, 'packages', ttl=config['cache']['ttl'])
+            channel_packages = cache.load()
+            if channel_packages is not None:
+                all_packages.update(channel_packages)
+                continue
+
+            url = self._get_chan_url(channel=channel)
+            response = requests.get(url)
+            response.raise_for_status()
+            channel_packages = dict()
+            for name, info in response.json()['packages'].items():
+                name = canonicalize_name(name)
+                links = dict(
+                    anaconda='https://anaconda.org/{channel}/{name}'.format(
+                        channel=channel,
+                        name=name,
+                    ),
+                )
+                for field, value in info.items():
+                    if value and value != 'None' and field in URL_FIELDS:
+                        links[URL_FIELDS[field]] = value
+                channel_packages[name] = dict(
+                    channel=channel,
+                    links=links,
+                )
+                license = info.get('license')
+                if license and license.lower() not in ('none', 'unknown'):
+                    channel_packages[name]['license'] = license
+                summary = info.get('summary')
+                if summary:
+                    channel_packages[name]['summary'] = summary
+
+            all_packages.update(channel_packages)
+            cache.dump(channel_packages)
+
+        return all_packages
+
+    @cached_property
+    def _releases(self) -> Dict[str, Dict[str, Dict[str, Any]]]:
         all_deps = defaultdict(dict)
-        for channel in channels:
+        for channel in self._channels:
             cache = JSONCache('conda', 'cloud', channel, ttl=config['cache']['ttl'])
             channel_deps = cache.load()
             if channel_deps is not None:
@@ -196,9 +255,7 @@ class CondaCloudRepo(CondaBaseRepo):
                     if version not in channel_deps[name]:
                         channel_deps[name][version] = dict(
                             depends=set(),
-                            license=info.get('license', 'unknown'),
                             timestamp=info.get('timestamp', 0) // 1000,
-                            channel=channel,
                             files=[],
                         )
                     # file info
