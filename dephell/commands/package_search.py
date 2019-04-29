@@ -9,7 +9,7 @@ from .base import BaseCommand
 
 
 class PackageSearchCommand(BaseCommand):
-    """Search packages on PyPI.org
+    """Search packages on PyPI.org or Anaconda Cloud.
 
     https://dephell.readthedocs.io/en/latest/cmd-package-search.html
     """

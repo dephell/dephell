@@ -45,6 +45,7 @@ logger = getLogger('dephell.repositories.conda.cloud')
 class CondaCloudRepo(CondaBaseRepo):
     channels = attr.ib(type=List[str], factory=list)
 
+    # https://conda.anaconda.org/{channel}/channeldata.json
     _repo_url = 'https://conda.anaconda.org/{channel}/{arch}/repodata.json.bz2'
     _default_url = 'https://repo.anaconda.com/pkgs/{channel}/{arch}/repodata.json.bz2'
     _search_url = 'https://api.anaconda.org/search'
@@ -144,7 +145,7 @@ class CondaCloudRepo(CondaBaseRepo):
                 description=info['summary'],
                 license=info['license'],
                 channel=info['owner'],
-                urls=urls,
+                links=urls,
             ))
         return results
 
