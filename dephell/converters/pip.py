@@ -5,6 +5,7 @@ from typing import Optional
 from urllib.parse import urlparse
 
 # external
+from dephell_links import DirLink
 from pip._internal.download import PipSession
 from pip._internal.index import PackageFinder
 from pip._internal.req import parse_requirements
@@ -110,13 +111,17 @@ class PIPConverter(BaseConverter):
         for url in urls.values():
             lines.append('--extra-index-url ' + url)
 
+        # disable hashes when dir-based deps are presented
+        # https://github.com/dephell/dephell/issues/41
+        with_hashes = not any(isinstance(req.dep.link, DirLink) for req in reqs)
+
         for req in reqs:
-            lines.append(self._format_req(req=req))
+            lines.append(self._format_req(req=req, with_hashes=with_hashes))
         return '\n'.join(lines) + '\n'
 
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
     # https://github.com/jazzband/pip-tools/blob/master/piptools/utils.py
-    def _format_req(self, req):
+    def _format_req(self, req, *, with_hashes: bool = True) -> str:
         line = ''
         if req.editable:
             line += '-e '
@@ -130,7 +135,7 @@ class PIPConverter(BaseConverter):
             line += req.version
         if req.markers:
             line += '; ' + req.markers
-        if req.hashes:
+        if with_hashes and req.hashes:
             for digest in req.hashes:
                 # https://github.com/jazzband/pip-tools/blob/master/piptools/writer.py
                 line += '{sep}--hash {hash}'.format(
