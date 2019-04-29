@@ -77,7 +77,6 @@ class Mutator:
         # any new group has to change state of the subgraph
         state = {dep.name: dict(dep.constraint.specs) for dep in deps if not isinstance(dep, RootDependency)}
         state[conflict.name] = dict(conflict.constraint.specs)
-        print(state)
         for group, dep in zip(groups, deps):
             for subdep in group.dependencies:
                 if isinstance(subdep, Dependency):
