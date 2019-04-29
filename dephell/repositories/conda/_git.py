@@ -68,6 +68,7 @@ class CondaGitRepo(CondaBaseRepo):
         'conda-forge': dict(repo='conda-forge/{name}-feedstock', path='recipe/meta.yaml'),
         # https://github.com/bioconda/bioconda-recipes/blob/master/recipes/anvio/meta.yaml
         'bioconda': dict(repo='bioconda/bioconda-recipes', path='recipes/{name}/meta.yaml'),
+        'custom': dict(repo='{channel}/{name}', path='recipe/meta.yaml'),
     })
 
     def get_releases(self, dep) -> tuple:
@@ -157,11 +158,12 @@ class CondaGitRepo(CondaBaseRepo):
         cookbooks = []
         for channel in self.channels:
             cookbook = self.cookbooks.get(channel)
-            if cookbook:
-                cookbooks.append(dict(
-                    repo=cookbook['repo'].format(name=name),
-                    path=cookbook['path'].format(name=name),
-                ))
+            if not cookbook:
+                cookbook = self.cookbooks['custom']
+            cookbooks.append(dict(
+                repo=cookbook['repo'].format(name=name, channel=channel),
+                path=cookbook['path'].format(name=name),
+            ))
         if not cookbooks:
             cookbook = self.cookbooks['conda-forge']
             cookbooks.append(dict(
