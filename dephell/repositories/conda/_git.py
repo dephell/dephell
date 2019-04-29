@@ -84,6 +84,8 @@ class CondaGitRepo(CondaBaseRepo):
             gathered = asyncio.gather(*coroutines)
             raw_releases = loop.run_until_complete(gathered)
             cache.dump(raw_releases)
+        if not raw_releases:
+            return ()
 
         # update dep
         release_info = raw_releases[0]
@@ -130,7 +132,7 @@ class CondaGitRepo(CondaBaseRepo):
 
             # get deps
             deps = []
-            for req in meta.get('requirements', {}).get('run', []):
+            for req in ((meta.get('requirements') or {}).get('run') or []):
                 parsed = self.parse_req(req)
                 if parsed['name'] == 'python':
                     release.python = RangeSpecifier(parsed.get('version', '*'))
