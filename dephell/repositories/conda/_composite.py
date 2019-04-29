@@ -23,7 +23,7 @@ class CondaRepo(CondaBaseRepo):
             self.cloud_repo.channels = self.channels
 
     def get_releases(self, dep) -> tuple:
-        for repo in self._get_repos():
+        for repo in (self.cloud_repo, self.git_repo):
             releases = repo.get_releases(dep=dep)
             if releases:
                 return releases
@@ -34,9 +34,3 @@ class CondaRepo(CondaBaseRepo):
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
         return self.cloud_repo.search(query=query)
-
-    def _get_repos(self):
-        if self._requests < 5:
-            return self.git_repo, self.cloud_repo
-        else:
-            return self.cloud_repo, self.git_repo
