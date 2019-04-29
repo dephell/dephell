@@ -31,7 +31,7 @@ Functions:
 + `first()` or `0` -- get first element from list.
 + `flatten()` or `flat()` -- squash list of lists into one-level (flat) list.
 + `last()` or `latest()` -- get last element from list.
-+ `len()`, `length()` or `size()` -- get count of elements in a list.
++ `len()`, `length()`, `count()` or `size()` -- get count of elements in a list.
 + `max()` -- get maximum value from a list.
 + `min()` -- get minimum value from a list.
 + `reverse()` or `reversed()` -- reverse values in a list.
