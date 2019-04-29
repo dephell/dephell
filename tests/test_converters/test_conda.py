@@ -1,4 +1,4 @@
-from ruamel.yaml import YAML
+from dephell.yaml import yaml_load
 
 # project
 from dephell.controllers import DependencyMaker
@@ -34,7 +34,7 @@ def test_conda_dumps_new():
     reqs = [Requirement(dep=dep, lock=False) for dep in deps]
     content = CondaConverter().dumps(reqs=reqs, project=root)
 
-    doc = YAML(typ='safe').load(content)
+    doc = yaml_load(content)
     assert doc['name'] == 'check-me'
     assert doc['channels'] == ['defaults']
     assert doc['dependencies'] == ['matplotlib ==2.0.2', 'numpy']

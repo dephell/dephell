@@ -14,8 +14,8 @@ import requests
 from aiohttp import ClientSession
 from dephell_specifier import RangeSpecifier
 from jinja2 import Environment
-from ruamel.yaml import YAML
 
+from ...yaml import yaml_load
 from ...cache import JSONCache
 from ...config import config
 from ...models.release import Release
@@ -220,19 +220,14 @@ class CondaGitRepo(CondaBaseRepo):
         content = '\n'.join(lines)
 
         # parse
-        yaml = YAML(typ='safe')
         meta = None
         try:
-            meta = yaml.load(content)
+            meta = yaml_load(content)
         except Exception as e:
-            if pyyaml is not None:
-                try:
-                    meta = pyyaml.load(content)
-                except Exception:
-                    logger.warning('cannot parse recipe', extra=dict(
-                        url=url,
-                        error=str(e),
-                    ))
+            logger.warning('cannot parse recipe', extra=dict(
+                url=url,
+                error=str(e),
+            ))
         if meta is None:
             return None
         meta.update(kwargs)

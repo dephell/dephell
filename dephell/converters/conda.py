@@ -2,7 +2,7 @@ from io import StringIO
 from pathlib import Path
 from typing import Optional
 
-from ruamel.yaml import YAML
+from ..yaml import yaml_dump, yaml_load
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
 
@@ -20,7 +20,7 @@ class CondaConverter(BaseConverter):
 
     # https://github.com/ericmjl/conda-envs/blob/master/deeplearning.yml
     def loads(self, content: str) -> RootDependency:
-        doc = YAML(typ='safe').load(content)
+        doc = yaml_load(content)
         root = RootDependency(raw_name=doc.get('name') or self._get_name(content=content))
         repo = CondaRepo(channels=doc.get('channels', []))
         for req in doc.get('dependencies', []):
@@ -40,9 +40,8 @@ class CondaConverter(BaseConverter):
 
     def dumps(self, reqs, project: Optional[RootDependency] = None,
               content: Optional[str] = None) -> str:
-        yaml = YAML()
         if content:
-            doc = yaml.load(content)
+            doc = yaml_load(content, safe=False)
         else:
             doc = dict()
 
@@ -98,6 +97,6 @@ class CondaConverter(BaseConverter):
             del doc['dependencies']
 
         stream = StringIO()
-        yaml.dump(doc, stream)
+        yaml_dump(doc, stream)
         stream.seek(0)
         return stream.read()
