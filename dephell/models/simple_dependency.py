@@ -1,4 +1,4 @@
-from typing import Optional, Set
+from typing import Optional, FrozenSet
 
 import attr
 from packaging.requirements import Requirement
@@ -16,7 +16,7 @@ class SimpleDependency:
 
     url = attr.ib(type=Optional[str], default=None)
     marker = attr.ib(type=Optional[str], default=None)
-    extras = attr.ib(type=Set[str], factory=set)
+    extras = attr.ib(type=FrozenSet[str], factory=frozenset)
 
     @classmethod
     def from_string(cls, text: str) -> 'SimpleDependency':

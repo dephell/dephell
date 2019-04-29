@@ -38,11 +38,12 @@ class BinCache(BaseCache):
     ext = '.bin'
 
     def load(self):
-        if self.path.exists():
-            with self.path.open('rb') as stream:
-                return pickle.load(stream)
+        if not self.path.exists():
+            return None
+        with self.path.open('rb') as stream:
+            return pickle.load(stream)
 
-    def dump(self, data):
+    def dump(self, data) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open('wb') as stream:
             pickle.dump(data, stream)
@@ -52,11 +53,12 @@ class TextCache(BaseCache):
     ext = '.txt'
 
     def load(self):
-        if self.path.exists():
-            with self.path.open('r') as stream:
-                return stream.read().split('\n')
+        if not self.path.exists():
+            return None
+        with self.path.open('r') as stream:
+            return stream.read().split('\n')
 
-    def dump(self, data):
+    def dump(self, data) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open('w') as stream:
             stream.write('\n'.join(data))
@@ -66,9 +68,14 @@ class JSONCache(BaseCache):
     ext = '.json'
 
     def load(self):
-        if self.path.exists():
-            with self.path.open('r') as stream:
+        if not self.path.exists():
+            return None
+        with self.path.open('r') as stream:
+            try:
                 return json.load(stream)
+            except json.JSONDecodeError:
+                return None
+        return None
 
     def dump(self, data):
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -87,7 +94,7 @@ class RequirementsCache(BaseCache):
 
     def load(self):
         if not self.path.exists():
-            return
+            return None
         root = self.converter.load(self.path)
         return root.dependencies
 

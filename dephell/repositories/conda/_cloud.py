@@ -70,17 +70,20 @@ class CondaCloudRepo(CondaBaseRepo):
             )
 
             # get deps
-            deps = []
+            deps = set()
+            pythons = set()
             for req in release_info['depends']:
                 parsed = self.parse_req(req)
                 if parsed['name'] == 'python':
-                    release.python = RangeSpecifier(parsed.get('version', '*'))
+                    if 'version' in parsed:
+                        pythons.add(parsed['version'])
                     continue
-                deps.append(SimpleDependency(
+                deps.add(SimpleDependency(
                     name=parsed['name'],
                     specifier=parsed.get('version', '*'),
                 ))
-            release.dependencies = tuple(deps)
+            release.python = RangeSpecifier(' || '.join(pythons))
+            release.dependencies = tuple(sorted(deps))
 
             releases.append(release)
         return tuple(releases)
@@ -134,21 +137,24 @@ class CondaCloudRepo(CondaBaseRepo):
                     version = info.pop('version')
                     if version not in channel_deps[name]:
                         channel_deps[name][version] = dict(
-                            depends=info['depends'],
+                            depends=set(),
                             license=info.get('license', 'unknown'),
                             timestamp=info.get('timestamp', 0) // 1000,
                             channel=channel,
                             files=[],
                         )
                     # file info
+                    channel_deps[name][version]['depends'].update(info['depends'])
                     channel_deps[name][version]['files'].append(dict(
                         url=base_url + '/' + fname,
                         sha256=info.get('sha256', None),
                         size=info['size'],
                     ))
 
-            cache.dump(channel_deps)
             for dep, releases in channel_deps.items():
+                for release in releases.values():
+                    release['depends'] = list(release['depends'])
                 all_deps[dep].update(releases)
+            cache.dump(channel_deps)
 
         return dict(all_deps)
