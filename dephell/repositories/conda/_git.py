@@ -113,9 +113,20 @@ class CondaGitRepo(CondaBaseRepo):
                 version=version,
                 time=datetime.datetime.strptime(meta['time'], '%Y-%m-%dT%H:%M:%SZ'),
             )
-            digest = meta.get('source', {}).get('sha256')
-            if digest:
-                release.hashes = (digest, )
+
+            # get hashes
+            if 'source' in meta:
+                if isinstance(meta['source'], dict):
+                    digest = meta['source'].get('sha256')
+                    if digest:
+                        release.hashes = (digest, )
+                else:
+                    hashes = []
+                    for source in meta['source']:
+                        digest = source.get('sha256')
+                        if digest:
+                            hashes.append(digest)
+                    release.hashes = tuple(hashes)
 
             # get deps
             deps = []
