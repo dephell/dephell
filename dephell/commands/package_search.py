@@ -29,5 +29,8 @@ class PackageSearchCommand(BaseCommand):
     def __call__(self) -> bool:
         repo = get_repo(name=self.config.get('repo', 'pypi'))
         results = repo.search(self.args.name)
+        if not results:
+            self.logger.error('no results')
+            return False
         print(make_json(data=results, key=self.config.get('filter')))
         return True

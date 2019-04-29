@@ -3,9 +3,9 @@ import sys
 from bz2 import BZ2Decompressor
 from collections import defaultdict, OrderedDict
 from datetime import datetime
+from logging import getLogger
 from platform import uname
 from typing import Any, Dict, List, Iterator, Iterable
-from urllib.parse import quote_plus
 
 import attr
 import requests
@@ -38,6 +38,8 @@ URL_FIELDS = {
     'license_url': 'license',
 }
 
+logger = getLogger('dephell.repositories.conda.cloud')
+
 
 @attr.s()
 class CondaCloudRepo(CondaBaseRepo):
@@ -45,7 +47,18 @@ class CondaCloudRepo(CondaBaseRepo):
 
     _repo_url = 'https://conda.anaconda.org/{channel}/{arch}/repodata.json.bz2'
     _default_url = 'https://repo.anaconda.com/pkgs/{channel}/{arch}/repodata.json.bz2'
-    _search_url = 'https://api.anaconda.org/search?name='
+    _search_url = 'https://api.anaconda.org/search'
+
+    _allowed_values = dict(
+        type=frozenset({'conda', 'pypi', 'env', 'ipynb'}),
+        platform=frozenset({
+            'osx-32', 'osx-64',
+            'win-32', 'win-64',
+            'linux-32', 'linux-64',
+            'linux-armv6l', 'linux-armv7l', 'linux-ppc64le',
+            'noarch',
+        }),
+    )
 
     def get_releases(self, dep) -> tuple:
         raw_releases = self._json.get(dep.name)
@@ -101,9 +114,22 @@ class CondaCloudRepo(CondaBaseRepo):
         raise NotImplementedError('use get_releases to get deps')
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
-        text = quote_plus(' '.join(query))
-        url = self._search_url + text
-        response = requests.get(url)
+        fields = self._parse_query(query=query)
+        logger.debug('search on anaconda cloud', extra=dict(query=fields))
+        invalid_fields = set(fields) - {'name', 'type', 'platform'}
+        if invalid_fields:
+            raise ValueError('Invalid fields: {}'.format(', '.join(invalid_fields)))
+        if 'name' not in fields:
+            raise ValueError('please, specify search text')
+        for field, value in fields.items():
+            if field in self._allowed_values and value not in self._allowed_values[field]:
+                raise ValueError('invalid {field} value. Given: {given}. Allowed: {allowed}'.format(
+                    field=field,
+                    given=value,
+                    allowed=', '.join(self._allowed_values[field]),
+                ))
+
+        response = requests.get(self._search_url, params=fields)
         response.raise_for_status()
 
         results = []
