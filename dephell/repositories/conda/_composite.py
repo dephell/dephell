@@ -1,5 +1,5 @@
 
-from typing import List
+from typing import Dict, Iterable, List
 
 import attr
 
@@ -31,6 +31,9 @@ class CondaRepo(CondaBaseRepo):
 
     async def get_dependencies(self, *args, **kwargs):
         raise NotImplementedError('use get_releases to get deps')
+
+    def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
+        return self.cloud_repo.search(query=query)
 
     def _get_repos(self):
         if self._requests < 5:

@@ -4,7 +4,7 @@ from argparse import REMAINDER, ArgumentParser
 # app
 from ..actions import make_json
 from ..config import builders
-from ..repositories import WareHouseRepo
+from ..repositories import get_repo
 from .base import BaseCommand
 
 
@@ -27,7 +27,7 @@ class PackageSearchCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        repo = WareHouseRepo()
+        repo = get_repo(name=self.config.get('repo', 'pypi'))
         results = repo.search(self.args.name)
         print(make_json(data=results, key=self.config.get('filter')))
         return True

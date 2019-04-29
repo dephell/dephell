@@ -4,7 +4,8 @@ from bz2 import BZ2Decompressor
 from collections import defaultdict, OrderedDict
 from datetime import datetime
 from platform import uname
-from typing import Any, Dict, List, Iterator
+from typing import Any, Dict, List, Iterator, Iterable
+from urllib.parse import quote_plus
 
 import attr
 import requests
@@ -30,6 +31,13 @@ from ...utils import cached_property
 # https://repo.anaconda.com/pkgs/r/linux-64
 # https://repo.anaconda.com/pkgs/r/noarch
 
+URL_FIELDS = {
+    'home': 'homepage',
+    'dev_url': 'repository',
+    'doc_url': 'documentation',
+    'license_url': 'license',
+}
+
 
 @attr.s()
 class CondaCloudRepo(CondaBaseRepo):
@@ -37,6 +45,7 @@ class CondaCloudRepo(CondaBaseRepo):
 
     _repo_url = 'https://conda.anaconda.org/{channel}/{arch}/repodata.json.bz2'
     _default_url = 'https://repo.anaconda.com/pkgs/{channel}/{arch}/repodata.json.bz2'
+    _search_url = 'https://api.anaconda.org/search?name='
 
     def get_releases(self, dep) -> tuple:
         raw_releases = self._json.get(dep.name)
@@ -90,6 +99,28 @@ class CondaCloudRepo(CondaBaseRepo):
 
     async def get_dependencies(self, *args, **kwargs):
         raise NotImplementedError('use get_releases to get deps')
+
+    def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
+        text = quote_plus(' '.join(query))
+        url = self._search_url + text
+        response = requests.get(url)
+        response.raise_for_status()
+
+        results = []
+        for info in response.json():
+            urls = dict(anaconda=info['html_url'])
+            for field, value in info.items():
+                if value and value != 'None' and field in URL_FIELDS:
+                    urls[URL_FIELDS[field]] = value
+            results.append(dict(
+                name=info['name'],
+                version=info['versions'][-1],
+                description=info['summary'],
+                license=info['license'],
+                channel=info['owner'],
+                urls=urls,
+            ))
+        return results
 
     # hidden methods
 
