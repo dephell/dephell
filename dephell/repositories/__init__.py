@@ -20,6 +20,8 @@ __all__ = [
 ]
 
 _repos = dict(
+    conda_cloud=CondaCloudRepo,
+    conda_git=CondaGitRepo,
     conda=CondaRepo,
     pypi=WareHouseRepo,
 )

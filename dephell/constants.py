@@ -33,11 +33,11 @@ FORMATS = (
 )
 
 FILES = (
-    'environment.yml', 'environment.yaml'
     'setup.py',
     'pyproject.toml', 'pyproject.lock',
     'requirements.in', 'requirements.txt',
     'Pipfile', 'Pipfile.lock',
+    'environment.yml', 'environment.yaml'
 )
 
 SUFFIXES = ('.txt', '.in', '.lock', '.toml', '.egg-info', '.py', '.json')
@@ -52,7 +52,7 @@ PAIRS = (
 )
 
 STRATEGIES = ('min', 'max')
-REPOSITORIES = ('pypi', 'conda')
+REPOSITORIES = ('pypi', 'conda', 'conda_git', 'conda_cloud')
 
 LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'EXCEPTION')
 LOG_FORMATTERS = ('short', 'full')
