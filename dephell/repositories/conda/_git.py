@@ -195,21 +195,9 @@ class CondaGitRepo(CondaBaseRepo):
 
         # render
         env = Environment()
-        env.globals.update(dict(
-            compiler=lambda name: name,
-            pin_subpackage=lambda subpackage_name, **kwargs: subpackage_name,
-            pin_compatible=lambda subpackage_name, **kwargs: subpackage_name,
-            cdt=lambda package_name, **kwargs: package_name + '-cos6-aarch64',
-            load_file_regex=lambda *args, **kwargs: None,
-            datetime=datetime,
-            time=time,
-            target_platform='linux-64',
-        ))
+        env.globals.update(self._env)
         template = env.from_string(content)
-        content = template.render(
-            os=SimpleNamespace(environ=os.environ, sep=os.path.sep),
-            environ=os.environ,
-        )
+        content = template.render()
 
         # clean
         lines = []
@@ -219,8 +207,14 @@ class CondaGitRepo(CondaBaseRepo):
                 lines.append(line)
                 continue
             selector = match.group(3)
-            if eval(selector, self._config):
-                lines.append(line)
+            try:
+                if eval(selector, self._config):
+                    lines.append(line)
+            except NameError:
+                logger.error('cannot execute selector in a recipe', extra=dict(
+                    url=url,
+                    selector=selector,
+                ))
         content = '\n'.join(lines)
 
         # parse
@@ -243,7 +237,7 @@ class CondaGitRepo(CondaBaseRepo):
         return meta
 
     @cached_property
-    def _config(self):
+    def _config(self) -> Dict[str, Any]:
         is_64 = sys.maxsize > 2**32
         translation = {
             'Linux': 'linux',
@@ -281,3 +275,38 @@ class CondaGitRepo(CondaBaseRepo):
             py37=bool(py == 37),
             py38=bool(py == 38),
         )
+
+    @cached_property
+    def _env(self) -> Dict[str, Any]:
+        python = python_version().split('.')
+        env = dict(
+            # functions
+            compiler=lambda name: name,
+            pin_subpackage=lambda subpackage_name, **kwargs: subpackage_name,
+            pin_compatible=lambda subpackage_name, **kwargs: subpackage_name,
+            cdt=lambda package_name, **kwargs: package_name + '-cos6-aarch64',
+            load_file_regex=lambda *args, **kwargs: None,
+
+            # modules
+            datetime=datetime,
+            time=time,
+
+            # system info
+            target_platform='linux-64',
+        )
+
+        python_env = dict(
+            # python vars
+            CONDA_BUILD_STATE='RENDER',
+            CONDA_PY=''.join(python[:2]),
+            PY3K=str(int(int(python[0]) >= 3)),
+            PY_VER='.'.join(python),
+            STDLIB_DIR='/tmp/',
+            SP_DIR='/tmp/site-packages/',
+        )
+
+        env['environ'] = os.environ.copy()
+        env['environ'].update(python_env)
+        env.update(env['environ'])
+        env['os'] = SimpleNamespace(environ=env['environ'], sep=os.path.sep)
+        return env
