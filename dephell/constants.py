@@ -37,7 +37,7 @@ FILES = (
     'pyproject.toml', 'pyproject.lock',
     'requirements.in', 'requirements.txt',
     'Pipfile', 'Pipfile.lock',
-    'environment.yml', 'environment.yaml'
+    'environment.yml', 'environment.yaml',
 )
 
 SUFFIXES = ('.txt', '.in', '.lock', '.toml', '.egg-info', '.py', '.json')

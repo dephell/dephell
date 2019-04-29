@@ -88,7 +88,7 @@ class CondaCloudRepo(CondaBaseRepo):
                 raw_name=dep.raw_name,
                 version=version,
                 time=datetime.fromtimestamp(release_info['timestamp']),
-                hashes=tuple(file['sha256'] for file in release_info['files'] if file['sha256'])
+                hashes=tuple(file['sha256'] for file in release_info['files'] if file['sha256']),
             )
 
             # get deps
