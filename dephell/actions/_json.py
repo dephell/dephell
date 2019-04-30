@@ -44,6 +44,7 @@ FILTERS = {
 
     # aliases
     '#': _each,
+    'count()': lambda v: len(v),
     'flat()': _flatten,
     'latest()': lambda v: v[-1],
     'length()': lambda v: len(v),

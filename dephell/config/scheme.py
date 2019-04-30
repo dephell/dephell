@@ -1,5 +1,5 @@
 # app
-from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES
+from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES
 
 
 _TARGET = dict(
@@ -39,6 +39,7 @@ SCHEME = {
 
     'warehouse':    dict(type='string', required=True),
     'bitbucket':    dict(type='string', required=True),
+    'repo':         dict(type='string', required=False, allowed=REPOSITORIES),
 
     'strategy':     dict(type='string', required=True, allowed=STRATEGIES),
     'prereleases':  dict(type='boolean', required=True),

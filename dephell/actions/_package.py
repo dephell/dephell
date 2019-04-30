@@ -5,6 +5,7 @@ from typing import Iterable, List
 from ..controllers import Resolver
 from ..converters import PIPConverter
 from ..models import Dependency
+from ..repositories import get_repo
 
 
 def get_packages(reqs: Iterable[str]) -> List[Dependency]:
@@ -12,9 +13,12 @@ def get_packages(reqs: Iterable[str]) -> List[Dependency]:
     return root.dependencies
 
 
-def get_package(req: str) -> Dependency:
+def get_package(req: str, repo: str = None) -> Dependency:
     root = PIPConverter(lock=False).loads(req)
-    return root.dependencies[0]
+    dep = root.dependencies[0]
+    if repo is not None:
+        dep.repo = get_repo(name=repo)
+    return dep
 
 
 def get_resolver(reqs: Iterable[str] = None) -> Resolver:

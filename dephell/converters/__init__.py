@@ -1,4 +1,5 @@
 # app
+from .conda import CondaConverter
 from .egginfo import EggInfoConverter
 from .installed import InstalledConverter
 from .pip import PIPConverter
@@ -31,6 +32,7 @@ CONVERTERS = dict(
     poetrylock=PoetryLockConverter(),
 
     # other
+    conda=CondaConverter(),
     pyproject=PyProjectConverter(),
     setuppy=SetupPyConverter(),
     installed=InstalledConverter(),

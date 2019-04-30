@@ -1,6 +1,5 @@
 # built-in
 import asyncio
-import re
 from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -31,7 +30,6 @@ except ImportError:
 
 
 logger = getLogger('dephell.repositories')
-rex_token = re.compile(r'^((?P<field>[a-z_]+)\:)?(?P<value>.+)$')
 _fields = {
     'author_email',
     'author',
@@ -68,6 +66,7 @@ class WareHouseRepo(Interface):
     url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
+    propagate = True
     hash = None
     link = None
 
@@ -162,10 +161,7 @@ class WareHouseRepo(Interface):
         return tuple(result)
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
-        fields = dict()
-        for token in query:
-            group = rex_token.fullmatch(token).groupdict()
-            fields[group['field'] or 'name'] = group['value']
+        fields = self._parse_query(query=query)
         logger.debug('search on PyPI', extra=dict(query=fields))
         invalid_fields = set(fields) - _fields
         if invalid_fields:

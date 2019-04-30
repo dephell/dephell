@@ -20,8 +20,6 @@
     params
     filters
     python-lookup
-    badge
-
 
 .. toctree::
     :maxdepth: 1
@@ -102,9 +100,17 @@
 
 .. toctree::
     :maxdepth: 1
-    :caption: Recipes
+    :caption: Dive deeper
 
+    badge
+    changelog
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Recipes and examples
+
+    use-git-hook
+    use-tree-git
     use-poetry-lock
     use-licenses
-    use-tree-git
 ```

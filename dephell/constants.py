@@ -18,6 +18,7 @@ class ReturnCodes(Enum):
 IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')
 
 FORMATS = (
+    'conda',
     'egginfo',
     'pip',
     'pipfile',
@@ -36,6 +37,7 @@ FILES = (
     'pyproject.toml', 'pyproject.lock',
     'requirements.in', 'requirements.txt',
     'Pipfile', 'Pipfile.lock',
+    'environment.yml', 'environment.yaml',
 )
 
 SUFFIXES = ('.txt', '.in', '.lock', '.toml', '.egg-info', '.py', '.json')
@@ -50,6 +52,7 @@ PAIRS = (
 )
 
 STRATEGIES = ('min', 'max')
+REPOSITORIES = ('pypi', 'conda', 'conda_git', 'conda_cloud')
 
 LOG_LEVELS = ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'EXCEPTION')
 LOG_FORMATTERS = ('short', 'full')

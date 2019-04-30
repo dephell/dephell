@@ -26,16 +26,19 @@ class PackageReleasesCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        dep = get_package(self.args.name)
+        dep = get_package(self.args.name, repo=self.config.get('repo'))
         releases = dep.repo.get_releases(dep)
 
         data = []
         for release in releases:
             data.append(dict(
-                date=str(release.time.date()),
+                date=str(release.time.date()) if release.time.year != 1970 else None,
                 version=str(release.version),
                 python=str(release.python) if release.python else '*',
             ))
 
+        if not data:
+            self.logger.error('no releases')
+            return False
         print(make_json(data=data, key=self.config.get('filter')))
         return True

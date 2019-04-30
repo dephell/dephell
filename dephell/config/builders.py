@@ -1,5 +1,5 @@
 # app
-from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, STRATEGIES, VERSION_SCHEMES
+from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES, VERSION_SCHEMES
 
 
 env_help = (
@@ -41,6 +41,7 @@ def build_api(parser):
     api_group = parser.add_argument_group('APIs endpoints')
     api_group.add_argument('--warehouse', help='warehouse API URL.')
     api_group.add_argument('--bitbucket', help='bitbucket API URL.')
+    api_group.add_argument('--repo', choices=REPOSITORIES, help='force repository for first-level deps.')
 
 
 def build_output(parser):
