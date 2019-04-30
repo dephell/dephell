@@ -37,5 +37,8 @@ class PackageReleasesCommand(BaseCommand):
                 python=str(release.python) if release.python else '*',
             ))
 
+        if not data:
+            self.logger.error('no releases')
+            return False
         print(make_json(data=data, key=self.config.get('filter')))
         return True

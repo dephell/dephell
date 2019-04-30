@@ -42,6 +42,22 @@ $ dephell package releases --filter=:10 git+https://github.com/orsinium/deal.git
 ]
 ```
 
+## Conda
+
+Show releases on [Anaconda Cloud](https://docs.anaconda.com/anaconda-cloud/):
+
+```bash
+$ dephell package releases --repo=conda textdistance
+[
+  {
+    "date": "2019-03-13",
+    "python": "*",
+    "version": "4.1.0"
+  },
+  ...
+]
+```
+
 ## See also
 
 1. [How DepHell choose Python environment](python-lookup).
