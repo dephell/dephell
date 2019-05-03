@@ -9,14 +9,14 @@
 Why it is better than all other tools:
 
 1. **Format agnostic**. You can use DepHell with your favorite format: setup.py, requirements.txt, Pipfile, poetry. DepHell supports them all and much more.
-1. **Use your favorite tool on any project**. Want to install a poetry based project, but don't like poetry? Just say DepHell to convert project meta information into setup.py and install it with pip. Or directly work with the project from DepHell, because DepHell can do everything what you usually want to do with packages.
-1. **DepHell doesn't try to replace your favorite tools**. If you use poetry, you have to use poetry's file formats and commands. However, DepHell can be combined with any other tool or even combine all these tools together through formats converting. You can use DepHell, poetry and pip at the same time.
-1. **Easily extendable**. Pipfile should be just another one supported format for pip. However, pip is really old and big project with many bad decisions, so, PyPA team can't just add new features in pip without fear to broke everything. This is how pipenv has been created, but pipenv has inherited almost all problems of pip and isn't extendable too. DepHell has strong modularity and can be easily extended by new formats and commands.
-1. **Developers friendly**. We aren't going to place all our modules into [`_internal`](https://github.com/pypa/pip/tree/master/src/pip/_internal). Also, DepHell has [big ecosystem](https://github.com/dephell) with separated libraries to help you use some DepHell's parts without pain and big dependencies for your project.
-1. **All-in-one-solution**. DepHell can manage dependencies, virtual environments, tests, CLI tools, packages, generate configs, show licenses for dependencies, make security audit, get downloads statistic from pypi, search packages and much more. None of your tools can do it all.
-1. **Smart dependency resolution**. Sometimes pip and pipenv can't lock your dependencies. Try to execute `pipenv install oslo.utils==1.4.0`. Pipenv can't handle it, but DepHell can: `dephell deps add --from=Pipfile oslo.utils==1.4.0` to add new dependency and `dephell deps convert --from=Pipfile --to=Pipfile.lock` to lock it.
+1. **Use your favorite tool on any project**. Want to install a poetry based project, but don't like poetry? Just tell DepHell to convert the project's meta information into a setup.py and install it with pip. Or work directly work with the project from DepHell, because DepHell can do everything that you usually want to do with packages.
+1. **DepHell doesn't try to replace your favorite tools**. If you use poetry, you have to use poetry's file formats and commands. However, DepHell can be combined with any other tool or can even combine all these tools together by converting formats. You can use DepHell, poetry, and pip all at the same time.
+1. **Easily extendable**. DepHell has strong modularity and can be easily extended with new formats and commands.
+1. **Developer friendly**. We aren't going to place all of our modules into [`_internal`](https://github.com/pypa/pip/tree/master/src/pip/_internal). Also, DepHell has a [large ecosystem](https://github.com/dephell) with separated libraries so you can use only the parts of DepHell that you need.
+1. **All-in-one-solution**. DepHell can manage dependencies, virtual environments, tests, CLI tools, packages, generate configs, show licenses for dependencies, assist with security audits, get download statistics from PyPI, search packages and much more.
+1. **Smart dependency resolution**. Sometimes pip and pipenv fail to lock your dependencies. Try to execute `pipenv install oslo.utils==1.4.0`. Pipenv can't handle it, but DepHell can: `dephell deps add --from=Pipfile oslo.utils==1.4.0` to add new dependency and `dephell deps convert --from=Pipfile --to=Pipfile.lock` to lock it.
 1. **Asyncio based**. DepHell doesn't support Python 2.7, and that allows us to use modern features to make network and filesystem requests as fast as possible.
-1. **Multiple environments**. You can have as many environments for project as you want. Separate sphinx dependencies from your main and dev environment. Other tools like pipenv and poetry don't support it.
+1. **Multiple environments**. You can have as many environments for project as you want. Separate sphinx dependencies from your main and dev environment. Other tools like pipenv and poetry don't support this.
 
 
 Features:
@@ -77,7 +77,7 @@ git clone https://github.com/pypa/sampleproject.git
 cd sampleproject
 ```
 
-This project uses [setup.py](https://docs.python.org/3/distutils/setupscript.html) for dependenciesand metainfo. However, this format over-complicated for most of projects. Let's convert it into [poetry](https://poetry.eustace.io/docs/pyproject/):
+This project uses [setup.py](https://docs.python.org/3/distutils/setupscript.html) for dependencies and metainfo. However, this format is over-complicated for most projects. Let's convert it into [poetry](https://poetry.eustace.io/docs/pyproject/):
 
 ```bash
 dephell deps convert --from=setup.py --to=pyproject.toml
@@ -119,7 +119,7 @@ dephell generate license MIT
 dephell generate editorconfig
 ```
 
-Our users, probably, has no installed poetry, but they, definitely, has pip that can install files from setup.py. Let's make it easier to generate `setup.py` from our `pyproject.toml`. Also, it points for DepHell your default dependencies file. Add next lines in the `pyproject.toml`:
+Our users probably have not installed poetry, but they are likely to have pip and can install files from setup.py. Let's make it easier to generate `setup.py` from our `pyproject.toml`. Also, it points to DepHell as your default dependencies file. Add the following lines in the `pyproject.toml`:
 
 ```toml
 [tool.dephell.main]
@@ -127,7 +127,7 @@ from = {format = "poetry", path = "pyproject.toml"}
 to = {format = "setuppy", path = "setup.py"}
 ```
 
-You can see full real world example of config in [DepHell's own pyproject.toml](./pyproject.toml).
+You can see a full, real-world example of a config in [DepHell's own pyproject.toml](./pyproject.toml).
 
 Now we can call DepHell commands without explicitly specifying `from` and `to`:
 
@@ -137,7 +137,7 @@ dephell deps convert
 
 It will make setup.py and README.rst from pyproject.toml and README.md.
 
-Now let's test our code into virtual environment:
+Now let's test our code in a virtual environment:
 
 ```bash
 $ dephell venv run pytest
@@ -150,13 +150,13 @@ INFO installation...
 # ... pytest output
 ```
 
-Also, we can just activate virtual environment for project and run any commands inside:
+We can now activate the virtual environment for our project and run any commands inside:
 
 ```bash
 dephell venv shell
 ```
 
-Ugh, we have tests, but have no `pytest` in our dependencies file. Let's add it:
+Ugh, we have tests, but don't have `pytest` in our dependencies file. Let's add it:
 
 ```bash
 dephell deps add --envs dev test -- pytest
@@ -173,7 +173,7 @@ pytest = "*"
 test = ["coverage", "pytest"]
 ```
 
-One day we will have really many dependencies. Let's have a look how many of them we have now:
+Eventually we will have many more dependencies. Let's look at how many of them we have now:
 
 ```bash
 $ dephell deps tree
@@ -197,14 +197,14 @@ $ dephell deps tree
   - six [required: >=1.10.0, locked: 1.12.0, latest: 1.12.0]
 ```
 
-Hm... Is it many or not? Let's look on their size.
+Hm...Is it as many as it seems? Let's look at their size.
 
 ```bash
 $ dephell inspect venv --filter=lib_size
 11.96Mb
 ```
 
-Ugh... Ok, it's Python. Are they actual?
+Ugh...Ok, it's Python. Are they actual?
 
 ```bash
 $ dephell deps outdated
@@ -223,7 +223,7 @@ $ dephell deps outdated
 
 `Pytest` requires old version of `more-itertools`. That happens.
 
-If our tests and dependencies are OK, it's time to deploy. First of all, increment project version:
+If our tests and dependencies are OK, it's time to deploy. First of all, increment the project version:
 
 ```bash
 $ dephell project bump minor
@@ -241,25 +241,25 @@ INFO dumping... (format=wheel)
 INFO builded
 ```
 
-Now, we can upload these packages on [PyPI](https://pypi.org/) with [twine](https://github.com/pypa/twine/).
+Now, we can upload these packages to [PyPI](https://pypi.org/) with [twine](https://github.com/pypa/twine/).
 
-This is some of the most useful commands. See [documentation](https://dephell.readthedocs.io/) for more details.
+These are some of the most useful commands. See [documentation](https://dephell.readthedocs.io/) for more details.
 
 ## Compatibility
 
-DepHell tested on Linux and Mac OS X with Python 3.5, 3.6, 3.7. And one of the coolest things that DepHell ran by DepHell on Travis CI.
+DepHell is tested on Linux and Mac OS X with Python 3.5, 3.6, 3.7. And one of the coolest things is that DepHell is run by DepHell on Travis CI.
 
 ## How can I help
 
 1. Star project on Github. Developers believe in the stars.
-1. Tell your fellows that [Gram](http://github.com/orsinium) has made [cool thing](https://github.com/dephell/dephell) for you.
-1. [Open an issue](https://github.com/dephell/dephell/issues/new) if you have thoughts how to make DepHell better.
+1. Tell your fellows that [Gram](http://github.com/orsinium) has a made [cool thing](https://github.com/dephell/dephell) for you.
+1. [Open an issue](https://github.com/dephell/dephell/issues/new) if you have thoughts on how to make DepHell better.
 1. Things that you can contribute in any project in [DepHell ecosystem](https://github.com/dephell):
     1. Fix grammar and typos.
     1. Document new things.
     1. Tests, we always need more tests.
     1. Make READMEs more nice and friendly.
-    1. See issues by [help wanted](https://github.com/dephell/dephell/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) label to find things that you can fix.
-    1. Anything what you want. If it is a new feature, please, open an issue before writing code.
+    1. View issues with the [help wanted](https://github.com/dephell/dephell/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) label to find things that you can fix.
+    1. Anything what you want. If it is a new feature, please open an issue before writing code.
 
 Thank you :heart:
