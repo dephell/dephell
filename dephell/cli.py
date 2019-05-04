@@ -76,7 +76,7 @@ def main(argv: List[str]) -> int:
         result = task()
     except Exception as e:
         logger.exception('{}: {}'.format(type(e).__name__, e))
-        if hasattr(task, 'config') and task.config.get('pdb', False) is True:
+        if hasattr(task, 'config') and task.config.get('pdb', False):
             post_mortem()
         return ReturnCodes.UNKNOWN_EXCEPTION.value
     except KeyboardInterrupt:
