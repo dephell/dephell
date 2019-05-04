@@ -119,6 +119,9 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
     if isinstance(version, str):
         version = Version(version)
 
+    if scheme == 'serial':
+        return str(version.release + 1)
+
     if scheme in ('semver', 'romver', 'pep', 'zerover'):
         parts = version.release + (0, 0)
         if scheme == 'zerover':
