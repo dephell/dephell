@@ -69,6 +69,12 @@ class Requirement:
         return None  # mypy wants it
 
     @property
+    def prereleases(self) -> Optional[bool]:
+        if self.dep.prereleases:
+            return True
+        return None  # mypy wants it
+
+    @property
     def link(self):
         return self.dep.link
 
