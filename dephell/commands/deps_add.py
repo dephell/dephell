@@ -42,7 +42,7 @@ class DepsAddCommand(BaseCommand):
 
         # set envs
         for dep in new_root.dependencies:
-            dep.envs = set(self.config['envs'])
+            dep.envs = set(self.config.get('envs', {'main'}))
 
         # mix them up
         self.logger.debug('merge...')

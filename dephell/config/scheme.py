@@ -30,7 +30,8 @@ SCHEME = {
     ),
     'envs': dict(
         type='list',
-        required=True,
+        required=False,
+        empty=False,
     ),
     'tests': dict(
         type='list',
