@@ -1,4 +1,7 @@
+from typing import Dict
+
 # app
+from .base import BaseConverter
 from .conda import CondaConverter
 from .egginfo import EggInfoConverter
 from .installed import InstalledConverter
@@ -11,6 +14,25 @@ from .pyproject import PyProjectConverter
 from .sdist import SDistConverter
 from .setuppy import SetupPyConverter
 from .wheel import WheelConverter
+
+
+__all__ = [
+    'CONVERTERS',
+
+    'BaseConverter',
+    'CondaConverter',
+    'EggInfoConverter',
+    'InstalledConverter',
+    'PIPConverter',
+    'PIPFileConverter',
+    'PIPFileLockConverter',
+    'PoetryConverter',
+    'PoetryLockConverter',
+    'PyProjectConverter',
+    'SDistConverter',
+    'SetupPyConverter',
+    'WheelConverter',
+]
 
 
 CONVERTERS = dict(
@@ -36,4 +58,4 @@ CONVERTERS = dict(
     pyproject=PyProjectConverter(),
     setuppy=SetupPyConverter(),
     installed=InstalledConverter(),
-)
+)  # type: Dict[str, BaseConverter]
