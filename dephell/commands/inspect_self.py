@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # app
-from ..__version__ import __version__
+from .. import __version__
 from ..actions import format_size, get_path_size, make_json
 from ..config import builders
 from ..constants import DEPHELL_ECOSYSTEM

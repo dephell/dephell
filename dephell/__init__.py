@@ -1,5 +1,4 @@
-# app
-from .__version__ import *  # noQA
-from .controllers import *  # noQA
-from .converters import *  # noQA
-from .models import *  # noQA
+
+__version__ = '0.6.0'
+__author__ = 'Gram (@orsinium)'
+__license__ = 'MIT'
