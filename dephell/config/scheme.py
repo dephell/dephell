@@ -50,8 +50,9 @@ SCHEME = {
     'level':        dict(type='string', required=True, allowed=LOG_LEVELS),
     'format':       dict(type='string', required=True, allowed=LOG_FORMATTERS),
     'nocolors':     dict(type='boolean', required=True),
-    'traceback':    dict(type='boolean', required=True),
     'filter':       dict(type='string', required=False),
+    'traceback':    dict(type='boolean', required=True),
+    'pdb':    dict(type='boolean', required=True),
 
     # venv
     'venv':     dict(type='string', required=True),
