@@ -54,7 +54,7 @@ def build_output(parser):
     output_group.add_argument('--filter', help='filter for JSON output.')
 
     output_group.add_argument('--traceback', action='store_true', help='show traceback for exceptions.')
-    output_group.add_argument('--pdb', action='store_true', help='run PDB for critical exceptions.')
+    output_group.add_argument('--pdb', action='store_true', help='run pdb for critical exceptions.')
 
 
 def build_venv(parser):
