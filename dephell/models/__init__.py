@@ -10,6 +10,7 @@ from .groups import Groups
 from .release import Release
 from .requirement import Requirement
 from .root import RootDependency
+from .simple_dependency import SimpleDependency
 
 
 __all__ = [
@@ -24,4 +25,5 @@ __all__ = [
     'Release',
     'Requirement',
     'RootDependency',
+    'SimpleDependency',
 ]

@@ -61,6 +61,18 @@ class DepsConvertCommand(BaseCommand):
                 return False
             self.logger.debug('resolved')
 
+        # apply envs if needed
+        if 'envs' in self.config:
+            if not should_be_resolved:
+                self.logger.debug('resolving...')
+                resolved = resolver.resolve(level=1, silent=self.config['silent'])
+                if not resolved:
+                    conflict = analyze_conflict(resolver=resolver)
+                    self.logger.warning('conflict was found')
+                    print(conflict)
+                    return False
+            resolver.apply_envs(set(self.config['envs']))
+
         # dump
         self.logger.debug('dump dependencies...', extra=dict(
             format=self.config['to']['format'],
