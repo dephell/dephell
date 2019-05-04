@@ -19,6 +19,8 @@ Config example:
 [tool.dephell.main]
 # read from poetry format
 from = {format = "poetry", path = "pyproject.toml"}
+# drop dev-dependencies
+envs = ["main"]
 # and convert into setup.py
 to = {format = "setuppy", path = "setup.py"}
 
@@ -55,7 +57,7 @@ $ dephell deps install --env=pytest
 $ dephell venv run --env=pytest
 ```
 
-Also, by default, DepHell uses `--env` to generate path to the virtual environment, so different `--envs` have different virtual environments.
+Also, by default, DepHell uses `--env` to generate path to the virtual environment, so different `--env` values have different virtual environments.
 
 ## See also
 

@@ -104,6 +104,7 @@
 
     badge
     changelog
+    hell
 
 .. toctree::
     :maxdepth: 1
