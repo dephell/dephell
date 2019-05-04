@@ -37,10 +37,12 @@ Commands that accept these parameters:
 
 ## Resolver and API
 
-+ `--strategy` -- Algorithm to select best release. Available values: `min` and `max`. By default is `max`, because almost all resolvers uses this strategy. Read blog post [Minimal Version Selection](https://research.swtch.com/vgo-mvs) for details about `min` strategy.
-+ `--prereleases` -- Allow prereleases.
++ `--strategy` -- algorithm to select best release. Available values: `min` and `max`. By default is `max`, because almost all resolvers uses this strategy. Read blog post [Minimal Version Selection](https://research.swtch.com/vgo-mvs) for details about `min` strategy.
++ `--prereleases` -- allow prereleases.
++ `--mutations` -- maximum mutations when trying to resolve conflicts. 200 by default.
 + `--warehouse` -- warehouse API URL. This is default value and can be reloaded in the dependencies file.
 + `--bitbucket` -- bitbucket API URL. Dephell isn't use Bitbucket API yet, but option already available.
++ `--repo` -- force repository for first-level dependencies. Useful when you want to use `conda` instead of `pypi` (for example, in [dephell package search](cmd-package-search) command).
 
 ## Virtual environment
 
@@ -56,8 +58,9 @@ Commands that accept these parameters:
 + `--level` -- minimal level for log messages. Available levels: `DEBUG`, `INFO`, `WARNING`, `ERROR` and `EXCEPTION`. `INFO` by default. `DEBUG` and `INFO` writes in the stdout, other levels in the stderr.
 + `--nocolors` -- do not color output.
 + `--silent` -- suppress any output except errors. Disables progress bar for resolver.
-+ `--traceback` -- show traceback for exceptions.
 + `--filter` -- [filter for JSON output](filters).
++ `--traceback` -- show traceback for exceptions.
+    + `--pdb` -- run [pdb](https://docs.python.org/3/library/pdb.html) when critical exception occurred.
 
 Other:
 
@@ -65,7 +68,9 @@ Other:
 + `--cache-ttl` -- Time to live for releases list cache (in seconds). 1 hour by default.
 + `--project` -- path to the current project. Current directory by default.
 + `--bin` -- path to the dir for installing scripts.
-+ `--envs` -- environments (`main`, `dev`) or extras to install.
++ `--envs` -- environments (`main`, `dev`) or extras to install or convert.
++ `--tests` -- path to test files for [dephell project test](cmd-project-test) command.
++ `--versioning` -- versioning scheme for project. See [dephell project bump](cmd-project-bump) for details.
 
 ## Default values
 

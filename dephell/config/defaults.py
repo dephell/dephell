@@ -9,7 +9,6 @@ data_dir = Path(user_data_dir('dephell'))
 
 
 DEFAULT = dict(
-    envs=['main'],
     tests=['tests'],
 
     # resolver
@@ -27,6 +26,7 @@ DEFAULT = dict(
     nocolors=False,
     silent=False,
     traceback=False,
+    pdb=False,
 
     # venv
     venv=str(data_dir / 'venvs' / '{project}-{digest}' / '{env}'),
