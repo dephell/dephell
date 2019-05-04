@@ -33,7 +33,7 @@ def test_dump():
     content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     assert 'requests = ' in content
     assert 'extras = ["security"]' in content
-    assert 'pathlib2 = "==2.*,>=2.2.0"' in content
+    assert 'toml = "==0.*,>=0.9.0"' in content
 
     assert 'https://github.com/django/django.git' in content
 
