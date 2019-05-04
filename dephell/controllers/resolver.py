@@ -140,6 +140,7 @@ class Resolver:
                 continue
             if dep.inherited_envs & envs:
                 continue
+            logger.debug('unapply by envs', extra=dict(dep=dep.name, envs=envs))
             # without `soft=True` all deps of this dep will be marked as unapplied
             # and ignored in Requirement.from_graph.
             # It's bad behavior because deps of this dep can be required for other

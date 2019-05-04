@@ -58,6 +58,6 @@ Enable hook in [.pre-commit-config.yaml](https://github.com/mverteuil/precommit-
 
 ## See also
 
-1. [Source repository]((https://github.com/mverteuil/precommit-dephell)).
+1. [Source repository](https://github.com/mverteuil/precommit-dephell).
 1. [DepHell config](config).
 1. [Hooks in Git](https://githooks.com/).

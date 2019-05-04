@@ -59,7 +59,7 @@ class DepsInstallCommand(BaseCommand):
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
 
         # filter deps by envs and markers
-        resolver.apply_envs(set(self.config['envs']))
+        resolver.apply_envs(set(self.config.get('envs', {'main'})))
         resolver.apply_markers(python=python)
 
         install, remove = self._get_install_remove(graph=resolver.graph, python=python)
