@@ -34,7 +34,14 @@ You can specify input and output in three different ways:
 Lock dependencies for Pipfile:
 
 ```bash
-dephell deps convert --from=Pipfile --to=Pipfile.lock
+$ dephell deps convert --from=Pipfile --to=Pipfile.lock
+```
+Or the same, but more explicit:
+
+```bash
+$ dephell deps convert \
+    --from-format=pipfile --from-path=Pipfile \
+    --to-format=pipfilelock --to-path=Pipfile.lock
 ```
 
 Best practice is specify your dependencies file in `pyproject.toml` DepHell config:
@@ -48,10 +55,42 @@ to = {format = "pipfilelock", path = "Pipfile.lock"}
 And after that DepHell will automatically detect your dependencies file:
 
 ```bash
-dephell deps convert
+$ dephell deps convert
 ```
 
 See [configuration documentation](config) for more details.
+
+## Filter dependencies
+
+You can filter dependencies by envs with `--envs` flag. All dependencies included in `main` or `dev` env. Also, some dependencies can be included in [extras](https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies). There is an example of poetry config with envs in comments:
+
+```toml
+[tool.poetry.dependencies]
+python = ">=3.5"
+aiohttp = "*"       # main, asyncio
+textdistance = "*"  # main
+
+[tool.poetry.dev-dependencies]
+pytest = "*"    # dev, tests
+sphinx = "*"    # dev
+
+[tool.poetry.extras]
+asyncio = ["aiohttp"]
+tests = ["pytest"]
+```
+
+Examples, how to filter these deps:
+
+```bash
+$ dephell deps convert --envs main
+# aiohttp, textdistance
+
+$ dephell deps convert --envs asyncio
+# aiohttp
+
+$ dephell deps convert --envs main tests
+# aiohttp, textdistance, pytest
+```
 
 ## See also
 
