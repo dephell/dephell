@@ -269,7 +269,7 @@ class PoetryConverter(BaseConverter):
             markers.append('sys_platform == "{}" '.format(content['platform']))
         if 'python' in content:
             markers.append(RangeSpecifier(content['python']).to_marker('python_version'))
-        ' and '.join(markers)
+        markers = ' and '.join(markers)
 
         deps = DependencyMaker.from_params(
             raw_name=name,
