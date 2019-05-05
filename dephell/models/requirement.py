@@ -10,7 +10,7 @@ class Requirement:
     _properties = (
         'name', 'release', 'version', 'extras', 'markers',
         'hashes', 'sources', 'editable', 'git', 'rev',
-        'description', 'optional',
+        'description', 'optional', 'platform', 'python',
     )
 
     def __init__(self, dep, lock: bool, roots: Iterable[str] = None):
@@ -69,6 +69,12 @@ class Requirement:
         return None  # mypy wants it
 
     @property
+    def prereleases(self) -> Optional[bool]:
+        if self.dep.prereleases:
+            return True
+        return None  # mypy wants it
+
+    @property
     def link(self):
         return self.dep.link
 
@@ -114,6 +120,20 @@ class Requirement:
         if markers:
             return str(markers)
         return None  # mypy wants it
+
+    @cached_property
+    def platform(self) -> Optional[str]:
+        for marker in ('sys_platform', 'platform_system', 'os_name'):
+            platform = self.dep.marker.get_string(marker)
+            if platform:
+                return platform
+
+    @cached_property
+    def python(self) -> Optional[str]:
+        python = self.dep.marker.python_version
+        if python:
+            return str(python)
+        return None
 
     @cached_property
     def hashes(self) -> Optional[tuple]:

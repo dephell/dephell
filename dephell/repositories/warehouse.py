@@ -106,7 +106,7 @@ class WareHouseRepo(Interface):
                 extra=dep.extra,
             )
             # filter prereleases if needed
-            if release.version.is_prerelease and not self.prereleases:
+            if release.version.is_prerelease and not self.prereleases and not dep.prereleases:
                 continue
             releases.append(release)
         releases.sort(reverse=True)

@@ -269,7 +269,7 @@ class PoetryConverter(BaseConverter):
             markers.append('sys_platform == "{}" '.format(content['platform']))
         if 'python' in content:
             markers.append(RangeSpecifier(content['python']).to_marker('python_version'))
-        ' and '.join(markers)
+        markers = ' and '.join(markers)
 
         deps = DependencyMaker.from_params(
             raw_name=name,
@@ -279,6 +279,7 @@ class PoetryConverter(BaseConverter):
             url=url,
             editable=content.get('develop', False),
             envs=envs,
+            prereleases=content.get('allows-prereleases', False),
         )
         return deps
 
@@ -289,6 +290,8 @@ class PoetryConverter(BaseConverter):
                 if isinstance(value, tuple):
                     value = list(value)
                 result[name] = value
+        if req.prereleases:
+            result['allows-prereleases'] = True
         if 'version' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table

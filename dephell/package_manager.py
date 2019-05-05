@@ -33,7 +33,7 @@ class PackageManager:
     # methods
 
     def install(self, reqs: Iterable[Requirement]) -> int:
-        args = ['--no-deps']
+        args = ['--no-deps', '--pre']
         if self.is_global:
             args.append('--user')
         converter = PIPConverter(lock=True)
