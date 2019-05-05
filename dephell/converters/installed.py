@@ -43,7 +43,7 @@ class InstalledConverter(BaseConverter):
                 path = Path(path)
 
             if path.suffix == '.egg':
-                name = path.with_suffix('').name.split('-')[0]
+                name = canonicalize_name(path.with_suffix('').name.split('-')[0])
                 if names is not None and name not in names:
                     continue
 
@@ -68,7 +68,7 @@ class InstalledConverter(BaseConverter):
             # read site-packages / dist-packages
             for converter, pattern in parsers:
                 for info_path in path.glob(pattern):
-                    name = info_path.with_suffix('').name.split('-')[0]
+                    name = canonicalize_name(info_path.with_suffix('').name.split('-')[0])
                     if names is not None and name not in names:
                         continue
                     subroot = converter.load_dir(info_path)
