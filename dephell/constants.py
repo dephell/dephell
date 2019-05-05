@@ -92,6 +92,8 @@ VERSION_SCHEMES = MappingProxyType(dict(
     romver=VERSION_MAJOR + VERSION_MINOR + VERSION_PRE,
     # https://calver.org/
     calver=VERSION_MAJOR + VERSION_PATCH,
+    # https://packaging.python.org/guides/distributing-packages-using-setuptools/#serial-versioning
+    serial=VERSION_MAJOR,
     # Mac OS X reference
     roman=VERSION_MAJOR,
     # https://0ver.org/
