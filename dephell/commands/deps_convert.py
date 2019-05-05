@@ -63,7 +63,7 @@ class DepsConvertCommand(BaseCommand):
 
         # apply envs if needed
         if 'envs' in self.config:
-            if not should_be_resolved:
+            if len(resolver.graph._layers) <= 1:
                 self.logger.debug('resolving...')
                 resolved = resolver.resolve(level=1, silent=self.config['silent'])
                 if not resolved:
