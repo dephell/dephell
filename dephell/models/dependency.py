@@ -33,6 +33,7 @@ class Dependency:
 
     # info from requirements file
     editable = attr.ib(type=bool, default=False, repr=False)
+    prereleases = attr.ib(type=bool, default=False, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
     marker = attr.ib(type=Markers, factory=Markers, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep

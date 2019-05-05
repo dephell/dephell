@@ -20,6 +20,7 @@ def test_load():
 
     assert deps['django'].link.rev == '1.11.4'
     assert isinstance(deps['django'].repo, GitRepo)
+    assert 'python_version >= "2.7.0"' in str(deps['pathlib2'].marker)
 
     assert deps['mysqlclient'].envs == {'main', 'mysql'}
     assert deps['pytest'].envs == {'dev'}
@@ -33,7 +34,7 @@ def test_dump():
     content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     assert 'requests = ' in content
     assert 'extras = ["security"]' in content
-    assert 'pathlib2 = "==2.*,>=2.2.0"' in content
+    assert 'toml = "==0.*,>=0.9.0"' in content
 
     assert 'https://github.com/django/django.git' in content
 
@@ -41,6 +42,9 @@ def test_dump():
     assert '>=0.9' in parsed['dependencies']['toml']
     assert '>=2.13' in parsed['dependencies']['requests']['version']
     assert {'security'} == set(parsed['dependencies']['requests']['extras'])
+
+    assert parsed['dependencies']['pathlib2']['allows-prereleases'] is True
+    assert parsed['dependencies']['pathlib2']['python'] == '==2.7.*,>=2.7.0'
 
     assert parsed['dependencies']['django']['git'] == 'https://github.com/django/django.git'
     assert parsed['dependencies']['django']['rev'] == '1.11.4'
