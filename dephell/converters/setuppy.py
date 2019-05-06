@@ -119,11 +119,11 @@ class SetupPyConverter(BaseConverter):
         root.entrypoints = tuple(entrypoints)
 
         # dependencies
-        deps = []
         for req in cls._get_list(info, 'install_requires'):
-            req = Requirement(req)
-            deps.extend(DependencyMaker.from_requirement(source=root, req=req))
-        root.attach_dependencies(deps)
+            root.attach_dependencies(DependencyMaker.from_requirement(
+                source=root,
+                req=Requirement(req),
+            ))
 
         # extras
         for extra, reqs in getattr(info, 'extras_require', {}).items():
@@ -131,10 +131,12 @@ class SetupPyConverter(BaseConverter):
             envs = {extra} if extra == 'dev' else {'main', extra}
             for req in reqs:
                 req = Requirement(req)
-                deps = DependencyMaker.from_requirement(source=root, req=req, marker=marker)
-                for dep in deps:
-                    dep.envs = envs
-                root.attach_dependencies(deps)
+                root.attach_dependencies(DependencyMaker.from_requirement(
+                    source=root,
+                    req=req,
+                    marker=marker,
+                    envs=envs,
+                ))
 
         return root
 
