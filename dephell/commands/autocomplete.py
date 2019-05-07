@@ -1,6 +1,7 @@
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
+import platform
 
 # external
 from appdirs import user_data_dir
@@ -47,10 +48,20 @@ class AutocompleteCommand(BaseCommand):
 
     def _bash(self):
         script = make_bash_autocomplete()
+
         path = Path.home() / '.local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
+
+        # change to macos autocomplete path 
+        # ref. https://itnext.io/programmable-completion-for-bash-on-macos-f81a0103080b
+        if platform.platform() == 'Darwin':
+            path = Path('/usr/local/etc/bash_completion.d') / 'dephell.bash-completion'
+        
+        # make sure that dir exists
+        path.parent.mkdir(parents=True, exist_ok=True)
+
         path.write_text(script)
 
-        for rc_name in ('.bashrc', '.profile'):
+        for rc_name in ('.bashrc', '.profile', '.bash_profile'):
             rc_path = Path.home() / rc_name
             if not rc_path.exists():
                 continue
