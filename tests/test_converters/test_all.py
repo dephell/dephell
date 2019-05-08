@@ -1,8 +1,11 @@
-# project
 # external
 import attr
 import pytest
 
+# built-in
+from pathlib import Path
+
+# project
 from dephell import converters
 from dephell.controllers import Graph
 from dephell.models import Requirement
@@ -10,19 +13,19 @@ from dephell.repositories import WareHouseRepo
 
 
 @pytest.mark.parametrize('converter, path', [
-    (converters.PIPConverter(lock=False), './tests/requirements/attrs-requests.txt'),
-    (converters.PIPConverter(lock=False), './tests/requirements/django-deal.txt'),
-    (converters.PIPConverter(lock=False), './tests/requirements/scipy-pandas-numpy.txt'),
+    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'attrs-requests.txt'),
+    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'django-deal.txt'),
+    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'scipy-pandas-numpy.txt'),
 
-    (converters.PIPFileConverter(), './tests/requirements/pipfile.toml'),
-    (converters.PIPFileLockConverter(), './tests/requirements/pipfile.lock.json'),
+    (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml'),
+    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json'),
 
-    (converters.PoetryConverter(), './tests/requirements/poetry.toml'),
-    (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml'),
+    (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml'),
+    (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml'),
 
-    (converters.SetupPyConverter(), './tests/requirements/setup.py'),
-    (converters.EggInfoConverter(), './tests/requirements/egg-info/'),
-    (converters.WheelConverter(), './tests/requirements/wheel.whl'),
+    (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py'),
+    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info/'),
+    (converters.WheelConverter(), Path('tests') / 'requirements' / 'wheel.whl'),
 ])
 def test_load_dump_load_deps(converter, path):
     root1 = converter.load(path)
@@ -64,15 +67,15 @@ def test_load_dump_load_deps(converter, path):
 
 
 @pytest.mark.parametrize('converter, path, exclude', [
-    (converters.PIPFileConverter(), './tests/requirements/pipfile.toml', ['raw_name']),
-    (converters.PIPFileLockConverter(), './tests/requirements/pipfile.lock.json', ['raw_name']),
+    (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml', ['raw_name']),
+    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json', ['raw_name']),
 
-    (converters.PoetryConverter(), './tests/requirements/poetry.toml', []),
-    (converters.PoetryLockConverter(), './tests/requirements/poetry.lock.toml', []),
+    (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml', []),
+    (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml', []),
 
-    (converters.SetupPyConverter(), './tests/requirements/setup.py', []),
-    (converters.EggInfoConverter(), './tests/requirements/egg-info/', ['package', 'entrypoints', 'readme']),
-    (converters.WheelConverter(), './tests/requirements/wheel.whl', ['package', 'entrypoints']),
+    (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py', []),
+    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info/', ['package', 'entrypoints', 'readme']),
+    (converters.WheelConverter(), Path('tests') / 'requirements' / 'wheel.whl', ['package', 'entrypoints']),
 ])
 def test_load_dump_load_metainfo(converter, path, exclude):
     root1 = converter.load(path)
