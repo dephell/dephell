@@ -1,7 +1,7 @@
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
-import platform
+from platform import platform
 
 # external
 from appdirs import user_data_dir
@@ -51,7 +51,7 @@ class AutocompleteCommand(BaseCommand):
 
         # https://github.com/dephell/dephell/pull/62
         path = Path.home() / '.local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
-        if not path.exists():
+        if platform().lower() == 'darwin':
             # ref. https://itnext.io/programmable-completion-for-bash-on-macos-f81a0103080b
             path = Path('/') / 'usr' / 'local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
         path.parent.mkdir(parents=True, exist_ok=True)
