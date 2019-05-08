@@ -49,16 +49,12 @@ class AutocompleteCommand(BaseCommand):
     def _bash(self):
         script = make_bash_autocomplete()
 
+        # https://github.com/dephell/dephell/pull/62
         path = Path.home() / '.local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
-
-        # change to macos autocomplete path 
-        # ref. https://itnext.io/programmable-completion-for-bash-on-macos-f81a0103080b
-        if platform.platform() == 'Darwin':
-            path = Path('/usr/local/etc/bash_completion.d') / 'dephell.bash-completion'
-        
-        # make sure that dir exists
+        if not path.exists():
+            # ref. https://itnext.io/programmable-completion-for-bash-on-macos-f81a0103080b
+            path = Path('/') / 'usr' / 'local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
         path.parent.mkdir(parents=True, exist_ok=True)
-
         path.write_text(script)
 
         for rc_name in ('.bashrc', '.profile', '.bash_profile'):
