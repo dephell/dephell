@@ -1,5 +1,6 @@
 # built-in
 import json
+from pathlib import Path
 
 # external
 from dephell_links import VCSLink
@@ -13,7 +14,7 @@ from dephell.repositories import GitRepo
 def test_load():
     converter = PIPFileLockConverter()
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile.lock
-    root = converter.load('./tests/requirements/pipfile.lock.json')
+    root = converter.load(Path('tests') / 'requirements' / 'pipfile.lock.json')
     deps = {dep.name: dep for dep in root.dependencies}
     assert 'requests' in deps
     assert 'records' in deps
@@ -24,7 +25,7 @@ def test_load():
 
 def test_load_git_based_dep():
     converter = PIPFileLockConverter()
-    root = converter.load('./tests/requirements/pipfile.lock.json')
+    root = converter.load(Path('tests') / 'requirements' / 'pipfile.lock.json')
     deps = {dep.name: dep for dep in root.dependencies}
     dep = deps['django']
     assert isinstance(dep.link, VCSLink)
@@ -37,7 +38,7 @@ def test_load_git_based_dep():
 
 def test_dump():
     converter = PIPFileLockConverter()
-    resolver = converter.load_resolver('./tests/requirements/pipfile.lock.json')
+    resolver = converter.load_resolver(Path('tests') / 'requirements' / 'pipfile.lock.json')
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
     content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)

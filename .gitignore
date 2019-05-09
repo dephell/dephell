@@ -19,3 +19,5 @@ pip-wheel-metadata/
 
 /README.rst
 /setup.py
+
+.idea
