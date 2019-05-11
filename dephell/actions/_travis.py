@@ -8,6 +8,7 @@ HEADER = """
 # https://github.com/dephell/dephell
 
 language: python
+dist: xenial
 
 before_install:
   # show a little bit more information about environment
@@ -16,7 +17,7 @@ before_install:
   - tree
   # install DepHell
   # https://github.com/travis-ci/travis-ci/issues/8589
-  - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.6/bin/python
+  - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.7/bin/python
   - dephell inspect self
 install:
   - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python"
@@ -32,7 +33,9 @@ PYTEST = """
       env: ENV={env}
     - python: "3.6"
       env: ENV={env}
-    - python: "3.7-dev"
+    - python: "3.7"
+      env: ENV={env}
+    - python: "3.8-dev"
       env: ENV={env}
     - python: "pypy3.5"
       env: ENV={env}
@@ -49,7 +52,7 @@ PYTEST = """
 """
 
 OTHER = """
-    - python: "3.6"
+    - python: "3.7"
       env: ENV={env}
 """
 
@@ -57,6 +60,7 @@ LOCKFILE = """
   allow_failures:
     - name: security
     - name: outdated
+    - python: "3.8-dev"
 
   include:
     - name: security
