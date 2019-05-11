@@ -66,10 +66,17 @@ class _Reader:
             raise FileNotFoundError('cannot find METADATA: {}'.format(str(path)))
         converter = EggInfoConverter()
 
+        # dependency_links.txt
+        urls = dict()
+        if (path / 'dependency_links.txt').exists():
+            with (path / 'dependency_links.txt').open('r') as stream:
+                content = stream.read()
+            urls = converter.parse_dependency_links(content)
+
         # METADATA
         with (path / 'METADATA').open('r') as stream:
             content = stream.read()
-        root = converter.parse_info(content)
+        root = converter.parse_info(content, urls=urls)
 
         # entry_points.txt
         if (path / 'entry_points.txt').exists():
@@ -97,6 +104,7 @@ class _Writer:
 
         converter = EggInfoConverter()
         getters = {
+            'dependency_links.txt': lambda: converter.make_dependency_links(reqs=reqs),
             'entry_points.txt': lambda: converter.make_entrypoints(project=project),
             'METADATA': lambda: converter.make_info(reqs=reqs, project=project, with_requires=True),
             'top_level.txt': lambda: converter.make_top_level(project=project),
