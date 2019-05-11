@@ -126,6 +126,7 @@ class PIPConverter(BaseConverter):
         if req.editable:
             line += '-e '
         if req.link is not None:
+            req.link.name = req.name  # patch `#=egg` by right name
             line += req.link.long
         else:
             line += req.raw_name

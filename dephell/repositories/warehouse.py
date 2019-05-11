@@ -186,6 +186,12 @@ class WareHouseRepo(Interface):
     def _update_dep_from_data(cls, dep, data: dict) -> None:
         """Updates metadata for dependency from json response
         """
+        # if name contains dot, restore it, because setuptools can't process it
+        if '.' in data['name']:
+            dep.raw_name = data['name']
+            if 'name' in dep.__dict__:
+                del dep.__dict__['name']
+
         if not dep.description:
             dep.description = data['summary']
 
