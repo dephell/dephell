@@ -1,4 +1,5 @@
 language: python
+dist: xenial
 
 before_install:
   # show a little bit more information about environment
@@ -8,7 +9,7 @@ before_install:
   # install DepHell
   # - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.6/bin/python
   # https://github.com/travis-ci/travis-ci/issues/8589
-  - /opt/python/3.6/bin/python install.py
+  - /opt/python/3.7/bin/python install.py
   - dephell inspect self
 install:
   - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python" --level=DEBUG --traceback
@@ -20,9 +21,11 @@ matrix:
   include:
     - python: "3.5"
       env: ENV=pytest
-    - python: "3.6"
+    - python: "3.6.7"
       env: ENV=pytest
-    - python: "3.7-dev"
+    - python: "3.7"
+      env: ENV=pytest
+    - python: "3.8-dev"
       env: ENV=pytest
     - python: "pypy3.5"
       env: ENV=pytest
@@ -37,5 +40,5 @@ matrix:
         - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback
         - dephell deps install --env=$ENV --level=DEBUG --traceback
 
-    - python: "3.6"
+    - python: "3.7"
       env: ENV=flake8
