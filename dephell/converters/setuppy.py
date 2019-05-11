@@ -8,7 +8,7 @@ from typing import Optional
 
 # external
 from dephell_specifier import RangeSpecifier
-from dephell_links import DirLink, FileLink, VCSLink, URLLink
+from dephell_links import DirLink, FileLink, VCSLink, URLLink, parse_link
 from packaging.requirements import Requirement
 from setuptools.dist import Distribution
 
@@ -119,11 +119,21 @@ class SetupPyConverter(BaseConverter):
                 entrypoints.append(EntryPoint.parse(text=entrypoint, group=group))
         root.entrypoints = tuple(entrypoints)
 
+        # dependency_links
+        urls = dict()
+        for url in cls._get_list(info, 'dependency_links'):
+            parsed = parse_link(url)
+            urls[parsed.name] = url
+
         # dependencies
         deps = []
         for req in cls._get_list(info, 'install_requires'):
             req = Requirement(req)
-            deps.extend(DependencyMaker.from_requirement(source=root, req=req))
+            deps.extend(DependencyMaker.from_requirement(
+                source=root,
+                req=req,
+                url=urls.get(req.name),
+            ))
         root.attach_dependencies(deps)
 
         # extras
