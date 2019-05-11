@@ -304,7 +304,9 @@ class SetupPyConverter(BaseConverter):
     @staticmethod
     def _format_link(req) -> str:
         link = req.dep.link
-        egg = '#egg={name}-{version}'.format(name=req.name, version=req.version)
+        egg = '#egg=' + req.name
+        if req.release:
+            egg += '-' + str(req.release.version)
 
         if isinstance(link, (FileLink, DirLink)):
             return link.short

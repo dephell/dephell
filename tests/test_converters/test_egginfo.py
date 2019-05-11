@@ -2,6 +2,8 @@
 from email.parser import Parser
 from pathlib import Path
 
+from dephell_links import VCSLink
+
 # project
 from dephell.converters import EggInfoConverter
 from dephell.models import Requirement
@@ -12,7 +14,26 @@ def test_load_deps():
     root = EggInfoConverter().load(path)
 
     needed = {'attrs', 'cached-property', 'packaging', 'requests', 'colorama', 'libtest'}
-    assert set(dep.name for dep in root.dependencies) == needed
+    assert {dep.name for dep in root.dependencies} == needed
+
+
+def test_load_dependency_links():
+    path = Path('tests') / 'requirements' / 'egg-info'
+    root = EggInfoConverter().load(path)
+    deps = {dep.name: dep for dep in root.dependencies}
+    assert type(deps['libtest'].link) is VCSLink
+
+
+def test_dump_dependency_links(temp_path):
+    path = Path('tests') / 'requirements' / 'egg-info'
+    temp_path /= 'test.egg-info'
+    converter = EggInfoConverter()
+    resolver = converter.load_resolver(path)
+    reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
+    converter.dump(reqs=reqs, path=temp_path, project=resolver.graph.metainfo)
+
+    content = (temp_path / 'dependency_links.txt').read_text()
+    assert content.strip() == 'git+https://github.com/gwtwod/poetrylibtest#egg=libtest'
 
 
 def test_dumps_deps():
@@ -22,7 +43,7 @@ def test_dumps_deps():
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
 
-    content = EggInfoConverter().dumps(reqs=reqs, project=resolver.graph.metainfo)
+    content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     assert 'Requires-Dist: requests' in content
 
     parsed = Parser().parsestr(content)
@@ -40,7 +61,7 @@ def test_dumps_metainfo():
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
 
-    content = EggInfoConverter().dumps(reqs=reqs, project=resolver.graph.metainfo)
+    content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)
     assert 'Requires-Dist: requests' in content
 
     parsed = Parser().parsestr(content)
