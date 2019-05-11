@@ -8,6 +8,7 @@ from typing import Optional
 
 # external
 from dephell_specifier import RangeSpecifier
+from dephell_links import DirLink, FileLink, VCSLink, URLLink
 from packaging.requirements import Requirement
 from setuptools.dist import Distribution
 
@@ -195,9 +196,18 @@ class SetupPyConverter(BaseConverter):
         data = {package: sorted(paths) for package, paths in data.items()}
         content.append(('package_data', data))
 
+        # depedencies
         reqs_list = [self._format_req(req=req) for req in reqs if not req.main_envs]
         content.append(('install_requires', reqs_list))
 
+        # dependency_links
+        links = []
+        for req in reqs:
+            if req.dep.link is not None:
+                links.append(self._format_link(req=req))
+        content.append(('dependency_links', links))
+
+        # extras
         extras = defaultdict(list)
         for req in reqs:
             if req.main_envs:
@@ -269,7 +279,7 @@ class SetupPyConverter(BaseConverter):
         return tuple(value for value in values if value != 'UNKNOWN' and value.strip())
 
     @staticmethod
-    def _format_req(req):
+    def _format_req(req) -> str:
         line = req.name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))
@@ -278,3 +288,22 @@ class SetupPyConverter(BaseConverter):
         if req.markers:
             line += '; ' + req.markers
         return line
+
+    @staticmethod
+    def _format_link(req) -> str:
+        link = req.dep.link
+        egg = '#egg={name}-{version}'.format(name=req.name, version=req.version)
+
+        if isinstance(link, (FileLink, DirLink)):
+            return link.short
+
+        if isinstance(link, VCSLink):
+            result = link.vcs + '+' + link.short
+            if link.rev:
+                result += '@' + link.rev
+            return result + egg
+
+        if isinstance(link, URLLink):
+            return link.short + egg
+
+        raise ValueError('invalid link for {}'.format(req.name))
