@@ -34,9 +34,9 @@ def read_dotenv(path: Path, env_vars: Dict[str, str] = None) -> Dict[str, str]:
 
             # clean and substitute value
             value = ' '.join(shlex.split(value, comments=True))
+            value = value.replace(r'\$', '$$')  # escaping
             value = decode(value, 'unicode-escape')
             if '$' in value:
-                value = value.replace(r'\$', '$$')  # escaping
                 value = Template(value).safe_substitute(env_vars)
 
             env_vars[key] = value
