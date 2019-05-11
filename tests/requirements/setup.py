@@ -29,6 +29,11 @@ setup(
         'cached_property',
         'packaging',
         'requests',
+
+        'libtest',
+    ],
+    dependency_links=[
+        'git+https://github.com/gwtwod/poetrylibtest#egg=libtest-0.1.0',
     ],
     extras_require=dict(
         windows=['colorama'],

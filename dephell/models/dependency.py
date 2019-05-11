@@ -8,7 +8,6 @@ from dephell_markers import Markers
 from packaging.utils import canonicalize_name
 
 # app
-from ..repositories import GitRepo
 from ..utils import cached_property
 from .constraint import Constraint
 from .groups import Groups
@@ -192,6 +191,8 @@ class Dependency:
         return result
 
     def __iadd__(self, dep: 'Dependency') -> 'Dependency':
+        from ..repositories import GitRepo
+
         if not isinstance(dep, type(self)):
             return NotImplemented
 

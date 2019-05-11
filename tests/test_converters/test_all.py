@@ -41,6 +41,8 @@ def test_load_dump_load_deps(converter, path):
 
     # check all params
     exclude = {'sources', 'description'}
+    if isinstance(converter, converters.EggInfoConverter):
+        exclude.add('git')
     for name, req1 in map1.items():
         req2 = map2[name]
         d1 = {k: v for k, v in req1 if k not in exclude}
