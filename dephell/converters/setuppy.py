@@ -123,7 +123,8 @@ class SetupPyConverter(BaseConverter):
         urls = dict()
         for url in cls._get_list(info, 'dependency_links'):
             parsed = parse_link(url)
-            urls[parsed.name] = url
+            name = parsed.name.split('-')[0]
+            urls[name] = url
 
         # dependencies
         deps = []
@@ -215,7 +216,8 @@ class SetupPyConverter(BaseConverter):
         for req in reqs:
             if req.dep.link is not None:
                 links.append(self._format_link(req=req))
-        content.append(('dependency_links', links))
+        if links:
+            content.append(('dependency_links', links))
 
         # extras
         extras = defaultdict(list)
