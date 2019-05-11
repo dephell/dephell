@@ -3,10 +3,11 @@ from collections import defaultdict
 from email.parser import Parser
 from itertools import chain
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 # external
 from dephell_discover import Root as PackageRoot
+from dephell_links import parse_link
 from dephell_markers import Markers
 from packaging.requirements import Requirement as PackagingRequirement
 
@@ -14,6 +15,7 @@ from packaging.requirements import Requirement as PackagingRequirement
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
+from .setuppy import SetupPyConverter
 
 
 class _Reader:
@@ -66,16 +68,23 @@ class _Reader:
                 content = stream.read()
             return self.parse_info(content)
 
+        # dependency_links.txt
+        urls = dict()
+        if (path / 'dependency_links.txt').exists():
+            with (path / 'dependency_links.txt').open('r') as stream:
+                content = stream.read()
+            urls = self.parse_dependency_links(content)
+
         # pkg-info
         with (path / 'PKG-INFO').open('r') as stream:
             content = stream.read()
-        root = self.parse_info(content)
+        root = self.parse_info(content, urls=urls)
 
         # requires.txt
         if not root.dependencies and (path / 'requires.txt').exists():
             with (path / 'requires.txt').open('r') as stream:
                 content = stream.read()
-            root = self.parse_requires(content, root=root)
+            root = self.parse_requires(content, root=root, urls=urls)
 
         # entry_points.txt
         if (path / 'entry_points.txt').exists():
@@ -97,7 +106,10 @@ class _Reader:
             return self.parse_requires(content=content)
 
     @classmethod
-    def parse_info(cls, content: str, root=None) -> RootDependency:
+    def parse_info(cls, content: str, root=None, urls: Dict[str, str] = None) -> RootDependency:
+        if urls is None:
+            urls = dict()
+
         info = Parser().parsestr(content)
         root = RootDependency(
             raw_name=cls._get(info, 'Name'),
@@ -136,13 +148,20 @@ class _Reader:
         deps = []
         for req in cls._get_list(info, 'Requires-Dist'):
             req = PackagingRequirement(req)
-            deps.extend(DependencyMaker.from_requirement(source=root, req=req))
+            deps.extend(DependencyMaker.from_requirement(
+                source=root,
+                req=req,
+                url=urls.get(req.name),
+            ))
         root.attach_dependencies(deps)
         return root
 
-    def parse_requires(self, content: str, root=None) -> RootDependency:
+    def parse_requires(self, content: str, root=None, urls: Dict[str, str] = None) -> RootDependency:
+        if urls is None:
+            urls = dict()
         if root is None:
             root = RootDependency(raw_name=self._get_name(content=content))
+
         envs = {'main'}
         marker = Markers()
         for req in content.split('\n'):
@@ -156,7 +175,13 @@ class _Reader:
                 continue
 
             req = PackagingRequirement(req)
-            deps = DependencyMaker.from_requirement(source=root, req=req, envs=envs, marker=marker)
+            deps = DependencyMaker.from_requirement(
+                source=root,
+                req=req,
+                envs=envs,
+                marker=marker,
+                url=urls.get(req.name),
+            )
             root.attach_dependencies(deps)
         return root
 
@@ -175,6 +200,17 @@ class _Reader:
                 entrypoints.append(EntryPoint.parse(text=line, group=group))
         root.entrypoints = tuple(entrypoints)
         return root
+
+    def parse_dependency_links(self, content: str) -> Dict[str, str]:
+        urls = dict()
+        for url in content.split('\n'):
+            url = url.strip()
+            if not url or url[0] == '#':
+                continue
+            parsed = parse_link(url)
+            name = parsed.name.split('-')[0]
+            urls[name] = url
+        return urls
 
     @staticmethod
     def _get(msg, name: str) -> str:
@@ -208,7 +244,7 @@ class _Writer:
             path /= project.name.replace('-', '_') + '.egg-info'
         path.mkdir(exist_ok=True, parents=True)
 
-        (path / 'dependency_links.txt').touch()
+        (path / 'dependency_links.txt').write_text(self.make_dependency_links(reqs=reqs))
         (path / 'entry_points.txt').write_text(self.make_entrypoints(project=project))
         (path / 'PKG-INFO').write_text(self.make_info(reqs=reqs, project=project, with_requires=False))
         (path / 'requires.txt').write_text(self.make_requires(reqs=reqs))
@@ -292,6 +328,13 @@ class _Writer:
             for req in reqs:
                 content.append(self._format_req(req=req, with_envs=False))
 
+        return '\n'.join(content)
+
+    def make_dependency_links(self, reqs) -> str:
+        content = []
+        for req in reqs:
+            if req.link is not None:
+                content.append(SetupPyConverter._format_link(req=req))
         return '\n'.join(content)
 
     @staticmethod
