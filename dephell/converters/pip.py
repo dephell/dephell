@@ -128,7 +128,7 @@ class PIPConverter(BaseConverter):
         if req.link is not None:
             line += req.link.long
         else:
-            line += req.name
+            line += req.raw_name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))
         if req.version:

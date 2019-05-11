@@ -375,7 +375,7 @@ class _Writer:
 
     @staticmethod
     def _format_req(req, with_envs: bool) -> str:
-        line = req.name
+        line = req.raw_name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))
         if req.version:
