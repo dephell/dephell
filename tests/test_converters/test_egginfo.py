@@ -3,7 +3,7 @@ from email.parser import Parser
 from pathlib import Path
 
 # project
-from dephell.converters import EggInfoConverter, SDistConverter
+from dephell.converters import EggInfoConverter
 from dephell.models import Requirement
 
 
@@ -16,8 +16,8 @@ def test_load_deps():
 
 
 def test_dumps_deps():
-    path = Path('tests') / 'requirements' / 'sdist.tar.gz'
-    converter = SDistConverter()
+    path = Path('tests') / 'requirements' / 'egg-info'
+    converter = EggInfoConverter()
     resolver = converter.load_resolver(path)
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
@@ -26,13 +26,16 @@ def test_dumps_deps():
     assert 'Requires-Dist: requests' in content
 
     parsed = Parser().parsestr(content)
-    needed = {'attrs', 'cached-property', 'packaging', 'requests'}
+    needed = {
+        'attrs', 'cached-property', 'packaging', 'requests',
+        'libtest', 'colorama; extra == "windows]"',
+    }
     assert set(parsed.get_all('Requires-Dist')) == needed
 
 
 def test_dumps_metainfo():
-    path = Path('tests') / 'requirements' / 'sdist.tar.gz'
-    converter = SDistConverter()
+    path = Path('tests') / 'requirements' / 'egg-info'
+    converter = EggInfoConverter()
     resolver = converter.load_resolver(path)
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
