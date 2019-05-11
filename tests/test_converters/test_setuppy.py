@@ -43,11 +43,11 @@ def test_dumps_deps():
 def test_dependency_links_load():
     content = """
         __import__("setuptools").setup(
-        name="lol",
-        version="0.1.0",
-        install_requires=["libtest"],
-        dependency_links=["git+https://github.com/gwtwod/poetrylibtest#egg=libtest-0.1.0"],
-    )
+            name="lol",
+            version="0.1.0",
+            install_requires=["libtest"],
+            dependency_links=["git+https://github.com/gwtwod/poetrylibtest#egg=libtest-0.1.0"],
+        )
     """
     converter = SetupPyConverter()
     resolver = converter.loads_resolver(content.strip())

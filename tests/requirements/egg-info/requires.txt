@@ -1,0 +1,8 @@
+attrs
+cached_property
+packaging
+requests
+libtest
+
+[windows]
+colorama
