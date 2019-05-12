@@ -47,6 +47,11 @@ def make_zsh_autocomplete() -> str:
     for command_name, command in commands.items():
         for action in command.get_parser()._actions:
             if action.help:
-                arguments[command_name].append((action.option_strings, action.help))
+                arguments[command_name].append(dict(
+                    opts=action.option_strings,
+                    choices=action.choices,
+                    help=action.help,
+                    files=action.dest in ('from', 'from_path', 'to', 'to_path'),
+                ))
 
     return template.render(first_words=first_words, tree=tree, arguments=arguments)

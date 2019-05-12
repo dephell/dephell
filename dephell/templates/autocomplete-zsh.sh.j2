@@ -42,8 +42,8 @@ _dephell()
     {% for command, args in arguments.items() %}
       "{{ command }}")
         commands=(
-          {% for opts, descr in args %}
-            '{{ opts[0] }}:{{ descr }}'
+          {% for arg in args %}
+            '{{ arg["opts"][-1] }}:{{ arg["help"] }}'
           {% endfor %}
         )
         _describe 'command' commands
@@ -59,8 +59,8 @@ _dephell()
     {% for command, args in arguments.items() %}
       "{{ command }}")
         commands=(
-          {% for opts, descr in args %}
-            '{{ opts[-1] }}:{{ descr }}'
+          {% for arg in args %}
+            '{{ arg["opts"][-1] }}:{{ arg["help"] }}'
           {% endfor %}
         )
         _describe 'command' commands
