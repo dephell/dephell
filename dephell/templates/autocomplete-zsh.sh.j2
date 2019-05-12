@@ -37,58 +37,47 @@ _dephell()
     esac
   fi
 
+  _autocomplete_command () {
+    case "$1" in
+      {% for command, args in arguments.items() %}
+        "{{ command }}")
+          _arguments -s -S ':cmd1:' ':cmd2:' \
+            {% for arg in args %}
+              {% if not arg["opts"] %}
+                {# positional arguments #}
+                {% if arg["files"] %}
+                  ':{{ arg["dest"] }}:_files' \
+                {% elif arg["choices"] %}
+                  ':{{ arg["dest"] }}:({{ arg["choices"] }})' \
+                {% else %}
+                  ':{{ arg["dest"] }}:' \
+                {% endif %}
+
+              {% else %}
+                {# flags #}
+                {% if arg["files"] %}
+                  '{{ arg["opts"][-1] }}=[{{ arg["help"] }}]:{{ arg["dest"] }}:_files' \
+                {% elif arg["choices"] %}
+                  '{{ arg["opts"][-1] }}=[{{ arg["help"] }}]:{{ arg["dest"] }}:({{ arg["choices"] }})' \
+                {% else %}
+                  '{{ arg["opts"][-1] }}[{{ arg["help"] }}]' \
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+                ;
+          return 0
+          ;;
+      {% endfor %}
+      *)
+      ;;
+    esac
+  }
+
+
   # autocomplete one-word command arguments
-  case "${first}" in
-    {% for command, args in arguments.items() %}
-      "{{ command }}")
-        _arguments \
-          {% for arg in args %}
-            {% if arg["opts"][-1] %}
-              '{{ arg["opts"][-1] }}[{{ arg["help"] }}]' \
-            {% endif %}
-          {% endfor %}
-              '-h::show help message and exit:' '-foo::args:_files' '*::args:_files'
-        return 0
-        ;;
-    {% endfor %}
-    *)
-    ;;
-  esac
-
+  _autocomplete_command "$first"
   # autocomplete two-words command arguments
-  case "${double}" in
-    {% for command, args in arguments.items() %}
-      "{{ command }}")
-        _arguments ':cmd1:' ':cmd2:' \
-          {% for arg in args %}
-            {% if not arg["opts"] %}
-              {# positional arguments #}
-              {% if arg["files"] %}
-                ':{{ arg["dest"] }}:_files' \
-              {% elif arg["choices"] %}
-                ':{{ arg["dest"] }}:({{ arg["choices"] }})' \
-              {% else %}
-                ':{{ arg["dest"] }}:' \
-              {% endif %}
-
-            {% else %}
-              {# flags #}
-              {% if arg["files"] %}
-                '{{ arg["opts"][-1] }}=[{{ arg["help"] }}]:{{ arg["dest"] }}:_files' \
-              {% elif arg["choices"] %}
-                '{{ arg["opts"][-1] }}=[{{ arg["help"] }}]:{{ arg["dest"] }}:({{ arg["choices"] }})' \
-              {% else %}
-                '{{ arg["opts"][-1] }}[{{ arg["help"] }}]' \
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-              ;
-        return 0
-        ;;
-    {% endfor %}
-    *)
-    ;;
-  esac
+  _autocomplete_command "$double"
 
 }
 
