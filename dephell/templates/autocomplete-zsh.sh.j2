@@ -41,12 +41,13 @@ _dephell()
   case "${first}" in
     {% for command, args in arguments.items() %}
       "{{ command }}")
-        commands=(
+        _arguments \
           {% for arg in args %}
-            '{{ arg["opts"][-1] }}:{{ arg["help"] }}'
+            {% if arg["opts"][-1] %}
+              '{{ arg["opts"][-1] }}[{{ arg["help"] }}]' \
+            {% endif %}
           {% endfor %}
-        )
-        _describe 'command' commands
+              '-h::show help message and exit:' '-foo::args:_files' '*::args:_files'
         return 0
         ;;
     {% endfor %}
@@ -58,12 +59,30 @@ _dephell()
   case "${double}" in
     {% for command, args in arguments.items() %}
       "{{ command }}")
-        commands=(
+        _arguments ':cmd1:' ':cmd2:' \
           {% for arg in args %}
-            '{{ arg["opts"][-1] }}:{{ arg["help"] }}'
+            {% if not arg["opts"] %}
+              {# positional arguments #}
+              {% if arg["files"] %}
+                ':{{ arg["dest"] }}:_files' \
+              {% elif arg["choices"] %}
+                ':{{ arg["dest"] }}:({{ arg["choices"] }})' \
+              {% else %}
+                ':{{ arg["dest"] }}:' \
+              {% endif %}
+
+            {% else %}
+              {# flags #}
+              {% if arg["files"] %}
+                '{{ arg["opts"][-1] }}=[{{ arg["help"] }}]:{{ arg["dest"] }}:_files' \
+              {% elif arg["choices"] %}
+                '{{ arg["opts"][-1] }}=[{{ arg["help"] }}]:{{ arg["dest"] }}:({{ arg["choices"] }})' \
+              {% else %}
+                '{{ arg["opts"][-1] }}[{{ arg["help"] }}]' \
+              {% endif %}
+            {% endif %}
           {% endfor %}
-        )
-        _describe 'command' commands
+              ;
         return 0
         ;;
     {% endfor %}

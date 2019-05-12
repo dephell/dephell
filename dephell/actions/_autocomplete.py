@@ -49,9 +49,16 @@ def make_zsh_autocomplete() -> str:
             if action.help:
                 arguments[command_name].append(dict(
                     opts=action.option_strings,
-                    choices=action.choices,
+                    choices=action.choices and ' '.join(action.choices),
                     help=action.help,
+                    dest=action.dest,
                     files=action.dest in ('from', 'from_path', 'to', 'to_path'),
                 ))
 
-    return template.render(first_words=first_words, tree=tree, arguments=arguments)
+    script = template.render(first_words=first_words, tree=tree, arguments=arguments)
+
+    while ' \n' in script:
+        script = script.replace(' \n', '\n')
+    while '\n\n' in script:
+        script = script.replace('\n\n', '\n')
+    return script
