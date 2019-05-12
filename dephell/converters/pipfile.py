@@ -114,7 +114,7 @@ class PIPFileConverter(BaseConverter):
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             for req in reqs:
                 if is_dev is req.is_dev:
-                    doc[section][req.name] = self._format_req(req=req)
+                    doc[section][req.raw_name] = self._format_req(req=req)
 
         return tomlkit.dumps(doc)
 

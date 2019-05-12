@@ -8,6 +8,7 @@ from typing import Optional
 
 # external
 from dephell_specifier import RangeSpecifier
+from dephell_links import DirLink, FileLink, VCSLink, URLLink, parse_link
 from packaging.requirements import Requirement
 from setuptools.dist import Distribution
 
@@ -118,11 +119,20 @@ class SetupPyConverter(BaseConverter):
                 entrypoints.append(EntryPoint.parse(text=entrypoint, group=group))
         root.entrypoints = tuple(entrypoints)
 
+        # dependency_links
+        urls = dict()
+        for url in cls._get_list(info, 'dependency_links'):
+            parsed = parse_link(url)
+            name = parsed.name.split('-')[0]
+            urls[name] = url
+
         # dependencies
         for req in cls._get_list(info, 'install_requires'):
+            req = Requirement(req)
             root.attach_dependencies(DependencyMaker.from_requirement(
                 source=root,
-                req=Requirement(req),
+                req=req,
+                url=urls.get(req.name),
             ))
 
         # extras
@@ -197,9 +207,19 @@ class SetupPyConverter(BaseConverter):
         data = {package: sorted(paths) for package, paths in data.items()}
         content.append(('package_data', data))
 
+        # depedencies
         reqs_list = [self._format_req(req=req) for req in reqs if not req.main_envs]
         content.append(('install_requires', reqs_list))
 
+        # dependency_links
+        links = []
+        for req in reqs:
+            if req.dep.link is not None:
+                links.append(self._format_link(req=req))
+        if links:
+            content.append(('dependency_links', links))
+
+        # extras
         extras = defaultdict(list)
         for req in reqs:
             if req.main_envs:
@@ -271,8 +291,8 @@ class SetupPyConverter(BaseConverter):
         return tuple(value for value in values if value != 'UNKNOWN' and value.strip())
 
     @staticmethod
-    def _format_req(req):
-        line = req.name
+    def _format_req(req) -> str:
+        line = req.raw_name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))
         if req.version:
@@ -280,3 +300,24 @@ class SetupPyConverter(BaseConverter):
         if req.markers:
             line += '; ' + req.markers
         return line
+
+    @staticmethod
+    def _format_link(req) -> str:
+        link = req.dep.link
+        egg = '#egg=' + req.name
+        if req.release:
+            egg += '-' + str(req.release.version)
+
+        if isinstance(link, (FileLink, DirLink)):
+            return link.short
+
+        if isinstance(link, VCSLink):
+            result = link.vcs + '+' + link.short
+            if link.rev:
+                result += '@' + link.rev
+            return result + egg
+
+        if isinstance(link, URLLink):
+            return link.short + egg
+
+        raise ValueError('invalid link for {}'.format(req.name))

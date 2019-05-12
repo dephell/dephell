@@ -80,7 +80,7 @@ class SDistConverter(BaseConverter):
         converter = EggInfoConverter()
         info = converter.make_info(reqs=reqs, project=project, with_requires=False)
         getters = {
-            'dependency_links.txt': lambda: '',
+            'dependency_links.txt': lambda: converter.make_dependency_links(reqs=reqs),
             'entry_points.txt': lambda: converter.make_entrypoints(project=project),
             'PKG-INFO': lambda: info,
             'requires.txt': lambda: converter.make_requires(reqs=reqs),

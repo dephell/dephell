@@ -25,7 +25,7 @@ You need DepHell to install dev version of DepHell :) Install DepHell by the ins
 ```bash
 $ git clone https://github.com/dephell/dephell.git
 $ cd dephell
-$ dephell convert
+$ dephell deps convert
 $ dephell venv create
 $ dephell deps install
 $ dephell venv shell

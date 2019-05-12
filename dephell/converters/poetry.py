@@ -164,7 +164,7 @@ class PoetryConverter(BaseConverter):
         for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
             for req in reqs:
                 if is_dev is req.is_dev:
-                    section[section_name][req.name] = self._format_req(req=req)
+                    section[section_name][req.raw_name] = self._format_req(req=req)
             if not section[section_name].value:
                 del section[section_name]
 

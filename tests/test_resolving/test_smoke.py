@@ -1,7 +1,10 @@
-# project
+# built-in
+from pathlib import Path
+
 # external
 from packaging.version import Version
 
+# project
 from dephell.converters.pip import PIPConverter
 
 
@@ -16,7 +19,7 @@ def test_one():
 
 
 def test_two_different():
-    resolver = loader.load_resolver(path='./tests/requirements/django-deal.txt')
+    resolver = loader.load_resolver(path=Path('tests') / 'requirements' / 'django-deal.txt')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'django' in resolver.graph
@@ -24,13 +27,13 @@ def test_two_different():
 
 
 def test_unresolved():
-    resolver = loader.load_resolver(path='./tests/requirements/django-django.txt')
+    resolver = loader.load_resolver(path=Path('tests') / 'requirements' / 'django-django.txt')
     resolved = resolver.resolve()
     assert resolved is False
 
 
 def test_resolution():
-    resolver = loader.load_resolver(path='./tests/requirements/scipy-pandas-numpy.txt')
+    resolver = loader.load_resolver(path=Path('tests') / 'requirements' / 'scipy-pandas-numpy.txt')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'pandas' in resolver.graph
@@ -43,7 +46,7 @@ def test_resolution():
 
 
 def test_unlocked():
-    resolver = loader.load_resolver(path='./tests/requirements/attrs-requests.txt')
+    resolver = loader.load_resolver(path=Path('tests') / 'requirements' / 'attrs-requests.txt')
     resolved = resolver.resolve()
     assert resolved is True
     assert 'attrs' in resolver.graph

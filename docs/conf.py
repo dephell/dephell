@@ -32,8 +32,8 @@ project = 'DepHell'
 copyright = '{}, Gram (@orsinium)'.format(date.today().year)
 author = 'Gram (@orsinium)'
 
-version = '0.4'
-release = '0.4.0'
+version = '0.7'
+release = '0.7.0'
 
 language = None
 exclude_patterns = []

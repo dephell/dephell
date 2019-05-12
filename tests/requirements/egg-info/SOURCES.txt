@@ -1,0 +1,7 @@
+setup.py
+dephell.egg-info/PKG-INFO
+dephell.egg-info/SOURCES.txt
+dephell.egg-info/dependency_links.txt
+dephell.egg-info/entry_points.txt
+dephell.egg-info/requires.txt
+dephell.egg-info/top_level.txt

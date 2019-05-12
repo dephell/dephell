@@ -9,8 +9,7 @@ from dephell.config import Config
 
 def test_build_command(temp_path: Path):
     metainfo_path = str(temp_path / 'pyproject.toml')
-    shutil.copy('tests/requirements/poetry.toml', metainfo_path)
-
+    shutil.copy(str(Path('tests') / 'requirements' / 'poetry.toml'), metainfo_path)
     config = Config()
     config.attach({
         'from': dict(format='poetry', path=metainfo_path),

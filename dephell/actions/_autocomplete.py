@@ -10,6 +10,15 @@ templates = Environment(
 )
 
 
+PATHS = (
+    'from', 'from_path',
+    'to', 'to_path',
+    'config', 'project',
+    'venv', 'bin',
+    'cache_path',
+)
+
+
 def make_bash_autocomplete() -> str:
     from ..commands import commands
 
@@ -47,6 +56,18 @@ def make_zsh_autocomplete() -> str:
     for command_name, command in commands.items():
         for action in command.get_parser()._actions:
             if action.help:
-                arguments[command_name].append((action.option_strings, action.help))
+                arguments[command_name].append(dict(
+                    opts=action.option_strings,
+                    choices=action.choices and ' '.join(action.choices),
+                    help=action.help,
+                    dest=action.dest,
+                    files=action.dest in PATHS,
+                ))
 
-    return template.render(first_words=first_words, tree=tree, arguments=arguments)
+    script = template.render(first_words=first_words, tree=tree, arguments=arguments)
+
+    while ' \n' in script:
+        script = script.replace(' \n', '\n')
+    while '\n\n' in script:
+        script = script.replace('\n\n', '\n')
+    return script

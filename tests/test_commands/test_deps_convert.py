@@ -10,8 +10,7 @@ from dephell.config import Config
 def test_convert_command(temp_path: Path):
     from_path = str(temp_path / 'pyproject.toml')
     to_path = temp_path / 'setup.py'
-    shutil.copy('tests/requirements/poetry.toml', from_path)
-
+    shutil.copy(str(Path('tests') / 'requirements' / 'poetry.toml'), from_path)
     config = Config()
     config.attach({
         'from': dict(format='poetry', path=from_path),
