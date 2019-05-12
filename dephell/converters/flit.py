@@ -1,4 +1,6 @@
+from itertools import chain
 from pathlib import Path
+from typing import Optional
 
 # external
 import tomlkit
@@ -15,6 +17,11 @@ from .egginfo import EggInfoConverter
 class FlitConverter(BaseConverter):
     lock = False
 
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if not content:
+            return False
+        return '[tool.flit.metadata]' in content
+
     def loads(self, content: str) -> RootDependency:
         doc = tomlkit.parse(content)
         section = doc['tool']['flit']['metadata']
@@ -23,12 +30,20 @@ class FlitConverter(BaseConverter):
             python=RangeSpecifier(section.get('requires-python')),
             classifiers=section.get('classifiers', tuple()),
             license=section.get('license', ''),
-            keywords=tuple(section.get('keywords', '').split(',')),
         )
+
+        if 'keywords' in section:
+            if isinstance(section['keywords'], str):
+                if ',' in section['keywords']:
+                    root.keywords = tuple(section['keywords'].split(','))
+                else:
+                    root.keywords = tuple(section['keywords'].split())
+            else:
+                root.keywords = tuple(section['keywords'])
 
         # description
         if 'description-file' in section:
-            root.readme = Readme(path=section['description-file'])
+            root.readme = Readme(path=Path(section['description-file']))
 
         # entrypoints
         entrypoints = []
@@ -65,12 +80,12 @@ class FlitConverter(BaseConverter):
             root.links.update(section['urls'])
 
         # requirements
-        for req in section['requires']:
+        for req in section.get('requires', []):
             root.attach_dependencies(DependencyMaker.from_requirement(
                 source=root,
                 req=Requirement(req),
             ))
-        for req in section['dev-requires']:
+        for req in section.get('dev-requires', []):
             root.attach_dependencies(DependencyMaker.from_requirement(
                 source=root,
                 req=Requirement(req),
@@ -137,6 +152,8 @@ class FlitConverter(BaseConverter):
         # metainfo
         for field in ('license', 'keywords', 'classifiers'):
             value = getattr(project, field)
+            if field == 'keywords':
+                value = ' '.join(value)
             if isinstance(value, tuple):
                 value = list(value)
             if not value:   # delete
@@ -192,8 +209,8 @@ class FlitConverter(BaseConverter):
                 del section[section_name]
 
         # extras
+        envs = set(chain(*[req.main_envs for req in reqs]))
         if 'requires-extra' in section:
-            envs = sum((req.main_envs for req in reqs), set())
             for env in section['requires-extra']:
                 if env in envs:
                     # clean env from old packages
@@ -203,6 +220,10 @@ class FlitConverter(BaseConverter):
                     del section['requires-extra'][env]
         else:
             section['requires-extra'] = tomlkit.table()
+        for env in envs:
+            if env not in section['requires-extra']:
+                # create new env
+                section['requires-extra'][env] = tomlkit.array()
         # write new extra packages
         for req in sorted(reqs):
             for env in req.main_envs:
