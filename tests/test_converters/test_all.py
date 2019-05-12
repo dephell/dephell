@@ -18,6 +18,8 @@ from dephell.repositories import WareHouseRepo
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'scipy-pandas-numpy.txt'),
 
     (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml'),
+
+    (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml'),
     (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json'),
 
     (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml'),
