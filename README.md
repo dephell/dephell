@@ -59,6 +59,7 @@ See [installation documentation](https://dephell.readthedocs.io/en/latest/instal
     1. [poetry.lock](https://poetry.eustace.io/docs/basic-usage/#installing-without-poetrylock) (`poetrylock`)
 1. Other:
     1. [setup.py](https://docs.python.org/3/distutils/setupscript.html) (`setuppy`)
+    1.[conda](https://conda.io/en/latest/)'s [environment.yml](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually) (`conda`)
     1. [pyproject.toml build-system requires](https://www.python.org/dev/peps/pep-0518/#build-system-table) (`pyproject`)
     1. Installed packages (`installed`).
 
