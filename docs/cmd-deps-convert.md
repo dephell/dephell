@@ -70,8 +70,8 @@ You can convert anything to anything:
 1. Migrate from setup.py to poetry: `dephell deps convert --from=setup.py --to=pyproject.toml`
 1. Migrate from pipenv to poetry: `dephell deps convert --from=Pipenv --to=pyproject.toml`
 1. Generate setup.py for poetry (to make project backward compatible with setuptools): `dephell deps convert --from=pyproject.toml --to=setup.py`
-1. Generate requirements.txt from Pipfile to work with pipenv-based project without pipenv: `dephell deps convert --from=Pipenv --to=requirements.txt`
-1. Generate requirements.txt from poetry to work with poetry-based project without poetry: `dephell deps convert --from=pyproject.toml --to=requirements.txt`
+1. Generate requirements.txt from Pipfile to work on a pipenv-based project without pipenv: `dephell deps convert --from=Pipenv --to=requirements.txt`
+1. Generate requirements.txt from poetry to work on a poetry-based project without poetry: `dephell deps convert --from=pyproject.toml --to=requirements.txt`
 
 ## Filter dependencies
 
