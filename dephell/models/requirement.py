@@ -92,6 +92,14 @@ class Requirement:
     def name(self) -> str:
         return self.dep.name
 
+    @cached_property
+    def raw_name(self) -> str:
+        """Like .name, but saves dots.
+
+        `.name` replaces `.` by `-`, but setuptools fails on it.
+        """
+        return self.dep.raw_name.replace('_', '-').lower()
+
     @property
     def description(self) -> str:
         return self.dep.description

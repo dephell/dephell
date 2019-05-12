@@ -120,6 +120,7 @@ packaging = "*"
 pip = ">=18.0"
 pyyaml = "*"  # TODO: replace by ruamel.yaml when migrate from poetry format to flit
 requests = "*"
+setuptools = "*"
 tomlkit = "*"
 yaspin = "*"
 

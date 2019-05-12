@@ -30,7 +30,7 @@ class PyProjectConverter(BaseConverter):
         return dumps(doc)
 
     def _format_req(self, req):
-        line = req.name
+        line = req.raw_name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))
         line += req.version

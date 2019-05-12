@@ -181,6 +181,6 @@ class PoetryLockConverter(BaseConverter):
         if deps:
             result['dependencies'] = tomlkit.table()
             for dep in deps:
-                result['dependencies'][dep.name] = str(dep.constraint) or '*'
+                result['dependencies'][dep.raw_name] = str(dep.constraint) or '*'
 
         return result
