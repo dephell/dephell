@@ -4,7 +4,7 @@
 # $ dephell deps convert
 [tool.dephell.main]
 # read from poetry format
-from = {format = "flit", path = "pyproject.toml"}
+from = {format = "poetry", path = "pyproject.toml"}
 # and convert into setup.py
 to = {format = "setuppy", path = "setup.py"}
 
@@ -77,15 +77,21 @@ import_heading_thirdparty = "external"
 import_heading_firstparty = "project"
 import_heading_localfolder = "app"
 
-# -- FLIT -- #
+# -- POETRY -- #
 
-[tool.flit.metadata]
-module = "dephell"
-author = "Gram"
-author-email = "master_fess@mail.ru"
-description-file = "README.md"
+[tool.poetry]
+name = "dephell"
+version = "0.7.1"
+authors = ["Gram <master_fess@mail.ru>"]
+description = "Dependency resolution for Python"
+readme = "README.md"
 license = "MIT"
-keywords = "packaging dependency dependencies venv licenses pip poetry pipfile pipenv setuptools flit"
+repository = "https://github.com/dephell/dephell"
+documentation = "https://dephell.readthedocs.io/en/latest/"
+keywords = [
+    "dephell", "packaging", "dependency", "dependencies", "venv", "licenses",
+    "pip", "poetry", "pipfile", "pipenv", "setuptools",
+]
 # https://pypi.org/classifiers/
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -99,44 +105,51 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-requires-python = ">=3.5"
-requires = [
-    "aiohttp",
-    "appdirs",
-    "attrs",
-    "cerberus",
-    "jinja2",
-    "m2r",
-    "packaging",
-    "pip>=18.0",
-    "requests",
-    "setuptools",
-    "tomlkit",
-    "yaspin",
+[tool.poetry.scripts]
+dephell = "dephell.cli:entrypoint"
 
-    "ruamel.yaml; implementation_name != 'python'",
-    "pyyaml; implementation_name == 'python'",
+[tool.poetry.dependencies]
+python = ">=3.5"
+aiohttp = "*"
+appdirs = "*"
+attrs = "*"
+cerberus = "*"
+jinja2 = "*"
+m2r = "*"
+packaging = "*"
+pip = ">=18.0"
+pyyaml = "*"  # TODO: replace by ruamel.yaml when migrate from poetry format to flit
+requests = "*"
+setuptools = "*"
+tomlkit = "*"
+yaspin = "*"
 
-    # dephell ecosystem
-    "dephell-archive",
-    "dephell-discover>=0.2.0",
-    "dephell-licenses",
-    "dephell-links",
-    "dephell-markers",
-    "dephell-pythons",
-    "dephell-shells",
-    "dephell-specifier>=0.1.4",
-    "dephell-venvs",
-]
+# optional
+aiofiles = {optional = true}
+autopep8 = {optional = true}
+colorama = {optional = true}
+graphviz = {optional = true}
+yapf = {optional = true}
 
-[tool.flit.metadata.requires-extra]
+# dephell ecosystem
+dephell-archive = "*"
+dephell-discover = "*"
+dephell-licenses = "*"
+dephell-links = "*"
+dephell-markers = "*"
+dephell-pythons = "*"
+dephell-shells = "*"
+dephell-specifier = ">=0.1.4"
+dephell-venvs = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+sphinx = "*"
+recommonmark = "*"
+sphinx-rtd-theme = "*"
+pygments-github-lexers = "*"
+
+[tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
 tests = ["pytest"]
 docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]
-
-[tool.flit.metadata.urls]
-repository = "https://github.com/dephell/dephell"
-documentation = "https://dephell.readthedocs.io/en/latest/"
-
-[tool.flit.scripts]
-dephell = "dephell.cli:entrypoint"
