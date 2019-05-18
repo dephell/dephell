@@ -1,5 +1,5 @@
 [tool.flit.metadata]
-module="flit"
+module="dephell"
 author="Thomas Kluyver"
 author-email="thomas@kluyver.me.uk"
 home-page="https://github.com/takluyver/flit"

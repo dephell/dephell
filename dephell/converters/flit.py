@@ -77,7 +77,7 @@ class FlitConverter(BaseConverter):
 
         # links
         if 'home-page' in section:
-            root.links['home'] = section['home-page']
+            root.links['homepage'] = section['home-page']
         if 'urls' in section:
             root.links.update(section['urls'])
 
@@ -230,6 +230,42 @@ class FlitConverter(BaseConverter):
         for req in sorted(reqs):
             for env in req.main_envs:
                 section['requires-extra'][env].append(self._format_req(req=req))
+
+        # scripts
+        if 'scripts' in doc['tool']['flit']:
+            # remove old scripts
+            names = [e.name for e in project.entrypoints if e.group == 'console_scripts']
+            for name in tuple(doc['tool']['flit']['scripts']):
+                if name not in names:
+                    del doc['tool']['flit']['scripts'][name]
+        else:
+            doc['tool']['flit']['scripts'] = tomlkit.table()
+        for entrypoint in project.entrypoints:
+            if entrypoint.group != 'console_scripts':
+                continue
+            doc['tool']['flit']['scripts'][entrypoint.name] = entrypoint.path
+
+        # entrypoints
+        if 'entrypoints' in doc['tool']['flit']:
+            groups = [e.group for e in project.entrypoints]
+            for group, entrypoints in list(doc['tool']['flit']['entrypoints'].items()):
+                # remove old group
+                if group not in groups:
+                    del doc['tool']['flit']['entrypoints'][group]
+                    continue
+                # remove old entrypoints in group
+                names = [e.name for e in project.entrypoints if e.group == group]
+                for name in tuple(entrypoints):
+                    if name not in names:
+                        del doc['tool']['flit']['entrypoints'][group][name]
+        else:
+            doc['tool']['flit']['entrypoints'] = tomlkit.table()
+        for entrypoint in project.entrypoints:
+            if entrypoint.group == 'console_scripts':
+                continue
+            if entrypoint.group not in doc['tool']['flit']['entrypoints']:
+                doc['tool']['flit']['entrypoints'][entrypoint.group] = tomlkit.table()
+            doc['tool']['flit']['entrypoints'][entrypoint.group][entrypoint.name] = entrypoint.path
 
         return tomlkit.dumps(doc)
 
