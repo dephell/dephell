@@ -4,6 +4,7 @@ from typing import Optional
 
 # external
 import tomlkit
+from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 
@@ -30,6 +31,7 @@ class FlitConverter(BaseConverter):
             python=RangeSpecifier(section.get('requires-python')),
             classifiers=section.get('classifiers', tuple()),
             license=section.get('license', ''),
+            package=PackageRoot(path=Path('.').resolve(), name=section['module']),
         )
 
         if 'keywords' in section:
@@ -52,11 +54,11 @@ class FlitConverter(BaseConverter):
             with path.open('rb', encoding='utf-8') as stream:
                 tmp_root = EggInfoConverter().parse_entrypoints(content=stream.read())
                 entrypoints = list(tmp_root.entrypoints)
-        for group, subentrypoints in section.get('entrypoints', {}).items():
-            for entrypoint in subentrypoints:
-                entrypoints.append(EntryPoint.parse(text=entrypoint, group=group))
-        for entrypoint in section.get('scripts', {}).values():
-            entrypoints.append(EntryPoint.parse(text=entrypoint))
+        for group, subentrypoints in doc['tool']['flit'].get('entrypoints', {}).items():
+            for name, entrypoint in subentrypoints.items():
+                entrypoints.append(EntryPoint(name=name, path=entrypoint, group=group))
+        for name, entrypoint in doc['tool']['flit'].get('scripts', {}).items():
+            entrypoints.append(EntryPoint(name=name, path=entrypoint))
         root.entrypoints = tuple(entrypoints)
 
         # authors
