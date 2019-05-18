@@ -200,8 +200,7 @@ class FlitConverter(BaseConverter):
 
         # dependencies
         for section_name, is_dev in [('requires', False), ('dev-requires', True)]:
-            if section_name not in section:
-                section[section_name] = tomlkit.array()
+            section[section_name] = tomlkit.array()
             for req in sorted(reqs):
                 if req.main_envs:
                     continue
