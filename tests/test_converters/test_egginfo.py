@@ -49,7 +49,7 @@ def test_dumps_deps():
     parsed = Parser().parsestr(content)
     needed = {
         'attrs', 'cached-property', 'packaging', 'requests',
-        'libtest', 'colorama; extra == "windows]"',
+        'libtest', 'colorama; extra == "windows"',
     }
     assert set(parsed.get_all('Requires-Dist')) == needed
 

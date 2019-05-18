@@ -50,3 +50,14 @@ def test_dump():
     assert parsed['dependencies']['django']['rev'] == '1.11.4'
 
     assert 'pytest' in parsed['dev-dependencies']
+
+
+def test_entrypoints():
+    converter = PoetryConverter()
+    root = converter.load(Path('tests') / 'requirements' / 'poetry.toml')
+    assert len(root.entrypoints) == 2
+
+    content = converter.dumps(reqs=[], project=root)
+    parsed = tomlkit.parse(content)['tool']['poetry']
+    assert parsed['scripts']['my-script'] == 'my_package:main'
+    assert dict(parsed['plugins']['flake8.extension']) == {'T00': 'flake8-todos.checker:Checker'}
