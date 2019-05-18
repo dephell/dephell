@@ -12,6 +12,7 @@ from packaging.utils import canonicalize_name
 # app
 from ..utils import cached_property
 from .group import Group
+from .author import Author
 
 
 @attr.s()
@@ -114,7 +115,22 @@ class RootDependency:
             values = (info[key] for info in infos if info[key])
             with suppress(StopIteration):
                 merged[key] = next(values)
-        return cls(**merged)
+        root = cls(**merged)
+
+        # get some metainfo from package
+        if root.raw_name == 'root' and root.package.packages:
+            root.raw_name = root.package.packages[0].module
+        info = root.package.metainfo
+        if root.version == '0.0.0' and info.version:
+            root.version = info.version
+        if not root.description and info.summary:
+            root.description = info.summary
+        if not root.license and info.license:
+            root.license = info.license
+        if not root.authors and info.authors:
+            root.authors = tuple(Author.parse(author) for author in info.authors)
+
+        return root
 
     def __str__(self):
         return self.name

@@ -133,7 +133,7 @@ yapf = {optional = true}
 
 # dephell ecosystem
 dephell-archive = "*"
-dephell-discover = "*"
+dephell-discover = ">=0.2.0"
 dephell-licenses = "*"
 dephell-links = "*"
 dephell-markers = "*"
