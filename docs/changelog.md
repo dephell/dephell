@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## v.0.7.1 (WIP)
+## v.0.7.2
+
++ Fix `plugins` parsing in poetry and `extras` parsing for `egg-info` and `sdist` ([#86](https://github.com/dephell/dephell/issues/86), [#89](https://github.com/dephell/dephell/pull/89)).
+
+## v.0.7.1
 
 + [`dependency_links`](https://setuptools.readthedocs.io/en/latest/setuptools.html#dependencies-that-aren-t-in-pypi) support for `setup.py`, `sdist` and `wheel` ([#79](https://github.com/dephell/dephell/pull/79), [#63](https://github.com/dephell/dephell/issues/63)).
 + Python 3.8 support ([#78](https://github.com/dephell/dephell/pull/78)).
