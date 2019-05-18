@@ -181,7 +181,7 @@ class FlitConverter(BaseConverter):
             for name, url in project.links.items():
                 if name == 'homepage':
                     continue
-            section['urls'][name] = url
+                section['urls'][name] = url
         elif 'urls' in section:
             del section['urls']
 
