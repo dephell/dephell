@@ -11,6 +11,13 @@ from ..models import RootDependency
 from .base import BaseConverter
 
 
+MAPPING_URLS = (
+    'https://raw.githubusercontent.com/bndr/pipreqs/master/pipreqs/mapping',
+    'https://raw.githubusercontent.com/JetBrains/intellij-community/master/python/helpers/tools/packages',
+)
+STDLIB_URL = 'https://raw.githubusercontent.com/bndr/pipreqs/master/pipreqs/stdlib'
+
+
 class ImportsConverter(BaseConverter):
     lock = True
 
@@ -39,5 +46,6 @@ class ImportsConverter(BaseConverter):
                     reqs.add(subnode.name)
             elif isinstance(node, ast.ImportFrom):
                 reqs.add(node.module)
+        reqs = {req.split('.', maxsplit=1)[0] for req in reqs if req}
         ...
         return reqs
