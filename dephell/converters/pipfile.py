@@ -116,7 +116,7 @@ class PIPFileConverter(BaseConverter):
                 if is_dev is req.is_dev:
                     doc[section][req.raw_name] = self._format_req(req=req)
 
-        return tomlkit.dumps(doc)
+        return tomlkit.dumps(doc).rstrip() + '\n'
 
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
     @staticmethod

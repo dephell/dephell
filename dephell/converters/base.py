@@ -72,7 +72,7 @@ class BaseConverter:
 
     @staticmethod
     def _split_extra_and_marker(text: str) -> Tuple[str, Optional[str]]:
-        text = text.lstrip('[').lstrip('[')
+        text = text.lstrip('[').rstrip(']')
         if ':' not in text:
             return text, None
         extra, marker = text.split(':')

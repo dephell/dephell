@@ -60,6 +60,19 @@ $ dephell deps convert
 
 See [configuration documentation](config) for more details.
 
+## More examples
+
+You can convert anything to anything:
+
+1. Lock requirements.txt: `dephell deps convert --from=requirements.in --to=requirements.txt`
+1. Lock Pipfile: `dephell deps convert --from=Pipfile --to=Pipfile.lock`
+1. Lock poetry: `dephell deps convert --from=pyproject.toml --to=poetry.lock`
+1. Migrate from setup.py to poetry: `dephell deps convert --from=setup.py --to=pyproject.toml`
+1. Migrate from pipenv to poetry: `dephell deps convert --from=Pipenv --to=pyproject.toml`
+1. Generate setup.py for poetry (to make project backward compatible with setuptools): `dephell deps convert --from=pyproject.toml --to=setup.py`
+1. Generate requirements.txt from Pipfile to work on a pipenv-based project without pipenv: `dephell deps convert --from=Pipenv --to=requirements.txt`
+1. Generate requirements.txt from poetry to work on a poetry-based project without poetry: `dephell deps convert --from=pyproject.toml --to=requirements.txt`
+
 ## Filter dependencies
 
 You can filter dependencies by envs with `--envs` flag. All dependencies included in `main` or `dev` env. Also, some dependencies can be included in [extras](https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies). There is an example of poetry config with envs in comments:

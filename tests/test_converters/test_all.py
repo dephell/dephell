@@ -26,7 +26,7 @@ from dephell.repositories import WareHouseRepo
     (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml'),
 
     (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py'),
-    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info/'),
+    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info'),
     (converters.WheelConverter(), Path('tests') / 'requirements' / 'wheel.whl'),
 ])
 def test_load_dump_load_deps(converter, path):
@@ -78,7 +78,7 @@ def test_load_dump_load_deps(converter, path):
     (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml', []),
 
     (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py', []),
-    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info/', ['package', 'entrypoints', 'readme']),
+    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info', ['package', 'entrypoints', 'readme']),
     (converters.WheelConverter(), Path('tests') / 'requirements' / 'wheel.whl', ['package', 'entrypoints']),
 ])
 def test_load_dump_load_metainfo(converter, path, exclude):
@@ -94,3 +94,32 @@ def test_load_dump_load_metainfo(converter, path, exclude):
         setattr(root1, field, None)
         setattr(root2, field, None)
     assert attr.asdict(root1) == attr.asdict(root2)
+
+
+@pytest.mark.parametrize('converter, path', [
+    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'attrs-requests.txt'),
+    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'django-deal.txt'),
+    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'scipy-pandas-numpy.txt'),
+
+    (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml'),
+    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json'),
+
+    (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml'),
+    # (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml'),
+
+    (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py'),
+    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info' / 'PKG-INFO'),
+    (converters.WheelConverter(), Path('tests') / 'requirements' / 'wheel.whl'),
+])
+def test_idempotency(converter, path):
+    root1 = converter.load(path)
+    reqs1 = Requirement.from_graph(graph=Graph(root1), lock=False)
+
+    content1 = converter.dumps(reqs1, project=root1)
+
+    root2 = converter.loads(content1)
+    reqs2 = Requirement.from_graph(graph=Graph(root2), lock=False)
+
+    content2 = converter.dumps(reqs2, project=root2, content=content1)
+
+    assert content1 == content2

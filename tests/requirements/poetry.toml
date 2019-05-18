@@ -44,3 +44,6 @@ pytest-cov = "^2.4"
 
 [tool.poetry.scripts]
 my-script = 'my_package:main'
+
+[tool.poetry.plugins."flake8.extension"]
+T00 = "flake8-todos.checker:Checker"

@@ -225,7 +225,7 @@ class PoetryConverter(BaseConverter):
             for entrypoint in entrypoints:
                 if entrypoint.group != 'console_scripts':
                     groups[entrypoint.group].add(entrypoint.name)
-            for group_name, group_content in dict(section['plugins']):
+            for group_name, group_content in section['plugins'].items():
                 if group_name not in groups:
                     del section['plugins'][group_name]
                     continue
