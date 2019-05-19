@@ -3,6 +3,7 @@ import json
 import pickle
 from pathlib import Path
 from time import time
+from typing import List
 
 # app
 from .config import config
@@ -58,7 +59,7 @@ class TextCache(BaseCache):
         with self.path.open('r') as stream:
             return stream.read().split('\n')
 
-    def dump(self, data) -> None:
+    def dump(self, data: List[str]) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open('w') as stream:
             stream.write('\n'.join(data))

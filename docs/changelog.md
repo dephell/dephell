@@ -2,6 +2,10 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.7.3
+
+1. Added `imports` converter to get dependencies from package imports ([#97](https://github.com/dephell/dephell/pull/97)).
+
 ## v.0.7.2
 
 + [flit](https://flit.readthedocs.io/en/latest/pyproject_toml.html) support.

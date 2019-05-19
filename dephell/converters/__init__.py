@@ -5,6 +5,7 @@ from .base import BaseConverter
 from .conda import CondaConverter
 from .egginfo import EggInfoConverter
 from .flit import FlitConverter
+from .imports import ImportsConverter
 from .installed import InstalledConverter
 from .pip import PIPConverter
 from .pipfile import PIPFileConverter
@@ -24,6 +25,7 @@ __all__ = [
     'CondaConverter',
     'EggInfoConverter',
     'FlitConverter',
+    'ImportsConverter',
     'InstalledConverter',
     'PIPConverter',
     'PIPFileConverter',
@@ -55,10 +57,13 @@ CONVERTERS = dict(
     poetry=PoetryConverter(),
     poetrylock=PoetryLockConverter(),
 
+    # environment
+    imports=ImportsConverter(),
+    installed=InstalledConverter(),
+
     # other
     conda=CondaConverter(),
     flit=FlitConverter(),
     pyproject=PyProjectConverter(),
     setuppy=SetupPyConverter(),
-    installed=InstalledConverter(),
 )  # type: Dict[str, BaseConverter]

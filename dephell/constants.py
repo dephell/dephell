@@ -21,6 +21,7 @@ FORMATS = (
     'conda',
     'egginfo',
     'flit',
+    'imports',
     'pip',
     'pipfile',
     'pipfilelock',
