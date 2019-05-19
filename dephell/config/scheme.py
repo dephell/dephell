@@ -22,21 +22,14 @@ _TARGET = dict(
 SCHEME = {
     'from': dict(required=False, **_TARGET),
     'to': dict(required=False, **_TARGET),
-    'and': dict(
-        type='list',
-        schema=_TARGET,
-        required=False,
-        empty=True,
-    ),
-    'envs': dict(
-        type='list',
-        required=False,
-        empty=False,
-    ),
-    'tests': dict(
-        type='list',
+    'and': dict(type='list', schema=_TARGET, required=False, empty=True),
+    'sdist': dict(
+        type='dict',
         required=True,
+        schema={'ratio': dict(type='float', required=True)},
     ),
+    'envs': dict(type='list', required=False, empty=False),
+    'tests': dict(type='list', required=True),
 
     'warehouse':    dict(type='string', required=True),
     'bitbucket':    dict(type='string', required=True),
@@ -67,7 +60,7 @@ SCHEME = {
     # other
     'cache': dict(
         type='dict',
-        required=True,  # because represented in default config
+        required=True,
         schema={
             'path': dict(type='string', required=True),
             'ttl': dict(type='integer', required=True),

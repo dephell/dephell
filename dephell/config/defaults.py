@@ -10,6 +10,9 @@ data_dir = Path(user_data_dir('dephell'))
 
 DEFAULT = dict(
     tests=['tests'],
+    sdist=dict(
+        ratio=2,
+    ),
 
     # resolver
     prereleases=False,

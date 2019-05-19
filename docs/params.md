@@ -27,6 +27,7 @@ Of course, you can use this options only in CLI. You can't specify path to confi
 + `--to` -- path or format for writing requirements.
 + `--to-format` -- output requirements file format.
 + `--to-path` -- path to output file.
++ `--sdist-ratio` -- ratio of tests and project size after which tests will be excluded from sdist. By default is 2 that means tests will be included while their size less than doubled package size.
 
 Commands that accept these parameters:
 
@@ -51,6 +52,7 @@ Commands that accept these parameters:
     + `{digest}` will be replaced by the short 4-letters digest of the project path to avoid conflicts for the projects with the same name in different locations.
     + `{env}` will be replaced by current environment (`main` by default).
 + `--python` -- python version for venv. This can be reloaded in the dependencies file.
++ `vars` (config only) -- dict of environment variables to pass in virtual environment.
 
 ## Output
 

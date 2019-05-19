@@ -11,6 +11,7 @@ import attr
 from dephell_archive import ArchivePath
 
 # app
+from ..config import config
 from ..controllers import Readme
 from ..models import RootDependency
 from .base import BaseConverter
@@ -21,8 +22,8 @@ from .egginfo import EggInfoConverter
 class SDistConverter(BaseConverter):
     # place all files into subdir
     subdir = attr.ib(type=bool, default=True)
-    # ratio of tests and project after which tests won't be included in sdist
-    ratio = attr.ib(type=float, default=2)
+    # ratio of tests and project size after which tests will be excluded from sdist
+    ratio = attr.ib(type=Optional[float], default=None)
 
     lock = False
 
@@ -120,61 +121,66 @@ class SDistConverter(BaseConverter):
                     )
                     tar.add(name=str(full_path), arcname=fpath, filter=self._set_uid_gid)
 
-            # write readme
-            if project.readme:
+            self._write_additional_files(tar=tar, project=project, subdir=subdir)
+
+    def _write_additional_files(self, *, tar, project, subdir):
+        # write readme
+        if project.readme:
+            tar.add(
+                name=str(project.readme.path),
+                arcname=subdir + project.readme.path.name,
+                filter=self._set_uid_gid,
+            )
+            if project.readme.markup != 'rst':
+                rst = project.readme.to_rst()
                 tar.add(
-                    name=str(project.readme.path),
-                    arcname=subdir + project.readme.path.name,
+                    name=str(rst.path),
+                    arcname=subdir + rst.path.name,
                     filter=self._set_uid_gid,
                 )
-                if project.readme.markup != 'rst':
-                    rst = project.readme.to_rst()
-                    tar.add(
-                        name=str(rst.path),
-                        arcname=subdir + rst.path.name,
-                        filter=self._set_uid_gid,
-                    )
-                elif (project.package.path / 'README.md').exists():
-                    tar.add(
-                        name=str(project.package.path / 'README.md'),
-                        arcname=subdir + 'README.md',
-                        filter=self._set_uid_gid,
-                    )
+            elif (project.package.path / 'README.md').exists():
+                tar.add(
+                    name=str(project.package.path / 'README.md'),
+                    arcname=subdir + 'README.md',
+                    filter=self._set_uid_gid,
+                )
 
-            # write setup files
-            path = project.package.path
-            for fname in ('setup.cfg', 'setup.py'):
-                if (path / fname).exists():
-                    tar.add(
-                        name=str(path / fname),
-                        arcname=subdir + fname,
-                        filter=self._set_uid_gid,
-                    )
+        # write setup files
+        path = project.package.path
+        for fname in ('setup.cfg', 'setup.py'):
+            if (path / fname).exists():
+                tar.add(
+                    name=str(path / fname),
+                    arcname=subdir + fname,
+                    filter=self._set_uid_gid,
+                )
 
-            # write license files
-            patterns = ('LICEN[CS]E*', 'COPYING*', 'NOTICE*', 'AUTHORS*')
-            for pattern in patterns:
-                for file_path in project.package.path.glob(pattern):
-                    if not file_path.is_file():
-                        continue
-                    tar.add(
-                        name=str(file_path),
-                        arcname=subdir + file_path.name,
-                        filter=self._set_uid_gid,
-                    )
+        # write license files
+        patterns = ('LICEN[CS]E*', 'COPYING*', 'NOTICE*', 'AUTHORS*')
+        for pattern in patterns:
+            for file_path in project.package.path.glob(pattern):
+                if not file_path.is_file():
+                    continue
+                tar.add(
+                    name=str(file_path),
+                    arcname=subdir + file_path.name,
+                    filter=self._set_uid_gid,
+                )
 
-            # write tests
-            from ..actions import get_path_size
-            tests_path = Path('tests')
-            if tests_path.exists():
-                package_size = get_path_size(path=project.package.packages[0].path)
-                tests_size = get_path_size(path=tests_path)
-                if package_size * self.ratio > tests_size:
-                    tar.add(
-                        name=str(tests_path),
-                        arcname=subdir + tests_path.name,
-                        filter=self._set_uid_gid,
-                    )
+        # write tests
+        from ..actions import get_path_size
+        if self.ratio is None:
+            self.ratio = config['sdist']['ratio']
+        tests_path = Path('tests')
+        if tests_path.exists():
+            package_size = get_path_size(path=project.package.packages[0].path)
+            tests_size = get_path_size(path=tests_path)
+            if package_size * self.ratio > tests_size:
+                tar.add(
+                    name=str(tests_path),
+                    arcname=subdir + tests_path.name,
+                    filter=self._set_uid_gid,
+                )
 
     def _write_content(self, tar, path: str, content) -> None:
         content = content.encode('utf-8')
