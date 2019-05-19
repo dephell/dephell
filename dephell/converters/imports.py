@@ -8,6 +8,7 @@ import requests
 from dephell_discover import Root as PackageRoot
 
 # app
+from ..cache import TextCache
 from ..controllers import DependencyMaker
 from ..utils import cached_property
 from ..models import RootDependency
@@ -19,6 +20,7 @@ MAPPING_URLS = (
     'https://raw.githubusercontent.com/JetBrains/intellij-community/master/python/helpers/tools/packages',
 )
 STDLIB_URL = 'https://raw.githubusercontent.com/bndr/pipreqs/master/pipreqs/stdlib'
+CACHE_TTL = 3600 * 24 * 30  # 30 days
 
 
 class ImportsConverter(BaseConverter):
@@ -47,6 +49,8 @@ class ImportsConverter(BaseConverter):
         local_modules = {package.module for package in root.package.packages}
         for module in sorted(modules):
             if module in local_modules:
+                continue
+            if Path(*module.split('.')).exists():
                 continue
             root.attach_dependencies(DependencyMaker.from_params(
                 source=root,
@@ -88,9 +92,15 @@ class ImportsConverter(BaseConverter):
 
     @cached_property
     def aliases(self) -> Dict[str, str]:
-        response = requests.get(MAPPING_URLS[0])
+        cache = TextCache('imports', 'aliases', ttl=CACHE_TTL)
+        lines = cache.load()
+        if not lines:
+            response = requests.get(MAPPING_URLS[0])
+            lines = response.text.splitlines()
+            cache.dump(lines)
+
         aliases = dict()
-        for line in response.text.splitlines():
+        for line in lines:
             if not line:
                 continue
             alias, name = line.split(':')
@@ -99,5 +109,12 @@ class ImportsConverter(BaseConverter):
 
     @cached_property
     def stdlib(self) -> List[str]:
-        response = requests.get(MAPPING_URLS[0])
-        return response.text.split()
+        cache = TextCache('imports', 'stdlib', ttl=CACHE_TTL)
+        lines = cache.load()
+        if lines:
+            return lines
+
+        response = requests.get(STDLIB_URL)
+        lines = response.text.splitlines()
+        cache.dump(lines)
+        return lines
