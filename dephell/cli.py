@@ -77,7 +77,7 @@ def main(argv: List[str]) -> int:
         result = task()
     except Exception as exc:
         if isinstance(exc, ExtraException):
-            logger.exception(exc.message, extra=exc.extra)
+            logger.exception(str(exc), extra=exc.extra)
         else:
             logger.exception('{}: {}'.format(type(exc).__name__, exc))
         if hasattr(task, 'config') and task.config.get('pdb', False):
