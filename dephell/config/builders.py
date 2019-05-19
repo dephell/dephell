@@ -71,7 +71,7 @@ def build_venv(parser):
 def build_other(parser):
     other_group = parser.add_argument_group('Other')
 
-    config_group.add_argument('--owner', help='name of the owner.')
+    other_group.add_argument('--owner', help='name of the owner.')
     other_group.add_argument('--cache-path', help='path to dephell cache')
     other_group.add_argument('--cache-ttl', type=int, help='Time to live for releases list cache')
 
