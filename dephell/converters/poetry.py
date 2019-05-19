@@ -42,7 +42,8 @@ class PoetryConverter(BaseConverter):
         root = RootDependency()
 
         # read metainfo
-        root.raw_name = section.get('name') or self._get_name(content=content)
+        if 'name' in section:
+            root.raw_name = section['name']
         for field in self._metafields:
             if field in section:
                 value = section[field]

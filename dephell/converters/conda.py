@@ -21,7 +21,9 @@ class CondaConverter(BaseConverter):
     # https://github.com/ericmjl/conda-envs/blob/master/deeplearning.yml
     def loads(self, content: str) -> RootDependency:
         doc = yaml_load(content)
-        root = RootDependency(raw_name=doc.get('name') or self._get_name(content=content))
+        root = RootDependency()
+        if 'name' in doc:
+            root.raw_name = doc['name']
         repo = CondaRepo(channels=doc.get('channels', []))
         for req in doc.get('dependencies', []):
             parsed = repo.parse_req(req)

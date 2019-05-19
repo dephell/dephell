@@ -33,7 +33,7 @@ class PIPFileLockConverter(PIPFileConverter):
     def loads(self, content) -> RootDependency:
         doc = json.loads(content, object_pairs_hook=OrderedDict)
         deps = []
-        root = RootDependency(raw_name=self._get_name(content=content))
+        root = RootDependency()
 
         python = doc.get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:
