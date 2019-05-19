@@ -44,7 +44,10 @@ class ImportsConverter(BaseConverter):
                 modules.extend(self._get_modules(content=content))
 
         # attach modules
+        local_modules = {package.module for package in root.package.packages}
         for module in sorted(modules):
+            if module in local_modules:
+                continue
             root.attach_dependencies(DependencyMaker.from_params(
                 source=root,
                 raw_name=module,
@@ -87,12 +90,14 @@ class ImportsConverter(BaseConverter):
     def aliases(self) -> Dict[str, str]:
         response = requests.get(MAPPING_URLS[0])
         aliases = dict()
-        for line in response.text().splitlines():
-            alias, name = line.split(' ')
+        for line in response.text.splitlines():
+            if not line:
+                continue
+            alias, name = line.split(':')
             aliases[alias] = name
         return aliases
 
     @cached_property
     def stdlib(self) -> List[str]:
         response = requests.get(MAPPING_URLS[0])
-        return response.text().split()
+        return response.text.split()
