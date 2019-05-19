@@ -28,6 +28,10 @@ def build_to(parser):
     to_group.add_argument('--to', help='path or format for writing requirements.')
     to_group.add_argument('--to-format', choices=FORMATS, help='output requirements file format.')
     to_group.add_argument('--to-path', help='path to output file.')
+    to_group.add_argument(
+        '--sdist-ratio',
+        help='ratio of tests and project size after which tests will be excluded from sdist.',
+    )
 
 
 def build_resolver(parser):
