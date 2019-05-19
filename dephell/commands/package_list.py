@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 from ..actions import get_python_env, make_json
 from ..config import builders
 from ..converters import InstalledConverter
+from ..exceptions import PackageNotFoundError
 from ..repositories import WareHouseRepo
 from .base import BaseCommand
 
@@ -35,7 +36,12 @@ class PackageListCommand(BaseCommand):
         repo = WareHouseRepo()
         data = []
         for dep in root.dependencies:
-            releases = repo.get_releases(dep)
+            try:
+                releases = repo.get_releases(dep)
+            except PackageNotFoundError as exc:
+                self.logger.warning(exc.message, extra=exc.extra)
+                continue
+
             data.append(dict(
                 name=dep.name,
                 latest=str(releases[0].version),
