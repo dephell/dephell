@@ -21,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.7.2',
+    version='0.7.3',
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
@@ -59,12 +59,12 @@ setup(
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
-        'docs': [
-            'pygments-github-lexers', 'recommonmark', 'sphinx',
-            'sphinx-rtd-theme'
-        ],
         'dev': [
             'pygments-github-lexers', 'pytest', 'recommonmark', 'sphinx',
+            'sphinx-rtd-theme'
+        ],
+        'docs': [
+            'pygments-github-lexers', 'recommonmark', 'sphinx',
             'sphinx-rtd-theme'
         ],
         'tests': ['pytest']
