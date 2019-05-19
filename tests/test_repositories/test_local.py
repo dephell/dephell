@@ -30,8 +30,5 @@ def test_deps_file():
     coroutine = repo.get_dependencies(name='dephell', version='0.2.0')
     deps = loop.run_until_complete(asyncio.gather(coroutine))[0]
     deps = {dep.name: dep for dep in deps}
-    expected = {
-        'attrs', 'cached-property', 'packaging', 'requests', 'colorama',
-        'libtest', 'setuptools',
-    }
+    expected = {'attrs', 'cached-property', 'packaging', 'requests', 'colorama', 'libtest'}
     assert set(deps) == expected
