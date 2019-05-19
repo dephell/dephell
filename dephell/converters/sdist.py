@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 from typing import Optional
 
 # external
+import attr
 from dephell_archive import ArchivePath
 
 # app
@@ -16,9 +17,14 @@ from .base import BaseConverter
 from .egginfo import EggInfoConverter
 
 
+@attr.s()
 class SDistConverter(BaseConverter):
+    # place all files into subdir
+    subdir = attr.ib(type=bool, default=True)
+    # ratio of tests and project after which tests won't be included in sdist
+    ratio = attr.ib(type=float, default=2)
+
     lock = False
-    subdir = True
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if content is not None:
@@ -154,6 +160,19 @@ class SDistConverter(BaseConverter):
                     tar.add(
                         name=str(file_path),
                         arcname=subdir + file_path.name,
+                        filter=self._set_uid_gid,
+                    )
+
+            # write tests
+            from ..actions import get_path_size
+            tests_path = Path('tests')
+            if tests_path.exists():
+                package_size = get_path_size(path=project.package.packages[0].path)
+                tests_size = get_path_size(path=tests_path)
+                if package_size * self.ratio > tests_size:
+                    tar.add(
+                        name=str(tests_path),
+                        arcname=subdir + tests_path.name,
                         filter=self._set_uid_gid,
                     )
 
