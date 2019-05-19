@@ -14,7 +14,7 @@ def build_config(parser):
     config_group = parser.add_argument_group('Configuration file')
     config_group.add_argument('-c', '--config', help='path to config file.')
     config_group.add_argument('-e', '--env', default='main', help='environment in config.')
-    config_group.add_argument('-o', '--owner', help='name of owner.')
+
 
 def build_from(parser):
     from_group = parser.add_argument_group('Input file')
@@ -71,6 +71,7 @@ def build_venv(parser):
 def build_other(parser):
     other_group = parser.add_argument_group('Other')
 
+    config_group.add_argument('--owner', help='name of the owner.')
     other_group.add_argument('--cache-path', help='path to dephell cache')
     other_group.add_argument('--cache-ttl', type=int, help='Time to live for releases list cache')
 
