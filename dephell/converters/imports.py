@@ -29,7 +29,7 @@ class ImportsConverter(BaseConverter):
     def can_parse(self, path: Path, content: str = None) -> bool:
         if isinstance(path, str):
             path = Path(path)
-        return (path.suffix == '.py') or path.is_file()
+        return (path.suffix == '.py') or (path / '__init__.py').exists()
 
     def load(self, path) -> RootDependency:
         if isinstance(path, str):

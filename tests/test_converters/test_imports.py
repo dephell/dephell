@@ -16,3 +16,12 @@ def test_imports_parser(lines, expected):
     converter = ImportsConverter()
     modules = converter._get_modules(content='\n'.join(lines))
     assert modules == expected
+
+
+def test_imports_load():
+    converter = ImportsConverter()
+    root = converter.load(path='dephell')
+    deps = {dep.name for dep in root.dependencies}
+    assert 'tomlkit' in deps
+    assert 'dephell' not in deps
+    assert 'cache' not in deps
