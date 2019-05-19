@@ -20,6 +20,8 @@ from dephell.repositories import WareHouseRepo
     (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml'),
     (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json'),
 
+    (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml'),
+
     (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml'),
     (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml'),
 
@@ -72,6 +74,8 @@ def test_load_dump_load_deps(converter, path):
     (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml', ['raw_name']),
     (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json', ['raw_name']),
 
+    (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml', []),
+
     (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml', []),
     (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml', []),
 
@@ -101,6 +105,8 @@ def test_load_dump_load_metainfo(converter, path, exclude):
 
     (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml'),
     (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json'),
+
+    (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml'),
 
     (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml'),
     # (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml'),

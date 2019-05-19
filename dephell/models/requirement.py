@@ -216,12 +216,15 @@ class Requirement:
             if value:
                 yield name, value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{name}({dep}, lock={lock})'.format(
             name=self.__class__.__name__,
             dep=self.name,
             lock=self.lock,
         )
+
+    def __lt__(self, other: 'Requirement') -> bool:
+        return self.name < other.name

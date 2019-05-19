@@ -42,7 +42,7 @@ class PIPConverter(BaseConverter):
 
     def load(self, path) -> RootDependency:
         deps = []
-        root = RootDependency(raw_name=self._get_name(path=path))
+        root = RootDependency()
 
         warehouse_url = urlparse(config['warehouse']).hostname
         if warehouse_url in ('pypi.org', 'pypi.python.org'):

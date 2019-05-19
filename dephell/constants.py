@@ -20,6 +20,7 @@ IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')
 FORMATS = (
     'conda',
     'egginfo',
+    'flit',
     'pip',
     'pipfile',
     'pipfilelock',
