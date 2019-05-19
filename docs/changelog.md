@@ -7,6 +7,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 1. Added `imports` converter to get dependencies from package imports ([#97](https://github.com/dephell/dephell/pull/97)).
 1. `sdist` includes tests if they not too big (`--sdist-ratio` option) ([#99](https://github.com/dephell/dephell/pull/99), [#95](https://github.com/dephell/dephell/issues/95)).
 1. You can specify path to `.env` file ([#69](https://github.com/dephell/dephell/issues/69), [#100](https://github.com/dephell/dephell/pull/100)).
+1. `dephell package list` doesn't fail if some packages missed on PyPI ([#85](https://github.com/dephell/dephell/issues/85), [#102](https://github.com/dephell/dephell/pull/102)).
 
 ## v.0.7.2
 
