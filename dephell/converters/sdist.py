@@ -145,6 +145,18 @@ class SDistConverter(BaseConverter):
                         filter=self._set_uid_gid,
                     )
 
+            # write license files
+            patterns = ('LICEN[CS]E*', 'COPYING*', 'NOTICE*', 'AUTHORS*')
+            for pattern in patterns:
+                for file_path in project.package.path.glob(pattern):
+                    if not file_path.is_file():
+                        continue
+                    tar.add(
+                        name=str(file_path),
+                        arcname=subdir + file_path.name,
+                        filter=self._set_uid_gid,
+                    )
+
     def _write_content(self, tar, path: str, content) -> None:
         content = content.encode('utf-8')
         tar_info = TarInfo(path)
