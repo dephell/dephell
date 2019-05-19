@@ -18,6 +18,7 @@ from packaging.requirements import InvalidRequirement, Requirement
 # app
 from ..cache import JSONCache, TextCache
 from ..config import config
+from ..exceptions import PackageNotFoundError, InvalidFieldsError
 from ..models.author import Author
 from ..models.release import Release
 from .base import Interface
@@ -84,7 +85,7 @@ class WareHouseRepo(Interface):
             url = '{url}{name}/json'.format(url=self.url, name=dep.base_name)
             response = requests.get(url)
             if response.status_code == 404:
-                raise KeyError('project {name} is not found'.format(name=dep.base_name))
+                raise PackageNotFoundError(package=dep.base_name, url=url)
             data = response.json()
             cache.dump(data)
         elif isinstance(data, str) and data == '':
@@ -165,7 +166,7 @@ class WareHouseRepo(Interface):
         logger.debug('search on PyPI', extra=dict(query=fields))
         invalid_fields = set(fields) - _fields
         if invalid_fields:
-            raise ValueError('Invalid fields: {}'.format(', '.join(invalid_fields)))
+            raise InvalidFieldsError(fields=invalid_fields)
 
         with ServerProxy('https://pypi.org/pypi') as client:
             response = client.search(fields, 'and')

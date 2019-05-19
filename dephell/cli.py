@@ -8,6 +8,7 @@ from typing import List
 # app
 from .commands import commands
 from .constants import ReturnCodes
+from .exceptions import ExtraException
 
 
 logger = getLogger('dephell.cli')
@@ -74,8 +75,11 @@ def main(argv: List[str]) -> int:
     # execute command
     try:
         result = task()
-    except Exception as e:
-        logger.exception('{}: {}'.format(type(e).__name__, e))
+    except Exception as exc:
+        if isinstance(exc, ExtraException):
+            logger.exception(str(exc), extra=exc.extra)
+        else:
+            logger.exception('{}: {}'.format(type(exc).__name__, exc))
         if hasattr(task, 'config') and task.config.get('pdb', False):
             post_mortem()
         return ReturnCodes.UNKNOWN_EXCEPTION.value
