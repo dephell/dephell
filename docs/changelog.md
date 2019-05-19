@@ -1,5 +1,7 @@
 # CHANGELOG
 
+Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
+
 ## v.0.7.2
 
 + [flit](https://flit.readthedocs.io/en/latest/pyproject_toml.html) support.

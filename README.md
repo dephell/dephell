@@ -19,7 +19,6 @@ Why it is better than all other tools:
 1. **Asyncio based**. DepHell doesn't support Python 2.7, and that allows us to use modern features to make network and filesystem requests as fast as possible.
 1. **Multiple environments**. You can have as many environments for project as you want. Separate sphinx dependencies from your main and dev environment. Other tools like pipenv and poetry don't support this.
 
-
 Features:
 
 + Manage dependencies: [convert between formats](https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html), [instаll](https://dephell.readthedocs.io/en/latest/cmd-deps-install.html), lock, [add new](https://dephell.readthedocs.io/en/latest/cmd-deps-add.html), resolve conflicts.
@@ -31,6 +30,8 @@ Features:
 + Generate [.editorconfig](https://dephell.readthedocs.io/en/latest/cmd-generate-editorconfig.html), [LICENSE](https://dephell.readthedocs.io/en/latest/cmd-generate-license.html), [AUTHORS](https://dephell.readthedocs.io/en/latest/cmd-generate-authors.html), [.travis.yml](https://dephell.readthedocs.io/en/latest/cmd-generate-travis.html).
 
 See [documentation](https://dephell.readthedocs.io/) for more details.
+
+Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
 ## Installation
 
