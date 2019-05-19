@@ -18,6 +18,7 @@ from .egginfo import EggInfoConverter
 
 class SDistConverter(BaseConverter):
     lock = False
+    subdir = True
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if content is not None:
@@ -69,10 +70,14 @@ class SDistConverter(BaseConverter):
         return root
 
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
+        project_name = project.raw_name
+        release_name = '{name}-{version}'.format(name=project_name, version=str(project.version))
+        subdir = release_name + '/' if self.subdir else ''
+
         if isinstance(path, str):
             path = Path(path)
         if not path.name.endswith('.tar.gz'):
-            path /= '{}-{}.tar.gz'.format(project.name.replace('-', '_'), str(project.version))
+            path /= release_name + '.tar.gz'
         path.parent.mkdir(exist_ok=True, parents=True)
         if path.exists():
             path.unlink()
@@ -91,38 +96,42 @@ class SDistConverter(BaseConverter):
         with TarFile.open(str(path), mode='w:gz') as tar:
 
             # write metafiles
-            self._write_content(tar=tar, path='PKG-INFO', content=info)
-            for fname, getter in getters.items():
-                fpath = '{}.egg-info/{}'.format(project.name.replace('-', '_'), fname)
+            self._write_content(tar=tar, path=subdir + 'PKG-INFO', content=info)
+            for file_name, getter in getters.items():
+                fpath = '{subdir}{project}.egg-info/{file}'.format(
+                    subdir=subdir,
+                    project=project_name,
+                    file=file_name,
+                )
                 self._write_content(tar=tar, path=fpath, content=getter())
 
             # write packages
             for package in chain(project.package.packages, project.package.data):
                 for full_path in package:
-                    tar.add(
-                        name=str(full_path),
-                        arcname='/'.join(full_path.relative_to(project.package.path).parts),
-                        filter=self._set_uid_gid,
+                    fpath = '{subdir}{module}'.format(
+                        subdir=subdir,
+                        module='/'.join(full_path.relative_to(project.package.path).parts),
                     )
+                    tar.add(name=str(full_path), arcname=fpath, filter=self._set_uid_gid)
 
             # write readme
             if project.readme:
                 tar.add(
                     name=str(project.readme.path),
-                    arcname=project.readme.path.name,
+                    arcname=subdir + project.readme.path.name,
                     filter=self._set_uid_gid,
                 )
                 if project.readme.markup != 'rst':
                     rst = project.readme.to_rst()
                     tar.add(
                         name=str(rst.path),
-                        arcname=rst.path.name,
+                        arcname=subdir + rst.path.name,
                         filter=self._set_uid_gid,
                     )
                 elif (project.package.path / 'README.md').exists():
                     tar.add(
                         name=str(project.package.path / 'README.md'),
-                        arcname='README.md',
+                        arcname=subdir + 'README.md',
                         filter=self._set_uid_gid,
                     )
 
@@ -132,7 +141,7 @@ class SDistConverter(BaseConverter):
                 if (path / fname).exists():
                     tar.add(
                         name=str(path / fname),
-                        arcname=fname,
+                        arcname=subdir + fname,
                         filter=self._set_uid_gid,
                     )
 
