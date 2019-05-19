@@ -48,7 +48,7 @@ class VenvShellCommand(BaseCommand):
         if 'vars' in self.config:
             env_vars.update(self.config['vars'])
         env_vars = read_dotenv(
-            path=Path(self.config['project']),
+            path=Path(self.config['dotenv']),
             env_vars=env_vars,
         )
 

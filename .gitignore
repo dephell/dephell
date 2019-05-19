@@ -18,6 +18,4 @@ pip-wheel-metadata/
 .dephell_report/
 
 /README.rst
-/setup.py
-
 .idea

@@ -20,13 +20,8 @@ python3 -m pip install --user dephell
 
 ## Get development version
 
-You need DepHell to install dev version of DepHell :) Install DepHell by the instruction from previous section and after that get dev version and create environment for it:
-
 ```bash
 $ git clone https://github.com/dephell/dephell.git
 $ cd dephell
-$ dephell deps convert
-$ dephell venv create
-$ dephell deps install
-$ dephell venv shell
+$ sudo python3 -m pip install -e .
 ```

@@ -33,6 +33,7 @@ DEFAULT = dict(
 
     # venv
     venv=str(data_dir / 'venvs' / '{project}-{digest}' / '{env}'),
+    dotenv=str(Path('.').resolve()),
 
     # cache
     cache=dict(

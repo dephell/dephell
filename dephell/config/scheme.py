@@ -49,6 +49,7 @@ SCHEME = {
 
     # venv
     'venv':     dict(type='string', required=True),
+    'dotenv':   dict(type='string', required=True),
     'python':   dict(type='string', required=False),
     'vars': dict(
         type='dict',
