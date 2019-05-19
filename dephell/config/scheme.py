@@ -20,6 +20,7 @@ _TARGET = dict(
 
 # all fields with default value (defaults.py) marked as required.
 SCHEME = {
+    'owner': dict(type='string', required=True),
     'from': dict(required=False, **_TARGET),
     'to': dict(required=False, **_TARGET),
     'and': dict(type='list', schema=_TARGET, required=False, empty=True),

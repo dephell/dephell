@@ -26,6 +26,7 @@ class GenerateLicenseCommand(BaseCommand):
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)
+        parser.add_argument('owner', help='license owner')
         parser.add_argument('name', nargs=REMAINDER, help='license name')
         return parser
 
@@ -44,7 +45,7 @@ class GenerateLicenseCommand(BaseCommand):
         # generate license text
         text = license.make_text(copyright='{year} {name}'.format(
             year=datetime.now().year,
-            name=getuser().title(),
+            name=config.get('owner') or getuser().title(),
         ))
         (Path(self.config['project']) / 'LICENSE').write_text(text)
         self.logger.info('license generated', extra=dict(license=license.name))
