@@ -7,6 +7,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + [flit](https://flit.readthedocs.io/en/latest/pyproject_toml.html) support.
 + Missed meta information (like project version when you read from `requirements.txt`) will be automatically parsed from magic variables (like `__version__`) in the project source code.
 + Fix `plugins` parsing in poetry and `extras` parsing for `egg-info` and `sdist` ([#86](https://github.com/dephell/dephell/issues/86), [#89](https://github.com/dephell/dephell/pull/89)).
++ Fix `sdist` structure ([#94](https://github.com/dephell/dephell/pull/94), [#93](https://github.com/dephell/dephell/issues/93)).
 
 ## v.0.7.1
 
