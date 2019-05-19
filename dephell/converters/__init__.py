@@ -4,6 +4,7 @@ from typing import Dict
 from .base import BaseConverter
 from .conda import CondaConverter
 from .egginfo import EggInfoConverter
+from .flit import FlitConverter
 from .installed import InstalledConverter
 from .pip import PIPConverter
 from .pipfile import PIPFileConverter
@@ -22,6 +23,7 @@ __all__ = [
     'BaseConverter',
     'CondaConverter',
     'EggInfoConverter',
+    'FlitConverter',
     'InstalledConverter',
     'PIPConverter',
     'PIPFileConverter',
@@ -55,6 +57,7 @@ CONVERTERS = dict(
 
     # other
     conda=CondaConverter(),
+    flit=FlitConverter(),
     pyproject=PyProjectConverter(),
     setuppy=SetupPyConverter(),
     installed=InstalledConverter(),

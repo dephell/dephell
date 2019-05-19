@@ -14,7 +14,7 @@ class PyProjectConverter(BaseConverter):
     def loads(self, content: str) -> RootDependency:
         doc = parse(content)
         deps = []
-        root = RootDependency(raw_name=self._get_name(content=content))
+        root = RootDependency()
         for req in doc['build-system']['requires']:
             req = Requirement(req)
             deps.extend(DependencyMaker.from_requirement(source=root, req=req))

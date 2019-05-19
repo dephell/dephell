@@ -20,5 +20,5 @@ def test_build_command(temp_path: Path):
     assert result is True
     assert (temp_path / 'setup.py').exists()
     assert (temp_path / 'my_package.egg-info' / 'PKG-INFO').exists()
-    assert (temp_path / 'dist' / 'my_package-0.1.0.tar.gz').exists()
+    assert (temp_path / 'dist' / 'my-package-0.1.0.tar.gz').exists()
     assert (temp_path / 'dist' / 'my_package-0.1.0-py3-none-any.whl').exists()

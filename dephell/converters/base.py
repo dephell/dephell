@@ -5,7 +5,6 @@ from tempfile import NamedTemporaryFile
 from typing import Optional, Tuple
 
 # app
-from ..constants import FILES
 from ..controllers import Graph, Mutator, Resolver
 from ..models import RootDependency
 
@@ -70,24 +69,6 @@ class BaseConverter:
         return self._get_resolver(root)
 
     # helpers
-
-    @staticmethod
-    def _get_name(*, path=None, content=None) -> str:
-        if path is not None:
-            path = Path(str(path))
-            file_name = path.name
-            project_name = path.parent.name
-
-            if file_name in FILES:
-                return project_name
-            if file_name[0].isdigit():
-                return project_name
-            return file_name
-
-        if content is not None:
-            return 'root-{length}'.format(length=len(content))
-
-        raise ValueError('please, specify path or content')
 
     @staticmethod
     def _split_extra_and_marker(text: str) -> Tuple[str, Optional[str]]:

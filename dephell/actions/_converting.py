@@ -1,5 +1,6 @@
 # built-in
 from logging import getLogger
+from pathlib import Path
 
 # app
 from ..config import Config
@@ -21,6 +22,19 @@ def attach_deps(*, resolver, config: Config, merge: bool = True) -> bool:
         ))
         loader = CONVERTERS[source['format']]
         root = loader.load(path=source['path'])
+
+        # fix name for new root to avoid conflicts
+        names = {other.name for other in resolver.graph.get_layer(0)}
+        if root.name in names:
+            if source['format'] not in names:
+                root.name = source['format']
+            else:
+                name = Path(source['path']).name
+                if name not in names:
+                    root.name = name
+            # TODO: generate random name
+            ...
+
         resolver.graph.add(root)
 
     if not merge:

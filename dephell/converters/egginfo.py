@@ -160,7 +160,7 @@ class _Reader:
         if urls is None:
             urls = dict()
         if root is None:
-            root = RootDependency(raw_name=self._get_name(content=content))
+            root = RootDependency()
 
         envs = {'main'}
         marker = Markers()
@@ -187,7 +187,7 @@ class _Reader:
 
     def parse_entrypoints(self, content: str, root=None) -> RootDependency:
         if root is None:
-            root = RootDependency(raw_name=self._get_name(content=content))
+            root = RootDependency()
         entrypoints = []
         group = 'console_scripts'
         for line in content.split('\n'):
