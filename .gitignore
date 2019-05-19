@@ -17,4 +17,5 @@ pip-wheel-metadata/
 .dephell_cache/
 .dephell_report/
 
+/README.rst
 .idea
