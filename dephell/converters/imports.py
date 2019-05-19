@@ -43,7 +43,7 @@ class ImportsConverter(BaseConverter):
         for package in root.package.packages:
             for module in package:
                 content = module.read_text(encoding='utf-8')
-                modules.extend(self._get_modules(content=content))
+                modules.update(self._get_modules(content=content))
 
         # attach modules
         local_modules = {package.module for package in root.package.packages}
@@ -77,7 +77,7 @@ class ImportsConverter(BaseConverter):
             if isinstance(node, ast.Import):
                 for subnode in node.names:
                     imports.add(subnode.name)
-            elif isinstance(node, ast.ImportFrom):
+            elif isinstance(node, ast.ImportFrom) and node.level == 0:
                 imports.add(node.module)
         modules = set()
         for module in imports:
