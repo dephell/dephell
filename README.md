@@ -58,12 +58,14 @@ See [installation documentation](https://dephell.readthedocs.io/en/latest/instal
 1. [pоetry](https://github.com/sdispater/poetry):
     1. [pyproject.toml](https://poetry.eustace.io/docs/pyproject/) (`poetry`)
     1. [poetry.lock](https://poetry.eustace.io/docs/basic-usage/#installing-without-poetrylock) (`poetrylock`)
+1. Environment:
+    1. Imports in the package (`imports`).
+    1. Installed packages (`installed`).
 1. Other:
     1. [setup.py](https://docs.python.org/3/distutils/setupscript.html) (`setuppy`)
     1. [flit](https://flit.readthedocs.io/en/latest/pyproject_toml.html) (`flit`)
     1. [conda](https://conda.io/en/latest/)'s [environment.yml](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually) (`conda`)
     1. [pyproject.toml build-system requires](https://www.python.org/dev/peps/pep-0518/#build-system-table) (`pyproject`)
-    1. Installed packages (`installed`).
 
 ## Usage
 
