@@ -39,7 +39,7 @@ class PackageListCommand(BaseCommand):
             try:
                 releases = repo.get_releases(dep)
             except PackageNotFoundError as exc:
-                self.logger.warning(exc.message, extra=exc.extra)
+                self.logger.warning(str(exc), extra=exc.extra)
                 continue
 
             data.append(dict(
