@@ -66,7 +66,7 @@ Commands that accept these parameters:
 
 Other:
 
-+`--owner` -- name of the owner.
++ `--owner` -- name of the owner.
 + `--cache-path` -- path to dephell cache.
 + `--cache-ttl` -- Time to live for releases list cache (in seconds). 1 hour by default.
 + `--project` -- path to the current project. Current directory by default.
