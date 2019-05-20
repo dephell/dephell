@@ -43,21 +43,30 @@ class GenerateLicenseCommand(BaseCommand):
             self.logger.error('cannot find license with given name')
             return False
 
+        # author name from --owner
+        author = self.config.get('owner')
+
         # get author from `from`
-        loader = CONVERTERS[self.config['from']['format']]
-        root = loader.load(self.config['from']['path'])
-        from_author = None
-        if root.authors:
-            from_author = root.authors
+        if not author and 'from' in self.config:
+            loader = CONVERTERS[self.config['from']['format']]
+            root = loader.load(self.config['from']['path'])
+            if root.authors:
+                author = root.authors
 
         # author from project config file
-        project_author = PackageRoot(self.config['project']).metainfo.authors
+        if not author:
+            authors = PackageRoot(self.config['project']).metainfo.authors
+            if authors:
+                author = authors[0]
+
+        # author from getuser().title
+        if not author:
+            author = getuser().title()
 
         # generate license text
         text = license.make_text(copyright='{year} {name}'.format(
             year=datetime.now().year,
-            name=self.config.get('owner') or getuser().title()
-                                                    or from_author or project_author,
+            name=author,
         ))
         (Path(self.config['project']) / 'LICENSE').write_text(text)
         self.logger.info('license generated', extra=dict(license=license.name))
