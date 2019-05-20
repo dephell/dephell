@@ -111,7 +111,7 @@ class ImportsConverter(BaseConverter):
 
     @cached_property
     def stdlib(self) -> List[str]:
-        cache = TextCache('imports', 'stdlib', ttl=CACHE_TTL)
+        cache = TextCache('imports', 'stdlib', ttl=-1)
         lines = cache.load()
         if lines:
             return lines
