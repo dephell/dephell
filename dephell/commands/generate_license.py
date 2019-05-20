@@ -6,9 +6,11 @@ from pathlib import Path
 
 # external
 from dephell_licenses import licenses
+from dephell_discover import Root as PackageRoot
 
 # app
 from ..config import builders
+from ..converters import CONVERTERS
 from .base import BaseCommand
 
 
@@ -41,10 +43,21 @@ class GenerateLicenseCommand(BaseCommand):
             self.logger.error('cannot find license with given name')
             return False
 
+        # get author from `from`
+        loader = CONVERTERS[self.config['from']['format']]
+        root = loader.load(self.config['from']['path'])
+        from_author = None
+        if root.authors:
+            from_author = root.authors
+
+        # author from project config file
+        project_author = PackageRoot(self.config['project']).metainfo.authors
+
         # generate license text
         text = license.make_text(copyright='{year} {name}'.format(
             year=datetime.now().year,
-            name=self.config.get('owner') or getuser().title(),
+            name=self.config.get('owner') or getuser().title()
+                                                    or from_author or project_author,
         ))
         (Path(self.config['project']) / 'LICENSE').write_text(text)
         self.logger.info('license generated', extra=dict(license=license.name))
