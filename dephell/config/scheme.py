@@ -59,6 +59,7 @@ SCHEME = {
     ),
 
     # other
+    'owner': dict(type='string', required=False),
     'cache': dict(
         type='dict',
         required=True,
