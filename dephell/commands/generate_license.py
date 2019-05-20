@@ -51,7 +51,7 @@ class GenerateLicenseCommand(BaseCommand):
             loader = CONVERTERS[self.config['from']['format']]
             root = loader.load(self.config['from']['path'])
             if root.authors:
-                author = root.authors
+                author = root.authors[0]
 
         # author from project config file
         if not author:
