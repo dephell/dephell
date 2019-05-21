@@ -1,10 +1,12 @@
 # built-in
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin, parse_qs
 
 # external
 import attr
+import html
+import html5lib
 import requests
 from packaging.requirements import Requirement
 
@@ -44,17 +46,12 @@ class SimpleWareHouseRepo(Interface):
         cache = JSONCache('simple', 'releases', dep.base_name, ttl=config['cache']['ttl'])
         data = cache.load()
         if data is None:
-            url = self.url + dep.base_name
-            response = requests.get(url)
-            if response.status_code == 404:
-                raise PackageNotFoundError(package=dep.base_name, url=url)
-            response.raise_for_status()
-            ...
+            data = list(self._get_links(name=dep.base_name))
             cache.dump(data)
 
         # init releases
         releases = []
-        for version, info in data['releases'].items():
+        for version, info in data:
             # ignore version if no files for release
             if not info:
                 continue
@@ -74,3 +71,22 @@ class SimpleWareHouseRepo(Interface):
         results = []
         ...
         return results
+
+    def _get_links(self, name: str):
+        dep_url = self.url + name
+        response = requests.get(dep_url)
+        if response.status_code == 404:
+            raise PackageNotFoundError(package=name, url=dep_url)
+        response.raise_for_status()
+        document = html5lib.parse(response.text, namespaceHTMLElements=False)
+
+        for tag in document.findall(".//a"):
+            link = tag.get("href")
+            if not link:
+                continue
+
+            python = tag.get('data-requires-python')
+            python = html.unescape(python) if python else '*'
+            fragment = parse_qs(urlparse(link).fragment)
+
+            yield dict(url=urljoin(dep_url, link), python=python, digest=fragment.get('sha256'))
