@@ -55,9 +55,9 @@ class GenerateLicenseCommand(BaseCommand):
 
         # author from project config file
         if not author:
-            authors = PackageRoot(Path(self.config['project'])).metainfo.authors
-            if authors:
-                author = authors[0]
+            metainfo = PackageRoot(Path(self.config['project'])).metainfo
+            if metainfo and metainfo.authors:
+                author = metainfo.authors[0]
 
         # author from getuser().title
         if not author:
