@@ -63,7 +63,7 @@ class AutocompleteCommand(BaseCommand):
                 continue
             if 'bash_completion.d' not in rc_path.read_text():
                 with rc_path.open('a') as stream:
-                    stream.write('\n\nsource {}\n'.format(str(path)))
+                    stream.write('\n\nsource "{}"\n'.format(str(path)))
             break
 
     def _zsh(self):
@@ -76,4 +76,4 @@ class AutocompleteCommand(BaseCommand):
         rc_path = Path.home() / '.zshrc'
         if str(path) not in rc_path.read_text():
             with rc_path.open('a') as stream:
-                stream.write('\n\nsource {}\n'.format(str(path)))
+                stream.write('\n\nsource "{}"\n'.format(str(path)))
