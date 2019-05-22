@@ -23,6 +23,7 @@ class PackageListCommand(BaseCommand):
             description=cls.__doc__,
         )
         builders.build_config(parser)
+        builders.build_venv(parser)
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
@@ -33,7 +34,6 @@ class PackageListCommand(BaseCommand):
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
         root = InstalledConverter().load(paths=python.lib_paths)
 
-        repo = WareHouseRepo()
         data = []
         for dep in root.dependencies:
             try:
