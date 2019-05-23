@@ -112,7 +112,10 @@ class _Writer:
         }
 
         self._records = []
-        base_path = '{}-{}.dist-info/'.format(project.name, str(project.version))
+        base_path = '{name}-{version}.dist-info/'.format(
+            name=project.raw_name.replace('-', '_'),
+            version=str(project.version),
+        )
         with path.open('w+b') as stream:
             with ZipFile(stream, mode='w', compression=ZIP_DEFLATED) as archive:
                 # write metafiles
@@ -156,7 +159,7 @@ class _Writer:
             path = Path(path)
         if path.suffix not in ('.whl', '.zip'):
             path /= '{name}-{version}-py3-none-any.whl'.format(
-                name=project.name.replace('-', '_'),
+                name=project.raw_name.replace('-', '_'),
                 version=str(project.version),
             )
         return path

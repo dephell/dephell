@@ -241,7 +241,7 @@ class _Writer:
             return
 
         if path.suffix != '.egg-info':
-            path /= project.name.replace('-', '_') + '.egg-info'
+            path /= project.raw_name.replace('-', '_') + '.egg-info'
         path.mkdir(exist_ok=True, parents=True)
 
         (path / 'dependency_links.txt').write_text(self.make_dependency_links(reqs=reqs))
@@ -258,7 +258,7 @@ class _Writer:
         # distutils.dist.DistributionMetadata.write_pkg_file
         content = []
         content.append(('Metadata-Version', '2.1'))
-        content.append(('Name', project.raw_name))
+        content.append(('Name', project.raw_name.replace('_', '-')))
         content.append(('Version', project.version))
         if project.description:
             content.append(('Summary', project.description))

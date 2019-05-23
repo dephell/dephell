@@ -132,15 +132,15 @@ graphviz = {optional = true}
 yapf = {optional = true}
 
 # dephell ecosystem
-dephell-archive = "*"
-dephell-discover = "*"
-dephell-licenses = "*"
-dephell-links = "*"
-dephell-markers = "*"
-dephell-pythons = "*"
-dephell-shells = "*"
-dephell-specifier = ">=0.1.4"
-dephell-venvs = "*"
+dephell-archive   = ">=0.1.5"
+dephell-discover  = ">=0.2.4"
+dephell-licenses  = ">=0.1.6"
+dephell-links     = ">=0.1.4"
+dephell-markers   = ">=0.2.6"
+dephell-pythons   = ">=0.1.11"
+dephell-shells    = ">=0.1.3"
+dephell-specifier = ">=0.1.7"
+dephell-venvs     = ">=0.1.16"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
