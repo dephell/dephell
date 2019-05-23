@@ -99,7 +99,7 @@ class ProjectBumpCommand(BaseCommand):
                         stream.write(new_content)
 
         # set git tag
-        if self.config.get['tag']:
+        if self.config.get('tag'):
             project = Path(self.config['project'])
             if (project / '.git').exists():
                 self.logger.info('commit and tag')
