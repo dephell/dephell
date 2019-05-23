@@ -50,6 +50,10 @@ class DepsTreeCommand(BaseCommand):
             return False
         self.logger.debug('resolved')
 
+        # apply envs if needed
+        if 'envs' in self.config:
+            resolver.apply_envs(set(self.config['envs']))
+
         if self.args.type == 'pretty':
             for dep in sorted(resolver.graph.get_layer(1)):
                 print('\n'.join(self._make_tree(dep)))
