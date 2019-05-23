@@ -6,7 +6,6 @@ from ..actions import get_python_env, make_json
 from ..config import builders
 from ..converters import InstalledConverter
 from ..exceptions import PackageNotFoundError
-from ..repositories import WareHouseRepo
 from .base import BaseCommand
 
 
@@ -37,7 +36,7 @@ class PackageListCommand(BaseCommand):
         data = []
         for dep in root.dependencies:
             try:
-                releases = repo.get_releases(dep)
+                releases = dep.repo.get_releases(dep)
             except PackageNotFoundError as exc:
                 self.logger.warning(str(exc), extra=exc.extra)
                 continue
