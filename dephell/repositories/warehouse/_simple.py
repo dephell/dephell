@@ -1,4 +1,5 @@
 # built-in
+import re
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
 from urllib.parse import urlparse, urljoin, parse_qs
@@ -19,6 +20,7 @@ from .base import Interface
 
 
 logger = getLogger('dephell.repositories.warehouse.simple')
+REX_WORD = re.compile('[a-zA-Z]+')
 
 
 def _process_url(url: str) -> str:
@@ -90,3 +92,21 @@ class SimpleWareHouseRepo(Interface):
             fragment = parse_qs(urlparse(link).fragment)
 
             yield dict(url=urljoin(dep_url, link), python=python, digest=fragment.get('sha256'))
+
+    @staticmethod
+    def _parse_name(fname: str) -> Tuple[str, str]:
+        if fname.endswith('.whl'):
+            base = fname.rsplit('-', maxsplit=3)[0]
+            name, _, version = base.partition('-')
+            return name, version
+
+        base = name.rsplit('.', maxsplit=1)[0]
+        parts = base.split('-')
+        name = []
+        for part in parts:
+            if REX_WORD.match(part):
+                name.append(part)
+            else:
+                break
+        version = parts[len(name):]
+        return '-'.join(name), '-'.join(version)
