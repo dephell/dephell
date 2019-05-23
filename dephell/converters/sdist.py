@@ -77,7 +77,7 @@ class SDistConverter(BaseConverter):
         return root
 
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
-        project_name = project.raw_name
+        project_name = project.raw_name.replace('-', '_')
         release_name = '{name}-{version}'.format(name=project_name, version=str(project.version))
         subdir = release_name + '/' if self.subdir else ''
 
