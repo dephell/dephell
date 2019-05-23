@@ -29,6 +29,7 @@ class JailInstallCommand(BaseCommand):
         )
         builders.build_config(parser)
         builders.build_venv(parser)
+        builders.build_resolver(parser)
         builders.build_output(parser)
         builders.build_other(parser)
         parser.add_argument('name', nargs=REMAINDER, help='packages to install')
