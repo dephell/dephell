@@ -23,7 +23,7 @@ logger = getLogger('dephell.repositories.warehouse')
 class BaseWarehouse(Interface):
 
     @staticmethod
-    def _convert_deps(deps, name, version, extra):
+    def _convert_deps(*, deps, name, version, extra):
 
         # filter result
         result = []
@@ -95,7 +95,10 @@ class BaseWarehouse(Interface):
             root = converter.load(path)
             deps = []
             for dep in root.dependencies:
-                for env in dep.envs.copy():
-                    dep.envs = {env}
+                if dep.envs == {'main'}:
                     deps.append(str(dep))
+                else:
+                    for env in dep.envs.copy() - {'main'}:
+                        dep.envs = {env}
+                        deps.append(str(dep))
             return tuple(deps)
