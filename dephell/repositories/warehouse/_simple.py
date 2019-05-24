@@ -1,4 +1,5 @@
 # built-in
+import asyncio
 import posixpath
 import re
 from datetime import datetime
@@ -16,7 +17,7 @@ from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 # app
-from ...cache import JSONCache
+from ...cache import JSONCache, TextCache
 from ...config import config
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
@@ -33,9 +34,11 @@ def _process_url(url: str) -> str:
         hostname = 'pypi.org'
     else:
         hostname = parsed.hostname
-    if hostname == 'pypi.org':
-        return parsed.scheme + '://pypi.org/simple/'
-    return parsed.scheme + '://' + hostname + parsed.path
+    if hostname in ('pypi.org', 'test.pypi.org'):
+        path = '/simple/'
+    else:
+        path = parsed.path
+    return parsed.scheme + '://' + hostname + path
 
 
 @attr.s()
@@ -60,8 +63,7 @@ class SimpleWareHouseRepo(BaseWarehouse):
         releases_info = dict()
         for link in links:
             name, version = self._parse_name(link['name'])
-            name = canonicalize_name(name)
-            if name != dep.name:
+            if canonicalize_name(name) != dep.name:
                 continue
             if not version:
                 continue
@@ -105,7 +107,16 @@ class SimpleWareHouseRepo(BaseWarehouse):
 
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
-        ...
+        cache = TextCache('simple', 'deps', name, str(version))
+        deps = cache.load()
+        if deps is None:
+            task = self._get_deps_from_links(name=name, version=version)
+            deps = await asyncio.gather(asyncio.ensure_future(task))
+            deps = deps[0]
+            cache.dump(deps)
+        elif deps == ['']:
+            return ()
+        return self._convert_deps(deps=deps, name=name, version=version, extra=extra)
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
         results = []
@@ -155,3 +166,43 @@ class SimpleWareHouseRepo(BaseWarehouse):
                 break
         version = parts[len(name):]
         return '-'.join(name), '-'.join(version)
+
+    async def _get_deps_from_links(self, name, version):
+        from ..converters import SDistConverter, WheelConverter
+
+        # retrieve data
+        cache = JSONCache('simple', 'releases', name, ttl=config['cache']['ttl'])
+        links = cache.load()
+        if links is None:
+            links = list(self._get_links(name=name))
+            cache.dump(links)
+
+        good_links = []
+        for link in links:
+            link_name, link_version = self._parse_name(link['name'])
+            if canonicalize_name(link_name) != name:
+                continue
+            if link_version != version:
+                continue
+            good_links.append(link)
+
+        sdist = SDistConverter()
+        wheel = WheelConverter()
+        rules = (
+            (wheel, '.whl'),
+            (sdist, '.tar.gz'),
+            (sdist, '.zip'),
+        )
+
+        for converer, ext in rules:
+            for link in good_links:
+                if not link['name'].endswith(ext):
+                    continue
+                try:
+                    return await self._download_and_parse(
+                        url=link['url'],
+                        converter=converer,
+                    )
+                except FileNotFoundError as e:
+                    logger.warning(e.args[0])
+        return ()
