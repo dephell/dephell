@@ -1,9 +1,10 @@
 # built-in
+import posixpath
 import re
 from datetime import datetime
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple, Iterator
-from urllib.parse import urlparse, urljoin, parse_qs
+from urllib.parse import urlparse, urljoin, parse_qs, quote
 
 # external
 import attr
@@ -112,7 +113,7 @@ class SimpleWareHouseRepo(Interface):
         return results
 
     def _get_links(self, name: str) -> Iterator[Dict[str, str]]:
-        dep_url = self.url + name
+        dep_url = posixpath.join(self.url, quote(name)) + '/'
         response = requests.get(dep_url)
         if response.status_code == 404:
             raise PackageNotFoundError(package=name, url=dep_url)
