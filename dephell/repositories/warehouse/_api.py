@@ -249,7 +249,7 @@ class WareHouseRepo(BaseWarehouse):
         #     if file_info['packagetype'] == 'bdist_wheel':
         #         return ()
 
-        from ..converters import SDistConverter, WheelConverter
+        from ...converters import SDistConverter, WheelConverter
 
         sdist = SDistConverter()
         wheel = WheelConverter()

@@ -168,7 +168,7 @@ class SimpleWareHouseRepo(BaseWarehouse):
         return '-'.join(name), '-'.join(version)
 
     async def _get_deps_from_links(self, name, version):
-        from ..converters import SDistConverter, WheelConverter
+        from ...converters import SDistConverter, WheelConverter
 
         # retrieve data
         cache = JSONCache('simple', 'releases', name, ttl=config['cache']['ttl'])
@@ -189,6 +189,8 @@ class SimpleWareHouseRepo(BaseWarehouse):
         sdist = SDistConverter()
         wheel = WheelConverter()
         rules = (
+            (wheel, 'py3-none-any.whl'),
+            (wheel, '-none-any.whl'),
             (wheel, '.whl'),
             (sdist, '.tar.gz'),
             (sdist, '.zip'),

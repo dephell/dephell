@@ -2,6 +2,7 @@ from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Tuple
+from urllib.parse import urlparse
 
 from aiohttp import ClientSession
 from dephell_markers import Markers
@@ -71,7 +72,8 @@ class BaseWarehouse(Interface):
                         raise ValueError('invalid response: {} {} ({})'.format(
                             response.status, response.reason, url,
                         ))
-                    path = Path(tmp) / url.rsplit('/', maxsplit=1)[-1]
+                    fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]
+                    path = Path(tmp) / fname
 
                     # download file
                     if aiofiles is not None:
