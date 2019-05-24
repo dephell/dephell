@@ -16,12 +16,12 @@ from dephell_markers import Markers
 from packaging.requirements import InvalidRequirement, Requirement
 
 # app
-from ..cache import JSONCache, TextCache
-from ..config import config
-from ..exceptions import PackageNotFoundError, InvalidFieldsError
-from ..models.author import Author
-from ..models.release import Release
-from .base import Interface
+from ...cache import JSONCache, TextCache
+from ...config import config
+from ...exceptions import PackageNotFoundError, InvalidFieldsError
+from ...models.author import Author
+from ...models.release import Release
+from ..base import Interface
 
 
 try:

@@ -12,11 +12,11 @@ import requests
 from packaging.requirements import Requirement
 
 # app
-from ..cache import JSONCache
-from ..config import config
-from ..exceptions import PackageNotFoundError
-from ..models.release import Release
-from .base import Interface
+from ...cache import JSONCache
+from ...config import config
+from ...exceptions import PackageNotFoundError
+from ...models.release import Release
+from ..base import Interface
 
 
 logger = getLogger('dephell.repositories.warehouse.simple')
@@ -95,13 +95,16 @@ class SimpleWareHouseRepo(Interface):
 
     @staticmethod
     def _parse_name(fname: str) -> Tuple[str, str]:
+        fname = fname.strip()
         if fname.endswith('.whl'):
-            base = fname.rsplit('-', maxsplit=3)[0]
-            name, _, version = base.partition('-')
+            fname = fname.rsplit('-', maxsplit=3)[0]
+            name, _, version = fname.partition('-')
             return name, version
 
-        base = name.rsplit('.', maxsplit=1)[0]
-        parts = base.split('-')
+        fname = fname.rsplit('.', maxsplit=1)[0]
+        if fname.endswith('.tar'):
+            fname = fname.rsplit('.', maxsplit=1)[0]
+        parts = fname.split('-')
         name = []
         for part in parts:
             if REX_WORD.match(part):
