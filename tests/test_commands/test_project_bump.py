@@ -9,7 +9,7 @@ from dephell.config import Config
 
 def test_bump_command(temp_path: Path):
     (temp_path / 'project').mkdir()
-    init_path = (temp_path / 'project' / '__init__')
+    init_path = (temp_path / 'project' / '__init__.py')
     init_path.write_text('__version__ = "1.2.3"')
     config = Config()
     config.attach({
