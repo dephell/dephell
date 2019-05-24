@@ -10,8 +10,7 @@ import attr
 import requests
 from aiohttp import ClientSession
 from dephell_licenses import License, licenses
-from dephell_markers import Markers
-from packaging.requirements import InvalidRequirement, Requirement
+from packaging.requirements import Requirement
 
 # app
 from ...cache import JSONCache, TextCache
@@ -127,42 +126,7 @@ class WareHouseRepo(BaseWarehouse):
             cache.dump(deps)
         elif deps == ['']:
             return ()
-
-        # filter result
-        result = []
-        for dep in deps:
-            try:
-                req = Requirement(dep)
-            except InvalidRequirement as e:
-                msg = 'cannot parse requirement: {} from {} {}'
-                try:
-                    # try to parse with dropped out markers
-                    req = Requirement(dep.split(';')[0])
-                except InvalidRequirement:
-                    raise ValueError(msg.format(dep, name, version)) from e
-                else:
-                    msg = 'cannot parse requirement: "{}" from {} {}'
-                    logger.warning(msg.format(dep, name, version))
-
-            try:
-                dep_extra = req.marker and Markers(req.marker).extra
-            except ValueError:  # unsupported operation for version marker python_version: in
-                dep_extra = None
-
-            # it's not extra and we want not extra too
-            if dep_extra is None and extra is None:
-                result.append(req)
-                continue
-            # it's extra, but we want not the extra
-            # or it's not the extra, but we want extra.
-            if dep_extra is None or extra is None:
-                continue
-            # it's extra and we want this extra
-            elif dep_extra == extra:
-                result.append(req)
-                continue
-
-        return tuple(result)
+        return self._convert_deps(deps=deps, name=name, version=version, extra=extra)
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
         fields = self._parse_query(query=query)
@@ -299,9 +263,13 @@ class WareHouseRepo(BaseWarehouse):
 
         for converer, checker in rules:
             for file_info in files_info:
-                if checker(file_info):
-                    try:
-                        return await self._download_and_parse(url=file_info['url'], converter=converer)
-                    except FileNotFoundError as e:
-                        logger.warning(e.args[0])
+                if not checker(file_info):
+                    continue
+                try:
+                    return await self._download_and_parse(
+                        url=file_info['url'],
+                        converter=converer,
+                    )
+                except FileNotFoundError as e:
+                    logger.warning(e.args[0])
         return ()
