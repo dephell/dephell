@@ -1,4 +1,6 @@
 import pytest
+from dephell.controllers import DependencyMaker
+from dephell.models import RootDependency
 from dephell.repositories.warehouse._simple import SimpleWareHouseRepo
 
 
@@ -11,3 +13,14 @@ from dephell.repositories.warehouse._simple import SimpleWareHouseRepo
 ])
 def test_parse_name(fname, name, version):
     assert SimpleWareHouseRepo._parse_name(fname) == (name, version)
+
+
+def test_get_releases():
+    root = RootDependency()
+    dep = DependencyMaker.from_requirement(source=root, req='dephell')[0]
+    repo = SimpleWareHouseRepo()
+    releases = repo.get_releases(dep=dep)
+    releases = {str(r.version): r for r in releases}
+    assert '0.7.0' in set(releases)
+    assert str(releases['0.7.0'].python) == '>=3.5'
+    assert len(releases['0.7.0'].hashes) == 2

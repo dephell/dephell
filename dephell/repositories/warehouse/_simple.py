@@ -1,7 +1,8 @@
 # built-in
 import re
+from datetime import datetime
 from logging import getLogger
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple, Iterator
 from urllib.parse import urlparse, urljoin, parse_qs
 
 # external
@@ -9,7 +10,9 @@ import attr
 import html
 import html5lib
 import requests
+from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
 
 # app
 from ...cache import JSONCache
@@ -29,6 +32,8 @@ def _process_url(url: str) -> str:
         hostname = 'pypi.org'
     else:
         hostname = parsed.hostname
+    if hostname == 'pypi.org' and parsed.path == '/pypi/':
+        return parsed.scheme + '://pypi.org/simple/'
     return parsed.scheme + '://' + hostname + parsed.path
 
 
@@ -46,22 +51,54 @@ class SimpleWareHouseRepo(Interface):
     def get_releases(self, dep) -> tuple:
         # retrieve data
         cache = JSONCache('simple', 'releases', dep.base_name, ttl=config['cache']['ttl'])
-        data = cache.load()
-        if data is None:
-            data = list(self._get_links(name=dep.base_name))
-            cache.dump(data)
+        links = cache.load()
+        if links is None:
+            links = list(self._get_links(name=dep.base_name))
+            cache.dump(links)
+
+        releases_info = dict()
+        for link in links:
+            name, version = self._parse_name(link['name'])
+            name = canonicalize_name(name)
+            if name != dep.name:
+                continue
+            if not version:
+                continue
+
+            if version not in releases_info:
+                releases_info[version] = dict(hashes=[], pythons=[])
+            if link['digest']:
+                releases_info[version]['hashes'].append(link['digest'])
+            if link['python']:
+                releases_info[version]['pythons'].append(link['python'])
 
         # init releases
         releases = []
-        for version, info in data:
+        prereleases = []
+        for version, info in releases_info.items():
             # ignore version if no files for release
-            if not info:
-                continue
-            release = Release.from_response(...)
+            release = Release(
+                raw_name=dep.raw_name,
+                version=version,
+                time=datetime(1970, 1, 1, 0, 0),
+                python=RangeSpecifier(' || '.join(info['pythons'])),
+                hashes=tuple(info['hashes']),
+                extra=dep.extra,
+            )
+
             # filter prereleases if needed
-            if release.version.is_prerelease and not self.prereleases and not dep.prereleases:
-                continue
+            if release.version.is_prerelease:
+                prereleases.append(release)
+                if not self.prereleases and not dep.prereleases:
+                    continue
+
             releases.append(release)
+
+        # special case for black: if there is no releases, but found some
+        # prereleases, implicitly allow prereleases for this package
+        if not release and prereleases:
+            releases = prereleases
+
         releases.sort(reverse=True)
         return tuple(releases)
 
@@ -74,7 +111,7 @@ class SimpleWareHouseRepo(Interface):
         ...
         return results
 
-    def _get_links(self, name: str):
+    def _get_links(self, name: str) -> Iterator[Dict[str, str]]:
         dep_url = self.url + name
         response = requests.get(dep_url)
         if response.status_code == 404:
@@ -88,10 +125,14 @@ class SimpleWareHouseRepo(Interface):
                 continue
 
             python = tag.get('data-requires-python')
-            python = html.unescape(python) if python else '*'
-            fragment = parse_qs(urlparse(link).fragment)
-
-            yield dict(url=urljoin(dep_url, link), python=python, digest=fragment.get('sha256'))
+            parsed = urlparse(link)
+            fragment = parse_qs(parsed.fragment)
+            yield dict(
+                url=urljoin(dep_url, link),
+                name=parsed.path.strip('/').split('/')[-1],
+                python=html.unescape(python) if python else '*',
+                digest=fragment['sha256'][0] if 'sha256' in fragment else None,
+            )
 
     @staticmethod
     def _parse_name(fname: str) -> Tuple[str, str]:
