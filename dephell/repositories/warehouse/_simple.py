@@ -20,7 +20,7 @@ from ...cache import JSONCache
 from ...config import config
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
-from ..base import Interface
+from ._base import BaseWarehouse
 
 
 logger = getLogger('dephell.repositories.warehouse.simple')
@@ -33,13 +33,13 @@ def _process_url(url: str) -> str:
         hostname = 'pypi.org'
     else:
         hostname = parsed.hostname
-    if hostname == 'pypi.org' and parsed.path == '/pypi/':
+    if hostname == 'pypi.org':
         return parsed.scheme + '://pypi.org/simple/'
     return parsed.scheme + '://' + hostname + parsed.path
 
 
 @attr.s()
-class SimpleWareHouseRepo(Interface):
+class SimpleWareHouseRepo(BaseWarehouse):
     name = attr.ib(default='pypi')
     url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
