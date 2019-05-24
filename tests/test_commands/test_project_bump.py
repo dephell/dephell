@@ -13,7 +13,7 @@ def test_bump_command(temp_path: Path):
     init_path.write_text('__version__ = "1.2.3"')
     config = Config()
     config.attach({
-        'project': str(Path(temp_path / 'project')),
+        'project': str(temp_path / 'project'),
     })
     command = ProjectBumpCommand(argv=['fix'], config=config)
     result = command()
