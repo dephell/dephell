@@ -5,7 +5,7 @@ Bump project version. Versioning scheme specified as `--versioning` and bumping 
 ```bash
 $ dephell project bump --versioning=semver minor
 INFO generated new version (old=0.3.2, new=0.4.0)
-INFO file bumped (path=/home/gram/Documents/dephell/dephell/__version__.py)
+INFO file bumped (path=/home/gram/Documents/dephell/dephell/__init__.py)
 ```
 
 It's recommend to explicitly add `versioning` in config to let your users know which scheme you're using in your project:
@@ -22,6 +22,16 @@ Command steps:
 1. Generate new version.
 1. Write new version in source code. DepHell looks for `__version__` variable in project source and writes new version in it.
 1. Write new version in `from` file.
+
+Also, the command adds git tag if `--tag` option (or `tag = True` in the config) is specified:
+
+```bash
+$ dephell project bump --tag minor
+INFO generated new version (old=0.8.0, new=0.9.0)
+INFO file bumped (path=/home/gram/Documents/dephell/dephell/__init__.py)
+INFO commit and tag
+INFO tag created, do not forget to push it: git push --tags
+```
 
 ## Rules
 
