@@ -11,7 +11,7 @@ from dephell_specifier import RangeSpecifier
 # app
 from ..controllers import DependencyMaker
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import WareHouseRepo, get_repo
+from ..repositories import WarehouseRepo, get_repo
 from .base import BaseConverter
 
 
@@ -56,13 +56,15 @@ class PIPFileConverter(BaseConverter):
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             for name, content in doc.get(section, {}).items():
                 subdeps = self._make_deps(root, name, content)
-                if 'index' in content:
-                    repo_name = content.get('index')
+                if isinstance(content, dict) and 'index' in content:
+                    index_name = content.get('index')
                     for dep in subdeps:
-                        dep.repo = WareHouseRepo(
-                            name=repo_name,
-                            url=repos[repo_name],
-                        )
+                        dep.repo = WarehouseRepo()
+                        dep.repo.add_repo(url=repos[index_name], name=index_name)
+                        for repo_name, repo_url in repos.items():
+                            if repo_name != index_name:
+                                dep.repo.add_repo(url=repo_url, name=repo_name)
+
                 for dep in subdeps:
                     # Pipfile doesn't support any other envs
                     dep.envs = {'dev'} if is_dev else {'main'}
@@ -81,16 +83,17 @@ class PIPFileConverter(BaseConverter):
 
         added_repos = {repo['name'] for repo in doc['source']}
         for req in reqs:
-            if not isinstance(req.dep.repo, WareHouseRepo):
+            if not isinstance(req.dep.repo, WarehouseRepo):
                 continue
-            if req.dep.repo.name in added_repos:
-                continue
-            added_repos.add(req.dep.repo.name)
-            doc['source'].append(OrderedDict([
-                ('name', req.dep.repo.name),
-                ('url', req.dep.repo.pretty_url),
-                ('verify_ssl', True),
-            ]))
+            for repo in req.dep.repo.repos:
+                if repo.name in added_repos:
+                    continue
+                added_repos.add(repo.name)
+                doc['source'].append(OrderedDict([
+                    ('name', repo.name),
+                    ('url', repo.pretty_url),
+                    ('verify_ssl', repo.pretty_url.startswith('https://')),
+                ]))
 
         if project.python:
             python = Pythons(abstract=True).get_by_spec(project.python)

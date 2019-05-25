@@ -98,5 +98,5 @@ def test_load_warehouse():
 
     assert deps['pkg1'].repo.url == 'https://pypi.org/pypi/', 'old url has not replaced'
     assert deps['pkg2'].repo.url == 'https://pypi.org/pypi/'
-    assert deps['pkg3'].repo.url == 'https://myserver.org/pypi/', 'server hostname has not used'
+    assert deps['pkg3'].repo.url == 'https://myserver.org/', 'server hostname has not used'
     assert deps['pkg4'].repo.url == 'https://pypi.org/pypi/', 'default url has not applied'

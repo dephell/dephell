@@ -4,7 +4,7 @@ import pytest
 
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
-from dephell.repositories.warehouse._simple import SimpleWareHouseRepo
+from dephell.repositories import WarehouseSimpleRepo
 
 
 loop = asyncio.get_event_loop()
@@ -18,13 +18,13 @@ loop = asyncio.get_event_loop()
     ('flake8-commas-2.0.0.tar.gz ', 'flake8-commas', '2.0.0'),
 ])
 def test_parse_name(fname, name, version):
-    assert SimpleWareHouseRepo._parse_name(fname) == (name, version)
+    assert WarehouseSimpleRepo._parse_name(fname) == (name, version)
 
 
 def test_get_releases():
     root = RootDependency()
     dep = DependencyMaker.from_requirement(source=root, req='dephell')[0]
-    repo = SimpleWareHouseRepo()
+    repo = WarehouseSimpleRepo()
     releases = repo.get_releases(dep=dep)
     releases = {str(r.version): r for r in releases}
     assert '0.7.0' in set(releases)
@@ -33,7 +33,7 @@ def test_get_releases():
 
 
 def test_extra():
-    repo = SimpleWareHouseRepo()
+    repo = WarehouseSimpleRepo()
 
     coroutine = repo.get_dependencies(name='requests', version='2.21.0')
     deps = loop.run_until_complete(asyncio.gather(coroutine))[0]

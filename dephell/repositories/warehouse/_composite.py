@@ -4,6 +4,7 @@ from typing import Optional, Iterable, List, Dict
 
 import attr
 import requests
+from requests.exceptions import SSLError
 
 from ...config import config
 from ...exceptions import PackageNotFoundError
@@ -12,15 +13,30 @@ from ._api import WarehouseAPIRepo
 from ._simple import WarehouseSimpleRepo
 
 
+@lru_cache(maxsize=16)
+def _has_api(url: str) -> bool:
+    if urlparse(url).hostname in ('pypi.org', 'python.org', 'test.pypi.org'):
+        return True
+    full_url = urljoin(url, 'dephell/json/')
+    try:
+        response = requests.head(full_url)
+    except SSLError:
+        return False
+    return response.status_code < 400
+
+
+@attr.s()
 class WarehouseRepo(Interface):
     repos = attr.ib(factory=list)
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
     propagate = True  # deps of deps will inherit repo
 
     def add_repo(self, *, url, name=None):
+        if not urlparse(url).scheme:
+            url = 'https://' + url
         if name is None:
             name = urlparse(url).hostname
-        if self._has_api(url=url):
+        if _has_api(url=url):
             cls = WarehouseAPIRepo
         else:
             cls = WarehouseSimpleRepo
@@ -66,14 +82,3 @@ class WarehouseRepo(Interface):
     @property
     def pretty_url(self):
         return self.url
-
-    # private methods
-
-    @lru_cache(maxsize=16)
-    @staticmethod
-    def _has_api(url: str) -> bool:
-        if urlparse(url).hostname in ('pypi.org', 'python.org', 'test.pypi.org'):
-            return True
-        full_url = urljoin(url, 'dephell/json/')
-        response = requests.head(full_url)
-        return response.status_code < 400

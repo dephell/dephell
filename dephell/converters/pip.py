@@ -14,7 +14,7 @@ from pip._internal.req import parse_requirements
 from ..config import config
 from ..controllers import DependencyMaker
 from ..models import RootDependency
-from ..repositories import WareHouseRepo
+from ..repositories import WarehouseRepo
 from .base import BaseConverter
 
 
@@ -78,12 +78,12 @@ class PIPConverter(BaseConverter):
 
         # update repository
         if finder.index_urls:
-            finded_host = urlparse(finder.index_urls[0]).hostname
-            if finded_host != urlparse(warehouse_url).hostname:
-                repo = WareHouseRepo(url=finder.index_urls[0])
-                for dep in deps:
-                    if isinstance(dep.repo, WareHouseRepo):
-                        dep.repo = repo
+            repo = WarehouseRepo()
+            for url in finder.index_urls:
+                repo.add_repo(url=url)
+            for dep in deps:
+                if isinstance(dep.repo, WarehouseRepo):
+                    dep.repo = repo
 
         root.attach_dependencies(deps)
         return root
@@ -93,22 +93,20 @@ class PIPConverter(BaseConverter):
         lines = []
 
         # get repos urls
-        urls = dict()
+        urls = []
+        names = set()
         for req in reqs:
-            if isinstance(req.dep.repo, WareHouseRepo):
-                urls[req.dep.repo.name] = req.dep.repo.pretty_url
-
+            if not isinstance(req.dep.repo, WarehouseRepo):
+                continue
+            for repo in req.dep.repo.repos:
+                if repo.name in names:
+                    continue
+                names.add(repo.name)
+                urls.append(repo.pretty_url)
         # dump repos urls
-        # pip._internal.build_env
-        if len(urls) == 1:
-            _name, url = urls.popitem()
-        elif 'pypi' in urls:
-            url = urls.pop('pypi')
-        else:
-            url = None
-        if url:
-            lines.append('-i ' + url)
-        for url in urls.values():
+        if urls:
+            lines.append('-i ' + urls[0])
+        for url in urls[1:]:
             lines.append('--extra-index-url ' + url)
 
         # disable hashes when dir-based deps are presented

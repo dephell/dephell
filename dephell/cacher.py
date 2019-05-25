@@ -17,7 +17,7 @@ from packaging.requirements import Requirement
 # project
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
-from dephell.repositories import WareHouseRepo
+from dephell.repositories import WarehouseAPIRepo
 
 
 loop = asyncio.get_event_loop()
@@ -35,7 +35,7 @@ def get_deps():
 
 
 def cache(deps):
-    repo = WareHouseRepo()
+    repo = WarehouseAPIRepo()
     tasks = []
     for dep in islice(deps, 1000):
         for release in repo.get_releases(dep):
