@@ -1,11 +1,7 @@
 # built-in
 from pathlib import Path
 
-# external
-from appdirs import user_data_dir
-
-
-data_dir = Path(user_data_dir('dephell'))
+from .app_dirs import get_cache_dir, get_data_dir
 
 
 DEFAULT = dict(
@@ -32,12 +28,12 @@ DEFAULT = dict(
     pdb=False,
 
     # venv
-    venv=str(data_dir / 'venvs' / '{project}-{digest}' / '{env}'),
+    venv=str(get_data_dir() / 'venvs' / '{project}-{digest}' / '{env}'),
     dotenv=str(Path('.').resolve()),
 
     # cache
     cache=dict(
-        path=str(data_dir / 'cache'),
+        path=str(get_cache_dir() / 'cache'),
         ttl=3600,
     ),
 
