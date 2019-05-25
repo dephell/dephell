@@ -99,25 +99,26 @@ class ProjectBumpCommand(BaseCommand):
                         stream.write(new_content)
 
         # set git tag
-        project = Path(self.config['project'])
-        if (project / '.git').exists():
-            self.logger.info('commit and tag')
-            ok = git_commit(
-                message='bump version to {}'.format(str(new_version)),
-                paths=paths,
-                project=project,
-            )
-            if not ok:
-                self.logger.error('cannot commit files')
-                return False
-            ok = git_tag(
-                name='v.' + str(new_version),
-                project=project,
-            )
-            if not ok:
-                self.logger.error('cannot add tag into git repo')
-                return False
+        if self.config.get('tag'):
+            project = Path(self.config['project'])
+            if (project / '.git').exists():
+                self.logger.info('commit and tag')
+                ok = git_commit(
+                    message='bump version to {}'.format(str(new_version)),
+                    paths=paths,
+                    project=project,
+                )
+                if not ok:
+                    self.logger.error('cannot commit files')
+                    return False
+                ok = git_tag(
+                    name='v.' + str(new_version),
+                    project=project,
+                )
+                if not ok:
+                    self.logger.error('cannot add tag into git repo')
+                    return False
 
-            self.logger.info('tag created, do not forget to push it: git push --tags')
+                self.logger.info('tag created, do not forget to push it: git push --tags')
 
         return True
