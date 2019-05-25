@@ -54,7 +54,10 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
     def get_releases(self, dep) -> tuple:
         # retrieve data
-        cache = JSONCache('simple', 'releases', dep.base_name, ttl=config['cache']['ttl'])
+        cache = JSONCache(
+            urlparse(self.url).hostname, 'links', dep.base_name,
+            ttl=config['cache']['ttl'],
+        )
         links = cache.load()
         if links is None:
             links = list(self._get_links(name=dep.base_name))
@@ -107,7 +110,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
-        cache = TextCache('simple', 'deps', name, str(version))
+        cache = TextCache(urlparse(self.url).hostname, 'deps', name, str(version))
         deps = cache.load()
         if deps is None:
             task = self._get_deps_from_links(name=name, version=version)
@@ -169,7 +172,10 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         from ...converters import SDistConverter, WheelConverter
 
         # retrieve data
-        cache = JSONCache('simple', 'releases', name, ttl=config['cache']['ttl'])
+        cache = JSONCache(
+            urlparse(self.url).hostname, 'links', name,
+            ttl=config['cache']['ttl'],
+        )
         links = cache.load()
         if links is None:
             links = list(self._get_links(name=name))

@@ -70,7 +70,10 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
     def get_releases(self, dep) -> tuple:
         # retrieve data
-        cache = JSONCache('releases', dep.base_name, ttl=config['cache']['ttl'])
+        cache = JSONCache(
+            urlparse(self.url).hostname, 'releases', dep.base_name,
+            ttl=config['cache']['ttl'],
+        )
         data = cache.load()
         if data is None:
             url = '{url}{name}/json'.format(url=self.url, name=dep.base_name)
@@ -117,7 +120,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
-        cache = TextCache('deps', name, str(version))
+        cache = TextCache(urlparse(self.url).hostname, 'deps', name, str(version))
         deps = cache.load()
         if deps is None:
             task = self._get_from_json(name=name, version=version)

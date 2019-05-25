@@ -35,7 +35,7 @@ class Safety:
 
     @cached_property
     def vulns(self) -> Dict[str, Tuple[SafetyVulnInfo, ...]]:
-        cache = JSONCache('safety', ttl=3600 * 24)
+        cache = JSONCache('pyup.io', ttl=3600 * 24)
         records = cache.load()
         if records is None:
             response = requests.get(self.url)
