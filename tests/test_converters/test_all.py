@@ -57,8 +57,8 @@ def test_load_dump_load_deps(converter, path):
         if isinstance(req1.dep.repo, WarehouseRepo):
             assert len(req1.dep.repo.repos) == len(req2.dep.repo.repos)
             for repo1, repo2 in zip(req1.dep.repo.repos, req2.dep.repo.repos):
-                assert repo1.name == repo1.name
-                assert repo1.url == repo1.url
+                assert repo1.name == repo2.name
+                assert repo1.url == repo2.url
 
     # exactly one dev or main env should be specified for dep
     for name, req1 in map1.items():
