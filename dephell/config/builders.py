@@ -72,6 +72,7 @@ def build_other(parser):
     other_group = parser.add_argument_group('Other')
 
     other_group.add_argument('--owner', help='name of the owner.')
+    other_group.add_argument('--tag', action='store_true', help='create git tag.')
     other_group.add_argument('--cache-path', help='path to dephell cache')
     other_group.add_argument('--cache-ttl', type=int, help='Time to live for releases list cache')
 
