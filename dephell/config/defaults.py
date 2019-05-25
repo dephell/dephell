@@ -33,7 +33,7 @@ DEFAULT = dict(
 
     # cache
     cache=dict(
-        path=str(get_cache_dir() / 'cache'),
+        path=str(get_cache_dir()),
         ttl=3600,
     ),
 

@@ -47,7 +47,9 @@ class GitRepo(Interface):
     @cached_property
     def path(self):
         name = self.link.name
-        path = Path(config['cache']['path']) / self.link.server / 'repo' / self.link.author / name
+        host = self.link.server or 'localhost'
+        author = self.link.author or 'anonimous'
+        path = Path(config['cache']['path']) / host / 'repo' / author / name
         return path
 
     @cached_property
@@ -92,7 +94,9 @@ class GitRepo(Interface):
 
     async def get_dependencies(self, name: str, version, extra: Optional[str] = None) -> tuple:
         # get from cache
-        cache = RequirementsCache(self.link.server, 'deps', self.link.author, name, str(version))
+        host = self.link.server or 'localhost'
+        author = self.link.author or 'anonimous'
+        cache = RequirementsCache(host, 'deps', author, name, str(version))
         deps = cache.load()
         if deps:
             if extra:

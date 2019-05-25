@@ -1,5 +1,6 @@
 # built-in
 import asyncio
+import posixpath
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 from urllib.parse import urlparse, urljoin
@@ -220,7 +221,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
         return data['license']
 
     async def _get_from_json(self, *, name, version):
-        url = urljoin(self.url, name, version, 'json')
+        url = urljoin(self.url, posixpath.join(name, str(version), 'json'))
         async with ClientSession() as session:
             async with session.get(url) as response:
                 if response.status == 404:
