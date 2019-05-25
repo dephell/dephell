@@ -132,8 +132,8 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         response.raise_for_status()
         document = html5lib.parse(response.text, namespaceHTMLElements=False)
 
-        for tag in document.findall(".//a"):
-            link = tag.get("href")
+        for tag in document.findall('.//a'):
+            link = tag.get('href')
             if not link:
                 continue
 
