@@ -20,7 +20,7 @@ except ImportError:
 logger = getLogger('dephell.repositories.warehouse')
 
 
-class BaseWarehouse(Interface):
+class WarehouseBaseRepo(Interface):
 
     @staticmethod
     def _convert_deps(*, deps, name, version, extra):
@@ -68,10 +68,7 @@ class BaseWarehouse(Interface):
         with TemporaryDirectory() as tmp:
             async with ClientSession() as session:
                 async with session.get(url) as response:
-                    if response.status != 200:
-                        raise ValueError('invalid response: {} {} ({})'.format(
-                            response.status, response.reason, url,
-                        ))
+                    response.raise_for_status()
                     fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]
                     path = Path(tmp) / fname
 

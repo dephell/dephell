@@ -21,7 +21,7 @@ from ...cache import JSONCache, TextCache
 from ...config import config
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
-from ._base import BaseWarehouse
+from ._base import WarehouseBaseRepo
 
 
 logger = getLogger('dephell.repositories.warehouse.simple')
@@ -42,7 +42,7 @@ def _process_url(url: str) -> str:
 
 
 @attr.s()
-class SimpleWareHouseRepo(BaseWarehouse):
+class WarehouseSimpleRepo(WarehouseBaseRepo):
     name = attr.ib(default='pypi')
     url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
@@ -119,9 +119,7 @@ class SimpleWareHouseRepo(BaseWarehouse):
         return self._convert_deps(deps=deps, name=name, version=version, extra=extra)
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
-        results = []
-        ...
-        return results
+        raise NotImplementedError
 
     def _get_links(self, name: str) -> Iterator[Dict[str, str]]:
         dep_url = posixpath.join(self.url, quote(name)) + '/'

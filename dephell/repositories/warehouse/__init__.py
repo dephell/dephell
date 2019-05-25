@@ -1,4 +1,10 @@
-from ._api import WareHouseRepo
+from ._api import WarehouseAPIRepo
+from ._composite import WarehouseRepo
+from ._simple import WarehouseSimpleRepo
 
 
-__all__ = ['WareHouseRepo']
+__all__ = [
+    'WarehouseAPIRepo',
+    'WarehouseRepo',
+    'WarehouseSimpleRepo',
+]

@@ -2,7 +2,7 @@
 import asyncio
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple, Union
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from xmlrpc.client import ServerProxy
 
 # external
@@ -18,7 +18,7 @@ from ...config import config
 from ...exceptions import PackageNotFoundError, InvalidFieldsError
 from ...models.author import Author
 from ...models.release import Release
-from ._base import BaseWarehouse
+from ._base import WarehouseBaseRepo
 
 
 logger = getLogger('dephell.repositories')
@@ -53,7 +53,7 @@ def _process_url(url: str) -> str:
 
 
 @attr.s()
-class WareHouseRepo(BaseWarehouse):
+class WarehouseAPIRepo(WarehouseBaseRepo):
     name = attr.ib(default='pypi')
     url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
@@ -217,17 +217,12 @@ class WareHouseRepo(BaseWarehouse):
         return data['license']
 
     async def _get_from_json(self, *, name, version):
-        url = '{url}{name}/{version}/json'.format(
-            url=self.url,
-            name=name,
-            version=version,
-        )
+        url = urljoin(self.url, name, version, 'json')
         async with ClientSession() as session:
             async with session.get(url) as response:
-                if response.status != 200:
-                    raise ValueError('invalid response: {} {} ({})'.format(
-                        response.status, response.reason, url,
-                    ))
+                if response.status == 404:
+                    raise PackageNotFoundError(package=name, url=url)
+                response.raise_for_status()
                 response = await response.json()
         dist = response['info']['requires_dist'] or []
         if dist:
