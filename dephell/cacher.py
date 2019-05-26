@@ -16,6 +16,7 @@ from packaging.requirements import Requirement
 
 # project
 from dephell.controllers import DependencyMaker
+from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.models import RootDependency
 from dephell.repositories import WarehouseAPIRepo
 
@@ -35,7 +36,7 @@ def get_deps():
 
 
 def cache(deps):
-    repo = WarehouseAPIRepo()
+    repo = WarehouseAPIRepo(name='pypi', url=DEFAULT_WAREHOUSE)
     tasks = []
     for dep in islice(deps, 1000):
         for release in repo.get_releases(dep):

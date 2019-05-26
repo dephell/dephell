@@ -28,25 +28,30 @@ logger = getLogger('dephell.repositories.warehouse.simple')
 REX_WORD = re.compile('[a-zA-Z]+')
 
 
-def _process_url(url: str) -> str:
-    parsed = urlparse(url)
-    if parsed.hostname == 'pypi.python.org':
-        hostname = 'pypi.org'
-    else:
-        hostname = parsed.hostname
-    if hostname in ('pypi.org', 'test.pypi.org'):
-        path = '/simple/'
-    else:
-        path = parsed.path
-    return parsed.scheme + '://' + hostname + path
-
-
 @attr.s()
 class WarehouseSimpleRepo(WarehouseBaseRepo):
-    name = attr.ib(default='pypi')
-    url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
+    name = attr.ib(type=str)
+    url = attr.ib(type=str)
+
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
     propagate = True  # deps of deps will inherit repo
+
+    def __attrs_post_init__(self):
+        # make name canonical
+        if self.name in ('pypi.org', 'pypi.python.org'):
+            self.name = 'pypi'
+
+        # replace link on pypi api by link on simple index
+        parsed = urlparse(self.url)
+        if parsed.hostname == 'pypi.python.org':
+            hostname = 'pypi.org'
+        else:
+            hostname = parsed.hostname
+        if hostname in ('pypi.org', 'test.pypi.org'):
+            path = '/simple/'
+        else:
+            path = parsed.path
+        self.url = parsed.scheme + '://' + hostname + path
 
     @property
     def pretty_url(self) -> str:

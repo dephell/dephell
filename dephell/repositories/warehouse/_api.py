@@ -40,28 +40,33 @@ _fields = {
 }
 
 
-def _process_url(url: str) -> str:
-    parsed = urlparse(url)
-    if parsed.path in ('', '/', '/simple', '/simple/'):
-        path = '/pypi/'
-    else:
-        path = parsed.path
-    if parsed.hostname == 'pypi.python.org':
-        hostname = 'pypi.org'
-    else:
-        hostname = parsed.hostname
-    return parsed.scheme + '://' + hostname + path
-
-
 @attr.s()
 class WarehouseAPIRepo(WarehouseBaseRepo):
-    name = attr.ib(default='pypi')
-    url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
+    name = attr.ib(type=str)
+    url = attr.ib(type=str)
+
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
     propagate = True
     hash = None
     link = None
+
+    def __attrs_post_init__(self):
+        # make name canonical
+        if self.name in ('pypi.org', 'pypi.python.org'):
+            self.name = 'pypi'
+
+        # replace link on simple index by link on pypi api
+        parsed = urlparse(self.url)
+        if parsed.path in ('', '/', '/simple', '/simple/'):
+            path = '/pypi/'
+        else:
+            path = parsed.path
+        if parsed.hostname == 'pypi.python.org':
+            hostname = 'pypi.org'
+        else:
+            hostname = parsed.hostname
+        self.url = parsed.scheme + '://' + hostname + path
 
     @property
     def pretty_url(self):

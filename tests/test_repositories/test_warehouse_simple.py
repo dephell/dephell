@@ -2,6 +2,7 @@ import asyncio
 
 import pytest
 
+from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
 from dephell.repositories import WarehouseSimpleRepo
@@ -24,7 +25,7 @@ def test_parse_name(fname, name, version):
 def test_get_releases():
     root = RootDependency()
     dep = DependencyMaker.from_requirement(source=root, req='dephell')[0]
-    repo = WarehouseSimpleRepo()
+    repo = WarehouseSimpleRepo(name='pypi', url=DEFAULT_WAREHOUSE)
     releases = repo.get_releases(dep=dep)
     releases = {str(r.version): r for r in releases}
     assert '0.7.0' in set(releases)
@@ -33,7 +34,7 @@ def test_get_releases():
 
 
 def test_extra():
-    repo = WarehouseSimpleRepo()
+    repo = WarehouseSimpleRepo(name='pypi', url=DEFAULT_WAREHOUSE)
 
     coroutine = repo.get_dependencies(name='requests', version='2.21.0')
     deps = loop.run_until_complete(asyncio.gather(coroutine))[0]

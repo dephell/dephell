@@ -44,13 +44,15 @@ class PIPConverter(BaseConverter):
         deps = []
         root = RootDependency()
 
-        warehouse_url = urlparse(config['warehouse']).hostname
-        if warehouse_url in ('pypi.org', 'pypi.python.org'):
-            warehouse_url += '/simple'
+        warehouse_urls = []
+        for url in config['warehouse']:
+            host = urlparse(url).hostname
+            if host in ('pypi.org', 'pypi.python.org', 'test.pypi.org'):
+                warehouse_urls.append('https://{}/simple'.format(host))
 
         finder = PackageFinder(
             find_links=[],
-            index_urls=[warehouse_url],
+            index_urls=warehouse_urls,
             session=PipSession(),
         )
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py

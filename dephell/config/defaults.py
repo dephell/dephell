@@ -2,6 +2,7 @@
 from pathlib import Path
 
 from .app_dirs import get_cache_dir, get_data_dir
+from ..constants import DEFAULT_WAREHOUSE
 
 
 DEFAULT = dict(
@@ -17,7 +18,7 @@ DEFAULT = dict(
 
     # api
     bitbucket='https://api.bitbucket.org/2.0',
-    warehouse='https://pypi.org/pypi/',
+    warehouse=[DEFAULT_WAREHOUSE],
 
     # output
     format='short',

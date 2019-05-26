@@ -17,6 +17,8 @@ class ReturnCodes(Enum):
 
 IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')
 
+DEFAULT_WAREHOUSE = 'https://pypi.org/pypi/'
+
 FORMATS = (
     'conda',
     'egginfo',
