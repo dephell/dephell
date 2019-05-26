@@ -8,7 +8,7 @@ from dephell_links import VCSLink
 # project
 from dephell.controllers import DependencyMaker
 from dephell.models import GitRelease, RootDependency
-from dephell.repositories.git.git import GitRepo
+from dephell.repositories import GitRepo
 
 
 class PatchedGitRepo(GitRepo):

@@ -15,7 +15,7 @@ from ...models.git_release import GitRelease
 from ...models.release import Release
 from ...utils import cached_property
 from ..base import Interface
-from ..local import LocalRepo
+from .._local_single import LocalRepo
 
 
 logger = getLogger(__name__)
