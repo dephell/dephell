@@ -1,10 +1,10 @@
 # app
-from .conda import CondaCloudRepo, CondaGitRepo, CondaRepo
-from .git.git import GitRepo
-from .local import LocalRepo
-from .release import ReleaseRepo
-from .warehouse import WarehouseSimpleRepo, WarehouseAPIRepo
+from ._conda import CondaCloudRepo, CondaGitRepo, CondaRepo
 from ._getter import get_repo
+from ._git.git import GitRepo
+from ._local_single import LocalRepo
+from ._release import ReleaseRepo
+from ._warehouse import WarehouseSimpleRepo, WarehouseAPIRepo
 
 
 __all__ = [
