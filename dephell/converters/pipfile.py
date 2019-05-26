@@ -9,9 +9,10 @@ from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, RepositoriesRegistry
+from ..config import config
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import WarehouseRepo, get_repo
+from ..repositories import get_repo
 from .base import BaseConverter
 
 
@@ -44,10 +45,12 @@ class PIPFileConverter(BaseConverter):
         deps = []
         root = RootDependency()
 
-        repos = dict()
+        repo = RepositoriesRegistry()
         if 'source' in doc:
-            for repo in doc['source']:
-                repos[repo['name']] = repo['url']
+            for repo_info in doc['source']:
+                repo.add_repo(name=repo_info['name'], url=repo_info['url'])
+        for url in config['warehouse']:
+            repo.add_repo(url=url)
 
         python = doc.get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:
@@ -57,13 +60,9 @@ class PIPFileConverter(BaseConverter):
             for name, content in doc.get(section, {}).items():
                 subdeps = self._make_deps(root, name, content)
                 if isinstance(content, dict) and 'index' in content:
-                    index_name = content.get('index')
+                    dep_repo = repo.make(name=content['index'])
                     for dep in subdeps:
-                        dep.repo = WarehouseRepo()
-                        dep.repo.add_repo(url=repos[index_name], name=index_name)
-                        for repo_name, repo_url in repos.items():
-                            if repo_name != index_name:
-                                dep.repo.add_repo(url=repo_url, name=repo_name)
+                        dep.repo = dep_repo
 
                 for dep in subdeps:
                     # Pipfile doesn't support any other envs
@@ -83,7 +82,7 @@ class PIPFileConverter(BaseConverter):
 
         added_repos = {repo['name'] for repo in doc['source']}
         for req in reqs:
-            if not isinstance(req.dep.repo, WarehouseRepo):
+            if not isinstance(req.dep.repo, RepositoriesRegistry):
                 continue
             for repo in req.dep.repo.repos:
                 if repo.name in added_repos:

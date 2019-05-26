@@ -7,9 +7,8 @@ from pathlib import Path
 
 # project
 from dephell import converters
-from dephell.controllers import Graph
+from dephell.controllers import Graph, RepositoriesRegistry
 from dephell.models import Requirement
-from dephell.repositories import WarehouseRepo
 
 
 @pytest.mark.parametrize('converter, path', [
@@ -54,7 +53,7 @@ def test_load_dump_load_deps(converter, path):
     # check warehouse URL
     for name, req1 in map1.items():
         req2 = map2[name]
-        if isinstance(req1.dep.repo, WarehouseRepo):
+        if isinstance(req1.dep.repo, RepositoriesRegistry):
             assert len(req1.dep.repo.repos) == len(req2.dep.repo.repos)
             for repo1, repo2 in zip(req1.dep.repo.repos, req2.dep.repo.repos):
                 assert repo1.name == repo2.name

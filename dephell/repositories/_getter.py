@@ -8,7 +8,7 @@ from .conda import CondaCloudRepo, CondaGitRepo, CondaRepo
 from .git.git import GitRepo
 from .local import LocalRepo
 from .release import ReleaseRepo
-from .warehouse import WarehouseRepo, WarehouseAPIRepo
+from .warehouse import WarehouseAPIRepo
 
 
 _repos = dict(
@@ -24,7 +24,9 @@ def get_repo(link=None, name: str = None):
         return _repos[name]
 
     if link is None:
-        repo = WarehouseRepo()
+        from ..controllers import RepositoriesRegistry
+
+        repo = RepositoriesRegistry()
         for url in config['warehouse']:
             repo.add_repo(url=url)
         return repo

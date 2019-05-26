@@ -3,7 +3,7 @@ from .conda import CondaCloudRepo, CondaGitRepo, CondaRepo
 from .git.git import GitRepo
 from .local import LocalRepo
 from .release import ReleaseRepo
-from .warehouse import WarehouseRepo, WarehouseSimpleRepo, WarehouseAPIRepo
+from .warehouse import WarehouseSimpleRepo, WarehouseAPIRepo
 from ._getter import get_repo
 
 
@@ -16,6 +16,5 @@ __all__ = [
     'LocalRepo',
     'ReleaseRepo',
     'WarehouseAPIRepo',
-    'WarehouseRepo',
     'WarehouseSimpleRepo',
 ]

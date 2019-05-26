@@ -12,9 +12,8 @@ from pip._internal.req import parse_requirements
 
 # app
 from ..config import config
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import RootDependency
-from ..repositories import WarehouseRepo
 from .base import BaseConverter
 
 
@@ -80,11 +79,13 @@ class PIPConverter(BaseConverter):
 
         # update repository
         if finder.index_urls:
-            repo = WarehouseRepo()
+            repo = RepositoriesRegistry()
             for url in finder.index_urls:
                 repo.add_repo(url=url)
+            for url in config['warehouse']:
+                repo.add_repo(url=url)
             for dep in deps:
-                if isinstance(dep.repo, WarehouseRepo):
+                if isinstance(dep.repo, RepositoriesRegistry):
                     dep.repo = repo
 
         root.attach_dependencies(deps)
@@ -98,7 +99,7 @@ class PIPConverter(BaseConverter):
         urls = []
         names = set()
         for req in reqs:
-            if not isinstance(req.dep.repo, WarehouseRepo):
+            if not isinstance(req.dep.repo, RepositoriesRegistry):
                 continue
             for repo in req.dep.repo.repos:
                 if repo.name in names:
