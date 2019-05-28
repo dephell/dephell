@@ -9,6 +9,7 @@ from ..config import Config
 from ..constants import FILES
 from ..models.release import Release
 from .base import Interface
+from ._warehouse import WarehouseLocalRepo
 
 
 class LocalRepo(Interface):
@@ -18,23 +19,10 @@ class LocalRepo(Interface):
         self.path = path
 
     def get_releases(self, dep) -> Tuple[Release, ...]:
-        releases = []
-
         dist_path = (self.path / 'dist')
         if dist_path.exists():
-            for path in dist_path.iterdir():
-                version = path.name
-                for suffix in ('.gz', '.bz', '.zip', '.tar', '.whl', '.tgz'):
-                    if version.endswith(suffix):
-                        version = version[:-len(suffix)]
-                if version.startswith(dep.name) or version.startswith(dep.name.replace('-', '_')):
-                    version = version[len(dep.name):]
-                releases.append(Release(
-                    raw_name=dep.raw_name,
-                    version=version,
-                    time=datetime.fromtimestamp(path.stat().st_mtime),
-                    extra=dep.extra,
-                ))
+            repo = WarehouseLocalRepo(path=dist_path)
+            releases = list(repo.get_releases(dep=dep))
 
         root = self.get_root(name=dep.name, version='0.0.0')
         self.update_dep_from_root(dep=dep, root=root)
