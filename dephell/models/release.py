@@ -9,7 +9,7 @@ from packaging.utils import canonicalize_name
 from packaging.version import parse
 
 # app
-from ..utils import cached_property
+from ..cached_property import cached_property
 
 
 @attr.s(hash=False, cmp=True)

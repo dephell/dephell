@@ -10,7 +10,7 @@ from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
 
 # app
-from ..utils import cached_property
+from ..cached_property import cached_property
 from .group import Group
 from .author import Author
 

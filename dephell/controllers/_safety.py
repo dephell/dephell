@@ -10,7 +10,7 @@ from packaging.version import Version
 
 # app
 from ..cache import JSONCache
-from ..utils import cached_property
+from ..cached_property import cached_property
 
 
 DUMP_URL = 'https://github.com/pyupio/safety-db/raw/master/data/insecure_full.json'

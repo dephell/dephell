@@ -20,7 +20,7 @@ from ...cache import JSONCache
 from ...config import config
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
-from ...utils import cached_property
+from ...cached_property import cached_property
 from ._base import CondaBaseRepo
 
 
