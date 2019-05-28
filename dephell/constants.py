@@ -76,6 +76,21 @@ EXTENSIONS = MappingProxyType(OrderedDict([
 ]))
 
 
+ARCHIVE_EXTENSIONS = (
+    '.tar.bz2',
+    '.tar.gz',
+    '.tar.lz',
+    '.tar.lzma',
+    '.tar.xz',
+    '.tar',
+    '.tbz',
+    '.tgz',
+    '.tlz',
+    '.txz',
+    '.whl',
+    '.zip',
+)
+
 # about name aliases: https://github.com/semver/semver/issues/411
 VERSION_MAJOR = ('major', 'breaking')
 VERSION_MINOR = ('minor', 'feature')

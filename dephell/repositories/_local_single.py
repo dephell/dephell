@@ -33,6 +33,7 @@ class LocalRepo(Interface):
                     raw_name=dep.raw_name,
                     version=version,
                     time=datetime.fromtimestamp(path.stat().st_mtime),
+                    extra=dep.extra,
                 ))
 
         root = self.get_root(name=dep.name, version='0.0.0')
