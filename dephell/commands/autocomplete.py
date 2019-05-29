@@ -1,6 +1,6 @@
 # built-in
 from argparse import ArgumentParser
-from pathlib import Path, PurePath
+from pathlib import Path
 from platform import platform
 import os
 
