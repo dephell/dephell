@@ -66,24 +66,22 @@ class AutocompleteCommand(BaseCommand):
                 return
 
         # https://github.com/dephell/dephell/pull/62
-        eager_paths = (
-            Path.home() / '.local' / 'etc' / 'bash-completion.d',
+        if platform().lower() == 'darwin':
             # ref. https://itnext.io/programmable-completion-for-bash-on-macos-f81a0103080b
-            Path('/') / 'usr' / 'local' / 'etc' / 'bash-completion.d',
-        )
-        for path in eager_paths:
-            if not path.exists():
+            path = Path('/') / 'usr' / 'local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
+        else:
+            path = Path.home() / '.local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(script)
+
+        for rc_name in ('.bashrc', '.profile', '.bash_profile'):
+            rc_path = Path.home() / rc_name
+            if not rc_path.exists():
                 continue
-            path = path / 'dephell'
-            path.write_text(script)
-            for rc_name in ('.bashrc', '.profile', '.bash_profile'):
-                rc_path = Path.home() / rc_name
-                if not rc_path.exists():
-                    continue
-                if str(path) not in rc_path.read_text():
-                    with rc_path.open('a') as stream:
-                        stream.write('\n\nsource "{}"\n'.format(str(path)))
-                break
+            if 'bash_completion.d/dephell.bash-completion' not in rc_path.read_text():
+                with rc_path.open('a') as stream:
+                    stream.write('\n\nsource "{}"\n'.format(str(path)))
+            break
 
     def _zsh(self):
         script = make_zsh_autocomplete()
