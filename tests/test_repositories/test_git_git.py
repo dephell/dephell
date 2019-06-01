@@ -1,6 +1,5 @@
 # built-in
 import asyncio
-from os import environ
 from pathlib import Path
 
 # external
@@ -8,9 +7,8 @@ import pytest
 from dephell_links import VCSLink
 
 # project
-from dephell.repositories.git.git import GitRepo
 from dephell.config import config
-
+from dephell.repositories.git.git import GitRepo
 
 loop = asyncio.get_event_loop()
 git_path = Path(config['cache']['path']) / 'git' / 'dephell' / '.git'
@@ -24,7 +22,6 @@ class Dep:
     raw_name = 'DepHell'
 
 
-@pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
 @pytest.mark.skipif(not git_path.exists(), reason='.git folder does not exist')
 def test_releases():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
@@ -39,7 +36,6 @@ def test_releases():
     assert str(releases[1].version) == '0.1.5'
 
 
-@pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
 @pytest.mark.skipif(not git_path.exists(), reason='.git folder does not exist')
 def test_deps():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
@@ -51,7 +47,6 @@ def test_deps():
     assert set(dep.name for dep in deps) == {'attrs', 'cached-property', 'packaging', 'requests'}
 
 
-@pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
 @pytest.mark.skipif(not git_path.exists(), reason='.git folder does not exist')
 def test_metaversion():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
