@@ -9,8 +9,8 @@ import attr
 from ..config import config
 from ..models import Dependency, Group, RootDependency
 from ..utils import lazy_product
-from .dependency import DependencyMaker
-from .graph import Graph
+from ._dependency import DependencyMaker
+from ._graph import Graph
 
 
 logger = getLogger('dephell.controllers')

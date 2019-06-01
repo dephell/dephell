@@ -96,6 +96,7 @@ class WareHouseRepo(Interface):
 
         # init releases
         releases = []
+        prereleases = []
         for version, info in data['releases'].items():
             # ignore version if no files for release
             if not info:
@@ -106,10 +107,20 @@ class WareHouseRepo(Interface):
                 info=info,
                 extra=dep.extra,
             )
+
             # filter prereleases if needed
-            if release.version.is_prerelease and not self.prereleases and not dep.prereleases:
-                continue
+            if release.version.is_prerelease:
+                prereleases.append(release)
+                if not self.prereleases and not dep.prereleases:
+                    continue
+
             releases.append(release)
+
+        # special case for black: if there is no releases, but found some
+        # prereleases, implicitly allow prereleases for this package
+        if not release and prereleases:
+            releases = prereleases
+
         releases.sort(reverse=True)
         return tuple(releases)
 

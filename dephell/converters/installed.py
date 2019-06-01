@@ -18,8 +18,10 @@ from .wheel import WheelConverter
 class InstalledConverter(BaseConverter):
     lock = True
 
-    # https://bugs.launchpad.net/ubuntu/+source/python-pip/+bug/1635463
-    _blacklist = {'pkg-resources'}
+    _blacklist = {
+        'pkg-resources',        # https://bugs.launchpad.net/ubuntu/+source/python-pip/+bug/1635463
+        'command-not-found',    # https://stackoverflow.com/a/22676267
+    }
 
     def load(self, path: Union[Path, str] = None, paths: Iterable[Union[Path, str]] = None,
              names: Iterable[str] = None) -> RootDependency:
@@ -41,9 +43,11 @@ class InstalledConverter(BaseConverter):
         for path in paths:
             if isinstance(path, str):
                 path = Path(path)
+            if 'dist-packages' in path.parts:
+                continue
 
             if path.suffix == '.egg':
-                name = path.with_suffix('').name.split('-')[0]
+                name = canonicalize_name(path.with_suffix('').name.split('-')[0])
                 if names is not None and name not in names:
                     continue
 
@@ -68,7 +72,7 @@ class InstalledConverter(BaseConverter):
             # read site-packages / dist-packages
             for converter, pattern in parsers:
                 for info_path in path.glob(pattern):
-                    name = info_path.with_suffix('').name.split('-')[0]
+                    name = canonicalize_name(info_path.with_suffix('').name.split('-')[0])
                     if names is not None and name not in names:
                         continue
                     subroot = converter.load_dir(info_path)

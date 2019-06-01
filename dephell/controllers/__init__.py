@@ -1,12 +1,12 @@
 # app
-from .conflict import analyze_conflict
-from .dependency import DependencyMaker
-from .graph import Graph
-from .mutator import Mutator
-from .readme import Readme
-from .resolver import Resolver
-from .safety import Safety, SafetyVulnInfo
-from .snyk import Snyk, SnykVulnInfo
+from ._conflict import analyze_conflict
+from ._dependency import DependencyMaker
+from ._graph import Graph
+from ._mutator import Mutator
+from ._readme import Readme
+from ._resolver import Resolver
+from ._safety import Safety, SafetyVulnInfo
+from ._snyk import Snyk, SnykVulnInfo
 
 
 __all__ = [
