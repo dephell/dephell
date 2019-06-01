@@ -15,12 +15,10 @@ class DepsConvertCommand(BaseCommand):
 
     https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html
     """
+
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps convert',
-            description=cls.__doc__,
-        )
+        parser = ArgumentParser(prog='dephell deps convert', description=cls.__doc__)
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_to(parser)
@@ -35,15 +33,19 @@ class DepsConvertCommand(BaseCommand):
         dumper = CONVERTERS[self.config['to']['format']]
 
         # load
-        self.logger.debug('load dependencies...', extra=dict(
-            format=self.config['from']['format'],
-            path=self.config['from']['path'],
-        ))
+        self.logger.debug(
+            'load dependencies...',
+            extra=dict(
+                format=self.config['from']['format'], path=self.config['from']['path']
+            ),
+        )
         resolver = loader.load_resolver(path=self.config['from']['path'])
         should_be_resolved = not loader.lock and dumper.lock
 
         # attach
-        merged = attach_deps(resolver=resolver, config=self.config, merge=not should_be_resolved)
+        merged = attach_deps(
+            resolver=resolver, config=self.config, merge=not should_be_resolved
+        )
         if not merged:
             conflict = analyze_conflict(resolver=resolver)
             self.logger.warning('conflict was found')
@@ -74,11 +76,13 @@ class DepsConvertCommand(BaseCommand):
             resolver.apply_envs(set(self.config['envs']))
 
         # dump
-        self.logger.debug('dump dependencies...', extra=dict(
-            format=self.config['to']['format'],
-            path=self.config['to']['path'],
-        ))
+        self.logger.debug(
+            'dump dependencies...',
+            extra=dict(
+                format=self.config['to']['format'], path=self.config['to']['path']
+            ),
         )
+
         dumper_kwargs = {
             'reqs': Requirement.from_graph(resolver.graph, lock=dumper.lock),
             'project': resolver.graph.metainfo,
