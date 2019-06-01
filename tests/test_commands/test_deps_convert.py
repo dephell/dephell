@@ -14,9 +14,9 @@ class TestConvertCommand:
         shutil.copy(str(requirements_dir / 'poetry.toml'), from_path)
         config = Config()
         config.attach({
-                'from': dict(format='poetry', path=from_path),
-                'to': dict(format='poetry', path=str(to_path)),
-                'project': str(temp_path),
+            'from': dict(format='poetry', path=from_path),
+            'to': dict(format='poetry', path=str(to_path)),
+            'project': str(temp_path),
         })
         command = DepsConvertCommand(argv=[], config=config)
         result = command()
@@ -30,9 +30,9 @@ class TestConvertCommand:
         shutil.copy(str(requirements_dir / 'poetry.toml'), from_path)
         config = Config()
         config.attach({
-                'from': {'format': 'poetry', 'path': from_path},
-                'to': {'format': 'setuppy', 'path': 'stdout'},
-                'project': str(temp_path),
+            'from': {'format': 'poetry', 'path': from_path},
+            'to': {'format': 'setuppy', 'path': 'stdout'},
+            'project': str(temp_path),
         })
 
         command = DepsConvertCommand(argv=[], config=config)
