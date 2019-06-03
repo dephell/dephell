@@ -53,26 +53,35 @@ class AutocompleteCommand(BaseCommand):
         # Install completions to the correct location for modern bash-completion.
         # This will be sourced on-demand by bash-completion as soon as dephell is
         # completed for the first time.
-        if 'BASH_COMPLETION_USER_DIR' in os.environ:
-            bashcomp_user_dir = Path(os.environ.get('BASH_COMPLETION_USER_DIR'))
-        else:
-            bashcomp_user_dir = Path(os.getenv('XDG_DATA_HOME', '~/.local/share')).expanduser() / 'bash-completion'
-        path = bashcomp_user_dir / 'completions' / 'dephell'
+        # https://github.com/dephell/dephell/pull/132
+        lazy_paths = (
+            Path(os.getenv('BASH_COMPLETION_USER_DIR', '')) / 'completions',
+            Path(os.getenv('XDG_DATA_HOME', '')) / 'bash-completion' / 'completions',
+            Path.home() / '.local' / 'share' / 'bash-completion' / 'completions',
+        )
 
+        for path in lazy_paths:
+            if path.exists():
+                (path / 'dephell').write_text(script)
+                return
+
+        # https://github.com/dephell/dephell/pull/62
+        if platform().lower() == 'darwin':
+            # ref. https://itnext.io/programmable-completion-for-bash-on-macos-f81a0103080b
+            path = Path('/') / 'usr' / 'local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
+        else:
+            path = Path.home() / '.local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(script)
 
-        # We cannot reliably assume bash-completion 2.x exists on macOS,
-        # so inject it into the user's bashrc
-        if platform().lower() == 'darwin':
-            for rc_name in ('.bashrc', '.profile', '.bash_profile'):
-                rc_path = Path.home() / rc_name
-                if not rc_path.exists():
-                    continue
-                if 'completions/dephell' not in rc_path.read_text():
-                    with rc_path.open('a') as stream:
-                        stream.write('\n\nsource "{}"\n'.format(str(path)))
-                break
+        for rc_name in ('.bashrc', '.profile', '.bash_profile'):
+            rc_path = Path.home() / rc_name
+            if not rc_path.exists():
+                continue
+            if 'bash_completion.d/dephell.bash-completion' not in rc_path.read_text():
+                with rc_path.open('a') as stream:
+                    stream.write('\n\nsource "{}"\n'.format(str(path)))
+            break
 
     def _zsh(self):
         script = make_zsh_autocomplete()
