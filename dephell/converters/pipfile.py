@@ -12,7 +12,7 @@ from dephell_specifier import RangeSpecifier
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..config import config
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import get_repo
+from ..repositories import get_repo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -86,6 +86,9 @@ class PIPFileConverter(BaseConverter):
                 continue
             for repo in req.dep.repo.repos:
                 if repo.name in added_repos:
+                    continue
+                # https://github.com/pypa/pipenv/issues/2231
+                if isinstance(repo, WarehouseLocalRepo):
                     continue
                 added_repos.add(repo.name)
                 doc['source'].append(OrderedDict([
