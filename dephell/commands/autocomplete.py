@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 from pathlib import Path
 from platform import platform
+import os
 
 # external
 from ..config import get_data_dir
@@ -49,11 +50,27 @@ class AutocompleteCommand(BaseCommand):
     def _bash(self):
         script = make_bash_autocomplete()
 
+        # Install completions to the correct location for modern bash-completion.
+        # This will be sourced on-demand by bash-completion as soon as dephell is
+        # completed for the first time.
+        # https://github.com/dephell/dephell/pull/132
+        lazy_paths = (
+            Path(os.getenv('BASH_COMPLETION_USER_DIR', '')) / 'completions',
+            Path(os.getenv('XDG_DATA_HOME', '')) / 'bash-completion' / 'completions',
+            Path.home() / '.local' / 'share' / 'bash-completion' / 'completions',
+        )
+
+        for path in lazy_paths:
+            if path.exists():
+                (path / 'dephell').write_text(script)
+                return
+
         # https://github.com/dephell/dephell/pull/62
-        path = Path.home() / '.local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
         if platform().lower() == 'darwin':
             # ref. https://itnext.io/programmable-completion-for-bash-on-macos-f81a0103080b
             path = Path('/') / 'usr' / 'local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
+        else:
+            path = Path.home() / '.local' / 'etc' / 'bash_completion.d' / 'dephell.bash-completion'
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(script)
 
@@ -61,7 +78,7 @@ class AutocompleteCommand(BaseCommand):
             rc_path = Path.home() / rc_name
             if not rc_path.exists():
                 continue
-            if 'bash_completion.d' not in rc_path.read_text():
+            if 'bash_completion.d/dephell.bash-completion' not in rc_path.read_text():
                 with rc_path.open('a') as stream:
                     stream.write('\n\nsource "{}"\n'.format(str(path)))
             break
