@@ -70,7 +70,7 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
 
         # special case for black: if there is no releases, but found some
         # prereleases, implicitly allow prereleases for this package
-        if not release and prereleases:
+        if not releases and prereleases:
             releases = prereleases
 
         releases.sort(reverse=True)

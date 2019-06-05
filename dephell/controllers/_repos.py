@@ -4,7 +4,7 @@ from typing import Optional, Iterable, List, Dict
 
 import attr
 import requests
-from requests.exceptions import SSLError
+from requests.exceptions import SSLError, ConnectionError
 
 from ..config import config
 from ..exceptions import PackageNotFoundError
@@ -19,7 +19,7 @@ def _has_api(url: str) -> bool:
     full_url = urljoin(url, 'dephell/json/')
     try:
         response = requests.head(full_url)
-    except SSLError:
+    except (SSLError, ConnectionError):
         return False
     return response.status_code < 400
 
