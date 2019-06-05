@@ -1,6 +1,7 @@
 from functools import lru_cache
-from urllib.parse import urljoin, urlparse
+from pathlib import Path
 from typing import Optional, Iterable, List, Dict
+from urllib.parse import urljoin, urlparse
 
 import attr
 import requests
@@ -9,7 +10,7 @@ from requests.exceptions import SSLError, ConnectionError
 from ..config import config
 from ..exceptions import PackageNotFoundError
 from ..repositories.base import Interface
-from ..repositories import WarehouseAPIRepo, WarehouseSimpleRepo
+from ..repositories import WarehouseAPIRepo, WarehouseLocalRepo, WarehouseSimpleRepo
 
 
 @lru_cache(maxsize=16)
@@ -32,6 +33,14 @@ class RepositoriesRegistry(Interface):
     _urls = attr.ib(factory=set)
 
     def add_repo(self, *, url: str, name: str = None) -> None:
+        path = Path(url)
+        if path.exists():
+            return WarehouseLocalRepo(
+                name=name or path.name,
+                path=path,
+                prereleases=self.prereleases,
+            )
+
         if not urlparse(url).scheme:
             url = 'https://' + url
         if url in self._urls:

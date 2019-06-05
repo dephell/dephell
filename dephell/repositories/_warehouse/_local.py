@@ -26,15 +26,19 @@ REX_WORD = re.compile('[a-zA-Z]+')
 @attr.s()
 class WarehouseLocalRepo(WarehouseBaseRepo):
     name = attr.ib(type=str)
-    path = attr.ib(type=str)
+    path = attr.ib(type=Path)
 
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
     propagate = True  # deps of deps will inherit repo
 
+    def __attrs_post_init__(self):
+        if isinstance(self.path, str):
+            self.path = Path(self.path)
+
     def get_releases(self, dep) -> tuple:
 
         releases_info = dict()
-        for path in Path(self.path).glob('**/*'):
+        for path in self.path.glob('**/*'):
             if not path.name.endswith(ARCHIVE_EXTENSIONS):
                 continue
             name, version = self._parse_name(path.name)
@@ -102,7 +106,7 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
         from ...converters import SDistConverter, WheelConverter
 
         paths = []
-        for path in Path(self.path).glob('**/*'):
+        for path in self.path.glob('**/*'):
             if not path.name.endswith(ARCHIVE_EXTENSIONS):
                 continue
             file_name, file_version = self._parse_name(path.name)
