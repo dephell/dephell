@@ -40,6 +40,8 @@ class RepositoriesRegistry(Interface):
                 path=path,
                 prereleases=self.prereleases,
             )
+        elif '.' not in url:
+            raise FileNotFoundError('cannot find directory: {}'.format(url))
 
         if not urlparse(url).scheme:
             url = 'https://' + url

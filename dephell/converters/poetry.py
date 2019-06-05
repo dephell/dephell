@@ -8,7 +8,8 @@ import tomlkit
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..controllers import DependencyMaker, Readme
+from ..config import config
+from ..controllers import DependencyMaker, Readme, RepositoriesRegistry
 from ..models import Author, Constraint, Dependency, EntryPoint, RootDependency
 from ..repositories import get_repo
 from .base import BaseConverter
@@ -102,6 +103,18 @@ class PoetryConverter(BaseConverter):
                     content=content,
                     envs=envs.get(name),
                 ))
+
+        # update repository
+        if 'source' in section and section['source'].value:
+            repo = RepositoriesRegistry()
+            for source in section['source']:
+                repo.add_repo(url=source['url'], name=source['name'])
+            for url in config['warehouse']:
+                repo.add_repo(url=url)
+            for dep in deps:
+                if isinstance(dep.repo, RepositoriesRegistry):
+                    dep.repo = repo
+
         root.attach_dependencies(deps)
         return root
 
