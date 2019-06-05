@@ -140,11 +140,11 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             link = tag.get('href')
             if not link:
                 continue
-            if not link.endswith(ARCHIVE_EXTENSIONS):
+            parsed = urlparse(link)
+            if not parsed.path.endswith(ARCHIVE_EXTENSIONS):
                 continue
 
             python = tag.get('data-requires-python')
-            parsed = urlparse(link)
             fragment = parse_qs(parsed.fragment)
             yield dict(
                 url=urljoin(dep_url, link),
