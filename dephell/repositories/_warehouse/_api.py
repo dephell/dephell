@@ -265,14 +265,14 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
             (sdist, lambda info: info['url'].endswith('.zip')),
         )
 
-        for converer, checker in rules:
+        for converter, checker in rules:
             for file_info in files_info:
                 if not checker(file_info):
                     continue
                 try:
                     return await self._download_and_parse(
                         url=file_info['url'],
-                        converter=converer,
+                        converter=converter,
                     )
                 except FileNotFoundError as e:
                     logger.warning(e.args[0])

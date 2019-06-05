@@ -185,14 +185,14 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             (sdist, '.zip'),
         )
 
-        for converer, ext in rules:
+        for converter, ext in rules:
             for link in good_links:
                 if not link['name'].endswith(ext):
                     continue
                 try:
                     return await self._download_and_parse(
                         url=link['url'],
-                        converter=converer,
+                        converter=converter,
                     )
                 except FileNotFoundError as e:
                     logger.warning(e.args[0])
