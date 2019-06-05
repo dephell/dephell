@@ -79,8 +79,13 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
         cache = TextCache('localhost', 'deps', name, str(version))
-        cache
-        ...
+        deps = cache.load()
+        if deps is None:
+            deps = self._get_deps_from_files(name=name, version=version)
+            cache.dump(deps)
+        elif deps == ['']:
+            return ()
+        return self._convert_deps(deps=deps, name=name, version=version, extra=extra)
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
         raise NotImplementedError
@@ -92,3 +97,43 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
             for byte_block in iter(lambda: stream.read(4096), ''):
                 digest.update(byte_block)
         return digest.hexdigest()
+
+    def _get_deps_from_files(self, name, version):
+        from ...converters import SDistConverter, WheelConverter
+
+        paths = []
+        for path in Path(self.path).glob('**/*'):
+            if not path.name.endswith(ARCHIVE_EXTENSIONS):
+                continue
+            file_name, file_version = self._parse_name(path.name)
+            if canonicalize_name(file_name) != name:
+                continue
+            if not file_version or file_version != str(version):
+                continue
+            paths.append(path)
+
+        sdist = SDistConverter()
+        wheel = WheelConverter()
+        rules = (
+            (wheel, 'py3-none-any.whl'),
+            (wheel, '-none-any.whl'),
+            (wheel, '.whl'),
+            (sdist, '.tar.gz'),
+            (sdist, '.zip'),
+        )
+
+        for converter, ext in rules:
+            for path in paths:
+                if not path.name.endswith(ext):
+                    continue
+                root = converter.load(path)
+                deps = []
+                for dep in root.dependencies:
+                    if dep.envs == {'main'}:
+                        deps.append(str(dep))
+                    else:
+                        for env in dep.envs.copy() - {'main'}:
+                            dep.envs = {env}
+                            deps.append(str(dep))
+                return tuple(deps)
+        return ()
