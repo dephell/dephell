@@ -94,7 +94,7 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
     def _get_hash(path: Path) -> str:
         digest = sha256()
         with path.open('rb') as stream:
-            for byte_block in iter(lambda: stream.read(4096), ''):
+            for byte_block in iter(lambda: stream.read(4096), b''):
                 digest.update(byte_block)
         return digest.hexdigest()
 
