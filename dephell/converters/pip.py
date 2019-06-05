@@ -1,4 +1,5 @@
 # built-in
+from itertools import chain
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Optional
@@ -14,6 +15,7 @@ from pip._internal.req import parse_requirements
 from ..config import config
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import RootDependency
+from ..repositories import WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -78,9 +80,9 @@ class PIPConverter(BaseConverter):
             ))
 
         # update repository
-        if finder.index_urls:
+        if finder.index_urls or finder.find_links:
             repo = RepositoriesRegistry()
-            for url in finder.index_urls:
+            for url in chain(finder.index_urls, finder.find_links):
                 repo.add_repo(url=url)
             for url in config['warehouse']:
                 repo.add_repo(url=url)
@@ -97,6 +99,7 @@ class PIPConverter(BaseConverter):
 
         # get repos urls
         urls = []
+        paths = []
         names = set()
         for req in reqs:
             if not isinstance(req.dep.repo, RepositoriesRegistry):
@@ -105,12 +108,17 @@ class PIPConverter(BaseConverter):
                 if repo.name in names:
                     continue
                 names.add(repo.name)
-                urls.append(repo.pretty_url)
+                if isinstance(repo, WarehouseLocalRepo):
+                    paths.append(repo.path)
+                else:
+                    urls.append(repo.pretty_url)
         # dump repos urls
         if urls:
             lines.append('-i ' + urls[0])
         for url in urls[1:]:
             lines.append('--extra-index-url ' + url)
+        for path in paths:
+            lines.append('--find-links ' + path)
 
         # disable hashes when dir-based deps are presented
         # https://github.com/dephell/dephell/issues/41
