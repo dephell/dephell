@@ -93,10 +93,16 @@ VERSION_DEV = ('dev', )
 VERSION_LOCAL = ('local', )
 VERSION_SCHEMES = MappingProxyType(dict(
     # https://www.python.org/dev/peps/pep-0440/#version-scheme
-    pep=(
-        MAJOR_VERSIONS + MINOR_VERSIONS + PATCH_VERSIONS + VERSION_PRE + VERSION_POST + VERSION_DEV + VERSION_LOCAL
-        + VERSION_RELEASE
-    ),
+    pep=sum([
+        MAJOR_VERSIONS,
+        MINOR_VERSIONS,
+        PATCH_VERSIONS,
+        VERSION_PRE,
+        VERSION_POST,
+        VERSION_DEV,
+        VERSION_LOCAL,
+        VERSION_RELEASE,
+    ], ()),
     # https://semver.org/
     semver=MAJOR_VERSIONS + MINOR_VERSIONS + PATCH_VERSIONS + VERSION_PRE + VERSION_LOCAL + VERSION_RELEASE,
     # https://github.com/staltz/comver
