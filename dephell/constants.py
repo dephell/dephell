@@ -24,6 +24,7 @@ FORMATS = (
     'egginfo',
     'flit',
     'imports',
+    'installed',
     'pip',
     'pipfile',
     'pipfilelock',
@@ -35,6 +36,7 @@ FORMATS = (
     'setuppy',
     'wheel',
 )
+NON_PATH_FORMATS = ('imports', 'installed')
 
 FILES = (
     'setup.py',
