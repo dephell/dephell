@@ -62,7 +62,8 @@ class PIPFileConverter(BaseConverter):
                 if isinstance(content, dict) and 'index' in content:
                     dep_repo = repo.make(name=content['index'])
                     for dep in subdeps:
-                        dep.repo = dep_repo
+                        if isinstance(dep.repo, RepositoriesRegistry):
+                            dep.repo = dep_repo
 
                 for dep in subdeps:
                     # Pipfile doesn't support any other envs

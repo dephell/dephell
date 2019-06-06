@@ -10,6 +10,7 @@ from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
 # app
+from ..config import config
 from ..controllers import RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseLocalRepo
@@ -37,6 +38,13 @@ class PIPFileLockConverter(PIPFileConverter):
         deps = []
         root = RootDependency()
 
+        repo = RepositoriesRegistry()
+        if 'source' in doc:
+            for repo_info in doc['source']:
+                repo.add_repo(name=repo_info['name'], url=repo_info['url'])
+        for url in config['warehouse']:
+            repo.add_repo(url=url)
+
         python = doc.get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:
             root.python = RangeSpecifier('==' + python)
@@ -44,6 +52,13 @@ class PIPFileLockConverter(PIPFileConverter):
         for section, is_dev in [('default', False), ('develop', True)]:
             for name, content in doc.get(section, {}).items():
                 subdeps = self._make_deps(root, name, content)
+                # set repo
+                if 'index' in content:
+                    dep_repo = repo.make(name=content['index'])
+                    for dep in subdeps:
+                        if isinstance(dep.repo, RepositoriesRegistry):
+                            dep.repo = dep_repo
+                # set envs
                 for dep in subdeps:
                     dep.envs = {'dev'} if is_dev else {'main'}
                 deps.extend(subdeps)
