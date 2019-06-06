@@ -10,7 +10,9 @@ from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
 # app
+from ..controllers import RepositoriesRegistry
 from ..models import RootDependency
+from ..repositories import WarehouseLocalRepo
 from .pipfile import PIPFileConverter
 
 
@@ -53,14 +55,29 @@ class PIPFileLockConverter(PIPFileConverter):
         for req in reqs:
             packages[req.is_dev][req.raw_name] = dict(self._format_req(req=req))
 
+        # get repos
+        repos = []
+        added_repos = set()
+        for req in reqs:
+            if not isinstance(req.dep.repo, RepositoriesRegistry):
+                continue
+            for repo in req.dep.repo.repos:
+                if repo.name in added_repos:
+                    continue
+                # https://github.com/pypa/pipenv/issues/2231
+                if isinstance(repo, WarehouseLocalRepo):
+                    continue
+                added_repos.add(repo.name)
+                repos.append(OrderedDict([
+                    ('url', repo.pretty_url),
+                    ('verify_ssl', repo.pretty_url.startswith('https://')),
+                    ('name', repo.name),
+                ]))
+
         python = Pythons(abstract=True).get_by_spec(project.python)
         data = OrderedDict([
             ('_meta', OrderedDict([
-                ('sources', [OrderedDict([
-                    ('url', 'https://pypi.python.org/simple'),
-                    ('verify_ssl', True),
-                    ('name', 'pypi'),
-                ])]),
+                ('sources', repos),
                 ('requires', {'python_version': str(python.version)}),
             ])),
             ('default', packages[False]),
