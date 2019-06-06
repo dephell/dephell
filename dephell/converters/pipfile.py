@@ -1,5 +1,4 @@
 # built-in
-from collections import OrderedDict
 from pathlib import Path
 from typing import List, Optional
 
@@ -78,10 +77,8 @@ class PIPFileConverter(BaseConverter):
         else:
             doc = tomlkit.document()
 
-        if 'source' not in doc:
-            doc['source'] = tomlkit.aot()
-
-        added_repos = {repo['name'] for repo in doc['source']}
+        section = doc['source'] if 'source' in doc else tomlkit.aot()
+        added_repos = {repo['name'] for repo in section}
         for req in reqs:
             if not isinstance(req.dep.repo, RepositoriesRegistry):
                 continue
@@ -92,11 +89,12 @@ class PIPFileConverter(BaseConverter):
                 if isinstance(repo, WarehouseLocalRepo):
                     continue
                 added_repos.add(repo.name)
-                doc['source'].append(OrderedDict([
-                    ('name', repo.name),
-                    ('url', repo.pretty_url),
-                    ('verify_ssl', repo.pretty_url.startswith('https://')),
-                ]))
+                source = tomlkit.table()
+                source['name'] = repo.name
+                source['url'] = repo.pretty_url
+                source['verify_ssl'] = repo.pretty_url.startswith('https://')
+                section.append(source)
+        doc['source'] = section
 
         if project.python:
             python = Pythons(abstract=True).get_by_spec(project.python)
@@ -165,6 +163,8 @@ class PIPFileConverter(BaseConverter):
                 if isinstance(value, tuple):
                     value = list(value)
                 result[name] = value
+        if isinstance(req.dep.repo, RepositoriesRegistry) and req.dep.repo.name != 'pypi':
+            result['index'] = req.dep.repo.name
         if 'version' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table
