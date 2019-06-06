@@ -31,30 +31,52 @@ class RepositoriesRegistry(Interface):
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
     _urls = attr.ib(factory=set)
+    _names = attr.ib(factory=set)
 
-    def add_repo(self, *, url: str, name: str = None) -> None:
+    def add_repo(self, *, url: str, name: str = None) -> bool:
+        # try to interpret URL as local path
+        if url in self._urls:
+            return False
         path = Path(url)
         if path.exists():
-            return WarehouseLocalRepo(
-                name=name or path.name,
+            if name is None:
+                name = path.name
+            if name in self._names:
+                return False
+            full_path = str(path.resolve())
+            if full_path in self._urls:
+                return False
+            self._names.add(name)
+            self._urls.update({url, full_path})
+            self.repos.append(WarehouseLocalRepo(
+                name=name,
                 path=path,
                 prereleases=self.prereleases,
-            )
+            ))
+            return True
         elif '.' not in url:
             raise FileNotFoundError('cannot find directory: {}'.format(url))
 
         if not urlparse(url).scheme:
             url = 'https://' + url
-        if url in self._urls:
-            return
+
         if name is None:
             name = urlparse(url).hostname
+        if name in self._names:
+            return False
+        self._names.add(name)
+
         if _has_api(url=url):
             cls = WarehouseAPIRepo
         else:
             cls = WarehouseSimpleRepo
-        self._urls.add(url)
-        self.repos.append(cls(name=name, url=url, prereleases=self.prereleases))
+        repo = cls(name=name, url=url, prereleases=self.prereleases)
+        urls = {url, repo.url, repo.pretty_url}
+        if urls & self._urls:
+            return False
+        self._urls.update(urls)
+        self.repos.append(repo)
+        return True
 
     def make(self, name: str) -> 'RepositoriesRegistry':
         """Return new RepositoriesRegistry where repo with given name goes first
@@ -69,7 +91,7 @@ class RepositoriesRegistry(Interface):
         for repo in self.repos:
             if repo.name != name:
                 repos.append(repo)
-        return type(self)(repos=repos)
+        return type(self)(repos=repos, prereleases=self.prereleases)
 
     def get_releases(self, dep) -> tuple:
         first_exception = None
