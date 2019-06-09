@@ -28,6 +28,7 @@ class GenerateLicenseCommand(BaseCommand):
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)
+        parser.add_argument('--owner', help='name of the owner')
         parser.add_argument('name', nargs=REMAINDER, help='license name')
         return parser
 

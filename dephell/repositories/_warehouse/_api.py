@@ -1,10 +1,9 @@
 # built-in
 import asyncio
+import posixpath
 from logging import getLogger
-from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Dict, Iterable, List, Optional, Tuple, Union
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from xmlrpc.client import ServerProxy
 
 # external
@@ -12,22 +11,15 @@ import attr
 import requests
 from aiohttp import ClientSession
 from dephell_licenses import License, licenses
-from dephell_markers import Markers
-from packaging.requirements import InvalidRequirement, Requirement
+from packaging.requirements import Requirement
 
 # app
-from ..cache import JSONCache, TextCache
-from ..config import config
-from ..exceptions import PackageNotFoundError, InvalidFieldsError
-from ..models.author import Author
-from ..models.release import Release
-from .base import Interface
-
-
-try:
-    import aiofiles
-except ImportError:
-    aiofiles = None
+from ...cache import JSONCache, TextCache
+from ...config import config
+from ...exceptions import PackageNotFoundError, InvalidFieldsError
+from ...models.author import Author
+from ...models.release import Release
+from ._base import WarehouseBaseRepo
 
 
 logger = getLogger('dephell.repositories')
@@ -48,28 +40,33 @@ _fields = {
 }
 
 
-def _process_url(url: str) -> str:
-    parsed = urlparse(url)
-    if parsed.path in ('', '/', '/simple', '/simple/'):
-        path = '/pypi/'
-    else:
-        path = parsed.path
-    if parsed.hostname == 'pypi.python.org':
-        hostname = 'pypi.org'
-    else:
-        hostname = parsed.hostname
-    return parsed.scheme + '://' + hostname + path
-
-
 @attr.s()
-class WareHouseRepo(Interface):
-    name = attr.ib(default='pypi')
-    url = attr.ib(type=str, factory=lambda: config['warehouse'], converter=_process_url)
+class WarehouseAPIRepo(WarehouseBaseRepo):
+    name = attr.ib(type=str)
+    url = attr.ib(type=str)
+
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
     propagate = True
     hash = None
     link = None
+
+    def __attrs_post_init__(self):
+        # make name canonical
+        if self.name in ('pypi.org', 'pypi.python.org'):
+            self.name = 'pypi'
+
+        # replace link on simple index by link on pypi api
+        parsed = urlparse(self.url)
+        if parsed.path in ('', '/', '/simple', '/simple/'):
+            path = '/pypi/'
+        else:
+            path = parsed.path
+        if parsed.hostname == 'pypi.python.org':
+            hostname = 'pypi.org'
+        else:
+            hostname = parsed.hostname
+        self.url = parsed.scheme + '://' + hostname + path
 
     @property
     def pretty_url(self):
@@ -79,7 +76,10 @@ class WareHouseRepo(Interface):
 
     def get_releases(self, dep) -> tuple:
         # retrieve data
-        cache = JSONCache('releases', dep.base_name, ttl=config['cache']['ttl'])
+        cache = JSONCache(
+            'warehouse-api', urlparse(self.url).hostname, 'releases', dep.base_name,
+            ttl=config['cache']['ttl'],
+        )
         data = cache.load()
         if data is None:
             url = '{url}{name}/json'.format(url=self.url, name=dep.base_name)
@@ -118,7 +118,7 @@ class WareHouseRepo(Interface):
 
         # special case for black: if there is no releases, but found some
         # prereleases, implicitly allow prereleases for this package
-        if not release and prereleases:
+        if not releases and prereleases:
             releases = prereleases
 
         releases.sort(reverse=True)
@@ -126,7 +126,7 @@ class WareHouseRepo(Interface):
 
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
-        cache = TextCache('deps', name, str(version))
+        cache = TextCache('warehouse-api', urlparse(self.url).hostname, 'deps', name, str(version))
         deps = cache.load()
         if deps is None:
             task = self._get_from_json(name=name, version=version)
@@ -135,42 +135,7 @@ class WareHouseRepo(Interface):
             cache.dump(deps)
         elif deps == ['']:
             return ()
-
-        # filter result
-        result = []
-        for dep in deps:
-            try:
-                req = Requirement(dep)
-            except InvalidRequirement as e:
-                msg = 'cannot parse requirement: {} from {} {}'
-                try:
-                    # try to parse with dropped out markers
-                    req = Requirement(dep.split(';')[0])
-                except InvalidRequirement:
-                    raise ValueError(msg.format(dep, name, version)) from e
-                else:
-                    msg = 'cannot parse requirement: "{}" from {} {}'
-                    logger.warning(msg.format(dep, name, version))
-
-            try:
-                dep_extra = req.marker and Markers(req.marker).extra
-            except ValueError:  # unsupported operation for version marker python_version: in
-                dep_extra = None
-
-            # it's not extra and we want not extra too
-            if dep_extra is None and extra is None:
-                result.append(req)
-                continue
-            # it's extra, but we want not the extra
-            # or it's not the extra, but we want extra.
-            if dep_extra is None or extra is None:
-                continue
-            # it's extra and we want this extra
-            elif dep_extra == extra:
-                result.append(req)
-                continue
-
-        return tuple(result)
+        return self._convert_deps(deps=deps, name=name, version=version, extra=extra)
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
         fields = self._parse_query(query=query)
@@ -261,17 +226,12 @@ class WareHouseRepo(Interface):
         return data['license']
 
     async def _get_from_json(self, *, name, version):
-        url = '{url}{name}/{version}/json'.format(
-            url=self.url,
-            name=name,
-            version=version,
-        )
+        url = urljoin(self.url, posixpath.join(name, str(version), 'json'))
         async with ClientSession() as session:
             async with session.get(url) as response:
-                if response.status != 200:
-                    raise ValueError('invalid response: {} {} ({})'.format(
-                        response.status, response.reason, url,
-                    ))
+                if response.status == 404:
+                    raise PackageNotFoundError(package=name, url=url)
+                response.raise_for_status()
                 response = await response.json()
         dist = response['info']['requires_dist'] or []
         if dist:
@@ -293,7 +253,7 @@ class WareHouseRepo(Interface):
         #     if file_info['packagetype'] == 'bdist_wheel':
         #         return ()
 
-        from ..converters import SDistConverter, WheelConverter
+        from ...converters import SDistConverter, WheelConverter
 
         sdist = SDistConverter()
         wheel = WheelConverter()
@@ -305,46 +265,15 @@ class WareHouseRepo(Interface):
             (sdist, lambda info: info['url'].endswith('.zip')),
         )
 
-        for converer, checker in rules:
+        for converter, checker in rules:
             for file_info in files_info:
-                if checker(file_info):
-                    try:
-                        return await self._download_and_parse(url=file_info['url'], converter=converer)
-                    except FileNotFoundError as e:
-                        logger.warning(e.args[0])
+                if not checker(file_info):
+                    continue
+                try:
+                    return await self._download_and_parse(
+                        url=file_info['url'],
+                        converter=converter,
+                    )
+                except FileNotFoundError as e:
+                    logger.warning(e.args[0])
         return ()
-
-    async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
-        with TemporaryDirectory() as tmp:
-            async with ClientSession() as session:
-                async with session.get(url) as response:
-                    if response.status != 200:
-                        raise ValueError('invalid response: {} {} ({})'.format(
-                            response.status, response.reason, url,
-                        ))
-                    path = Path(tmp) / url.rsplit('/', maxsplit=1)[-1]
-
-                    # download file
-                    if aiofiles is not None:
-                        async with aiofiles.open(str(path), mode='wb') as stream:
-                            while True:
-                                chunk = await response.content.read(1024)
-                                if not chunk:
-                                    break
-                                await stream.write(chunk)
-                    else:
-                        with path.open(mode='wb') as stream:
-                            while True:
-                                chunk = await response.content.read(1024)
-                                if not chunk:
-                                    break
-                                stream.write(chunk)
-
-            # load and make separated dep for every env
-            root = converter.load(path)
-            deps = []
-            for dep in root.dependencies:
-                for env in dep.envs.copy():
-                    dep.envs = {env}
-                    deps.append(str(dep))
-            return tuple(deps)

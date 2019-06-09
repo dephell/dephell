@@ -10,7 +10,7 @@ from dephell_discover import Root as PackageRoot
 # app
 from ..cache import TextCache
 from ..controllers import DependencyMaker
-from ..utils import cached_property
+from ..cached_property import cached_property
 from ..models import RootDependency
 from .base import BaseConverter
 

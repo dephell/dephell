@@ -8,7 +8,7 @@ from dephell_markers import Markers
 from packaging.utils import canonicalize_name
 
 # app
-from ..utils import cached_property
+from ..cached_property import cached_property
 from .constraint import Constraint
 from .groups import Groups
 

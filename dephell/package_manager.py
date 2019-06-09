@@ -12,7 +12,7 @@ import attr
 # app
 from .converters import PIPConverter
 from .models import Requirement
-from .utils import cached_property
+from .cached_property import cached_property
 
 
 logger = getLogger('dephell')

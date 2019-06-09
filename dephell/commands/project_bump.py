@@ -29,6 +29,7 @@ class ProjectBumpCommand(BaseCommand):
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
+        parser.add_argument('--tag', action='store_true', help='create git tag')
         parser.add_argument('name', help='bumping rule name or new version')
         return parser
 

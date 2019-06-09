@@ -1,5 +1,5 @@
 # project
-from dephell.utils import lazy_product
+from dephell.controllers._mutator import lazy_product
 
 
 def test_lazy_product_order():

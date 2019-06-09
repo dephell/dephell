@@ -1,11 +1,8 @@
 # built-in
 from pathlib import Path
 
-# external
-from appdirs import user_data_dir
-
-
-data_dir = Path(user_data_dir('dephell'))
+from .app_dirs import get_cache_dir, get_data_dir
+from ..constants import DEFAULT_WAREHOUSE
 
 
 DEFAULT = dict(
@@ -21,7 +18,7 @@ DEFAULT = dict(
 
     # api
     bitbucket='https://api.bitbucket.org/2.0',
-    warehouse='https://pypi.org/pypi/',
+    warehouse=[DEFAULT_WAREHOUSE],
 
     # output
     format='short',
@@ -32,12 +29,12 @@ DEFAULT = dict(
     pdb=False,
 
     # venv
-    venv=str(data_dir / 'venvs' / '{project}-{digest}' / '{env}'),
+    venv=str(get_data_dir() / 'venvs' / '{project}-{digest}' / '{env}'),
     dotenv=str(Path('.').resolve()),
 
     # cache
     cache=dict(
-        path=str(data_dir / 'cache'),
+        path=str(get_cache_dir()),
         ttl=3600,
     ),
 

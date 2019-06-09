@@ -4,7 +4,7 @@ from typing import Optional
 
 # app
 from ..config import config
-from ..utils import cached_property
+from ..cached_property import cached_property
 
 
 class Group:
