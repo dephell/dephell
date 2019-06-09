@@ -2,6 +2,7 @@
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
+from urllib.parse import urlparse
 
 # external
 import tomlkit
@@ -9,8 +10,9 @@ from dephell_links import DirLink
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
+from ..repositories import WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -66,6 +68,28 @@ class PoetryLockConverter(BaseConverter):
                     extras[extra].append(req.name)
         if extras:
             doc['extras'] = dict(extras)
+
+        # add repositories
+        sources = tomlkit.aot()
+        added = set()
+        for req in reqs:
+            if not isinstance(req.dep.repo, RepositoriesRegistry):
+                continue
+            for repo in req.dep.repo.repos:
+                if repo.name in added:
+                    continue
+                if isinstance(repo, WarehouseLocalRepo):
+                    continue
+                if urlparse(repo.pretty_url).hostname in ('pypi.org', 'pypi.python.org'):
+                    continue
+                added.add(repo.name)
+
+                source = tomlkit.table()
+                source['name'] = repo.name
+                source['url'] = repo.pretty_url
+                sources.append(source)
+        if sources:
+            doc['source'] = sources
 
         doc['metadata'] = {
             # sha256 of tool.poetry section from pyproject.toml
@@ -164,17 +188,20 @@ class PoetryLockConverter(BaseConverter):
             result['marker'] = req.markers
 
         # add link
-        if req.link:
+        if req.link and (req.git or isinstance(req.link, DirLink)):
             result['source'] = tomlkit.table()
             if req.git:
                 result['source']['type'] = 'git'
             elif isinstance(req.link, DirLink):
                 result['source']['type'] = 'directory'
-            else:
-                result['source']['type'] = 'legacy'
             result['source']['url'] = req.link.short
             if req.rev:
                 result['source']['reference'] = req.rev
+        elif isinstance(req.dep.repo, RepositoriesRegistry):
+            repo = req.repo.repos[0]
+            result['source']['type'] = 'legacy'
+            result['source']['url'] = repo.pretty_url
+            result['source']['reference'] = repo.name
 
         # add dependencies
         deps = req.dep.dependencies
