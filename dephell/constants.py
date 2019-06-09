@@ -24,6 +24,7 @@ FORMATS = (
     'egginfo',
     'flit',
     'imports',
+    'installed',
     'pip',
     'pipfile',
     'pipfilelock',
@@ -35,6 +36,7 @@ FORMATS = (
     'setuppy',
     'wheel',
 )
+NON_PATH_FORMATS = ('imports', 'installed')
 
 FILES = (
     'setup.py',
@@ -75,6 +77,21 @@ EXTENSIONS = MappingProxyType(OrderedDict([
     ('',            'txt'),
 ]))
 
+
+ARCHIVE_EXTENSIONS = (
+    '.tar.bz2',
+    '.tar.gz',
+    '.tar.lz',
+    '.tar.lzma',
+    '.tar.xz',
+    '.tar',
+    '.tbz',
+    '.tgz',
+    '.tlz',
+    '.txz',
+    '.whl',
+    '.zip',
+)
 
 # about name aliases: https://github.com/semver/semver/issues/411
 VERSION_MAJOR = ('major', 'breaking')

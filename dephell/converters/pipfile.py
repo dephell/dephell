@@ -1,5 +1,4 @@
 # built-in
-from collections import OrderedDict
 from pathlib import Path
 from typing import List, Optional
 
@@ -12,7 +11,7 @@ from dephell_specifier import RangeSpecifier
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..config import config
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import get_repo
+from ..repositories import get_repo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -62,7 +61,8 @@ class PIPFileConverter(BaseConverter):
                 if isinstance(content, dict) and 'index' in content:
                     dep_repo = repo.make(name=content['index'])
                     for dep in subdeps:
-                        dep.repo = dep_repo
+                        if isinstance(dep.repo, RepositoriesRegistry):
+                            dep.repo = dep_repo
 
                 for dep in subdeps:
                     # Pipfile doesn't support any other envs
@@ -77,22 +77,27 @@ class PIPFileConverter(BaseConverter):
         else:
             doc = tomlkit.document()
 
-        if 'source' not in doc:
-            doc['source'] = tomlkit.aot()
-
-        added_repos = {repo['name'] for repo in doc['source']}
+        section = doc['source'] if 'source' in doc else tomlkit.aot()
+        added_repos = {repo['name'] for repo in section}
+        updated = False
         for req in reqs:
             if not isinstance(req.dep.repo, RepositoriesRegistry):
                 continue
             for repo in req.dep.repo.repos:
                 if repo.name in added_repos:
                     continue
+                # https://github.com/pypa/pipenv/issues/2231
+                if isinstance(repo, WarehouseLocalRepo):
+                    continue
                 added_repos.add(repo.name)
-                doc['source'].append(OrderedDict([
-                    ('name', repo.name),
-                    ('url', repo.pretty_url),
-                    ('verify_ssl', repo.pretty_url.startswith('https://')),
-                ]))
+                source = tomlkit.table()
+                source['name'] = repo.name
+                source['url'] = repo.pretty_url
+                source['verify_ssl'] = repo.pretty_url.startswith('https://')
+                section.append(source)
+                updated = True
+        if updated:
+            doc['source'] = section
 
         if project.python:
             python = Pythons(abstract=True).get_by_spec(project.python)
@@ -161,6 +166,8 @@ class PIPFileConverter(BaseConverter):
                 if isinstance(value, tuple):
                     value = list(value)
                 result[name] = value
+        if isinstance(req.dep.repo, RepositoriesRegistry) and req.dep.repo.name != 'pypi':
+            result['index'] = req.dep.repo.name
         if 'version' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table

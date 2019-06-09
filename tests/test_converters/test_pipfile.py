@@ -69,18 +69,12 @@ verify_ssl = true
 name = 'pypi'
 
 [[source]]
-url = 'https://pypi.org/'
-verify_ssl = true
-name = 'pypi2'
-
-[[source]]
 url = 'https://myserver.org/'
 verify_ssl = true
 name = 'pypi3'
 
 [packages]
 pkg1 = {version='*', index='pypi'}
-pkg2 = {version='*', index='pypi2'}
 pkg3 = {version='*', index='pypi3'}
 pkg4 = '*'
 """
@@ -92,11 +86,9 @@ def test_load_warehouse():
     deps = {dep.name: dep for dep in root.dependencies}
 
     assert deps['pkg1'].repo.name == 'pypi'
-    assert deps['pkg2'].repo.name == 'pypi2'
     assert deps['pkg3'].repo.name == 'pypi3'
     assert deps['pkg4'].repo.name == 'pypi'
 
     assert deps['pkg1'].repo.url == 'https://pypi.org/pypi/', 'old url is not replaced'
-    assert deps['pkg2'].repo.url == 'https://pypi.org/pypi/'
     assert deps['pkg3'].repo.url == 'https://myserver.org/', 'server hostname is not used'
     assert deps['pkg4'].repo.url == 'https://pypi.org/pypi/', 'default url is not applied'

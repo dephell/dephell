@@ -1,3 +1,4 @@
+import re
 from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -18,6 +19,7 @@ except ImportError:
 
 
 logger = getLogger('dephell.repositories.warehouse')
+REX_WORD = re.compile('[a-zA-Z]+')
 
 
 class WarehouseBaseRepo(Interface):
@@ -99,3 +101,24 @@ class WarehouseBaseRepo(Interface):
                         dep.envs = {env}
                         deps.append(str(dep))
             return tuple(deps)
+
+    @staticmethod
+    def _parse_name(fname: str) -> Tuple[str, str]:
+        fname = fname.strip()
+        if fname.endswith('.whl'):
+            fname = fname.rsplit('-', maxsplit=3)[0]
+            name, _, version = fname.partition('-')
+            return name, version
+
+        fname = fname.rsplit('.', maxsplit=1)[0]
+        if fname.endswith('.tar'):
+            fname = fname.rsplit('.', maxsplit=1)[0]
+        parts = fname.split('-')
+        name = []
+        for part in parts:
+            if REX_WORD.match(part):
+                name.append(part)
+            else:
+                break
+        version = parts[len(name):]
+        return '-'.join(name), '-'.join(version)

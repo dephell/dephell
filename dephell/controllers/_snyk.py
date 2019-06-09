@@ -11,7 +11,7 @@ from dephell_specifier import RangeSpecifier
 from packaging.version import VERSION_PATTERN, Version
 
 # app
-from ..utils import cached_property
+from ..cached_property import cached_property
 
 
 RSS_URL = 'https://snyk.io/vuln/feed.xml?type=pip'

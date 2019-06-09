@@ -1,15 +1,16 @@
 from functools import lru_cache
-from urllib.parse import urljoin, urlparse
+from pathlib import Path
 from typing import Optional, Iterable, List, Dict
+from urllib.parse import urljoin, urlparse
 
 import attr
 import requests
-from requests.exceptions import SSLError
+from requests.exceptions import SSLError, ConnectionError
 
 from ..config import config
 from ..exceptions import PackageNotFoundError
 from ..repositories.base import Interface
-from ..repositories import WarehouseAPIRepo, WarehouseSimpleRepo
+from ..repositories import WarehouseAPIRepo, WarehouseLocalRepo, WarehouseSimpleRepo
 
 
 @lru_cache(maxsize=16)
@@ -19,7 +20,7 @@ def _has_api(url: str) -> bool:
     full_url = urljoin(url, 'dephell/json/')
     try:
         response = requests.head(full_url)
-    except SSLError:
+    except (SSLError, ConnectionError):
         return False
     return response.status_code < 400
 
@@ -30,20 +31,52 @@ class RepositoriesRegistry(Interface):
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
     _urls = attr.ib(factory=set)
+    _names = attr.ib(factory=set)
 
-    def add_repo(self, *, url: str, name: str = None) -> None:
+    def add_repo(self, *, url: str, name: str = None) -> bool:
+        # try to interpret URL as local path
+        if url in self._urls:
+            return False
+        path = Path(url)
+        if path.exists():
+            if name is None:
+                name = path.name
+            if name in self._names:
+                return False
+            full_path = str(path.resolve())
+            if full_path in self._urls:
+                return False
+            self._names.add(name)
+            self._urls.update({url, full_path})
+            self.repos.append(WarehouseLocalRepo(
+                name=name,
+                path=path,
+                prereleases=self.prereleases,
+            ))
+            return True
+        elif '.' not in url:
+            raise FileNotFoundError('cannot find directory: {}'.format(url))
+
         if not urlparse(url).scheme:
             url = 'https://' + url
-        if url in self._urls:
-            return
+
         if name is None:
             name = urlparse(url).hostname
+        if name in self._names:
+            return False
+        self._names.add(name)
+
         if _has_api(url=url):
             cls = WarehouseAPIRepo
         else:
             cls = WarehouseSimpleRepo
-        self._urls.add(url)
-        self.repos.append(cls(name=name, url=url, prereleases=self.prereleases))
+        repo = cls(name=name, url=url, prereleases=self.prereleases)
+        urls = {url, repo.url, repo.pretty_url}
+        if urls & self._urls:
+            return False
+        self._urls.update(urls)
+        self.repos.append(repo)
+        return True
 
     def make(self, name: str) -> 'RepositoriesRegistry':
         """Return new RepositoriesRegistry where repo with given name goes first
@@ -58,7 +91,7 @@ class RepositoriesRegistry(Interface):
         for repo in self.repos:
             if repo.name != name:
                 repos.append(repo)
-        return type(self)(repos=repos)
+        return type(self)(repos=repos, prereleases=self.prereleases)
 
     def get_releases(self, dep) -> tuple:
         first_exception = None

@@ -7,8 +7,8 @@ from pathlib import Path
 
 # project
 from dephell import converters
-from dephell.controllers import Graph, RepositoriesRegistry
-from dephell.models import Requirement
+from dephell.controllers import Graph, RepositoriesRegistry, DependencyMaker
+from dephell.models import Requirement, RootDependency
 
 
 @pytest.mark.parametrize('converter, path', [
@@ -73,7 +73,7 @@ def test_load_dump_load_deps(converter, path):
 
 @pytest.mark.parametrize('converter, path, exclude', [
     (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml', ['raw_name']),
-    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json', ['raw_name']),
+    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json', ['raw_name', 'python']),
 
     (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml', []),
 
@@ -128,3 +128,35 @@ def test_idempotency(converter, path):
     content2 = converter.dumps(reqs2, project=root2, content=content1)
 
     assert content1 == content2
+
+
+@pytest.mark.parametrize('converter', [
+    # converters.PIPConverter(lock=False),
+
+    converters.PIPFileConverter(),
+    converters.PIPFileLockConverter(),
+
+    converters.PoetryConverter(),
+    converters.PoetryLockConverter(),
+])
+def test_repository_preserve(converter):
+    repo = RepositoriesRegistry()
+    repo.add_repo(url='https://example.com', name='insane')
+    repo.add_repo(url='https://pypi.org/simple/', name='pypi')
+    root = RootDependency()
+    dep1 = DependencyMaker.from_params(
+        source=root,
+        raw_name='dephell',
+        constraint='*',
+        repo=repo,
+    )[0]
+    req = Requirement(dep=dep1, roots=[root.name], lock=False)
+
+    content1 = converter.dumps([req], project=root)
+    root2 = converter.loads(content1)
+    assert len(root2.dependencies) == 1
+    dep2 = root2.dependencies[0]
+
+    repos1 = [attr.asdict(repo) for repo in dep1.repo.repos]
+    repos2 = [attr.asdict(repo) for repo in dep2.repo.repos]
+    assert repos1 == repos2

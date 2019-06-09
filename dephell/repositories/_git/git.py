@@ -13,9 +13,9 @@ from ...config import config
 from ...context_tools import chdir
 from ...models.git_release import GitRelease
 from ...models.release import Release
-from ...utils import cached_property
+from ...cached_property import cached_property
 from ..base import Interface
-from ..local import LocalRepo
+from .._local_single import LocalRepo
 
 
 logger = getLogger(__name__)
@@ -49,7 +49,7 @@ class GitRepo(Interface):
         name = self.link.name
         host = self.link.server or 'localhost'
         author = self.link.author or 'anonimous'
-        path = Path(config['cache']['path']) / host / 'repo' / author / name
+        path = Path(config['cache']['path']) / 'git' / host / 'repo' / author / name
         return path
 
     @cached_property
@@ -96,7 +96,7 @@ class GitRepo(Interface):
         # get from cache
         host = self.link.server or 'localhost'
         author = self.link.author or 'anonimous'
-        cache = RequirementsCache(host, 'deps', author, name, str(version))
+        cache = RequirementsCache('git', host, 'deps', author, name, str(version))
         deps = cache.load()
         if deps:
             if extra:

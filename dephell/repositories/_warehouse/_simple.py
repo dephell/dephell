@@ -1,7 +1,6 @@
 # built-in
 import asyncio
 import posixpath
-import re
 from datetime import datetime
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple, Iterator
@@ -19,13 +18,13 @@ from packaging.utils import canonicalize_name
 # app
 from ...cache import JSONCache, TextCache
 from ...config import config
+from ...constants import ARCHIVE_EXTENSIONS
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
 from ._base import WarehouseBaseRepo
 
 
 logger = getLogger('dephell.repositories.warehouse.simple')
-REX_WORD = re.compile('[a-zA-Z]+')
 
 
 @attr.s()
@@ -60,7 +59,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
     def get_releases(self, dep) -> tuple:
         # retrieve data
         cache = JSONCache(
-            urlparse(self.url).hostname, 'links', dep.base_name,
+            'warehouse-simple', urlparse(self.url).hostname, 'links', dep.base_name,
             ttl=config['cache']['ttl'],
         )
         links = cache.load()
@@ -107,7 +106,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
         # special case for black: if there is no releases, but found some
         # prereleases, implicitly allow prereleases for this package
-        if not release and prereleases:
+        if not releases and prereleases:
             releases = prereleases
 
         releases.sort(reverse=True)
@@ -115,7 +114,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
-        cache = TextCache(urlparse(self.url).hostname, 'deps', name, str(version))
+        cache = TextCache('warehouse-simple', urlparse(self.url).hostname, 'deps', name, str(version))
         deps = cache.load()
         if deps is None:
             task = self._get_deps_from_links(name=name, version=version)
@@ -141,9 +140,11 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             link = tag.get('href')
             if not link:
                 continue
+            parsed = urlparse(link)
+            if not parsed.path.endswith(ARCHIVE_EXTENSIONS):
+                continue
 
             python = tag.get('data-requires-python')
-            parsed = urlparse(link)
             fragment = parse_qs(parsed.fragment)
             yield dict(
                 url=urljoin(dep_url, link),
@@ -152,33 +153,12 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
                 digest=fragment['sha256'][0] if 'sha256' in fragment else None,
             )
 
-    @staticmethod
-    def _parse_name(fname: str) -> Tuple[str, str]:
-        fname = fname.strip()
-        if fname.endswith('.whl'):
-            fname = fname.rsplit('-', maxsplit=3)[0]
-            name, _, version = fname.partition('-')
-            return name, version
-
-        fname = fname.rsplit('.', maxsplit=1)[0]
-        if fname.endswith('.tar'):
-            fname = fname.rsplit('.', maxsplit=1)[0]
-        parts = fname.split('-')
-        name = []
-        for part in parts:
-            if REX_WORD.match(part):
-                name.append(part)
-            else:
-                break
-        version = parts[len(name):]
-        return '-'.join(name), '-'.join(version)
-
     async def _get_deps_from_links(self, name, version):
         from ...converters import SDistConverter, WheelConverter
 
         # retrieve data
         cache = JSONCache(
-            urlparse(self.url).hostname, 'links', name,
+            'warehouse-simple', urlparse(self.url).hostname, 'links', name,
             ttl=config['cache']['ttl'],
         )
         links = cache.load()
@@ -205,14 +185,14 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             (sdist, '.zip'),
         )
 
-        for converer, ext in rules:
+        for converter, ext in rules:
             for link in good_links:
                 if not link['name'].endswith(ext):
                     continue
                 try:
                     return await self._download_and_parse(
                         url=link['url'],
-                        converter=converer,
+                        converter=converter,
                     )
                 except FileNotFoundError as e:
                     logger.warning(e.args[0])

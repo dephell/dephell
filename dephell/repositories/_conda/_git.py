@@ -20,7 +20,7 @@ from ...cache import JSONCache
 from ...config import config
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
-from ...utils import cached_property
+from ...cached_property import cached_property
 from ._base import CondaBaseRepo
 
 
@@ -73,7 +73,7 @@ class CondaGitRepo(CondaBaseRepo):
 
     def get_releases(self, dep) -> tuple:
         # get metainfo
-        cache = JSONCache('conda-forge.github.com', 'releases', dep.name, ttl=config['cache']['ttl'])
+        cache = JSONCache('conda-forge', 'releases', dep.name, ttl=config['cache']['ttl'])
         raw_releases = cache.load()
         if raw_releases is None:
             revs = self._get_revs(name=dep.name)

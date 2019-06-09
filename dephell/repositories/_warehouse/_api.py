@@ -77,7 +77,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
     def get_releases(self, dep) -> tuple:
         # retrieve data
         cache = JSONCache(
-            urlparse(self.url).hostname, 'releases', dep.base_name,
+            'warehouse-api', urlparse(self.url).hostname, 'releases', dep.base_name,
             ttl=config['cache']['ttl'],
         )
         data = cache.load()
@@ -118,7 +118,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
         # special case for black: if there is no releases, but found some
         # prereleases, implicitly allow prereleases for this package
-        if not release and prereleases:
+        if not releases and prereleases:
             releases = prereleases
 
         releases.sort(reverse=True)
@@ -126,7 +126,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
-        cache = TextCache(urlparse(self.url).hostname, 'deps', name, str(version))
+        cache = TextCache('warehouse-api', urlparse(self.url).hostname, 'deps', name, str(version))
         deps = cache.load()
         if deps is None:
             task = self._get_from_json(name=name, version=version)
@@ -265,14 +265,14 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
             (sdist, lambda info: info['url'].endswith('.zip')),
         )
 
-        for converer, checker in rules:
+        for converter, checker in rules:
             for file_info in files_info:
                 if not checker(file_info):
                     continue
                 try:
                     return await self._download_and_parse(
                         url=file_info['url'],
-                        converter=converer,
+                        converter=converter,
                     )
                 except FileNotFoundError as e:
                     logger.warning(e.args[0])

@@ -4,11 +4,11 @@ from dephell_links import DirLink, FileLink
 # app
 from ..config import config
 from ..constants import DEFAULT_WAREHOUSE
-from .conda import CondaCloudRepo, CondaGitRepo, CondaRepo
-from .git.git import GitRepo
-from .local import LocalRepo
-from .release import ReleaseRepo
-from .warehouse import WarehouseAPIRepo
+from ._conda import CondaCloudRepo, CondaGitRepo, CondaRepo
+from ._git.git import GitRepo
+from ._local_single import LocalRepo
+from ._release import ReleaseRepo
+from ._warehouse import WarehouseAPIRepo
 
 
 _repos = dict(
