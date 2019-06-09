@@ -5,6 +5,7 @@ from logging import getLogger
 
 # app
 from ..config import Config, config
+from ..constants import CONFIG_NAMES
 
 
 class BaseCommand:
@@ -26,17 +27,28 @@ class BaseCommand:
     @classmethod
     def get_config(cls, args) -> Config:
         config.setup_logging()
-        if args.config:
-            config.attach_file(path=args.config, env=args.env)
-        elif os.path.exists('pyproject.toml'):
-            data = config.attach_file(path='pyproject.toml', env=args.env, silent=True)
-            if data is None:
-                cls.logger.warning('cannot find tool.dephell section in the config')
-        else:
-            cls.logger.warning('cannot find config file')
+        cls._attach_config_file(path=args.config, env=args.env)
         config.attach_cli(args)
         config.setup_logging()
         return config
+
+    @classmethod
+    def _attach_config_file(cls, path, env) -> None:
+        if path:
+            config.attach_file(path=path, env=env)
+            return
+
+        for path in CONFIG_NAMES:
+            if not os.path.exists(path):
+                continue
+            data = config.attach_file(path=path, env=env, silent=True)
+            if data is None:
+                cls.logger.warning('cannot find tool.dephell section in the config', extra=dict(
+                    path=path,
+                ))
+            return
+
+        cls.logger.warning('cannot find config file')
 
     def validate(self) -> bool:
         is_valid = self.config.validate()

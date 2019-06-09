@@ -17,6 +17,7 @@ class ReturnCodes(Enum):
 
 IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')
 
+CONFIG_NAMES = ('poetry.toml', 'pyproject.toml')
 DEFAULT_WAREHOUSE = 'https://pypi.org/pypi/'
 
 FORMATS = (
