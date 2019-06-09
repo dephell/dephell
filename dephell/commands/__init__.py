@@ -14,6 +14,7 @@ from .generate_config import GenerateConfigCommand
 from .generate_editorconfig import GenerateEditorconfigCommand
 from .generate_license import GenerateLicenseCommand
 from .generate_travis import GenerateTravisCommand
+from .inspect_auth import InspectAuthCommand
 from .inspect_config import InspectConfigCommand
 from .inspect_gadget import InspectGadgetCommand
 from .inspect_self import InspectSelfCommand
@@ -56,6 +57,7 @@ __all__ = [
     'GenerateEditorconfigCommand',
     'GenerateLicenseCommand',
     'GenerateTravisCommand',
+    'InspectAuthCommand',
     'InspectConfigCommand',
     'InspectGadgetCommand',
     'InspectSelfCommand',
@@ -99,6 +101,7 @@ commands = {
     'generate editorconfig': GenerateEditorconfigCommand,
     'generate license': GenerateLicenseCommand,
     'generate travis': GenerateTravisCommand,
+    'inspect auth': InspectAuthCommand,
     'inspect config': InspectConfigCommand,
     'inspect self': InspectSelfCommand,
     'inspect venv': InspectVenvCommand,
