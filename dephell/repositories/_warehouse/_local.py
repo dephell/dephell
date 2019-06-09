@@ -82,7 +82,7 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
 
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
-        cache = TextCache('localhost', 'deps', name, str(version))
+        cache = TextCache('warehouse-local', 'deps', name, str(version))
         deps = cache.load()
         if deps is None:
             deps = self._get_deps_from_files(name=name, version=version)

@@ -59,7 +59,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
     def get_releases(self, dep) -> tuple:
         # retrieve data
         cache = JSONCache(
-            urlparse(self.url).hostname, 'links', dep.base_name,
+            'warehouse-simple', urlparse(self.url).hostname, 'links', dep.base_name,
             ttl=config['cache']['ttl'],
         )
         links = cache.load()
@@ -114,7 +114,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
     async def get_dependencies(self, name: str, version: str,
                                extra: Optional[str] = None) -> Tuple[Requirement, ...]:
-        cache = TextCache(urlparse(self.url).hostname, 'deps', name, str(version))
+        cache = TextCache('warehouse-simple', urlparse(self.url).hostname, 'deps', name, str(version))
         deps = cache.load()
         if deps is None:
             task = self._get_deps_from_links(name=name, version=version)
@@ -158,7 +158,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
         # retrieve data
         cache = JSONCache(
-            urlparse(self.url).hostname, 'links', name,
+            'warehouse-simple', urlparse(self.url).hostname, 'links', name,
             ttl=config['cache']['ttl'],
         )
         links = cache.load()

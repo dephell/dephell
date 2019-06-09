@@ -49,7 +49,7 @@ class GitRepo(Interface):
         name = self.link.name
         host = self.link.server or 'localhost'
         author = self.link.author or 'anonimous'
-        path = Path(config['cache']['path']) / host / 'repo' / author / name
+        path = Path(config['cache']['path']) / 'git' / host / 'repo' / author / name
         return path
 
     @cached_property
@@ -96,7 +96,7 @@ class GitRepo(Interface):
         # get from cache
         host = self.link.server or 'localhost'
         author = self.link.author or 'anonimous'
-        cache = RequirementsCache(host, 'deps', author, name, str(version))
+        cache = RequirementsCache('git', host, 'deps', author, name, str(version))
         deps = cache.load()
         if deps:
             if extra:
