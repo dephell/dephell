@@ -4,7 +4,7 @@ Add LICENSE file in the project. This command gets the license name as input, do
 
 ```bash
 $ dephell generate license MIT
-$ dephell generate license Apache-2.0
+$ dephell generate license --owner="Your Company Name" Apache-2.0
 ```
 
 ## Which license should I choose

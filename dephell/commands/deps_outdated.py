@@ -5,7 +5,6 @@ from argparse import ArgumentParser
 from ..actions import get_python_env, make_json
 from ..config import builders
 from ..converters import CONVERTERS, InstalledConverter
-from ..repositories import WareHouseRepo
 from .base import BaseCommand
 
 
@@ -46,10 +45,9 @@ class DepsOutdatedCommand(BaseCommand):
             self.logger.debug('choosen python', extra=dict(path=str(python.path)))
             root = InstalledConverter().load(paths=python.lib_paths)
 
-        repo = WareHouseRepo()
         data = []
         for dep in root.dependencies:
-            releases = repo.get_releases(dep)
+            releases = dep.repo.get_releases(dep)
             latest = str(releases[0].version)
             installed = str(dep.constraint).replace('=', '').split(' || ')
             if latest in installed:

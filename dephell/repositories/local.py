@@ -46,7 +46,7 @@ class LocalRepo(Interface):
         return tuple(reversed(releases))
 
     async def get_dependencies(self, name: str, version: str, extra: Optional[str] = None) -> tuple:
-        cache = RequirementsCache('local_deps', name, str(version))
+        cache = RequirementsCache('localhost', 'deps', name, str(version))
         deps = cache.load()
         if deps:
             return deps

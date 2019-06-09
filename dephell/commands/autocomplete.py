@@ -5,7 +5,7 @@ from platform import platform
 import os
 
 # external
-from appdirs import user_data_dir
+from ..config import get_data_dir
 from dephell_shells import Shells
 
 # app
@@ -85,7 +85,7 @@ class AutocompleteCommand(BaseCommand):
 
     def _zsh(self):
         script = make_zsh_autocomplete()
-        path = Path(user_data_dir('dephell')) / '_dephell_zsh_autocomplete'
+        path = get_data_dir() / '_dephell_zsh_autocomplete'
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(script)
         path.chmod(0o777)

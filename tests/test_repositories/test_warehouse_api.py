@@ -2,14 +2,15 @@
 import asyncio
 
 # project
-from dephell.repositories import WareHouseRepo
+from dephell.constants import DEFAULT_WAREHOUSE
+from dephell.repositories import WarehouseAPIRepo
 
 
 loop = asyncio.get_event_loop()
 
 
 def test_extra():
-    repo = WareHouseRepo()
+    repo = WarehouseAPIRepo(name='pypi', url=DEFAULT_WAREHOUSE)
 
     coroutine = repo.get_dependencies(name='requests', version='2.21.0')
     deps = loop.run_until_complete(asyncio.gather(coroutine))[0]
@@ -27,7 +28,7 @@ def test_extra():
 
 
 def test_info_from_files():
-    repo = WareHouseRepo()
+    repo = WarehouseAPIRepo(name='pypi', url=DEFAULT_WAREHOUSE)
     coroutine = repo.get_dependencies(name='m2r', version='0.2.1')
     deps = loop.run_until_complete(asyncio.gather(coroutine))[0]
     deps = {dep.name: dep for dep in deps}

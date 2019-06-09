@@ -9,9 +9,10 @@ from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, RepositoriesRegistry
+from ..config import config
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import WareHouseRepo, get_repo
+from ..repositories import get_repo
 from .base import BaseConverter
 
 
@@ -44,10 +45,12 @@ class PIPFileConverter(BaseConverter):
         deps = []
         root = RootDependency()
 
-        repos = dict()
+        repo = RepositoriesRegistry()
         if 'source' in doc:
-            for repo in doc['source']:
-                repos[repo['name']] = repo['url']
+            for repo_info in doc['source']:
+                repo.add_repo(name=repo_info['name'], url=repo_info['url'])
+        for url in config['warehouse']:
+            repo.add_repo(url=url)
 
         python = doc.get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:
@@ -56,13 +59,11 @@ class PIPFileConverter(BaseConverter):
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             for name, content in doc.get(section, {}).items():
                 subdeps = self._make_deps(root, name, content)
-                if 'index' in content:
-                    repo_name = content.get('index')
+                if isinstance(content, dict) and 'index' in content:
+                    dep_repo = repo.make(name=content['index'])
                     for dep in subdeps:
-                        dep.repo = WareHouseRepo(
-                            name=repo_name,
-                            url=repos[repo_name],
-                        )
+                        dep.repo = dep_repo
+
                 for dep in subdeps:
                     # Pipfile doesn't support any other envs
                     dep.envs = {'dev'} if is_dev else {'main'}
@@ -81,16 +82,17 @@ class PIPFileConverter(BaseConverter):
 
         added_repos = {repo['name'] for repo in doc['source']}
         for req in reqs:
-            if not isinstance(req.dep.repo, WareHouseRepo):
+            if not isinstance(req.dep.repo, RepositoriesRegistry):
                 continue
-            if req.dep.repo.name in added_repos:
-                continue
-            added_repos.add(req.dep.repo.name)
-            doc['source'].append(OrderedDict([
-                ('name', req.dep.repo.name),
-                ('url', req.dep.repo.pretty_url),
-                ('verify_ssl', True),
-            ]))
+            for repo in req.dep.repo.repos:
+                if repo.name in added_repos:
+                    continue
+                added_repos.add(repo.name)
+                doc['source'].append(OrderedDict([
+                    ('name', repo.name),
+                    ('url', repo.pretty_url),
+                    ('verify_ssl', repo.pretty_url.startswith('https://')),
+                ]))
 
         if project.python:
             python = Pythons(abstract=True).get_by_spec(project.python)

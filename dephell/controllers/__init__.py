@@ -5,6 +5,7 @@ from ._graph import Graph
 from ._mutator import Mutator
 from ._readme import Readme
 from ._resolver import Resolver
+from ._repos import RepositoriesRegistry
 from ._safety import Safety, SafetyVulnInfo
 from ._snyk import Snyk, SnykVulnInfo
 
@@ -15,6 +16,7 @@ __all__ = [
     'Graph',
     'Mutator',
     'Readme',
+    'RepositoriesRegistry',
     'Resolver',
     'Safety',
     'SafetyVulnInfo',
