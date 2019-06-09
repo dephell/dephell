@@ -10,6 +10,7 @@ from dephell_links import DirLink
 from dephell_specifier import RangeSpecifier
 
 # app
+from ..config import config
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
 from ..repositories import WarehouseLocalRepo
@@ -37,6 +38,14 @@ class PoetryLockConverter(BaseConverter):
         root = RootDependency()
         root.python = RangeSpecifier(doc.get('metadata', {}).get('python-versions', '*'))
 
+        # get repositories
+        repo = RepositoriesRegistry()
+        if doc.get('source'):
+            for source in doc['source']:
+                repo.add_repo(url=source['url'], name=source['name'])
+        for url in config['warehouse']:
+            repo.add_repo(url=url)
+
         envs = defaultdict(set)
         for extra, deps in doc.get('extras', {}).items():
             for dep in deps:
@@ -45,12 +54,15 @@ class PoetryLockConverter(BaseConverter):
             # category can be "dev" or "main"
             envs[content['name']].add(content['category'])
 
+        deps = []
         for content in doc.get('package', []):
-            root.attach_dependencies(self._make_deps(
+            deps.extend(self._make_deps(
                 root=root,
                 content=content,
                 envs=envs[content['name']],
+                repo=repo,
             ))
+        root.attach_dependencies(deps)
         return root
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
@@ -106,15 +118,19 @@ class PoetryLockConverter(BaseConverter):
 
     # https://github.com/sdispater/poetry/blob/master/poetry.lock
     @classmethod
-    def _make_deps(cls, root, content, envs) -> List[Dependency]:
+    def _make_deps(cls, root, content, envs, repo) -> List[Dependency]:
         # get link
         url = None
         if 'source' in content:
-            url = content['source']['url']
-            if content['source']['type'] == 'git':
-                url = 'git+' + url
-                if 'reference' in content['source']:
-                    url += '@' + content['source']['reference']
+            if content['source']['type'] == 'legacy':
+                repo = repo.make(content['source']['reference'])
+            else:
+                repo = None
+                url = content['source']['url']
+                if content['source']['type'] == 'git':
+                    url = 'git+' + url
+                    if 'reference' in content['source']:
+                        url += '@' + content['source']['reference']
 
         # make markers
         marker = content.get('marker', None)
@@ -139,6 +155,10 @@ class PoetryLockConverter(BaseConverter):
             editable=False,
             envs=envs,
         )
+
+        if repo is not None:
+            for dep in deps:
+                dep.repo = repo
 
         if version == '*':
             return deps
@@ -198,7 +218,8 @@ class PoetryLockConverter(BaseConverter):
             if req.rev:
                 result['source']['reference'] = req.rev
         elif isinstance(req.dep.repo, RepositoriesRegistry):
-            repo = req.repo.repos[0]
+            repo = req.dep.repo.repos[0]
+            result['source'] = tomlkit.table()
             result['source']['type'] = 'legacy'
             result['source']['url'] = repo.pretty_url
             result['source']['reference'] = repo.name
