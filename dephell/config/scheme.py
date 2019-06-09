@@ -34,11 +34,11 @@ SCHEME = {
     ),
 
     'auth': dict(
-        type='dict',
-        keysrules=dict(type='string', regex=r'[a-z0-9\.\-\_]'),
+        type='list',
         valuesrules=dict(
             type='dict',
             schema={
+                'hostname': dict(type='string', regex=r'[a-z0-9\.\-\_]'),
                 'username': dict(type='string', required=True),
                 'password': dict(type='string', required=True),
             },
