@@ -40,51 +40,7 @@ from .venv_run import VenvRunCommand
 from .venv_shell import VenvShellCommand
 
 
-__all__ = [
-    'AutocompleteCommand',
-    'commands',
-    'DepsAddCommand',
-    'DepsAuditCommand',
-    'DepsCheckCommand',
-    'DepsConvertCommand',
-    'DepsInstallCommand',
-    'DepsLicensesCommand',
-    'DepsOutdatedCommand',
-    'DepsSyncCommand',
-    'DepsTreeCommand',
-    'GenerateAuthorsCommand',
-    'GenerateConfigCommand',
-    'GenerateEditorconfigCommand',
-    'GenerateLicenseCommand',
-    'GenerateTravisCommand',
-    'InspectAuthCommand',
-    'InspectConfigCommand',
-    'InspectGadgetCommand',
-    'InspectSelfCommand',
-    'InspectVenvCommand',
-    'JailInstallCommand',
-    'JailListCommand',
-    'JailRemoveCommand',
-    'JailTryCommand',
-    'PackageDownloadsCommand',
-    'PackageInstallCommand',
-    'PackageListCommand',
-    'PackagePurgeCommand',
-    'PackageReleasesCommand',
-    'PackageRemoveCommand',
-    'PackageSearchCommand',
-    'PackageShowCommand',
-    'ProjectBuildCommand',
-    'ProjectBumpCommand',
-    'ProjectTestCommand',
-    'VenvCreateCommand',
-    'VenvDestroyCommand',
-    'VenvRunCommand',
-    'VenvShellCommand',
-]
-
-
-commands = {
+COMMANDS = {
     'autocomplete': AutocompleteCommand,
     'deps add': DepsAddCommand,
     'deps audit': DepsAuditCommand,
