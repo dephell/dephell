@@ -135,6 +135,7 @@ def test_idempotency(converter, path):
     converters.PIPFileConverter(),
     converters.PIPFileLockConverter(),
     converters.PoetryConverter(),
+    converters.PoetryLockConverter(),
 ])
 def test_repository_preserve(converter):
     repo = RepositoriesRegistry()
