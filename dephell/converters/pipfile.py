@@ -79,6 +79,7 @@ class PIPFileConverter(BaseConverter):
 
         section = doc['source'] if 'source' in doc else tomlkit.aot()
         added_repos = {repo['name'] for repo in section}
+        updated = False
         for req in reqs:
             if not isinstance(req.dep.repo, RepositoriesRegistry):
                 continue
@@ -94,7 +95,9 @@ class PIPFileConverter(BaseConverter):
                 source['url'] = repo.pretty_url
                 source['verify_ssl'] = repo.pretty_url.startswith('https://')
                 section.append(source)
-        doc['source'] = section
+                updated = True
+        if updated:
+            doc['source'] = section
 
         if project.python:
             python = Pythons(abstract=True).get_by_spec(project.python)
