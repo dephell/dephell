@@ -73,7 +73,6 @@ class AuthCommand(BaseCommand):
             self.logger.info('credentials removed', extra=dict(
                 hostname=hst,
                 username=usr,
-                count=diff,
             ))
             return True
 
