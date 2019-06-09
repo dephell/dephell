@@ -132,8 +132,10 @@ def test_idempotency(converter, path):
 
 @pytest.mark.parametrize('converter', [
     # converters.PIPConverter(lock=False),
+
     converters.PIPFileConverter(),
     converters.PIPFileLockConverter(),
+
     converters.PoetryConverter(),
     converters.PoetryLockConverter(),
 ])
