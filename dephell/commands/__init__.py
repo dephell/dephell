@@ -1,4 +1,5 @@
 # app
+from .auth import AuthCommand
 from .autocomplete import AutocompleteCommand
 from .deps_add import DepsAddCommand
 from .deps_audit import DepsAuditCommand
@@ -41,7 +42,9 @@ from .venv_shell import VenvShellCommand
 
 
 COMMANDS = {
+    'auth': AuthCommand,
     'autocomplete': AutocompleteCommand,
+
     'deps add': DepsAddCommand,
     'deps audit': DepsAuditCommand,
     'deps check': DepsCheckCommand,
@@ -52,21 +55,25 @@ COMMANDS = {
     'deps sync': DepsSyncCommand,
     'deps tree': DepsTreeCommand,
     # 'deps remove': ...,
+
     'generate authors': GenerateAuthorsCommand,
     'generate config': GenerateConfigCommand,
     'generate editorconfig': GenerateEditorconfigCommand,
     'generate license': GenerateLicenseCommand,
     'generate travis': GenerateTravisCommand,
+
     'inspect auth': InspectAuthCommand,
     'inspect config': InspectConfigCommand,
     'inspect self': InspectSelfCommand,
     'inspect venv': InspectVenvCommand,
     'inspect gadget': InspectGadgetCommand,
+
     'jail install': JailInstallCommand,
     'jail list': JailListCommand,
     'jail remove': JailRemoveCommand,
     'jail try': JailTryCommand,
     # 'jail update': ...,
+
     'package downloads': PackageDownloadsCommand,
     'package install': PackageInstallCommand,
     'package list': PackageListCommand,
@@ -75,9 +82,11 @@ COMMANDS = {
     'package remove': PackageRemoveCommand,
     'package search': PackageSearchCommand,
     'package show': PackageShowCommand,
+
     'project build': ProjectBuildCommand,
     'project bump': ProjectBumpCommand,
     'project test': ProjectTestCommand,
+
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,
     'venv run': VenvRunCommand,
