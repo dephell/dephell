@@ -1,5 +1,5 @@
 # built-in
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
 from urllib.parse import urlparse
@@ -106,7 +106,7 @@ class PoetryConverter(BaseConverter):
                 ))
 
         # update repository
-        if 'source' in section and section['source'].value:
+        if section.get('source'):
             repo = RepositoriesRegistry()
             for source in section['source']:
                 repo.add_repo(url=source['url'], name=source['name'])
@@ -173,7 +173,7 @@ class PoetryConverter(BaseConverter):
                     del section[section_name][name]
 
         # python version
-        section['dependencies']['python'] = str(project.python)
+        section['dependencies']['python'] = str(project.python) or '*'
 
         # write dependencies
         for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
@@ -274,7 +274,7 @@ class PoetryConverter(BaseConverter):
 
         # remove or update old repositories
         added = []
-        if 'source' in section and section['source'].value:
+        if section.get('source'):
             old = list(section['source'])
             section['source'] = tomlkit.aot()
             added = []
@@ -284,13 +284,19 @@ class PoetryConverter(BaseConverter):
                         source['url'] = urls[source['name']]
                     section['source'].append(source)
                     added.append(source['name'])
+            sources = section['source']
         else:
-            section['source'] = tomlkit.aot()
+            sources = tomlkit.aot()
 
         # add new repositories
         for name, url in sorted(urls.items()):
             if name not in added:
-                section['source'].append(OrderedDict([('name', name), ('url', url)]))
+                source = tomlkit.table()
+                source['name'] = name
+                source['url'] = url
+                sources.append(source)
+
+        section['source'] = sources
 
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod
