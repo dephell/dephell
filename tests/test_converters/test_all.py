@@ -133,7 +133,7 @@ def test_idempotency(converter, path):
 @pytest.mark.parametrize('converter', [
     # converters.PIPConverter(lock=False),
     converters.PIPFileConverter(),
-    # converters.PIPFileLockConverter(),
+    converters.PIPFileLockConverter(),
 ])
 def test_repository_preserve(converter):
     repo = RepositoriesRegistry()

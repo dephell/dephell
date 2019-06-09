@@ -39,13 +39,12 @@ class PIPFileLockConverter(PIPFileConverter):
         root = RootDependency()
 
         repo = RepositoriesRegistry()
-        if 'source' in doc:
-            for repo_info in doc['source']:
-                repo.add_repo(name=repo_info['name'], url=repo_info['url'])
+        for repo_info in doc.get('_meta', {}).get('sources', []):
+            repo.add_repo(name=repo_info['name'], url=repo_info['url'])
         for url in config['warehouse']:
             repo.add_repo(url=url)
 
-        python = doc.get('requires', {}).get('python_version', '')
+        python = doc.get('_meta', {}).get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:
             root.python = RangeSpecifier('==' + python)
 
@@ -114,4 +113,6 @@ class PIPFileLockConverter(PIPFileConverter):
                 name = 'ref'
             if name in self.fields:
                 result[name] = value
+        if isinstance(req.dep.repo, RepositoriesRegistry) and req.dep.repo.name != 'pypi':
+            result['index'] = req.dep.repo.name
         return result
