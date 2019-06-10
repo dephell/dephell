@@ -145,6 +145,8 @@ dephell-venvs     = ">=0.1.16"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
+pytest-server-fixtures = "*"
+
 sphinx = "*"
 recommonmark = "*"
 sphinx-rtd-theme = "*"
@@ -152,5 +154,5 @@ pygments-github-lexers = "*"
 
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
-tests = ["pytest"]
+tests = ["pytest", "pytest-server-fixtures"]
 docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]
