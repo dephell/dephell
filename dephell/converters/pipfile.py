@@ -75,6 +75,7 @@ class PIPFileConverter(BaseConverter):
         else:
             doc = tomlkit.document()
 
+        # repositories
         section = doc['source'] if 'source' in doc else tomlkit.aot()
         added_repos = {repo['name'] for repo in section}
         updated = False
@@ -96,15 +97,25 @@ class PIPFileConverter(BaseConverter):
                 source['verify_ssl'] = repo.pretty_url.startswith('https://')
                 section.append(source)
                 updated = True
+        # pipenv doesn't work without explicit repo
+        if not added_repos:
+            source = tomlkit.table()
+            source['name'] = 'pypi'
+            source['url'] = 'https://pypi.org/simple/'
+            source['verify_ssl'] = True
+            section.append(source)
+            updated = True
         if updated:
             doc['source'] = section
 
+        # python version
         if project.python:
             python = Pythons(abstract=True).get_by_spec(project.python)
             if 'requires' not in doc:
                 doc['requires'] = tomlkit.table()
             doc['requires']['python_version'] = str(python.get_short_version())
 
+        # dependencies
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             # create section if doesn't exist
             if section not in doc:

@@ -89,6 +89,13 @@ class PIPFileLockConverter(PIPFileConverter):
                     ('verify_ssl', repo.pretty_url.startswith('https://')),
                     ('name', repo.name),
                 ]))
+        # pipenv doesn't work without explicit repo
+        if not repos:
+            repos.append(OrderedDict([
+                ('url', 'https://pypi.org/simple/'),
+                ('verify_ssl', True),
+                ('name', 'pypi'),
+            ]))
 
         python = Pythons(abstract=True).get_by_spec(project.python)
         data = OrderedDict([
