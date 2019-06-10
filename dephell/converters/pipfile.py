@@ -9,7 +9,6 @@ from dephell_specifier import RangeSpecifier
 
 # app
 from ..controllers import DependencyMaker, RepositoriesRegistry
-from ..config import config
 from ..models import Constraint, Dependency, RootDependency
 from ..repositories import get_repo, WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
@@ -48,8 +47,7 @@ class PIPFileConverter(BaseConverter):
         if 'source' in doc:
             for repo_info in doc['source']:
                 repo.add_repo(name=repo_info['name'], url=repo_info['url'])
-        for url in config['warehouse']:
-            repo.add_repo(url=url)
+        repo.attach_config()
 
         python = doc.get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:

@@ -10,7 +10,6 @@ from dephell_links import DirLink
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..config import config
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
@@ -43,8 +42,7 @@ class PoetryLockConverter(BaseConverter):
         if doc.get('source'):
             for source in doc['source']:
                 repo.add_repo(url=source['url'], name=source['name'])
-        for url in config['warehouse']:
-            repo.add_repo(url=url)
+        repo.attach_config()
 
         envs = defaultdict(set)
         for extra, deps in doc.get('extras', {}).items():

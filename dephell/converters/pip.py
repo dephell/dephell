@@ -3,7 +3,6 @@ from itertools import chain
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Optional
-from urllib.parse import urlparse
 
 # external
 from dephell_links import DirLink
@@ -12,7 +11,6 @@ from pip._internal.index import PackageFinder
 from pip._internal.req import parse_requirements
 
 # app
-from ..config import config
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
@@ -45,15 +43,9 @@ class PIPConverter(BaseConverter):
         deps = []
         root = RootDependency()
 
-        warehouse_urls = []
-        for url in config['warehouse']:
-            host = urlparse(url).hostname
-            if host in ('pypi.org', 'pypi.python.org', 'test.pypi.org'):
-                warehouse_urls.append('https://{}/simple'.format(host))
-
         finder = PackageFinder(
             find_links=[],
-            index_urls=warehouse_urls,
+            index_urls=[],
             session=PipSession(),
         )
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py
@@ -84,8 +76,7 @@ class PIPConverter(BaseConverter):
             repo = RepositoriesRegistry()
             for url in chain(finder.index_urls, finder.find_links):
                 repo.add_repo(url=url)
-            for url in config['warehouse']:
-                repo.add_repo(url=url)
+            repo.attach_config()
             for dep in deps:
                 if isinstance(dep.repo, WarehouseBaseRepo):
                     dep.repo = repo

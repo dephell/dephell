@@ -10,7 +10,6 @@ from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..config import config
 from ..controllers import RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
@@ -41,8 +40,7 @@ class PIPFileLockConverter(PIPFileConverter):
         repo = RepositoriesRegistry()
         for repo_info in doc.get('_meta', {}).get('sources', []):
             repo.add_repo(name=repo_info['name'], url=repo_info['url'])
-        for url in config['warehouse']:
-            repo.add_repo(url=url)
+        repo.attach_config()
 
         python = doc.get('_meta', {}).get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:

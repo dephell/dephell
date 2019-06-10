@@ -7,7 +7,7 @@ import attr
 import requests
 from requests.exceptions import SSLError, ConnectionError
 
-from ..config import config
+from ..config import config as global_config
 from ..exceptions import PackageNotFoundError
 from ..repositories import WarehouseAPIRepo, WarehouseBaseRepo, WarehouseLocalRepo, WarehouseSimpleRepo
 
@@ -27,7 +27,7 @@ def _has_api(url: str) -> bool:
 @attr.s()
 class RepositoriesRegistry(WarehouseBaseRepo):
     repos = attr.ib(factory=list)
-    prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
+    prereleases = attr.ib(type=bool, factory=lambda: global_config['prereleases'])  # allow prereleases
 
     _urls = attr.ib(factory=set)
     _names = attr.ib(factory=set)
@@ -76,6 +76,16 @@ class RepositoriesRegistry(WarehouseBaseRepo):
         self._urls.update(urls)
         self.repos.append(repo)
         return True
+
+    def attach_config(self, config=None) -> bool:
+        """Add repositories from config into registry
+        """
+        if config is None:
+            config = global_config
+        added = []
+        for url in config['warehouse']:
+            added.append(self.add_repo(url=url))
+        return any(added)
 
     def make(self, name: str) -> 'RepositoriesRegistry':
         """Return new RepositoriesRegistry where repo with given name goes first
