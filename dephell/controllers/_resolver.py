@@ -55,7 +55,7 @@ class Resolver:
         """
         if not force and not dep.applied:
             return
-        # it must be before actual unapplying to avoid recursion on cyclic dependencies
+        # it must be before actual unapplying to avoid recursion on circular dependencies
         if not soft:
             dep.applied = False
 
