@@ -81,7 +81,7 @@ class WarehouseBaseRepo(Interface):
 
     async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
         with TemporaryDirectory() as tmp:
-            async with ClientSession() as session:
+            async with ClientSession(auth=self.auth) as session:
                 async with session.get(url) as response:
                     response.raise_for_status()
                     fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]

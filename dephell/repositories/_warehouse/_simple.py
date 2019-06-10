@@ -31,6 +31,7 @@ logger = getLogger('dephell.repositories.warehouse.simple')
 class WarehouseSimpleRepo(WarehouseBaseRepo):
     name = attr.ib(type=str)
     url = attr.ib(type=str)
+    auth = attr.ib(default=None)
 
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
     from_config = attr.ib(type=bool, default=False)
@@ -131,7 +132,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
     def _get_links(self, name: str) -> Iterator[Dict[str, str]]:
         dep_url = posixpath.join(self.url, quote(name)) + '/'
-        response = requests.get(dep_url)
+        response = requests.get(dep_url, auth=self.auth)
         if response.status_code == 404:
             raise PackageNotFoundError(package=name, url=dep_url)
         response.raise_for_status()
