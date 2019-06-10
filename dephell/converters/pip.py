@@ -96,6 +96,8 @@ class PIPConverter(BaseConverter):
             if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
             for repo in req.dep.repo.repos:
+                if repo.from_config:
+                    continue
                 if repo.name in names:
                     continue
                 names.add(repo.name)

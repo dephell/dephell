@@ -52,9 +52,11 @@ class PIPFileLockConverter(PIPFileConverter):
                 # set repo
                 if 'index' in content:
                     dep_repo = repo.make(name=content['index'])
-                    for dep in subdeps:
-                        if isinstance(dep.repo, WarehouseBaseRepo):
-                            dep.repo = dep_repo
+                else:
+                    dep_repo = repo
+                for dep in subdeps:
+                    if isinstance(dep.repo, WarehouseBaseRepo):
+                        dep.repo = dep_repo
                 # set envs
                 for dep in subdeps:
                     dep.envs = {'dev'} if is_dev else {'main'}
@@ -74,6 +76,8 @@ class PIPFileLockConverter(PIPFileConverter):
             if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
             for repo in req.dep.repo.repos:
+                if repo.from_config:
+                    continue
                 if repo.name in added_repos:
                     continue
                 # https://github.com/pypa/pipenv/issues/2231

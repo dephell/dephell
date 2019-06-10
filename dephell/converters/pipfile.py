@@ -82,6 +82,8 @@ class PIPFileConverter(BaseConverter):
             if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
             for repo in req.dep.repo.repos:
+                if repo.from_config:
+                    continue
                 if repo.name in added_repos:
                     continue
                 # https://github.com/pypa/pipenv/issues/2231

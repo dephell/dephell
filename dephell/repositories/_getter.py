@@ -2,7 +2,6 @@
 from dephell_links import DirLink, FileLink
 
 # app
-from ..config import config
 from ..constants import DEFAULT_WAREHOUSE
 from ._conda import CondaCloudRepo, CondaGitRepo, CondaRepo
 from ._git.git import GitRepo
@@ -27,8 +26,7 @@ def get_repo(link=None, name: str = None):
         from ..controllers import RepositoriesRegistry
 
         repo = RepositoriesRegistry()
-        for url in config['warehouse']:
-            repo.add_repo(url=url)
+        repo.attach_config()
         return repo
 
     if getattr(link, 'vcs', '') == 'git':

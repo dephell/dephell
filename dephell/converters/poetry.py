@@ -2,7 +2,6 @@
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
-from urllib.parse import urlparse
 
 # external
 import tomlkit
@@ -264,9 +263,9 @@ class PoetryConverter(BaseConverter):
             if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
             for repo in req.dep.repo.repos:
-                if isinstance(repo, WarehouseLocalRepo):
+                if repo.from_config:
                     continue
-                if urlparse(repo.pretty_url).hostname in ('pypi.org', 'pypi.python.org'):
+                if isinstance(repo, WarehouseLocalRepo):
                     continue
                 urls[repo.name] = repo.pretty_url
 
