@@ -8,7 +8,9 @@ import requests
 from requests.exceptions import SSLError, ConnectionError
 
 from ..config import config as global_config
+from ..constants import WAREHOUSE_DOMAINS
 from ..exceptions import PackageNotFoundError
+from ..models import Auth
 from ..repositories import WarehouseAPIRepo, WarehouseBaseRepo, WarehouseLocalRepo, WarehouseSimpleRepo
 
 
@@ -84,15 +86,28 @@ class RepositoriesRegistry(WarehouseBaseRepo):
         self.repos.append(repo)
         return True
 
-    def attach_config(self, config=None) -> bool:
-        """Add repositories from config into registry
+    def attach_config(self, config=None) -> None:
         """
+        1. Add repositories from config into registry
+        2. Add auth
+        """
+        # repos from config
         if config is None:
             config = global_config
-        added = []
         for url in config['warehouse']:
-            added.append(self.add_repo(url=url, from_config=True))
-        return any(added)
+            self.add_repo(url=url, from_config=True)
+
+        # auth
+        for repo in self.repos:
+            if isinstance(repo, WarehouseLocalRepo):
+                continue
+            host = urlparse(repo.pretty_url).hostname
+            # pypi doesn't have private packages
+            if host in WAREHOUSE_DOMAINS:
+                continue
+            for cred in config['auth']:
+                if cred['hostname'] == host:
+                    repo.auth = Auth(**cred)
 
     def make(self, name: str) -> 'RepositoriesRegistry':
         """Return new RepositoriesRegistry where repo with given name goes first
