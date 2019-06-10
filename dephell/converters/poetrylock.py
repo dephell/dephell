@@ -13,7 +13,7 @@ from dephell_specifier import RangeSpecifier
 from ..config import config
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import WarehouseLocalRepo
+from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -217,7 +217,7 @@ class PoetryLockConverter(BaseConverter):
             result['source']['url'] = req.link.short
             if req.rev:
                 result['source']['reference'] = req.rev
-        elif isinstance(req.dep.repo, RepositoriesRegistry):
+        elif isinstance(req.dep.repo, WarehouseBaseRepo):
             repo = req.dep.repo.repos[0]
             result['source'] = tomlkit.table()
             result['source']['type'] = 'legacy'

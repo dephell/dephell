@@ -13,7 +13,7 @@ from dephell_specifier import RangeSpecifier
 from ..config import config
 from ..controllers import RepositoriesRegistry
 from ..models import RootDependency
-from ..repositories import WarehouseLocalRepo
+from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .pipfile import PIPFileConverter
 
 
@@ -55,7 +55,7 @@ class PIPFileLockConverter(PIPFileConverter):
                 if 'index' in content:
                     dep_repo = repo.make(name=content['index'])
                     for dep in subdeps:
-                        if isinstance(dep.repo, RepositoriesRegistry):
+                        if isinstance(dep.repo, WarehouseBaseRepo):
                             dep.repo = dep_repo
                 # set envs
                 for dep in subdeps:
@@ -73,7 +73,7 @@ class PIPFileLockConverter(PIPFileConverter):
         repos = []
         added_repos = set()
         for req in reqs:
-            if not isinstance(req.dep.repo, RepositoriesRegistry):
+            if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
             for repo in req.dep.repo.repos:
                 if repo.name in added_repos:
@@ -113,6 +113,6 @@ class PIPFileLockConverter(PIPFileConverter):
                 name = 'ref'
             if name in self.fields:
                 result[name] = value
-        if isinstance(req.dep.repo, RepositoriesRegistry) and req.dep.repo.name != 'pypi':
+        if isinstance(req.dep.repo, WarehouseBaseRepo) and req.dep.repo.name != 'pypi':
             result['index'] = req.dep.repo.name
         return result

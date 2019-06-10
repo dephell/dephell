@@ -11,7 +11,7 @@ from dephell_specifier import RangeSpecifier
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..config import config
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import get_repo, WarehouseLocalRepo
+from ..repositories import get_repo, WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -61,7 +61,7 @@ class PIPFileConverter(BaseConverter):
                 if isinstance(content, dict) and 'index' in content:
                     dep_repo = repo.make(name=content['index'])
                     for dep in subdeps:
-                        if isinstance(dep.repo, RepositoriesRegistry):
+                        if isinstance(dep.repo, WarehouseBaseRepo):
                             dep.repo = dep_repo
 
                 for dep in subdeps:
@@ -81,7 +81,7 @@ class PIPFileConverter(BaseConverter):
         added_repos = {repo['name'] for repo in section}
         updated = False
         for req in reqs:
-            if not isinstance(req.dep.repo, RepositoriesRegistry):
+            if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
             for repo in req.dep.repo.repos:
                 if repo.name in added_repos:
@@ -166,7 +166,7 @@ class PIPFileConverter(BaseConverter):
                 if isinstance(value, tuple):
                     value = list(value)
                 result[name] = value
-        if isinstance(req.dep.repo, RepositoriesRegistry) and req.dep.repo.name != 'pypi':
+        if isinstance(req.dep.repo, WarehouseBaseRepo) and req.dep.repo.name != 'pypi':
             result['index'] = req.dep.repo.name
         if 'version' not in result:
             result['version'] = '*'
