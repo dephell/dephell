@@ -33,6 +33,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
     url = attr.ib(type=str)
 
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
+    from_config = attr.ib(type=bool, default=False)
     propagate = True  # deps of deps will inherit repo
 
     def __attrs_post_init__(self):

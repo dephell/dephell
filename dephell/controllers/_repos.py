@@ -28,11 +28,12 @@ def _has_api(url: str) -> bool:
 class RepositoriesRegistry(WarehouseBaseRepo):
     repos = attr.ib(factory=list)
     prereleases = attr.ib(type=bool, factory=lambda: global_config['prereleases'])  # allow prereleases
+    from_config = attr.ib(type=bool, default=False)
 
     _urls = attr.ib(factory=set)
     _names = attr.ib(factory=set)
 
-    def add_repo(self, *, url: str, name: str = None) -> bool:
+    def add_repo(self, *, url: str, name: str = None, from_config: bool = False) -> bool:
         # try to interpret URL as local path
         if url in self._urls:
             return False
@@ -51,6 +52,7 @@ class RepositoriesRegistry(WarehouseBaseRepo):
                 name=name,
                 path=path,
                 prereleases=self.prereleases,
+                from_config=from_config,
             ))
             return True
         elif '.' not in url:
@@ -69,7 +71,12 @@ class RepositoriesRegistry(WarehouseBaseRepo):
             cls = WarehouseAPIRepo
         else:
             cls = WarehouseSimpleRepo
-        repo = cls(name=name, url=url, prereleases=self.prereleases)
+        repo = cls(
+            name=name,
+            url=url,
+            prereleases=self.prereleases,
+            from_config=from_config,
+        )
         urls = {url, repo.url, repo.pretty_url}
         if urls & self._urls:
             return False
@@ -84,7 +91,7 @@ class RepositoriesRegistry(WarehouseBaseRepo):
             config = global_config
         added = []
         for url in config['warehouse']:
-            added.append(self.add_repo(url=url))
+            added.append(self.add_repo(url=url, from_config=True))
         return any(added)
 
     def make(self, name: str) -> 'RepositoriesRegistry':
