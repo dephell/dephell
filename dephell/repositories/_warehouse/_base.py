@@ -10,6 +10,7 @@ from dephell_markers import Markers
 from packaging.requirements import InvalidRequirement, Requirement
 
 from ..base import Interface
+from ...cached_property import cached_property
 
 
 try:
@@ -23,6 +24,10 @@ REX_WORD = re.compile('[a-zA-Z]+')
 
 
 class WarehouseBaseRepo(Interface):
+
+    @cached_property
+    def repos(self):
+        return [self]
 
     @staticmethod
     def _convert_deps(*, deps, name, version, extra):

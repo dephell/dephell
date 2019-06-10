@@ -9,8 +9,7 @@ from requests.exceptions import SSLError, ConnectionError
 
 from ..config import config
 from ..exceptions import PackageNotFoundError
-from ..repositories.base import Interface
-from ..repositories import WarehouseAPIRepo, WarehouseLocalRepo, WarehouseSimpleRepo
+from ..repositories import WarehouseAPIRepo, WarehouseBaseRepo, WarehouseLocalRepo, WarehouseSimpleRepo
 
 
 @lru_cache(maxsize=16)
@@ -26,7 +25,7 @@ def _has_api(url: str) -> bool:
 
 
 @attr.s()
-class RepositoriesRegistry(Interface):
+class RepositoriesRegistry(WarehouseBaseRepo):
     repos = attr.ib(factory=list)
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
 
