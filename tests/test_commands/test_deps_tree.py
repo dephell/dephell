@@ -3,10 +3,12 @@ import json
 from pathlib import Path
 
 # project
+import pytest
 from dephell.commands import DepsTreeCommand
 from dephell.config import Config
 
 
+@pytest.mark.allow_hosts(['pypi.org'])
 def test_deps_tree_command(temp_path: Path, capsys):
     config = Config()
     config.attach({

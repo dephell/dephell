@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 # external
+import pytest
 from dephell_venvs import VEnv
 
 # project
@@ -10,6 +11,7 @@ from dephell.commands import DepsInstallCommand
 from dephell.config import Config
 
 
+# @pytest.mark.allow_hosts(['pypi.org'])
 def test_deps_install_command(temp_path: Path):
     reqs_path = temp_path / 'requirements.txt'
     reqs_path.write_text('six==1.12.0')
