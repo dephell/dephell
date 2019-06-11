@@ -8,7 +8,7 @@ from dephell.commands import DepsTreeCommand
 from dephell.config import Config
 
 
-@pytest.mark.allow_hosts(['pypi.org'])
+@pytest.mark.allow_hosts()
 def test_deps_tree_command(temp_path: Path, capsys):
     config = Config()
     config.attach({

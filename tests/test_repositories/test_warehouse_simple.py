@@ -34,6 +34,7 @@ def test_get_releases():
     assert len(releases['0.7.0'].hashes) == 2
 
 
+@pytest.mark.allow_hosts()
 def test_extra():
     repo = WarehouseSimpleRepo(name='pypi', url=DEFAULT_WAREHOUSE)
 

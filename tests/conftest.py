@@ -19,7 +19,6 @@ class SocketConnectBlockedError(RuntimeError):
     pass
 
 
-# @pytest.fixture('session', autouse=True)
 @pytest.fixture()
 def socket_disabled():
     disable_socket()
@@ -76,3 +75,10 @@ def temp_path(tmp_path: Path):
         else:
             shutil.rmtree(str(path))
     yield tmp_path
+
+
+@pytest.fixture()
+def temp_cache(temp_path):
+    from dephell.config import config
+
+    config.attach({'cache': {'path': str(temp_path)}})

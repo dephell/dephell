@@ -36,7 +36,7 @@ def test_deps_outdated_command_file(temp_path: Path, capsys):
     assert output[0]['latest'] != '1.11.0'
 
 
-@pytest.mark.allow_hosts(['pypi.org'])
+@pytest.mark.allow_hosts()
 def test_deps_outdated_command_venv(temp_path: Path, capsys):
     venv_path = temp_path / 'venv'
     venv = VEnv(path=venv_path)
