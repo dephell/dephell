@@ -53,7 +53,7 @@ def pytest_runtest_teardown():
 
 def disable_socket():
     def guarded(*args, **kwargs):
-        raise SocketBlockedError
+        raise SocketBlockedError('use @pytest.mark.allow_hosts to unblock some hosts')
 
     socket.socket = guarded
 

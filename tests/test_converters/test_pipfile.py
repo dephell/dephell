@@ -2,6 +2,7 @@
 from pathlib import Path
 
 # external
+import pytest
 from dephell_links import VCSLink
 
 # project
@@ -11,6 +12,7 @@ from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
 
 
+@pytest.mark.allow_hosts()
 def test_load():
     converter = PIPFileConverter()
     root = converter.load(Path('tests') / 'requirements' / 'pipfile.toml')
@@ -28,6 +30,7 @@ def test_load():
     assert deps['requests'].envs == {'main'}
 
 
+@pytest.mark.allow_hosts()
 def test_load_git_based_dep():
     converter = PIPFileConverter()
     root = converter.load(Path('tests') / 'requirements' / 'pipfile.toml')
@@ -41,6 +44,7 @@ def test_load_git_based_dep():
     assert dep.link.name == 'django'
 
 
+@pytest.mark.allow_hosts()
 def test_dump():
     converter = PIPFileConverter()
     resolver = converter.load_resolver(Path('tests') / 'requirements' / 'pipfile.toml')
@@ -80,6 +84,7 @@ pkg4 = '*'
 """
 
 
+@pytest.mark.allow_hosts()
 def test_load_warehouse():
     converter = PIPFileConverter()
     root = converter.loads(WAREHOUSE_TEST)

@@ -8,7 +8,7 @@ from dephell.commands import PackageSearchCommand
 from dephell.config import Config
 
 
-@pytest.mark.allow_hosts(['pypi.org'])
+@pytest.mark.allow_hosts()
 def test_package_search_command(capsys):
     config = Config()
     config.attach({

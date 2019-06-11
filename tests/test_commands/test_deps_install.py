@@ -11,7 +11,7 @@ from dephell.commands import DepsInstallCommand
 from dephell.config import Config
 
 
-# @pytest.mark.allow_hosts(['pypi.org'])
+@pytest.mark.allow_hosts()
 def test_deps_install_command(temp_path: Path):
     reqs_path = temp_path / 'requirements.txt'
     reqs_path.write_text('six==1.12.0')

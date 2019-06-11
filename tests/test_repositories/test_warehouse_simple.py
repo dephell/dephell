@@ -22,6 +22,7 @@ def test_parse_name(fname, name, version):
     assert WarehouseSimpleRepo._parse_name(fname) == (name, version)
 
 
+@pytest.mark.allow_hosts()
 def test_get_releases():
     root = RootDependency()
     dep = DependencyMaker.from_requirement(source=root, req='dephell')[0]
