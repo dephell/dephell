@@ -19,42 +19,56 @@ class SocketConnectBlockedError(RuntimeError):
     pass
 
 
-@pytest.fixture()
-def socket_disabled():
-    disable_socket()
+def fake_socket(*args, **kwargs):
+    raise SocketBlockedError('use @pytest.mark.allow_hosts to unblock some hosts')
+
+
+def pytest_addoption(parser):
+    group = parser.getgroup('socket')
+    group.addoption(
+        '--no-network',
+        action='store_true',
+        help='Skip tests with network interactions.'
+    )
+    group.addoption(
+        '--allow-hosts',
+        dest='allow_hosts',
+        metavar='ALLOWED_HOSTS_CSV',
+        help='Only allow specified hosts through socket.socket.connect((host, port)).'
+    )
+
+
+@pytest.fixture(autouse=True)
+def no_network(request):
+    _setup(request)
     yield
+    socket.socket.connect = true_connect
     socket.socket = true_socket
 
 
-def pytest_runtest_setup(item):
+def _setup(request):
     """
     + socket disabled by default
     + @pytest.mark.allow_hosts() -- allow all connections
     + @pytest.mark.allow_hosts(['pypi,org']) -- allow pypi.org connections
     """
-    marker = item.get_closest_marker('allow_hosts')
-    hosts = None
+    marker = request.node.get_closest_marker('allow_hosts')
+
+    # block network if no marker
+    if not marker:
+        socket.socket = fake_socket
+        return
+
+    # skip marked tests if no network connection
+    if request.config.getoption('--no-network'):
+        pytest.skip('test requires network connection')
+
     # if test marked with allow_hosts and hosts specified
-    if marker and marker.args:
+    # allow only these hosts. Otherwise allow all hosts
+    if marker.args:
         hosts = marker.args[0]
-
-    if marker:  # if test marked with allow_hosts
-        if hosts is not None:  # if hosts are specified, allow only them
-            socket_allow_hosts(hosts)
-    else:  # if test not marked, disable socket at all
-        disable_socket()
-
-
-def pytest_runtest_teardown():
-    socket.socket.connect = true_connect
-    socket.socket = true_socket
-
-
-def disable_socket():
-    def guarded(*args, **kwargs):
-        raise SocketBlockedError('use @pytest.mark.allow_hosts to unblock some hosts')
-
-    socket.socket = guarded
+        socket_allow_hosts(hosts)
+        return
 
 
 def socket_allow_hosts(allowed=None):
