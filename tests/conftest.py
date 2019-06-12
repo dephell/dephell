@@ -82,3 +82,9 @@ def temp_cache(temp_path):
     from dephell.config import config
 
     config.attach({'cache': {'path': str(temp_path)}})
+
+
+@pytest.fixture
+def requirements_dir() -> Path:
+    """ Return the absolute Path to 'tests/requirements' """
+    return Path(__file__).parent / Path('requirements')
