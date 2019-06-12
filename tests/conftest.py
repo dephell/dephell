@@ -28,13 +28,7 @@ def pytest_addoption(parser):
     group.addoption(
         '--no-network',
         action='store_true',
-        help='Skip tests with network interactions.'
-    )
-    group.addoption(
-        '--allow-hosts',
-        dest='allow_hosts',
-        metavar='ALLOWED_HOSTS_CSV',
-        help='Only allow specified hosts through socket.socket.connect((host, port)).'
+        help='skip tests with network interactions',
     )
 
 
