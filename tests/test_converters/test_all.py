@@ -11,6 +11,7 @@ from dephell.controllers import Graph, RepositoriesRegistry, DependencyMaker
 from dephell.models import Requirement, RootDependency
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path', [
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'attrs-requests.txt'),
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'django-deal.txt'),
@@ -71,6 +72,7 @@ def test_load_dump_load_deps(converter, path):
         assert req1.dep.envs == req2.dep.envs
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path, exclude', [
     (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml', ['raw_name']),
     (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json', ['raw_name', 'python']),
@@ -99,6 +101,7 @@ def test_load_dump_load_metainfo(converter, path, exclude):
     assert attr.asdict(root1) == attr.asdict(root2)
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path', [
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'attrs-requests.txt'),
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'django-deal.txt'),
@@ -130,6 +133,7 @@ def test_idempotency(converter, path):
     assert content1 == content2
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter', [
     # converters.PIPConverter(lock=False),
 

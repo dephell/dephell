@@ -40,5 +40,11 @@ matrix:
         - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback
         - dephell deps install --env=$ENV --level=DEBUG --traceback
 
+    - name: offline
+      python: "3.7"
+      env: ENV=pytest
+      script:
+        - dephell venv run --env=$ENV pytest --no-network tests/
+
     - python: "3.7"
       env: ENV=flake8

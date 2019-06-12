@@ -1,8 +1,15 @@
 # dephell deps convert
 
-Convert dependencies between formats. Dephell will automagically lock them if needed and resolve all conflicts. Dependency resolution is the strongest side of the DepHell, pip and pipenv has no any dependency resolution that would be smart enough.
+Convert dependencies between formats. Dephell will automagically lock them if needed and resolve all conflicts.
 
-You can specify input and output in three different ways:
+Dephell uses four pieces of information for conversion:
+
+1. `--from-format`: The format to convert from (e.g. `poetry`)
+1. `--from-path`: The path to the file to read from (e.g. `pyproject.toml`)
+1. `--to-format`: The format to convert to (e.g. `setuppy`)
+1. `--to-path`: The path to the file where the result should be put (e.g. `setup.py`). You can provide the special case 'stdout' to this option to output to the screen instead of a file.
+    
+Dephell can try to guess the formats or paths you want to use given the other piece of information, giving you three different ways to specify what you want:
 
 1. Explicitly specify path and format: `--from-format=poetry --from-path=pyproject.toml` and `--to-format=setuppy --to-path=setup.py`.
 1. Specify only path: `--from=pyproject.toml` and `--to=setup.py`.
@@ -61,6 +68,12 @@ And after that DepHell will automatically detect your dependencies file:
 $ dephell deps convert
 ```
 
+You can still override this config for one-off actions:
+
+```bash
+$ dephell deps convert --to requirements.txt
+```
+
 See [configuration documentation](config) for more details.
 
 ## More examples
@@ -75,6 +88,7 @@ You can convert anything to anything:
 1. Generate setup.py for poetry (to make project backward compatible with setuptools): `dephell deps convert --from=pyproject.toml --to=setup.py`
 1. Generate requirements.txt from Pipfile to work on a pipenv-based project without pipenv: `dephell deps convert --from=Pipenv --to=requirements.txt`
 1. Generate requirements.txt from poetry to work on a poetry-based project without poetry: `dephell deps convert --from=pyproject.toml --to=requirements.txt`
+1. Pipe poetry requirements into pip for installation in a custom environment: `pip install -r <(dephell deps convert --to-path stdout --to-format pip)`
 
 ## Filter dependencies
 
