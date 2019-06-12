@@ -22,6 +22,7 @@ def test_parse_name(fname, name, version):
     assert WarehouseSimpleRepo._parse_name(fname) == (name, version)
 
 
+@pytest.mark.allow_hosts()
 def test_get_releases():
     root = RootDependency()
     dep = DependencyMaker.from_requirement(source=root, req='dephell')[0]
@@ -33,6 +34,7 @@ def test_get_releases():
     assert len(releases['0.7.0'].hashes) == 2
 
 
+@pytest.mark.allow_hosts()
 def test_extra():
     repo = WarehouseSimpleRepo(name='pypi', url=DEFAULT_WAREHOUSE)
 

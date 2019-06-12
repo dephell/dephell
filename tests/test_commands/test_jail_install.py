@@ -2,6 +2,7 @@
 from pathlib import Path
 
 # external
+import pytest
 from dephell_venvs import VEnv
 
 # project
@@ -9,6 +10,7 @@ from dephell.commands import JailInstallCommand
 from dephell.config import Config
 
 
+@pytest.mark.allow_hosts()
 def test_jail_install_command(temp_path: Path):
     venv_path = temp_path / 'venv'
     bin_path = temp_path / 'bin'

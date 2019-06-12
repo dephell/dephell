@@ -1,11 +1,14 @@
 # built-in
 import json
 
+import pytest
+
 # project
 from dephell.commands import PackageDownloadsCommand
 from dephell.config import Config
 
 
+@pytest.mark.allow_hosts()
 def test_package_downloads_command(capsys):
     config = Config()
     config.attach({

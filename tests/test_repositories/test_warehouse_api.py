@@ -1,6 +1,8 @@
 # built-in
 import asyncio
 
+import pytest
+
 # project
 from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.repositories import WarehouseAPIRepo
@@ -9,6 +11,7 @@ from dephell.repositories import WarehouseAPIRepo
 loop = asyncio.get_event_loop()
 
 
+@pytest.mark.allow_hosts()
 def test_extra():
     repo = WarehouseAPIRepo(name='pypi', url=DEFAULT_WAREHOUSE)
 
@@ -27,6 +30,7 @@ def test_extra():
     assert 'cryptography' in deps
 
 
+@pytest.mark.allow_hosts()
 def test_info_from_files():
     repo = WarehouseAPIRepo(name='pypi', url=DEFAULT_WAREHOUSE)
     coroutine = repo.get_dependencies(name='m2r', version='0.2.1')

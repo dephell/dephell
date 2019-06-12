@@ -3,6 +3,7 @@ import pytest
 from dephell.converters import ImportsConverter
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('lines, expected', [
     (['from django import forms'], {'Django'}),
     (['from django.forms import Form'], {'Django'}),    # import from
@@ -18,6 +19,7 @@ def test_imports_parser(lines, expected):
     assert modules == expected
 
 
+@pytest.mark.allow_hosts()
 def test_imports_load():
     converter = ImportsConverter()
     root = converter.load(path='dephell')
