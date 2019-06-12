@@ -19,3 +19,4 @@ pip-wheel-metadata/
 
 /README.rst
 .idea
+.venv/

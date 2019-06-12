@@ -14,3 +14,9 @@ def temp_path(tmp_path: Path):
         else:
             shutil.rmtree(str(path))
     yield tmp_path
+
+
+@pytest.fixture
+def requirements_dir() -> Path:
+    """ Return the absolute Path to 'tests/requirements' """
+    return Path(__file__).parent / Path('requirements')
