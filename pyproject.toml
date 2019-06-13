@@ -43,6 +43,13 @@ tests = ["tests", "README.md"]
 # run command `pytest`
 command = "pytest tests/"
 
+# Test installation using poetry:
+[tool.dephell.poetry]
+# read dependencies from poetry format
+from = {format = "poetry", path = "pyproject.toml"}
+# run command `poetry install`
+command = "poetry install -vvv"
+
 [tool.dephell.pypy]
 from = {format = "poetry", path = "pyproject.toml"}
 # force python interpreter for env
