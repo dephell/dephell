@@ -141,7 +141,7 @@ yapf = {version = "*", optional = true}
 
 # dephell ecosystem
 dephell-archive   = ">=0.1.5"
-dephell-discover  = ">=0.2.4"
+dephell-discover  = ">=0.2.6"
 dephell-licenses  = ">=0.1.6"
 dephell-links     = ">=0.1.4"
 dephell-markers   = ">=0.2.6"
@@ -156,8 +156,8 @@ sphinx = "*"
 recommonmark = "*"
 sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
-flake8 = "^3.7"
-pre-commit = "^1.17"
+flake8 = "*"
+pre-commit = "*"
 
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
