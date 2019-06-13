@@ -157,6 +157,7 @@ recommonmark = "*"
 sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
 flake8 = "^3.7"
+pre-commit = "^1.17"
 
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
