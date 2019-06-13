@@ -133,11 +133,11 @@ tomlkit = "*"
 yaspin = "*"
 
 # optional
-aiofiles = {version = "*" ,optional = true}
-autopep8 = {version = "*" ,optional = true}
-colorama = {version = "*" ,optional = true}
-graphviz = {version = "*" ,optional = true}
-yapf = {version = "*" ,optional = true}
+aiofiles = {version = "*", optional = true}
+autopep8 = {version = "*", optional = true}
+colorama = {version = "*", optional = true}
+graphviz = {version = "*", optional = true}
+yapf = {version = "*", optional = true}
 
 # dephell ecosystem
 dephell-archive   = ">=0.1.5"
