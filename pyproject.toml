@@ -156,6 +156,7 @@ sphinx = "*"
 recommonmark = "*"
 sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
+flake8 = "^3.7"
 
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
