@@ -156,7 +156,6 @@ sphinx = "*"
 recommonmark = "*"
 sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
-flake8 = "*"
 pre-commit = "*"
 
 [tool.poetry.extras]
