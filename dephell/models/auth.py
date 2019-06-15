@@ -15,7 +15,7 @@ class Auth(HTTPBasicAuth):
     # for requests
     def __call__(self, request):
         # additional check to prevent lack of creds
-        if urlparse.urlparse(request.url).hostname != self.hostname:
+        if urlparse(request.url).hostname != self.hostname:
             return request
 
         request.headers['Authorization'] = self.encode()

@@ -5,6 +5,7 @@ from pathlib import Path
 
 # external
 import pytest
+import requests_mock as _requests_mock
 
 
 true_socket = socket.socket
@@ -96,3 +97,8 @@ def temp_cache(temp_path):
 def requirements_dir() -> Path:
     """ Return the absolute Path to 'tests/requirements' """
     return Path(__file__).parent / Path('requirements')
+
+
+@pytest.fixture
+def fixtures_path() -> Path:
+    return Path(__file__).parent / Path('fixtures')

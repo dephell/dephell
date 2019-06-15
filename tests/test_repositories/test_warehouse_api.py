@@ -5,6 +5,8 @@ import pytest
 
 # project
 from dephell.constants import DEFAULT_WAREHOUSE
+from dephell.controllers import DependencyMaker
+from dephell.models import RootDependency, Auth
 from dephell.repositories import WarehouseAPIRepo
 
 
@@ -37,3 +39,36 @@ def test_info_from_files():
     deps = loop.run_until_complete(asyncio.gather(coroutine))[0]
     deps = {dep.name: dep for dep in deps}
     assert set(deps) == {'mistune', 'docutils'}
+
+
+def test_get_releases(requests_mock, temp_cache, fixtures_path):
+    url = 'https://pypi.org/pypi/'
+    text = (fixtures_path / 'warehouse-api-response.json').read_text()
+    requests_mock.get(url + 'dephell-shells/json', text=text)
+
+    root = RootDependency()
+    dep = DependencyMaker.from_requirement(source=root, req='dephell-shells')[0]
+    repo = WarehouseAPIRepo(name='pypi', url=url)
+    releases = repo.get_releases(dep=dep)
+
+    assert requests_mock.call_count == 1
+    assert len(releases) == 4
+
+
+def test_get_releases_auth(requests_mock, temp_cache, fixtures_path):
+    url = 'https://custom.pypi.org/pypi/'
+    text = (fixtures_path / 'warehouse-api-response.json').read_text()
+    requests_mock.get(url + 'dephell-shells/json', text=text)
+
+    root = RootDependency()
+    dep = DependencyMaker.from_requirement(source=root, req='dephell-shells')[0]
+    repo = WarehouseAPIRepo(name='pypi', url=url, auth=Auth(
+        hostname='custom.pypi.org',
+        username='gram',
+        password='test',
+    ))
+    releases = repo.get_releases(dep=dep)
+
+    assert requests_mock.call_count == 1
+    assert len(releases) == 4
+    assert requests_mock.last_request.headers['Authorization'] == 'Basic Z3JhbTp0ZXN0'

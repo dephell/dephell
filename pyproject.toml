@@ -38,6 +38,8 @@ command = "mypy --ignore-missing-imports --allow-redefinition dephell"
 [tool.dephell.pytest]
 # read dependencies from poetry format
 from = {format = "poetry", path = "pyproject.toml"}
+# install dependencies from `dependencies` section and `tests` extra
+envs = ['main', 'tests']
 # copy files that requred for tests
 tests = ["tests", "README.md"]
 # run command `pytest`
