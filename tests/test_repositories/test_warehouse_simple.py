@@ -4,7 +4,7 @@ import pytest
 
 from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.controllers import DependencyMaker
-from dephell.models import RootDependency
+from dephell.models import Auth, RootDependency
 from dephell.repositories import WarehouseSimpleRepo
 
 
@@ -51,3 +51,37 @@ def test_extra():
     assert 'chardet' not in deps
     assert 'win-inet-pton' not in deps
     assert 'cryptography' in deps
+
+
+def test_get_releases_mocked(requests_mock, temp_cache, fixtures_path):
+    url = 'https://artifactory.example.org/pypi/'
+    text = (fixtures_path / 'warehouse-simple.html').read_text()
+    requests_mock.get(url + 'dephell-shells/', text=text)
+
+    root = RootDependency()
+    dep = DependencyMaker.from_requirement(source=root, req='dephell-shells')[0]
+    repo = WarehouseSimpleRepo(name='pypi', url=url)
+    releases = repo.get_releases(dep=dep)
+
+    assert requests_mock.call_count == 1
+    assert len(releases) == 4
+
+
+def test_get_releases_auth(requests_mock, temp_cache, fixtures_path):
+    url = 'https://artifactory.example.org/pypi/'
+    text = (fixtures_path / 'warehouse-simple.html').read_text()
+    requests_mock.get(url + 'dephell-shells/', text=text)
+
+    root = RootDependency()
+    dep = DependencyMaker.from_requirement(source=root, req='dephell-shells')[0]
+    auth = Auth(
+        hostname='artifactory.example.org',
+        username='gram',
+        password='test',
+    )
+    repo = WarehouseSimpleRepo(name='pypi', url=url, auth=auth)
+    releases = repo.get_releases(dep=dep)
+
+    assert requests_mock.call_count == 1
+    assert len(releases) == 4
+    assert requests_mock.last_request.headers['Authorization'] == 'Basic Z3JhbTp0ZXN0'
