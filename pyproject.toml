@@ -45,6 +45,13 @@ tests = ["tests", "README.md"]
 # run command `pytest`
 command = "pytest tests/"
 
+# Test installation using poetry:
+[tool.dephell.poetry]
+# read dependencies from poetry format
+from = {format = "poetry", path = "pyproject.toml"}
+# run command `poetry install`
+command = "poetry install -vvv"
+
 [tool.dephell.pypy]
 from = {format = "poetry", path = "pyproject.toml"}
 # force python interpreter for env
@@ -128,15 +135,15 @@ tomlkit = "*"
 yaspin = "*"
 
 # optional
-aiofiles = {optional = true}
-autopep8 = {optional = true}
-colorama = {optional = true}
-graphviz = {optional = true}
-yapf = {optional = true}
+aiofiles = {version = "*", optional = true}
+autopep8 = {version = "*", optional = true}
+colorama = {version = "*", optional = true}
+graphviz = {version = "*", optional = true}
+yapf = {version = "*", optional = true}
 
 # dephell ecosystem
 dephell-archive   = ">=0.1.5"
-dephell-discover  = ">=0.2.4"
+dephell-discover  = ">=0.2.6"
 dephell-licenses  = ">=0.1.6"
 dephell-links     = ">=0.1.4"
 dephell-markers   = ">=0.2.6"
@@ -154,6 +161,7 @@ sphinx = "*"
 recommonmark = "*"
 sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
+pre-commit = "*"
 
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]

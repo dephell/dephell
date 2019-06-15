@@ -350,8 +350,5 @@ class PoetryConverter(BaseConverter):
         # if we have only version, return string instead of table
         if tuple(result.value) == ('version', ):
             return result['version']
-        # do not specify version explicit
-        if result['version'] == '*':
-            del result['version']
 
         return result

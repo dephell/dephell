@@ -1,0 +1,4 @@
+- repo: https://github.com/mverteuil/precommit-dephell
+  rev: master
+  hooks:
+    - id: dephell
