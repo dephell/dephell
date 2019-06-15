@@ -121,14 +121,15 @@ class RootDependency:
         if root.raw_name == 'root' and root.package.packages:
             root.raw_name = root.package.packages[0].module
         info = root.package.metainfo
-        if root.version == '0.0.0' and info.version:
-            root.version = info.version
-        if not root.description and info.summary:
-            root.description = info.summary
-        if not root.license and info.license:
-            root.license = info.license
-        if not root.authors and info.authors:
-            root.authors = tuple(Author.parse(author) for author in info.authors)
+        if info:
+            if root.version == '0.0.0' and info.version:
+                root.version = info.version
+            if not root.description and info.summary:
+                root.description = info.summary
+            if not root.license and info.license:
+                root.license = info.license
+            if not root.authors and info.authors:
+                root.authors = tuple(Author.parse(author) for author in info.authors)
 
         return root
 
