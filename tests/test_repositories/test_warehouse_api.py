@@ -104,4 +104,4 @@ def test_get_deps_auth(asyncio_mock, temp_cache, fixtures_path):
     assert set(deps) == {'attrs', 'pexpect', 'shellingham'}
     assert len(asyncio_mock.requests) == 1
     client = list(asyncio_mock.requests.values())[0][0].args[0]
-    assert client._default_auth is auth
+    assert client._default_headers['authorization'] == 'Basic Z3JhbTp0ZXN0'

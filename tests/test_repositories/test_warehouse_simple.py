@@ -85,3 +85,38 @@ def test_get_releases_auth(requests_mock, temp_cache, fixtures_path):
     assert requests_mock.call_count == 1
     assert len(releases) == 4
     assert requests_mock.last_request.headers['Authorization'] == 'Basic Z3JhbTp0ZXN0'
+
+
+@pytest.mark.allow_hosts()  # to download archive
+def test_get_deps(requests_mock, temp_cache, fixtures_path):
+    url = 'https://custom.pypi.org/'
+    text = (fixtures_path / 'warehouse-simple.html').read_text()
+    requests_mock.get(url + 'dephell-shells/', text=text)
+
+    repo = WarehouseSimpleRepo(name='pypi', url=url)
+    coroutine = repo.get_dependencies(name='dephell-shells', version='0.1.2')
+    deps = loop.run_until_complete(asyncio.gather(coroutine))[0]
+    deps = {dep.name: dep for dep in deps}
+    assert set(deps) == {'attrs', 'pexpect', 'shellingham'}
+    assert requests_mock.call_count == 1
+
+
+@pytest.mark.allow_hosts()  # to download archive
+def test_get_deps_auth(requests_mock, temp_cache, fixtures_path):
+    url = 'https://custom.pypi.org/'
+    text = (fixtures_path / 'warehouse-simple.html').read_text()
+    requests_mock.get(url + 'dephell-shells/', text=text)
+
+    auth = Auth(
+        hostname='custom.pypi.org',
+        username='gram',
+        password='test',
+    )
+    repo = WarehouseSimpleRepo(name='pypi', url=url, auth=auth)
+    coroutine = repo.get_dependencies(name='dephell-shells', version='0.1.2')
+    deps = loop.run_until_complete(asyncio.gather(coroutine))[0]
+    deps = {dep.name: dep for dep in deps}
+
+    assert set(deps) == {'attrs', 'pexpect', 'shellingham'}
+    assert requests_mock.call_count == 1
+    assert requests_mock.last_request.headers['Authorization'] == 'Basic Z3JhbTp0ZXN0'

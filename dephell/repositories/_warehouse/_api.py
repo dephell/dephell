@@ -229,7 +229,10 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
     async def _get_from_json(self, *, name, version):
         url = urljoin(self.url, posixpath.join(name, str(version), 'json'))
-        async with ClientSession(auth=self.auth) as session:
+        headers = dict()
+        if self.auth:
+            headers['Authorization'] = self.auth.encode()
+        async with ClientSession(headers=headers) as session:
             async with session.get(url) as response:
                 if response.status == 404:
                     raise PackageNotFoundError(package=name, url=url)
