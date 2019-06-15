@@ -5,7 +5,7 @@ from pathlib import Path
 
 # external
 import pytest
-import requests_mock as _requests_mock
+from aioresponses import aioresponses
 
 
 true_socket = socket.socket
@@ -102,3 +102,15 @@ def requirements_dir() -> Path:
 @pytest.fixture
 def fixtures_path() -> Path:
     return Path(__file__).parent / Path('fixtures')
+
+
+class PatchedAIOResponses(aioresponses):
+    async def _request_mock(self, orig_self, method, url, *args, **kwargs):
+        # add `orig_self` (original `ClientSession`) into `args`
+        return await super()._request_mock(orig_self, method, url, orig_self, *args, **kwargs)
+
+
+@pytest.fixture
+def asyncio_mock() -> PatchedAIOResponses:
+    with PatchedAIOResponses() as mock:
+        yield mock
