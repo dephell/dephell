@@ -1,0 +1,6 @@
+{
+  "extends": "base-config.json",
+
+  "MD013": false,
+  "MD014": false
+}
