@@ -25,8 +25,8 @@ matrix:
       env: ENV=pytest
     - python: "3.7"
       env: ENV=pytest
-    - python: "3.8-dev"
-      env: ENV=pytest
+    # - python: "3.8-dev"
+    #   env: ENV=pytest
     - python: "pypy3.5"
       env: ENV=pytest
 
@@ -51,4 +51,3 @@ matrix:
 
     - python: "3.7"
       env: ENV=poetry
-
