@@ -38,16 +38,8 @@
     :maxdepth: 1
     :caption: Dive deeper
 
+    index-use
     badge
     changelog
     hell
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Recipes and examples
-
-    use-git-hook
-    use-tree-git
-    use-poetry-lock
-    use-licenses
 ```
