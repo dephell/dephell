@@ -1,4 +1,4 @@
-# inspect: info about environment
+# **inspect**: info about environment
 
 Commands to get information about environment: [dephell config](cmd-inspect-config), [dephell ecosystem versions](cmd-inspect-self), [virtual environment](cmd-inspect-venv).
 

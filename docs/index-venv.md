@@ -1,4 +1,4 @@
-# venv: virtual environments
+# **venv**: virtual environments
 
 Commands to manage virtual environments for the project: [create](cmd-venv-create), and [destroy](cmd-venv-destroy), [activate](cmd-venv-shell), [run commands inside](cmd-venv-run). Most important thing here is you can have as much separated environments for one project as you want. DepHell make it really cheap.
 

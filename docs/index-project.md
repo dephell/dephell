@@ -1,4 +1,4 @@
-# project: make releases
+# **project**: make releases
 
 Commands to manage project: [run tests](cmd-project-test) into separated environment, [bump version](cmd-project-bump), [build packages](cmd-project-build).
 

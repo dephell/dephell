@@ -1,4 +1,4 @@
-# package: single package actions
+# **package**: single package actions
 
 Commands to work with single packages.
 

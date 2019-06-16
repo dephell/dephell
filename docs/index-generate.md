@@ -1,4 +1,4 @@
-# generate: files generation
+# **generate**: files generation
 
 Commands to generate useful files based on project metadata: [AUTHORS](cmd-generate-authors), [pyproject.toml](cmd-generate-config), [.editorconfig](cmd-generate-editorconfig), [LICENSE](cmd-generate-license), [.travis.yml](cmd-generate-travis).
 

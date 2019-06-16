@@ -1,4 +1,4 @@
-# jail: CLI tools management
+# **jail**: CLI tools management
 
 Commands to manage CLI tools (like [httpie](https://httpie.org/)) to keep them into isolated virtual environment: [install](cmd-jail-install), [show installed](cmd-jail-list), [remove](cmd-jail-remove), [try some lib or tool without installation](cmd-jail-try).
 
