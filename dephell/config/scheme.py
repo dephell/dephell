@@ -46,7 +46,7 @@ SCHEME = {
     ),
 
     # api
-    'warehouse':    dict(type='list', required=False, empty=False),
+    'warehouse':    dict(type='list', required=False, empty=True),
     'bitbucket':    dict(type='string', required=True),
     'repo':         dict(type='string', required=False, allowed=REPOSITORIES),
 

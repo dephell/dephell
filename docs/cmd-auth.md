@@ -27,5 +27,6 @@ Credentials are stored in global config. If you add credentials for `example.com
 
 ## See also
 
+1. [Private PyPI repository](use-warehouse) usage details and examples.
 1. [dephell inspect auth](cmd-inspect-auth) to list added credentials.
 1. [dephell deps install](cmd-deps-install) to install dependencies from private repository.
