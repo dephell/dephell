@@ -15,7 +15,6 @@ install:
   - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python" --level=DEBUG --traceback
   - dephell deps install --env=$ENV --level=DEBUG --traceback
 script:
-  - ls "/Users/travis/Library/Application Support/dephell/venvs/dephell-24n7/pytest/bin/" || true
   - dephell venv run --env=$ENV --level=DEBUG --traceback
 
 matrix:
@@ -26,8 +25,8 @@ matrix:
       env: ENV=pytest
     - python: "3.7"
       env: ENV=pytest
-    - python: "3.8-dev"
-      env: ENV=pytest
+    # - python: "3.8-dev"
+    #   env: ENV=pytest
     - python: "pypy3.5"
       env: ENV=pytest
 
