@@ -43,7 +43,7 @@ envs = ["main", "tests"]
 # copy files that requred for tests
 tests = ["tests", "README.md"]
 # run command `pytest`
-command = "pytest tests/"
+command = "python -m pytest tests/"
 
 # Test installation using poetry:
 [tool.dephell.poetry]
