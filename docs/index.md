@@ -10,6 +10,18 @@
 + [Discover licenses](cmd-deps-licenses) of all project dependencies, show [outdated](cmd-deps-outdated) packages, [find security issues](cmd-deps-audit).
 + Generate [.editorconfig](cmd-generate-editorconfig), [LICENSE](cmd-generate-license), [AUTHORS](cmd-generate-authors), [.travis.yml](cmd-generate-travis).
 
+## Quick start
+
+1. [Install](installation) DepHell.
+1. [Convert](cmd-deps-convert) dependencies from one format to another.
+1. [Make config](config) for DepHell to simplify commands.
+
+And that's it! Now you can use any tools with any Python project. Every other commands build around ability to read project dependencies and metadata and resolve conflicts. When you ready to boost your productivity, read how to manage your environment with DepHell:
+
+1. [Create virtual environment](cmd-venv-create).
+1. [Install](cmd-deps-install) or [synchronize](cmd-deps-sync) dependencies.
+1. [Run](cmd-venv-run) commands inside or [activate virtual environment](cmd-venv-shell).
+
 ```eval_rst
 .. toctree::
     :maxdepth: 1
@@ -22,7 +34,7 @@
     python-lookup
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Commands
 
     index-deps
