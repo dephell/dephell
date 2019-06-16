@@ -40,6 +40,13 @@ matrix:
         - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback
         - dephell deps install --env=$ENV --level=DEBUG --traceback
 
+    # https://github.com/igorshubovych/markdownlint-cli
+    - name: markdown lint
+      install:
+        - npm install -g markdownlint-cli
+      script:
+        - bash -c "markdownlint --config markdownlint.json **/*.md"
+
     - name: offline
       python: "3.7"
       env: ENV=pytest
@@ -51,4 +58,3 @@ matrix:
 
     - python: "3.7"
       env: ENV=poetry
-
