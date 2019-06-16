@@ -22,96 +22,24 @@
     python-lookup
 
 .. toctree::
-    :maxdepth: 1
-    :caption: Project dependencies
+    :maxdepth: 2
+    :caption: Commands
 
-    cmd-deps-add
-    cmd-deps-audit
-    cmd-deps-check
-    cmd-deps-convert
-    cmd-deps-install
-    cmd-deps-licenses
-    cmd-deps-outdated
-    cmd-deps-sync
-    cmd-deps-tree
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Files generation
-
-    cmd-generate-authors
-    cmd-generate-config
-    cmd-generate-editorconfig
-    cmd-generate-license
-    cmd-generate-travis
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Inspect
-
-    cmd-inspect-config
-    cmd-inspect-self
-    cmd-inspect-venv
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Isolation
-
-    cmd-jail-install
-    cmd-jail-list
-    cmd-jail-remove
-    cmd-jail-try
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Single package actions
-
-    cmd-package-downloads
-    cmd-package-install
-    cmd-package-list
-    cmd-package-purge
-    cmd-package-releases
-    cmd-package-remove
-    cmd-package-search
-    cmd-package-show
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Project
-
-    cmd-project-build
-    cmd-project-bump
-    cmd-project-test
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Virtual environment
-
-    cmd-venv-create
-    cmd-venv-destroy
-    cmd-venv-run
-    cmd-venv-shell
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Other commands
-
-    cmd-autocomplete
+    index-deps
+    index-generate
+    index-inspect
+    index-jail
+    index-package
+    index-project
+    index-venv
+    index-other
 
 .. toctree::
     :maxdepth: 1
     :caption: Dive deeper
 
+    index-use
     badge
     changelog
     hell
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Recipes and examples
-
-    use-git-hook
-    use-tree-git
-    use-poetry-lock
-    use-licenses
 ```
