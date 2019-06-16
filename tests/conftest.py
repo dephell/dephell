@@ -5,6 +5,7 @@ from pathlib import Path
 
 # external
 import pytest
+from aioresponses import aioresponses
 
 
 true_socket = socket.socket
@@ -96,3 +97,20 @@ def temp_cache(temp_path):
 def requirements_dir() -> Path:
     """ Return the absolute Path to 'tests/requirements' """
     return Path(__file__).parent / Path('requirements')
+
+
+@pytest.fixture
+def fixtures_path() -> Path:
+    return Path(__file__).parent / Path('fixtures')
+
+
+class PatchedAIOResponses(aioresponses):
+    async def _request_mock(self, orig_self, method, url, *args, **kwargs):
+        # add `orig_self` (original `ClientSession`) into `args`
+        return await super()._request_mock(orig_self, method, url, orig_self, *args, **kwargs)
+
+
+@pytest.fixture
+def asyncio_mock() -> PatchedAIOResponses:
+    with PatchedAIOResponses() as mock:
+        yield mock

@@ -6,7 +6,7 @@ from sys import argv
 from typing import List
 
 # app
-from .commands import commands
+from .commands import COMMANDS
 from .constants import ReturnCodes
 from .exceptions import ExtraException
 
@@ -28,7 +28,7 @@ class PatchedParser(ArgumentParser):
         formatter.add_text(self.epilog)
 
         formatter.start_section('commands')
-        for name, command in sorted(commands.items()):
+        for name, command in sorted(COMMANDS.items()):
             descr = command.get_parser().description.split('\n')[0]
             formatter.add_argument(Action([name], '', help=descr))
         formatter.end_section()
@@ -39,7 +39,7 @@ class PatchedParser(ArgumentParser):
 parser = PatchedParser(
     description='Manage dependencies, projects, virtual environments.',
 )
-parser.add_argument('command', choices=commands.keys(), nargs='?', help='command to execute')
+parser.add_argument('command', choices=COMMANDS.keys(), nargs='?', help='command to execute')
 
 
 def main(argv: List[str]) -> int:
@@ -47,7 +47,7 @@ def main(argv: List[str]) -> int:
     for size, direction in ((1, 1), (2, 1), (2, -1)):
         command_name = ' '.join(argv[:size][::direction])
         command_args = argv[size:]
-        if command_name in commands:
+        if command_name in COMMANDS:
             break
     else:
         args = parser.parse_args(argv[:1])
@@ -57,7 +57,7 @@ def main(argv: List[str]) -> int:
         command_args = argv[1:]
 
     # get and init command object
-    command = commands[command_name]
+    command = COMMANDS[command_name]
     try:
         task = command(command_args)
     except KeyError as e:  # env not found

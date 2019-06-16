@@ -2,17 +2,15 @@
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
-from urllib.parse import urlparse
 
 # external
 import tomlkit
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..config import config
 from ..controllers import DependencyMaker, Readme, RepositoriesRegistry
 from ..models import Author, Constraint, Dependency, EntryPoint, RootDependency
-from ..repositories import get_repo, WarehouseLocalRepo
+from ..repositories import get_repo, WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -110,10 +108,9 @@ class PoetryConverter(BaseConverter):
             repo = RepositoriesRegistry()
             for source in section['source']:
                 repo.add_repo(url=source['url'], name=source['name'])
-            for url in config['warehouse']:
-                repo.add_repo(url=url)
+            repo.attach_config()
             for dep in deps:
-                if isinstance(dep.repo, RepositoriesRegistry):
+                if isinstance(dep.repo, WarehouseBaseRepo):
                     dep.repo = repo
 
         root.attach_dependencies(deps)
@@ -263,12 +260,12 @@ class PoetryConverter(BaseConverter):
         # get repositories
         urls = dict()
         for req in reqs:
-            if not isinstance(req.dep.repo, RepositoriesRegistry):
+            if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
             for repo in req.dep.repo.repos:
-                if isinstance(repo, WarehouseLocalRepo):
+                if repo.from_config:
                     continue
-                if urlparse(repo.pretty_url).hostname in ('pypi.org', 'pypi.python.org'):
+                if isinstance(repo, WarehouseLocalRepo):
                     continue
                 urls[repo.name] = repo.pretty_url
 

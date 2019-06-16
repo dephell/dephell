@@ -6,6 +6,7 @@ There are some real-world examples, recipes and hacks how to use DepHell for dif
 .. toctree::
     :maxdepth: 1
 
+    use-warehouse
     use-git-hook
     use-tree-git
     use-poetry-lock

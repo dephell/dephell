@@ -1,4 +1,5 @@
 # app
+from .auth import AuthCommand
 from .autocomplete import AutocompleteCommand
 from .deps_add import DepsAddCommand
 from .deps_audit import DepsAuditCommand
@@ -14,6 +15,7 @@ from .generate_config import GenerateConfigCommand
 from .generate_editorconfig import GenerateEditorconfigCommand
 from .generate_license import GenerateLicenseCommand
 from .generate_travis import GenerateTravisCommand
+from .inspect_auth import InspectAuthCommand
 from .inspect_config import InspectConfigCommand
 from .inspect_gadget import InspectGadgetCommand
 from .inspect_self import InspectSelfCommand
@@ -39,51 +41,10 @@ from .venv_run import VenvRunCommand
 from .venv_shell import VenvShellCommand
 
 
-__all__ = [
-    'AutocompleteCommand',
-    'commands',
-    'DepsAddCommand',
-    'DepsAuditCommand',
-    'DepsCheckCommand',
-    'DepsConvertCommand',
-    'DepsInstallCommand',
-    'DepsLicensesCommand',
-    'DepsOutdatedCommand',
-    'DepsSyncCommand',
-    'DepsTreeCommand',
-    'GenerateAuthorsCommand',
-    'GenerateConfigCommand',
-    'GenerateEditorconfigCommand',
-    'GenerateLicenseCommand',
-    'GenerateTravisCommand',
-    'InspectConfigCommand',
-    'InspectGadgetCommand',
-    'InspectSelfCommand',
-    'InspectVenvCommand',
-    'JailInstallCommand',
-    'JailListCommand',
-    'JailRemoveCommand',
-    'JailTryCommand',
-    'PackageDownloadsCommand',
-    'PackageInstallCommand',
-    'PackageListCommand',
-    'PackagePurgeCommand',
-    'PackageReleasesCommand',
-    'PackageRemoveCommand',
-    'PackageSearchCommand',
-    'PackageShowCommand',
-    'ProjectBuildCommand',
-    'ProjectBumpCommand',
-    'ProjectTestCommand',
-    'VenvCreateCommand',
-    'VenvDestroyCommand',
-    'VenvRunCommand',
-    'VenvShellCommand',
-]
-
-
-commands = {
+COMMANDS = {
+    'auth': AuthCommand,
     'autocomplete': AutocompleteCommand,
+
     'deps add': DepsAddCommand,
     'deps audit': DepsAuditCommand,
     'deps check': DepsCheckCommand,
@@ -94,20 +55,25 @@ commands = {
     'deps sync': DepsSyncCommand,
     'deps tree': DepsTreeCommand,
     # 'deps remove': ...,
+
     'generate authors': GenerateAuthorsCommand,
     'generate config': GenerateConfigCommand,
     'generate editorconfig': GenerateEditorconfigCommand,
     'generate license': GenerateLicenseCommand,
     'generate travis': GenerateTravisCommand,
+
+    'inspect auth': InspectAuthCommand,
     'inspect config': InspectConfigCommand,
     'inspect self': InspectSelfCommand,
     'inspect venv': InspectVenvCommand,
     'inspect gadget': InspectGadgetCommand,
+
     'jail install': JailInstallCommand,
     'jail list': JailListCommand,
     'jail remove': JailRemoveCommand,
     'jail try': JailTryCommand,
     # 'jail update': ...,
+
     'package downloads': PackageDownloadsCommand,
     'package install': PackageInstallCommand,
     'package list': PackageListCommand,
@@ -116,9 +82,11 @@ commands = {
     'package remove': PackageRemoveCommand,
     'package search': PackageSearchCommand,
     'package show': PackageShowCommand,
+
     'project build': ProjectBuildCommand,
     'project bump': ProjectBumpCommand,
     'project test': ProjectTestCommand,
+
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,
     'venv run': VenvRunCommand,

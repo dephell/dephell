@@ -44,8 +44,10 @@ _fields = {
 class WarehouseAPIRepo(WarehouseBaseRepo):
     name = attr.ib(type=str)
     url = attr.ib(type=str)
+    auth = attr.ib(default=None)
 
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
+    from_config = attr.ib(type=bool, default=False)
 
     propagate = True
     hash = None
@@ -83,7 +85,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
         data = cache.load()
         if data is None:
             url = '{url}{name}/json'.format(url=self.url, name=dep.base_name)
-            response = requests.get(url)
+            response = requests.get(url, auth=self.auth)
             if response.status_code == 404:
                 raise PackageNotFoundError(package=dep.base_name, url=url)
             data = response.json()
@@ -227,7 +229,10 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
     async def _get_from_json(self, *, name, version):
         url = urljoin(self.url, posixpath.join(name, str(version), 'json'))
-        async with ClientSession() as session:
+        headers = dict()
+        if self.auth:
+            headers['Authorization'] = self.auth.encode()
+        async with ClientSession(headers=headers) as session:
             async with session.get(url) as response:
                 if response.status == 404:
                     raise PackageNotFoundError(package=name, url=url)
