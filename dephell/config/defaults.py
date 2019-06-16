@@ -10,6 +10,7 @@ DEFAULT = dict(
     sdist=dict(
         ratio=2,
     ),
+    auth=[],
 
     # resolver
     prereleases=False,

@@ -6,5 +6,6 @@ Commands that doesn't fit in any group.
 .. toctree::
     :maxdepth: 1
 
+    cmd-auth
     cmd-autocomplete
 ```

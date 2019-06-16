@@ -19,7 +19,11 @@ from .scheme import SCHEME
 
 class Config:
     env = ''
-    _skip = ('config', 'env', 'key', 'name', 'type')
+    _skip = (
+        'config', 'env',
+        'key', 'name', 'type',
+        'hostname', 'username', 'password',
+    )
 
     def __init__(self, data: Optional[dict] = None):
         self._data = data or DEFAULT.copy()
