@@ -1,4 +1,4 @@
-![DepHell](./assets/logo.png)
+# ![DepHell](./assets/logo.png)
 
 [![pypi](https://img.shields.io/pypi/v/dephell.svg)](https://pypi.python.org/pypi/dephell/)
 [![MIT License](https://img.shields.io/pypi/l/dephell.svg)](https://github.com/dephell/dephell/blob/master/LICENSE)

@@ -80,7 +80,7 @@ Some dependency formats support explicit repository specification. These reposit
 
 `requirements.txt`:
 
-```
+```bash
 -i https://example.com/
 -i https://pypi.org/simple/
 ...

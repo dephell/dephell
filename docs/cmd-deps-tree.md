@@ -41,7 +41,7 @@ $ dephell deps tree --type=graph aiohttp==3.5.4
 
 It will create next graph in `.dephell_report` directory:
 
-![](../assets/graph-example.png)
+![graph example](../assets/graph-example.png)
 
 ## JSON output
 

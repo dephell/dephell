@@ -8,7 +8,6 @@ Dependency resolution for Python.
 sudo pip3 install dephell
 ```
 
-
 ## CLI usage
 
 With arguments:
@@ -39,7 +38,6 @@ Available formats:
 1. `pipfile` -- not locked [Pipfile](https://github.com/pypa/pipfile#pipfile)
 1. `pipfilelock` -- locked [Pipfile](https://github.com/pypa/pipfile#pipfilelock)
 
-
 ## Python lib usage
 
 ```python
@@ -54,7 +52,6 @@ reqs = Requirement.from_graph(resolver.graph, lock=True)
 dumper = PIPConverter(lock=True)
 dumper.dump(reqs=reqs, path='requirements.txt')
 ```
-
 
 ## TODO
 
