@@ -52,7 +52,7 @@ $ dephell inspect config --warehouse --filter="warehouse"
 []
 ```
 
-# Authentication
+## Authentication
 
 Use [dephell auth](cmd-auth) to add credentials for host in global config:
 
@@ -74,9 +74,9 @@ $ dephell inspect auth
 ]
 ```
 
-## Repositories from dependency file
+## Dependency file
 
-Some dependency formats supports explicit repository specification. These repositories always have higher priority than specified in config.
+Some dependency formats support explicit repository specification. These repositories always have higher priority than specified in config.
 
 `requirements.txt`:
 
@@ -84,4 +84,38 @@ Some dependency formats supports explicit repository specification. These reposi
 -i https://example.com/
 -i https://pypi.org/simple/
 ...
+```
+
+`Pipfile`:
+
+```toml
+[[source]]
+url = "https://example.com/"
+verify_ssl = true
+name = "example"
+
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+# ...
+
+[packages]
+deal = {index="example"}
+# ^ try to find in "example" repository before all
+```
+
+Poetry (`pyproject.toml`)
+
+```toml
+# ...
+
+[[tool.poetry.source]]
+name = "example"
+url = "https://example.com/"
+
+[[tool.poetry.source]]
+name = "pypi"
+url = "https://pypi.org/simple"
 ```
