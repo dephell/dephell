@@ -42,6 +42,7 @@ matrix:
 
     # https://github.com/igorshubovych/markdownlint-cli
     - name: markdown lint
+      language: generic
       install:
         - npm install -g markdownlint-cli
       script:
