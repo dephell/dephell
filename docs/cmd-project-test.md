@@ -44,7 +44,6 @@ python = ">=3.5"
 
 You can run tests on this environment by the next command:
 
-
 ```bash
 $ dephell project test --env=pytest
 INFO creating wheel...

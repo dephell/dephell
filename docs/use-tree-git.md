@@ -6,4 +6,4 @@ Let's make dependencies graph for [ehtim](https://github.com/achael/eht-imaging)
 dephell deps tree --type=graph git+https://github.com/achael/eht-imaging.git#egg=ehtim
 ```
 
-![](../assets/ehtim-graph.png)
+![ehtim dependencies graph](../assets/ehtim-graph.png)

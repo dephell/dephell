@@ -8,7 +8,7 @@ Dephell uses four pieces of information for conversion:
 1. `--from-path`: The path to the file to read from (e.g. `pyproject.toml`)
 1. `--to-format`: The format to convert to (e.g. `setuppy`)
 1. `--to-path`: The path to the file where the result should be put (e.g. `setup.py`). You can provide the special case 'stdout' to this option to output to the screen instead of a file.
-    
+
 Dephell can try to guess the formats or paths you want to use given the other piece of information, giving you three different ways to specify what you want:
 
 1. Explicitly specify path and format: `--from-format=poetry --from-path=pyproject.toml` and `--to-format=setuppy --to-path=setup.py`.
@@ -46,6 +46,7 @@ Lock dependencies for Pipfile:
 ```bash
 $ dephell deps convert --from=Pipfile --to=Pipfile.lock
 ```
+
 Or the same, but more explicit:
 
 ```bash
