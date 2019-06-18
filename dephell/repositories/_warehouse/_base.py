@@ -26,7 +26,7 @@ REX_WORD = re.compile('[a-zA-Z]+')
 class WarehouseBaseRepo(Interface):
     # I'm not sure how to combine `@abstractproperty` and `= attr.ib()`
     @cached_property
-    def prereleases(self):
+    def prereleases(self) -> bool:
         raise NotImplementedError
 
     @cached_property
@@ -36,6 +36,9 @@ class WarehouseBaseRepo(Interface):
     @cached_property
     def repos(self):
         return [self]
+
+    async def download(self, name: str, version: str, path: Path) -> bool:
+        raise NotImplementedError
 
     @staticmethod
     def _convert_deps(*, deps, name, version, extra):

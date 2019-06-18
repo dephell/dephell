@@ -150,6 +150,12 @@ class RepositoriesRegistry(WarehouseBaseRepo):
                 return repo.search(query=query)
         return self.repos[0].search(query=query)
 
+    async def download(self, name: str, version: str, path: Path) -> bool:
+        for repo in self.repos:
+            if not isinstance(repo, WarehouseLocalRepo):
+                return await repo.download(name=name, version=version, path=path)
+        return await self.repos[0].download(name=name, version=version, path=path)
+
     # properties
 
     @property
