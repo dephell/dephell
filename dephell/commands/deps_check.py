@@ -2,10 +2,9 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import attach_deps, get_python_env, make_json
+from ..actions import get_python_env, make_json
 from ..config import builders
-from ..controllers import analyze_conflict
-from ..converters import CONVERTERS, InstalledConverter
+from ..converters import InstalledConverter
 from ..models import Requirement
 from .base import BaseCommand
 
@@ -31,22 +30,8 @@ class DepsCheckCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        loader_config = self.config.get('to') or self.config['from']
-        self.logger.info('get dependencies', extra=dict(
-            format=loader_config['format'],
-            path=loader_config['path'],
-        ))
-        loader = CONVERTERS[loader_config['format']]
-        resolver = loader.load_resolver(path=loader_config['path'])
-        attach_deps(resolver=resolver, config=self.config, merge=False)
-
-        # resolve
-        self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve(silent=self.config['silent'])
-        if not resolved:
-            conflict = analyze_conflict(resolver=resolver)
-            self.logger.warning('conflict was found')
-            print(conflict)
+        resolver = self._get_locked()
+        if resolver is None:
             return False
 
         # get executable

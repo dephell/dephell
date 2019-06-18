@@ -2,10 +2,9 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_packages, get_python_env, make_json
+from ..actions import get_packages, make_json
 from ..config import builders
 from ..controllers import Safety, Snyk
-from ..converters import CONVERTERS, InstalledConverter
 from .base import BaseCommand
 
 
@@ -44,24 +43,10 @@ class DepsAuditCommand(BaseCommand):
 
         # get packages from lockfile
         if packages is None:
-            loader_config = self.config.get('to') or self.config.get('from')
-            if loader_config is not None:
-                loader = CONVERTERS[loader_config['format']]
-                if loader.lock:
-                    self.logger.info('get dependencies from lockfile', extra=dict(
-                        format=loader_config['format'],
-                        path=loader_config['path'],
-                    ))
-                    root = loader.load(path=loader_config['path'])
-                    packages = root.dependencies
-
-        # get installed packages
-        if packages is None:
-            # get executable
-            python = get_python_env(config=self.config)
-            self.logger.debug('choosen python', extra=dict(path=str(python.path)))
-            root = InstalledConverter().load(paths=python.lib_paths)
-            packages = root.dependencies
+            resolver = self._get_locked()
+            if resolver is None:
+                return False
+            packages = resolver.graph
 
         safety = Safety()
         snyk = Snyk()

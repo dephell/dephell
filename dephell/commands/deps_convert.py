@@ -31,6 +31,12 @@ class DepsConvertCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        if 'from' not in self.config:
+            self.error('`--from` is required for this command')
+            return False
+        if 'to' not in self.config:
+            self.error('`--to` is required for this command')
+            return False
         loader = CONVERTERS[self.config['from']['format']]
         dumper = CONVERTERS[self.config['to']['format']]
 

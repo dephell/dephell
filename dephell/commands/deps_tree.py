@@ -3,10 +3,8 @@ from argparse import REMAINDER, ArgumentParser
 from typing import List
 
 # app
-from ..actions import attach_deps, get_resolver, make_json
+from ..actions import make_json
 from ..config import builders
-from ..controllers import analyze_conflict
-from ..converters import CONVERTERS
 from .base import BaseCommand
 
 
@@ -33,26 +31,9 @@ class DepsTreeCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        if self.args.name:
-            resolver = get_resolver(reqs=self.args.name)
-        else:
-            loader = CONVERTERS[self.config['from']['format']]
-            resolver = loader.load_resolver(path=self.config['from']['path'])
-            attach_deps(resolver=resolver, config=self.config, merge=False)
-
-        # resolve
-        self.logger.debug('resolving...')
-        resolved = resolver.resolve(silent=self.config['silent'])
-        if not resolved:
-            conflict = analyze_conflict(resolver=resolver)
-            self.logger.warning('conflict was found')
-            print(conflict)
+        resolver = self._get_locked()
+        if resolver is None:
             return False
-        self.logger.debug('resolved')
-
-        # apply envs if needed
-        if 'envs' in self.config:
-            resolver.apply_envs(set(self.config['envs']))
 
         if self.args.type == 'pretty':
             for dep in sorted(resolver.graph.get_layer(1)):
