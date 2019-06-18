@@ -92,4 +92,5 @@ SCHEME = {
     'tests':        dict(type='list', required=True),
     'versioning':   dict(type='string', required=True),
     'command':      dict(type='string', required=False),
+    'vendors':      dict(type='string', required=False),
 }
