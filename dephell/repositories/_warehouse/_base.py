@@ -81,30 +81,9 @@ class WarehouseBaseRepo(Interface):
 
     async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
         with TemporaryDirectory() as tmp:
-            headers = dict()
-            if self.auth:
-                headers['Authorization'] = self.auth.encode()
-            async with ClientSession(headers=headers) as session:
-                async with session.get(url) as response:
-                    response.raise_for_status()
-                    fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]
-                    path = Path(tmp) / fname
-
-                    # download file
-                    if aiofiles is not None:
-                        async with aiofiles.open(str(path), mode='wb') as stream:
-                            while True:
-                                chunk = await response.content.read(1024)
-                                if not chunk:
-                                    break
-                                await stream.write(chunk)
-                    else:
-                        with path.open(mode='wb') as stream:
-                            while True:
-                                chunk = await response.content.read(1024)
-                                if not chunk:
-                                    break
-                                stream.write(chunk)
+            fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]
+            path = Path(tmp) / fname
+            self._download(url=url, path=path)
 
             # load and make separated dep for every env
             root = converter.load(path)
@@ -117,6 +96,30 @@ class WarehouseBaseRepo(Interface):
                         dep.envs = {env}
                         deps.append(str(dep))
             return tuple(deps)
+
+    async def _download(self, *, url: str, path: Path) -> None:
+        headers = dict()
+        if self.auth:
+            headers['Authorization'] = self.auth.encode()
+        async with ClientSession(headers=headers) as session:
+            async with session.get(url) as response:
+                response.raise_for_status()
+
+                # download file
+                if aiofiles is not None:
+                    async with aiofiles.open(str(path), mode='wb') as stream:
+                        while True:
+                            chunk = await response.content.read(1024)
+                            if not chunk:
+                                break
+                            await stream.write(chunk)
+                else:
+                    with path.open(mode='wb') as stream:
+                        while True:
+                            chunk = await response.content.read(1024)
+                            if not chunk:
+                                break
+                            stream.write(chunk)
 
     @staticmethod
     def _parse_name(fname: str) -> Tuple[str, str]:
