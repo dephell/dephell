@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 from tempfile import TemporaryDirectory
 from pathlib import Path
 
+from bowler import Query
 from packaging.utils import canonicalize_name
 
 # app
@@ -36,8 +37,11 @@ class ProjectVendorizeCommand(BaseCommand):
         resolver = self._get_locked()
         if resolver is None:
             return False
-
         output_path = Path(self.config['vendors'])
+        self._download_packages(resolver=resolver, output_path=output_path)
+        return True
+
+    def _download_packages(self, resolver, output_path):
         with TemporaryDirectory() as archives_path:
             archives_path = Path(archives_path)
 
@@ -64,7 +68,6 @@ class ProjectVendorizeCommand(BaseCommand):
                     archive_path=archive_path,
                     output_path=output_path,
                 )
-        return True
 
     def _extract_modules(self, dep, archive_path, output_path):
         with TemporaryDirectory() as package_path:
@@ -82,3 +85,7 @@ class ProjectVendorizeCommand(BaseCommand):
                     version=dep.group.best_release.version,
                 ))
                 shutil.copytree(str(module_path), str(output_path / module_path.name))
+
+    def _patch_imports(self, resolver, output_path):
+        ...
+        Query('dephell/cacher.py').select_module('requests').rename('testme').execute(write=True, silent=True)
