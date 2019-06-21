@@ -38,10 +38,17 @@ class ProjectVendorizeCommand(BaseCommand):
         if resolver is None:
             return False
         output_path = Path(self.config['vendors'])
-        self._download_packages(resolver=resolver, output_path=output_path)
+
+        self.logger.info('downloding packages...', extra=dict(output=output_path))
+        packages = self._download_packages(resolver=resolver, output_path=output_path)
+
+        self.logger.info('patching imports...')
+        modules = self._patch_imports(resolver=resolver, output_path=output_path)
+
+        self.logger.info('done!', extra=dict(packages=packages, modules=modules))
         return True
 
-    def _download_packages(self, resolver, output_path):
+    def _download_packages(self, resolver, output_path: Path) -> int:
         with TemporaryDirectory() as archives_path:
             archives_path = Path(archives_path)
 
@@ -68,8 +75,9 @@ class ProjectVendorizeCommand(BaseCommand):
                     archive_path=archive_path,
                     output_path=output_path,
                 )
+        return len(tasks)
 
-    def _extract_modules(self, dep, archive_path, output_path):
+    def _extract_modules(self, dep, archive_path, output_path: Path) -> None:
         with TemporaryDirectory() as package_path:
             package_path = Path(package_path)
             shutil.unpack_archive(str(archive_path), str(package_path))
@@ -86,6 +94,20 @@ class ProjectVendorizeCommand(BaseCommand):
                 ))
                 shutil.copytree(str(module_path), str(output_path / module_path.name))
 
-    def _patch_imports(self, resolver, output_path):
-        ...
-        Query('dephell/cacher.py').select_module('requests').rename('testme').execute(write=True, silent=True)
+    def _patch_imports(self, resolver, output_path) -> int:
+        # select modules to patch imports
+        query = Query()
+        query.paths = []
+        for package in resolver.graph.metainfo.package:
+            for module_path in package:
+                query.paths.append(str(module_path))
+
+        # set renamings
+        root = Path(self.config['project'])
+        for library in output_path.iterdir():
+            library_module = '.'.join(library.relative_to(root).parts)
+            query = query.select_module(library.name).rename(library_module)
+
+        # execute renaming
+        query.execute(interactive=False, write=True, silent=True)
+        return len(query.paths)
