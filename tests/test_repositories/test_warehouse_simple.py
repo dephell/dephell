@@ -131,7 +131,7 @@ def test_download(requests_mock, asyncio_mock, temp_cache, fixtures_path: Path,
     text_response = (fixtures_path / 'warehouse-simple.html').read_text()
     file_url = re.findall(
         r'https://files.pythonhosted.org/packages/[^\"]+0\.1\.2[^\"]+',
-        text_response
+        text_response,
     )[0]
     file_name = urlparse(file_url).path.split('/')[-1]
     file_content = (requirements_dir / 'wheel.whl').read_bytes()
