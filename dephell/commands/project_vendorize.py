@@ -98,7 +98,7 @@ class ProjectVendorizeCommand(BaseCommand):
         # select modules to patch imports
         query = Query()
         query.paths = []
-        for package in resolver.graph.metainfo.package:
+        for package in resolver.graph.metainfo.package.packages:
             for module_path in package:
                 query.paths.append(str(module_path))
 
