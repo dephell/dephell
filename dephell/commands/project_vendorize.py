@@ -84,10 +84,24 @@ class ProjectVendorizeCommand(BaseCommand):
             if len(list(package_path.iterdir())) == 1:
                 package_path = next(package_path.iterdir())
 
+            # find modules
+            modules = []
             for module_path in package_path.iterdir():
-                if canonicalize_name(module_path.name) not in (dep.name, dep.name + '-py'):
-                    continue
-                self.info('copying module', extra=dict(
+                if canonicalize_name(module_path.name) in (dep.name, dep.name + '-py'):
+                    modules.append(module_path)
+            if not modules:
+                for module_path in package_path.iterdir():
+                    if module_path.is_dir() and '.' not in module_path.name:
+                        modules.append(module_path)
+            if not modules:
+                self.error('cannot find modules', extra=dict(
+                    dependency=dep.name,
+                    version=dep.group.best_release.version,
+                ))
+
+            # copy modules
+            for module_path in modules:
+                self.info('copying module...', extra=dict(
                     path=module_path.name,
                     dependency=dep.name,
                     version=dep.group.best_release.version,
