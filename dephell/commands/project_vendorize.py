@@ -62,13 +62,6 @@ class ProjectVendorizeCommand(BaseCommand):
                 ))
             loop.run_until_complete(asyncio.gather(*tasks))
 
-            # say to shutils that wheel can be parsed as zip
-            shutil.register_unpack_format(
-                name='wheel',
-                extensions=['.whl'],
-                function=shutil._unpack_zipfile,
-            )
-
             for archive_path in archives_path.iterdir():
                 self._extract_modules(
                     dep=dep,
@@ -77,7 +70,14 @@ class ProjectVendorizeCommand(BaseCommand):
                 )
         return len(tasks)
 
-    def _extract_modules(self, dep, archive_path, output_path: Path) -> None:
+    def _extract_modules(self, dep, archive_path: Path, output_path: Path) -> bool:
+        # say to shutils that wheel can be parsed as zip
+        shutil.register_unpack_format(
+            name='wheel',
+            extensions=['.whl'],
+            function=shutil._unpack_zipfile,
+        )
+
         with TemporaryDirectory() as package_path:
             package_path = Path(package_path)
             shutil.unpack_archive(str(archive_path), str(package_path))
@@ -91,18 +91,17 @@ class ProjectVendorizeCommand(BaseCommand):
                     dependency=dep.name,
                     version=dep.group.best_release.version,
                 ))
-                return
+                return False
 
             # copy modules
-            modules = {module.root for module in root.packages}
-            for module_path in modules:
-                module_path = module_path.relative_to(package_path)
-                self.info('copying module...', extra=dict(
-                    path=module_path,
-                    dependency=dep.name,
-                    version=dep.group.best_release.version,
-                ))
-                shutil.copytree(str(module_path), str(output_path / module_path))
+            module_path = root.packages[0].path
+            module_path = module_path.relative_to(package_path)
+            self.logger.info('copying module...', extra=dict(
+                path=module_path,
+                dependency=dep.name,
+            ))
+            shutil.copytree(str(module_path), str(output_path / module_path))
+            return True
 
     def _patch_imports(self, resolver, output_path) -> int:
         # select modules to patch imports
