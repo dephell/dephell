@@ -2,7 +2,7 @@
 from ._conda import CondaCloudRepo, CondaGitRepo, CondaRepo
 from ._getter import get_repo
 from ._git.git import GitRepo
-from ._local_single import LocalRepo
+from ._local import LocalRepo
 from ._release import ReleaseRepo
 from ._warehouse import WarehouseBaseRepo, WarehouseSimpleRepo, WarehouseAPIRepo, WarehouseLocalRepo
 
