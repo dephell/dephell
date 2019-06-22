@@ -41,7 +41,7 @@ Commands that accept these parameters:
 + `--strategy` -- algorithm to select best release. Available values: `min` and `max`. By default is `max`, because almost all resolvers uses this strategy. Read blog post [Minimal Version Selection](https://research.swtch.com/vgo-mvs) for details about `min` strategy.
 + `--prereleases` -- allow prereleases.
 + `--mutations` -- maximum mutations when trying to resolve conflicts. 200 by default.
-+ `--warehouse` -- warehouse API URL. This is default value and can be reloaded in the dependencies file.
++ `--warehouse` -- warehouse URLs or local paths to archives with releases.
 + `--bitbucket` -- bitbucket API URL. Dephell isn't use Bitbucket API yet, but option already available.
 + `--repo` -- force repository for first-level dependencies. Useful when you want to use `conda` instead of `pypi` (for example, in [dephell package search](cmd-package-search) command).
 

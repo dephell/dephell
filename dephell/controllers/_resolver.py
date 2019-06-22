@@ -1,4 +1,5 @@
 # built-in
+import re
 from logging import getLogger
 from typing import Optional
 
@@ -13,6 +14,7 @@ from ._conflict import analyze_conflict
 
 
 logger = getLogger('dephell.resolver')
+REX_BASE_VERSION = re.compile(r'[0-9\.]+')
 
 
 class Resolver:
@@ -55,7 +57,7 @@ class Resolver:
         """
         if not force and not dep.applied:
             return
-        # it must be before actual unapplying to avoid recursion on cyclic dependencies
+        # it must be before actual unapplying to avoid recursion on circular dependencies
         if not soft:
             dep.applied = False
 
@@ -151,7 +153,7 @@ class Resolver:
         # Some child deps can be unapplied from other child deps, but we need them.
         # For example, if we need A, but don't need B, and A and B depends on C,
         # then C will be unapplied from B. Let's retun B in the graph by apllying A.
-        for dep in layer:
+        for dep in self.graph:
             if not dep.applied:
                 continue
             if not (dep.envs | dep.inherited_envs) & envs:
@@ -163,6 +165,10 @@ class Resolver:
         if implementation == 'python':
             implementation = 'cpython'
 
+        # get only base part of python version because `packagings` drops
+        # all markers for python prereleases
+        python_version = REX_BASE_VERSION.match(str(python.version)).group()
+
         for dep in self.graph:
             if not dep.applied:
                 continue
@@ -170,7 +176,7 @@ class Resolver:
                 continue
 
             fit = Marker(str(dep.marker)).evaluate(dict(
-                python_version=str(python.version),
+                python_version=python_version,
                 implementation_name=implementation,
             ))
             if fit:

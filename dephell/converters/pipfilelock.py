@@ -10,10 +10,9 @@ from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..config import config
 from ..controllers import RepositoriesRegistry
 from ..models import RootDependency
-from ..repositories import WarehouseLocalRepo
+from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .pipfile import PIPFileConverter
 
 
@@ -41,8 +40,7 @@ class PIPFileLockConverter(PIPFileConverter):
         repo = RepositoriesRegistry()
         for repo_info in doc.get('_meta', {}).get('sources', []):
             repo.add_repo(name=repo_info['name'], url=repo_info['url'])
-        for url in config['warehouse']:
-            repo.add_repo(url=url)
+        repo.attach_config()
 
         python = doc.get('_meta', {}).get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:
@@ -54,9 +52,11 @@ class PIPFileLockConverter(PIPFileConverter):
                 # set repo
                 if 'index' in content:
                     dep_repo = repo.make(name=content['index'])
-                    for dep in subdeps:
-                        if isinstance(dep.repo, RepositoriesRegistry):
-                            dep.repo = dep_repo
+                else:
+                    dep_repo = repo
+                for dep in subdeps:
+                    if isinstance(dep.repo, WarehouseBaseRepo):
+                        dep.repo = dep_repo
                 # set envs
                 for dep in subdeps:
                     dep.envs = {'dev'} if is_dev else {'main'}
@@ -73,9 +73,11 @@ class PIPFileLockConverter(PIPFileConverter):
         repos = []
         added_repos = set()
         for req in reqs:
-            if not isinstance(req.dep.repo, RepositoriesRegistry):
+            if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
             for repo in req.dep.repo.repos:
+                if repo.from_config:
+                    continue
                 if repo.name in added_repos:
                     continue
                 # https://github.com/pypa/pipenv/issues/2231
@@ -87,6 +89,13 @@ class PIPFileLockConverter(PIPFileConverter):
                     ('verify_ssl', repo.pretty_url.startswith('https://')),
                     ('name', repo.name),
                 ]))
+        # pipenv doesn't work without explicit repo
+        if not repos:
+            repos.append(OrderedDict([
+                ('url', 'https://pypi.org/simple/'),
+                ('verify_ssl', True),
+                ('name', 'pypi'),
+            ]))
 
         python = Pythons(abstract=True).get_by_spec(project.python)
         data = OrderedDict([
@@ -113,6 +122,6 @@ class PIPFileLockConverter(PIPFileConverter):
                 name = 'ref'
             if name in self.fields:
                 result[name] = value
-        if isinstance(req.dep.repo, RepositoriesRegistry) and req.dep.repo.name != 'pypi':
+        if isinstance(req.dep.repo, WarehouseBaseRepo) and req.dep.repo.name != 'pypi':
             result['index'] = req.dep.repo.name
         return result

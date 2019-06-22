@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 # external
+import pytest
 from dephell_links import VCSLink
 
 # project
@@ -11,6 +12,7 @@ from dephell.models import Requirement
 from dephell.repositories import GitRepo
 
 
+@pytest.mark.allow_hosts()
 def test_load():
     converter = PIPFileLockConverter()
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile.lock
@@ -23,6 +25,7 @@ def test_load():
     assert len(deps['pyyaml'].group.best_release.hashes) == 14
 
 
+@pytest.mark.allow_hosts()
 def test_load_git_based_dep():
     converter = PIPFileLockConverter()
     root = converter.load(Path('tests') / 'requirements' / 'pipfile.lock.json')
@@ -36,6 +39,7 @@ def test_load_git_based_dep():
     assert dep.link.name == 'django'
 
 
+@pytest.mark.allow_hosts()
 def test_dump():
     converter = PIPFileLockConverter()
     resolver = converter.load_resolver(Path('tests') / 'requirements' / 'pipfile.lock.json')

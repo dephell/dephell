@@ -20,19 +20,19 @@ PATHS = (
 
 
 def make_bash_autocomplete() -> str:
-    from ..commands import commands
+    from ..commands import COMMANDS
 
     template = templates.get_template('autocomplete.sh.j2')
     tree = defaultdict(set)
     first_words = set()
-    for command in commands:
+    for command in COMMANDS:
         command, _sep, subcommand = command.partition(' ')
         first_words.add(command)
         if subcommand:
             tree[command].add(subcommand)
 
     arguments = defaultdict(set)
-    for command_name, command in commands.items():
+    for command_name, command in COMMANDS.items():
         for action in command.get_parser()._actions:
             arguments[command_name].update(action.option_strings)
 
@@ -40,12 +40,12 @@ def make_bash_autocomplete() -> str:
 
 
 def make_zsh_autocomplete() -> str:
-    from ..commands import commands
+    from ..commands import COMMANDS
 
     template = templates.get_template('autocomplete-zsh.sh.j2')
     tree = defaultdict(set)
     first_words = set()
-    for command_name, command in commands.items():
+    for command_name, command in COMMANDS.items():
         command_name, _sep, subcommand = command_name.partition(' ')
         first_words.add(command_name)
         if subcommand:
@@ -53,7 +53,7 @@ def make_zsh_autocomplete() -> str:
             tree[command_name].add((subcommand, description))
 
     arguments = defaultdict(list)
-    for command_name, command in commands.items():
+    for command_name, command in COMMANDS.items():
         for action in command.get_parser()._actions:
             if action.help:
                 arguments[command_name].append(dict(

@@ -2,7 +2,6 @@
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
-from urllib.parse import urlparse
 
 # external
 import tomlkit
@@ -10,10 +9,9 @@ from dephell_links import DirLink
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..config import config
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import WarehouseLocalRepo
+from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -43,8 +41,7 @@ class PoetryLockConverter(BaseConverter):
         if doc.get('source'):
             for source in doc['source']:
                 repo.add_repo(url=source['url'], name=source['name'])
-        for url in config['warehouse']:
-            repo.add_repo(url=url)
+        repo.attach_config()
 
         envs = defaultdict(set)
         for extra, deps in doc.get('extras', {}).items():
@@ -88,11 +85,11 @@ class PoetryLockConverter(BaseConverter):
             if not isinstance(req.dep.repo, RepositoriesRegistry):
                 continue
             for repo in req.dep.repo.repos:
+                if repo.from_config:
+                    continue
                 if repo.name in added:
                     continue
                 if isinstance(repo, WarehouseLocalRepo):
-                    continue
-                if urlparse(repo.pretty_url).hostname in ('pypi.org', 'pypi.python.org'):
                     continue
                 added.add(repo.name)
 
@@ -217,7 +214,7 @@ class PoetryLockConverter(BaseConverter):
             result['source']['url'] = req.link.short
             if req.rev:
                 result['source']['reference'] = req.rev
-        elif isinstance(req.dep.repo, RepositoriesRegistry):
+        elif isinstance(req.dep.repo, WarehouseBaseRepo):
             repo = req.dep.repo.repos[0]
             result['source'] = tomlkit.table()
             result['source']['type'] = 'legacy'

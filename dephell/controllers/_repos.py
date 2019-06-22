@@ -7,10 +7,11 @@ import attr
 import requests
 from requests.exceptions import SSLError, ConnectionError
 
-from ..config import config
+from ..config import config as global_config
+from ..constants import WAREHOUSE_DOMAINS
 from ..exceptions import PackageNotFoundError
-from ..repositories.base import Interface
-from ..repositories import WarehouseAPIRepo, WarehouseLocalRepo, WarehouseSimpleRepo
+from ..models import Auth
+from ..repositories import WarehouseAPIRepo, WarehouseBaseRepo, WarehouseLocalRepo, WarehouseSimpleRepo
 
 
 @lru_cache(maxsize=16)
@@ -26,14 +27,15 @@ def _has_api(url: str) -> bool:
 
 
 @attr.s()
-class RepositoriesRegistry(Interface):
+class RepositoriesRegistry(WarehouseBaseRepo):
     repos = attr.ib(factory=list)
-    prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
+    prereleases = attr.ib(type=bool, factory=lambda: global_config['prereleases'])  # allow prereleases
+    from_config = attr.ib(type=bool, default=False)
 
     _urls = attr.ib(factory=set)
     _names = attr.ib(factory=set)
 
-    def add_repo(self, *, url: str, name: str = None) -> bool:
+    def add_repo(self, *, url: str, name: str = None, from_config: bool = False) -> bool:
         # try to interpret URL as local path
         if url in self._urls:
             return False
@@ -52,6 +54,7 @@ class RepositoriesRegistry(Interface):
                 name=name,
                 path=path,
                 prereleases=self.prereleases,
+                from_config=from_config,
             ))
             return True
         elif '.' not in url:
@@ -70,13 +73,41 @@ class RepositoriesRegistry(Interface):
             cls = WarehouseAPIRepo
         else:
             cls = WarehouseSimpleRepo
-        repo = cls(name=name, url=url, prereleases=self.prereleases)
+        repo = cls(
+            name=name,
+            url=url,
+            prereleases=self.prereleases,
+            from_config=from_config,
+        )
         urls = {url, repo.url, repo.pretty_url}
         if urls & self._urls:
             return False
         self._urls.update(urls)
         self.repos.append(repo)
         return True
+
+    def attach_config(self, config=None) -> None:
+        """
+        1. Add repositories from config into registry
+        2. Add auth
+        """
+        # repos from config
+        if config is None:
+            config = global_config
+        for url in config['warehouse']:
+            self.add_repo(url=url, from_config=True)
+
+        # auth
+        for repo in self.repos:
+            if isinstance(repo, WarehouseLocalRepo):
+                continue
+            host = urlparse(repo.pretty_url).hostname
+            # pypi doesn't have private packages
+            if host in WAREHOUSE_DOMAINS:
+                continue
+            for cred in config['auth']:
+                if cred['hostname'] == host:
+                    repo.auth = Auth(**cred)
 
     def make(self, name: str) -> 'RepositoriesRegistry':
         """Return new RepositoriesRegistry where repo with given name goes first

@@ -29,5 +29,7 @@ class InspectConfigCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        print(make_json(data=self.config._data, key=self.config.get('filter')))
+        config = self.config._data.copy()
+        del config['auth']  # do not show credentials
+        print(make_json(data=config, key=self.config.get('filter')))
         return True

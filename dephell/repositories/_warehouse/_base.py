@@ -10,6 +10,7 @@ from dephell_markers import Markers
 from packaging.requirements import InvalidRequirement, Requirement
 
 from ..base import Interface
+from ...cached_property import cached_property
 
 
 try:
@@ -23,6 +24,18 @@ REX_WORD = re.compile('[a-zA-Z]+')
 
 
 class WarehouseBaseRepo(Interface):
+    # I'm not sure how to combine `@abstractproperty` and `= attr.ib()`
+    @cached_property
+    def prereleases(self):
+        raise NotImplementedError
+
+    @cached_property
+    def from_config(self):
+        raise NotImplementedError
+
+    @cached_property
+    def repos(self):
+        return [self]
 
     @staticmethod
     def _convert_deps(*, deps, name, version, extra):
@@ -68,7 +81,10 @@ class WarehouseBaseRepo(Interface):
 
     async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
         with TemporaryDirectory() as tmp:
-            async with ClientSession() as session:
+            headers = dict()
+            if self.auth:
+                headers['Authorization'] = self.auth.encode()
+            async with ClientSession(headers=headers) as session:
                 async with session.get(url) as response:
                     response.raise_for_status()
                     fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]

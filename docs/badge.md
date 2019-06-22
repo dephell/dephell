@@ -4,6 +4,6 @@ If you want to show your users how to use your project more effective and what `
 
 [![Powered by DepHell](https://github.com/dephell/dephell/blob/master/assets/badge.svg)](https://github.com/dephell/dephell)
 
-```
+```md
 [![Powered by DepHell](https://github.com/dephell/dephell/blob/master/assets/badge.svg)](https://github.com/dephell/dephell)
 ```

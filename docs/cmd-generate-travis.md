@@ -77,7 +77,6 @@ matrix:
         - dephell deps install --env=$ENV
 ```
 
-
 ## See also
 
 1. [dephell generate config](cmd-generate-config) to make DepHell config for project.
