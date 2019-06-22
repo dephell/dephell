@@ -4,9 +4,10 @@ from pathlib import Path
 
 # external
 from dephell_discover import Root as PackageRoot
+from dephell_versioning import bump_version
 
 # app
-from ..actions import bump_project, bump_version, get_version_from_project, git_commit, git_tag
+from ..actions import bump_project, get_version_from_project, git_commit, git_tag
 from ..config import builders
 from ..converters import CONVERTERS
 from ..models import Requirement

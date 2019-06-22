@@ -1,16 +1,11 @@
 # built-in
 import re
-from datetime import date
 from pathlib import Path
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional
 
 # external
 from dephell_discover import Root
-from packaging.version import VERSION_PATTERN, Version
-
-# app
-from .. import constants
-from ._roman import arabic2roman, roman2arabic
+from packaging.version import VERSION_PATTERN
 
 
 FILE_NAMES = (
@@ -89,114 +84,3 @@ def bump_project(project: Root, old: str, new: str) -> Iterator[Path]:
             file_bumped = bump_file(path=path, old=old, new=new)
             if file_bumped:
                 yield path
-
-
-def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver') -> str:
-    # check scheme
-    if scheme not in constants.VERSION_SCHEMES:
-        raise ValueError('invalid scheme: {}'.format(scheme))
-
-    if rule == 'init':
-        return constants.VERSION_INIT[scheme]
-
-    # explicitly specified local version
-    if rule[0] == '+':
-        if 'local' not in constants.VERSION_SCHEMES[scheme]:
-            raise ValueError('local numbers are unsupported by scheme ' + scheme)
-        version = str(version).split('+')[0]
-        return version + rule
-
-    # check rule
-    if rule not in constants.VERSION_SCHEMES[scheme]:
-        if REX_VERSION.fullmatch(rule):
-            return rule
-        raise ValueError('rule {} is unsupported by scheme {}'.format(rule, scheme))
-
-    if scheme == 'roman':
-        version = roman2arabic(version)
-        return arabic2roman(version + 1)
-
-    if isinstance(version, str):
-        version = Version(version)
-
-    if scheme == 'serial':
-        return str(version.release + 1)
-
-    if scheme in ('semver', 'romver', 'pep', 'zerover'):
-        parts = version.release + (0, 0)
-        if scheme == 'zerover':
-            parts = (0, ) + parts[1:]
-        if rule in constants.MAJOR_VERSIONS:
-            parts = (parts[0] + 1, 0, 0)
-        if rule in constants.MINOR_VERSIONS:
-            parts = (parts[0], parts[1] + 1, 0)
-        if rule in constants.PATCH_VERSIONS:
-            parts = (parts[0], parts[1], parts[2] + 1)
-
-        if scheme in ('semver', 'romver', 'zerover'):
-            if rule in constants.PRE_VERSIONS:
-                pre = version.pre[1] if version.pre else 0
-                return '{}.{}.{}-rc.{}'.format(*parts[:3], pre + 1)
-            elif rule in constants.VERSION_LOCAL:
-                pre = '-{}.{}'.format(*version.pre) if version.pre else ''
-                local = int(version.local) if version.local else 0
-                return '{}.{}.{}{}+{}'.format(*parts[:3], pre, local + 1)
-
-        if scheme == 'pep':
-            if rule in constants.PRE_VERSIONS:
-                pre = version.pre[1] if version.pre else 0
-                return '{}.{}.{}rc{}'.format(*parts[:3], pre + 1)
-            if rule in constants.VERSION_POST:
-                # PEP allows post-releases for pre-releases,
-                # but it "strongly discouraged", so let's ignore it.
-                return '{}.{}.{}.post{}'.format(*parts[:3], (version.post or 0) + 1)
-            if rule in constants.VERSION_DEV + constants.VERSION_RELEASE:
-                suffix = ''
-                dev_version = version.dev
-                if rule in constants.VERSION_DEV:
-                    dev_version = (dev_version or 0) + 1
-
-                if version.pre and rule not in constants.VERSION_RELEASE:
-                    suffix = 'rc{}'.format(version.pre[1])
-                elif version.post:
-                    suffix = '.post{}'.format(version.post)
-
-                if dev_version:
-                    suffix = '{}.dev{}'.format(suffix, dev_version)
-
-                return '{}.{}.{}{}'.format(*parts[:3], suffix)
-            if rule in constants.VERSION_LOCAL:
-                old = str(version).split('+')[0]
-                local = int(version.local) if version.local else 0
-                return '{}+{}'.format(old, local + 1)
-        return '{}.{}.{}'.format(*parts[:3])
-
-    if scheme == 'comver':
-        parts = version.release + (0,)
-        if rule in constants.MAJOR_VERSIONS:
-            parts = (parts[0] + 1, 0)
-        if rule in constants.MINOR_VERSIONS:
-            parts = (parts[0], parts[1] + 1)
-
-        if rule in constants.PRE_VERSIONS:
-            pre = version.pre[1] if version.pre else 0
-            suffix = '-rc.{}'.format(pre + 1)
-        elif rule in constants.VERSION_LOCAL:
-            pre = '-{}.{}'.format(*version.pre) if version.pre else ''
-            local = int(version.local) if version.local else 0
-            suffix = '{}+{}'.format(pre, local + 1)
-        else:
-            suffix = ''
-        return '{}.{}{}'.format(*parts[:2], suffix)
-
-    if scheme == 'calver':
-        today = date.today()
-        if rule in constants.VERSION_MAJOR:
-            return '{}.{}'.format(today.year, today.month)
-        if rule in constants.VERSION_PATCH:
-            if version.release[0] == today.year and version.release[1] == today.month:
-                micro = (version.release + (0, 0))[2]
-                micro = today.day if micro < today.day else micro + 1
-            else:
-                micro = today.day
-            return '{}.{}.{}'.format(today.year, today.month, micro)

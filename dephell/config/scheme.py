@@ -1,3 +1,5 @@
+from dephell_versioning import get_schemes
+
 # app
 from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES
 
@@ -90,6 +92,6 @@ SCHEME = {
     'bin':          dict(type='string', required=True),
     'envs':         dict(type='list', required=False, empty=False),
     'tests':        dict(type='list', required=True),
-    'versioning':   dict(type='string', required=True),
+    'versioning':   dict(type='string', required=True, allowed=get_schemes()),
     'command':      dict(type='string', required=False),
 }
