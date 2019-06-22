@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 # external
+import pytest
 from dephell_venvs import VEnv
 
 # project
@@ -10,6 +11,7 @@ from dephell.commands import PackageInstallCommand
 from dephell.config import Config
 
 
+@pytest.mark.allow_hosts()
 def test_package_install_command(temp_path: Path):
     venv_path = temp_path / 'venv'
     venv = VEnv(path=venv_path)

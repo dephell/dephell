@@ -126,56 +126,68 @@ def bump_version(version: Union[Version, str], rule: str, scheme: str = 'semver'
         parts = version.release + (0, 0)
         if scheme == 'zerover':
             parts = (0, ) + parts[1:]
-        if rule in constants.VERSION_MAJOR:
-            return '{}.0.0'.format(parts[0] + 1)
-        if rule in constants.VERSION_MINOR:
-            return '{}.{}.0'.format(parts[0], parts[1] + 1)
-        if rule in constants.VERSION_PATCH:
-            return '{}.{}.{}'.format(parts[0], parts[1], parts[2] + 1)
+        if rule in constants.MAJOR_VERSIONS:
+            parts = (parts[0] + 1, 0, 0)
+        if rule in constants.MINOR_VERSIONS:
+            parts = (parts[0], parts[1] + 1, 0)
+        if rule in constants.PATCH_VERSIONS:
+            parts = (parts[0], parts[1], parts[2] + 1)
 
         if scheme in ('semver', 'romver', 'zerover'):
-            if rule in constants.VERSION_PRE:
+            if rule in constants.PRE_VERSIONS:
                 pre = version.pre[1] if version.pre else 0
                 return '{}.{}.{}-rc.{}'.format(*parts[:3], pre + 1)
-            if rule in constants.VERSION_LOCAL:
+            elif rule in constants.VERSION_LOCAL:
                 pre = '-{}.{}'.format(*version.pre) if version.pre else ''
                 local = int(version.local) if version.local else 0
                 return '{}.{}.{}{}+{}'.format(*parts[:3], pre, local + 1)
 
         if scheme == 'pep':
-            if rule in constants.VERSION_PRE:
+            if rule in constants.PRE_VERSIONS:
                 pre = version.pre[1] if version.pre else 0
                 return '{}.{}.{}rc{}'.format(*parts[:3], pre + 1)
             if rule in constants.VERSION_POST:
                 # PEP allows post-releases for pre-releases,
                 # but it "strongly discouraged", so let's ignore it.
                 return '{}.{}.{}.post{}'.format(*parts[:3], (version.post or 0) + 1)
-            if rule in constants.VERSION_DEV:
-                if version.pre:
+            if rule in constants.VERSION_DEV + constants.VERSION_RELEASE:
+                suffix = ''
+                dev_version = version.dev
+                if rule in constants.VERSION_DEV:
+                    dev_version = (dev_version or 0) + 1
+
+                if version.pre and rule not in constants.VERSION_RELEASE:
                     suffix = 'rc{}'.format(version.pre[1])
                 elif version.post:
                     suffix = '.post{}'.format(version.post)
-                else:
-                    suffix = ''
-                return '{}.{}.{}{}.dev{}'.format(*parts[:3], suffix, (version.dev or 0) + 1)
+
+                if dev_version:
+                    suffix = '{}.dev{}'.format(suffix, dev_version)
+
+                return '{}.{}.{}{}'.format(*parts[:3], suffix)
             if rule in constants.VERSION_LOCAL:
                 old = str(version).split('+')[0]
                 local = int(version.local) if version.local else 0
                 return '{}+{}'.format(old, local + 1)
+        return '{}.{}.{}'.format(*parts[:3])
 
     if scheme == 'comver':
-        parts = parts = version.release + (0,)
-        if rule in constants.VERSION_MAJOR:
-            return '{}.0'.format(parts[0] + 1)
-        if rule in constants.VERSION_MINOR:
-            return '{}.{}'.format(parts[0], parts[1] + 1)
-        if rule in constants.VERSION_PRE:
+        parts = version.release + (0,)
+        if rule in constants.MAJOR_VERSIONS:
+            parts = (parts[0] + 1, 0)
+        if rule in constants.MINOR_VERSIONS:
+            parts = (parts[0], parts[1] + 1)
+
+        if rule in constants.PRE_VERSIONS:
             pre = version.pre[1] if version.pre else 0
-            return '{}.{}-rc.{}'.format(*parts[:2], pre + 1)
-        if rule in constants.VERSION_LOCAL:
+            suffix = '-rc.{}'.format(pre + 1)
+        elif rule in constants.VERSION_LOCAL:
             pre = '-{}.{}'.format(*version.pre) if version.pre else ''
             local = int(version.local) if version.local else 0
-            return '{}.{}{}+{}'.format(*parts[:2], pre, local + 1)
+            suffix = '{}+{}'.format(pre, local + 1)
+        else:
+            suffix = ''
+        return '{}.{}{}'.format(*parts[:2], suffix)
 
     if scheme == 'calver':
         today = date.today()

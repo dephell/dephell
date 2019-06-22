@@ -8,8 +8,9 @@ from dephell_markers import Markers
 from packaging.utils import canonicalize_name
 
 # app
-from ..utils import cached_property
+from ..cached_property import cached_property
 from .constraint import Constraint
+from .group import Group
 from .groups import Groups
 
 
@@ -56,13 +57,14 @@ class Dependency:
         return Groups(dep=self)
 
     @cached_property
-    def group(self):
+    def group(self) -> Group:
         """By first access choose and save best group
         """
         self.groups.actualize()
         for group in self.groups:
             if not group.empty:
                 return group
+        raise LookupError('all dependencies are empty')
 
     @property
     def dependencies(self) -> Tuple['Dependency', ...]:

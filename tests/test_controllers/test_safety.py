@@ -1,7 +1,10 @@
+import pytest
+
 # project
 from dephell.controllers import Safety
 
 
+@pytest.mark.allow_hosts()
 def test_safety():
     safety = Safety()
     vulns = safety.get('django', '1.11.0')

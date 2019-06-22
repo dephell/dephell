@@ -13,9 +13,9 @@ from ...config import config
 from ...context_tools import chdir
 from ...models.git_release import GitRelease
 from ...models.release import Release
-from ...utils import cached_property
+from ...cached_property import cached_property
 from ..base import Interface
-from ..local import LocalRepo
+from .._local_single import LocalRepo
 
 
 logger = getLogger(__name__)
@@ -47,7 +47,9 @@ class GitRepo(Interface):
     @cached_property
     def path(self):
         name = self.link.name
-        path = Path(config['cache']['path']) / self.name / name
+        host = self.link.server or 'localhost'
+        author = self.link.author or 'anonimous'
+        path = Path(config['cache']['path']) / 'git' / host / 'repo' / author / name
         return path
 
     @cached_property
@@ -92,7 +94,9 @@ class GitRepo(Interface):
 
     async def get_dependencies(self, name: str, version, extra: Optional[str] = None) -> tuple:
         # get from cache
-        cache = RequirementsCache('git_deps', name, str(version))
+        host = self.link.server or 'localhost'
+        author = self.link.author or 'anonimous'
+        cache = RequirementsCache('git', host, 'deps', author, name, str(version))
         deps = cache.load()
         if deps:
             if extra:

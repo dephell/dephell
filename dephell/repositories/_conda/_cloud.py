@@ -19,7 +19,7 @@ from ...cache import JSONCache
 from ...config import config
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
-from ...utils import cached_property
+from ...cached_property import cached_property
 
 
 # https://conda.anaconda.org/conda-forge/linux-64
@@ -194,7 +194,7 @@ class CondaCloudRepo(CondaBaseRepo):
     def _packages(self) -> Dict[str, Dict[str, Any]]:
         all_packages = dict()
         for channel in self._channels:
-            cache = JSONCache('conda', 'cloud', channel, 'packages', ttl=config['cache']['ttl'])
+            cache = JSONCache('conda.anaconda.org', 'packages', channel, ttl=config['cache']['ttl'])
             channel_packages = cache.load()
             if channel_packages is not None:
                 all_packages.update(channel_packages)
@@ -235,7 +235,7 @@ class CondaCloudRepo(CondaBaseRepo):
     def _releases(self) -> Dict[str, Dict[str, Dict[str, Any]]]:
         all_deps = defaultdict(dict)
         for channel in self._channels:
-            cache = JSONCache('conda', 'cloud', channel, ttl=config['cache']['ttl'])
+            cache = JSONCache('conda.anaconda.org', 'releases', channel, ttl=config['cache']['ttl'])
             channel_deps = cache.load()
             if channel_deps is not None:
                 for dep, releases in channel_deps.items():

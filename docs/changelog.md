@@ -2,12 +2,26 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.7.4
+
++ Custom warehouse and simple index support ([#53](https://github.com/dephell/dephell/issues/53), [#128](https://github.com/dephell/dephell/pull/128)).
++ Fixed bug with packages names that made them incompatible with `pkg_resources` ([#110](https://github.com/dephell/dephell/issues/110), [#117](https://github.com/dephell/dephell/pull/117)).
++ Now `project bump` doesn't make git tag by default. Use `--tag` to add tag or add `tag = true` into config ([#114](https://github.com/dephell/dephell/pull/114), [#106](https://github.com/dephell/dephell/issues/106)).
++ Support for output into stdout for [dephell deps convert](cmd-deps-convert) ([#140](https://github.com/dephell/dephell/pull/140), [#136](https://github.com/dephell/dephell/issues/136)).
++ Allow to install prereleases into jail ([#118](https://github.com/dephell/dephell/pull/118), [#113](https://github.com/dephell/dephell/issues/113))
++ Smarter detection of owner name for `generate license`. You can force the name with `--owner=Name` (or `owner = "Name"` in config) ([#108](https://github.com/dephell/dephell/pull/108), [#107](https://github.com/dephell/dephell/issues/107), [#104](https://github.com/dephell/dephell/pull/104), [#87](https://github.com/dephell/dephell/issues/87)).
++ Local filesystem path support for `--warehouse` parameter ([#145](https://github.com/dephell/dephell/pull/145)).
++ Improved documentation ([#162](https://github.com/dephell/dephell/pull/162)).
++ Improved pre-release support for [dephell project bump](cmd-project-bump) ([#144](https://github.com/dephell/dephell/pull/144), [#142](https://github.com/dephell/dephell/issues/142)).
++ Improved poetry support ([#159](https://github.com/dephell/dephell/pull/159), [#152](https://github.com/dephell/dephell/issues/152), [#154](https://github.com/dephell/dephell/issues/154)).
++ Lazy load for bash autocomplete ([#132](https://github.com/dephell/dephell/pull/132)).
+
 ## v.0.7.3
 
-1. Added `imports` converter to get dependencies from package imports ([#97](https://github.com/dephell/dephell/pull/97)).
-1. `sdist` includes tests if they not too big (`--sdist-ratio` option) ([#99](https://github.com/dephell/dephell/pull/99), [#95](https://github.com/dephell/dephell/issues/95)).
-1. You can specify path to `.env` file ([#69](https://github.com/dephell/dephell/issues/69), [#100](https://github.com/dephell/dephell/pull/100)).
-1. `dephell package list` doesn't fail if some packages missed on PyPI ([#85](https://github.com/dephell/dephell/issues/85), [#102](https://github.com/dephell/dephell/pull/102)).
++ Added `imports` converter to get dependencies from package imports ([#97](https://github.com/dephell/dephell/pull/97)).
++ `sdist` includes tests if they not too big (`--sdist-ratio` option) ([#99](https://github.com/dephell/dephell/pull/99), [#95](https://github.com/dephell/dephell/issues/95)).
++ You can specify path to `.env` file ([#69](https://github.com/dephell/dephell/issues/69), [#100](https://github.com/dephell/dephell/pull/100)).
++ `dephell package list` doesn't fail if some packages missed on PyPI ([#85](https://github.com/dephell/dephell/issues/85), [#102](https://github.com/dephell/dephell/pull/102)).
 
 ## v.0.7.2
 

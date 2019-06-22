@@ -10,7 +10,7 @@ Dephell makes config from 3 layers:
 
 Config should be TOML file with `tool.dephell.ENV_NAME` sections (see [PEP-518](https://www.python.org/dev/peps/pep-0518/#tool-table)).
 
-1. Default filename: `pyproject.toml`. You can change it by `--config` argument.
+1. By default, dephell tries to read `pyproject.toml` or `dephell.toml`. You can change it by `--config` argument.
 1. Default environment: `main`. Environment is the name of the section inside of `tool.dephell` section in config file. You can change environment by `--env` argument.
 
 Config example:

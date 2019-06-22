@@ -10,7 +10,7 @@ from packaging.version import Version
 
 # app
 from ..cache import JSONCache
-from ..utils import cached_property
+from ..cached_property import cached_property
 
 
 DUMP_URL = 'https://github.com/pyupio/safety-db/raw/master/data/insecure_full.json'
@@ -35,7 +35,7 @@ class Safety:
 
     @cached_property
     def vulns(self) -> Dict[str, Tuple[SafetyVulnInfo, ...]]:
-        cache = JSONCache('safety', ttl=3600 * 24)
+        cache = JSONCache('pyup.io', ttl=3600 * 24)
         records = cache.load()
         if records is None:
             response = requests.get(self.url)

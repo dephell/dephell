@@ -7,7 +7,7 @@ import attr
 
 # app
 from ..config import config
-from ..utils import cached_property
+from ..cached_property import cached_property
 from .group import Group
 
 

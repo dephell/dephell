@@ -7,11 +7,11 @@ from pathlib import Path
 
 # project
 from dephell import converters
-from dephell.controllers import Graph
-from dephell.models import Requirement
-from dephell.repositories import WareHouseRepo
+from dephell.controllers import Graph, RepositoriesRegistry, DependencyMaker
+from dephell.models import Requirement, RootDependency
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path', [
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'attrs-requests.txt'),
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'django-deal.txt'),
@@ -54,9 +54,11 @@ def test_load_dump_load_deps(converter, path):
     # check warehouse URL
     for name, req1 in map1.items():
         req2 = map2[name]
-        if isinstance(req1.dep.repo, WareHouseRepo):
-            assert req1.dep.repo.name == req2.dep.repo.name
-            assert req1.dep.repo.url == req2.dep.repo.url
+        if isinstance(req1.dep.repo, RepositoriesRegistry):
+            assert len(req1.dep.repo.repos) == len(req2.dep.repo.repos)
+            for repo1, repo2 in zip(req1.dep.repo.repos, req2.dep.repo.repos):
+                assert repo1.name == repo2.name
+                assert repo1.url == repo2.url
 
     # exactly one dev or main env should be specified for dep
     for name, req1 in map1.items():
@@ -70,9 +72,10 @@ def test_load_dump_load_deps(converter, path):
         assert req1.dep.envs == req2.dep.envs
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path, exclude', [
     (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml', ['raw_name']),
-    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json', ['raw_name']),
+    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json', ['raw_name', 'python']),
 
     (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml', []),
 
@@ -98,6 +101,7 @@ def test_load_dump_load_metainfo(converter, path, exclude):
     assert attr.asdict(root1) == attr.asdict(root2)
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path', [
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'attrs-requests.txt'),
     (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'django-deal.txt'),
@@ -127,3 +131,36 @@ def test_idempotency(converter, path):
     content2 = converter.dumps(reqs2, project=root2, content=content1)
 
     assert content1 == content2
+
+
+@pytest.mark.allow_hosts()
+@pytest.mark.parametrize('converter', [
+    # converters.PIPConverter(lock=False),
+
+    converters.PIPFileConverter(),
+    converters.PIPFileLockConverter(),
+
+    converters.PoetryConverter(),
+    converters.PoetryLockConverter(),
+])
+def test_repository_preserve(converter):
+    repo = RepositoriesRegistry()
+    repo.add_repo(url='https://example.com', name='insane')
+    repo.add_repo(url='https://pypi.org/simple/', name='pypi')
+    root = RootDependency()
+    dep1 = DependencyMaker.from_params(
+        source=root,
+        raw_name='dephell',
+        constraint='*',
+        repo=repo,
+    )[0]
+    req = Requirement(dep=dep1, roots=[root.name], lock=False)
+
+    content1 = converter.dumps([req], project=root)
+    root2 = converter.loads(content1)
+    assert len(root2.dependencies) == 1
+    dep2 = root2.dependencies[0]
+
+    repos1 = [attr.asdict(repo) for repo in dep1.repo.repos]
+    repos2 = [attr.asdict(repo) for repo in dep2.repo.repos]
+    assert repos1 == repos2

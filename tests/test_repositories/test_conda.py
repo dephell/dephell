@@ -8,6 +8,7 @@ from dephell.models import RootDependency
 from dephell.repositories import CondaRepo, CondaGitRepo, CondaCloudRepo
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('repo_class', [CondaRepo, CondaCloudRepo])
 def test_conda_get_releases(repo_class):
     repo = repo_class(channels=['conda-forge'])
@@ -18,6 +19,7 @@ def test_conda_get_releases(repo_class):
     assert not {'3.0.3', '3.1.0', '4.0.0', '4.1.0'} - versions
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI usually out of rate for Github')
 def test_conda_get_releases_git():
     repo = CondaGitRepo(channels=['conda-forge'])
@@ -28,6 +30,7 @@ def test_conda_get_releases_git():
     assert not {'3.0.3', '3.1.0', '4.0.0', '4.1.0'} - versions
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.parametrize('repo_class', [CondaRepo, CondaCloudRepo])
 def test_conda_deps(repo_class):
     repo = repo_class(channels=['bioconda'])
@@ -38,6 +41,7 @@ def test_conda_deps(repo_class):
     assert 'prodigal' in deps
 
 
+@pytest.mark.allow_hosts()
 @pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI usually out of rate for Github')
 def test_conda_deps_git():
     repo = CondaGitRepo(channels=['bioconda'])

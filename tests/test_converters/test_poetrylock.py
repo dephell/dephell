@@ -7,7 +7,7 @@ import tomlkit
 # project
 from dephell.converters.poetrylock import PoetryLockConverter
 from dephell.models import Requirement
-from dephell.repositories.git.git import GitRepo
+from dephell.repositories import GitRepo
 
 
 def test_load():

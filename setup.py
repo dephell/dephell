@@ -21,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.7.3',
+    version='0.7.4',
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
@@ -31,8 +31,7 @@ setup(
     author='Gram',
     author_email='master_fess@mail.ru',
     license='MIT',
-    keywords=
-    'dephell packaging dependency dependencies venv licenses pip poetry pipfile pipenv setuptools',
+    keywords='dephell packaging dependency dependencies venv licenses pip poetry pipfile pipenv setuptools',
     classifiers=[
         'Development Status :: 4 - Beta', 'Environment :: Console',
         'Framework :: Setuptools Plugin', 'Intended Audience :: Developers',
@@ -45,28 +44,29 @@ setup(
     packages=[
         'dephell', 'dephell.actions', 'dephell.commands', 'dephell.config',
         'dephell.controllers', 'dephell.converters', 'dephell.models',
-        'dephell.repositories', 'dephell.repositories.conda',
-        'dephell.repositories.git'
+        'dephell.repositories', 'dephell.repositories._conda',
+        'dephell.repositories._git', 'dephell.repositories._warehouse'
     ],
     package_data={'dephell': ['templates/*.j2']},
     install_requires=[
-        'aiohttp', 'appdirs', 'attrs', 'cerberus', 'dephell-archive',
-        'dephell-discover', 'dephell-licenses', 'dephell-links',
-        'dephell-markers', 'dephell-pythons', 'dephell-shells',
-        'dephell-specifier>=0.1.4', 'dephell-venvs', 'jinja2', 'm2r',
-        'packaging', 'pip>=18.0', 'pyyaml', 'requests', 'setuptools', 'tomlkit',
-        'yaspin'
+        'aiohttp', 'appdirs', 'attrs', 'cerberus>=1.3',
+        'dephell-archive>=0.1.5', 'dephell-discover>=0.2.6',
+        'dephell-licenses>=0.1.6', 'dephell-links>=0.1.4',
+        'dephell-markers>=0.2.6', 'dephell-pythons>=0.1.11',
+        'dephell-shells>=0.1.3', 'dephell-specifier>=0.1.7',
+        'dephell-venvs>=0.1.16', 'html5lib', 'jinja2', 'm2r', 'packaging',
+        'pip>=18.0', 'pyyaml', 'requests', 'setuptools', 'tomlkit', 'yaspin'
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
         'dev': [
-            'pygments-github-lexers', 'pytest', 'recommonmark', 'sphinx',
-            'sphinx-rtd-theme'
+            'aioresponses', 'pygments-github-lexers', 'pytest', 'recommonmark',
+            'requests-mock', 'sphinx', 'sphinx-rtd-theme'
         ],
+        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'docs': [
             'pygments-github-lexers', 'recommonmark', 'sphinx',
             'sphinx-rtd-theme'
-        ],
-        'tests': ['pytest']
+        ]
     },
 )

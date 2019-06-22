@@ -42,7 +42,6 @@ Commands that use this lookup:
 + [dephell package list](cmd-package-list)
 + [dephell package show](cmd-package-show)
 
-
 If you want to force DepHell ignore project venvs and use global interpreter you can pass into command non-existent venv:
 
 ```bash

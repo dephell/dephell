@@ -22,7 +22,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 In this example DepHell installs latest `texdistance` release in a temporary virtual environment and runs python interpreter with already imported `textdistance` inside.
 
-Use [ipython](https://ipython.org/) instead of standart python interpreter:
+Use [ipython](https://ipython.org/) instead of standard python interpreter:
 
 ```bash
 $ dephell jail try --command=ipython textdistance

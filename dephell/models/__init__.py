@@ -1,4 +1,5 @@
 # app
+from .auth import Auth
 from .author import Author
 from .constraint import Constraint
 from .dependency import Dependency
@@ -14,6 +15,7 @@ from .simple_dependency import SimpleDependency
 
 
 __all__ = [
+    'Auth',
     'Author',
     'Constraint',
     'Dependency',

@@ -17,11 +17,18 @@ class ReturnCodes(Enum):
 
 IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')
 
+CONFIG_NAMES = ('poetry.toml', 'pyproject.toml')
+GLOBAL_CONFIG_NAME = 'config.toml'
+
+DEFAULT_WAREHOUSE = 'https://pypi.org/pypi/'
+WAREHOUSE_DOMAINS = {'pypi.org', 'pypi.python.org', 'test.pypi.org'}
+
 FORMATS = (
     'conda',
     'egginfo',
     'flit',
     'imports',
+    'installed',
     'pip',
     'pipfile',
     'pipfilelock',
@@ -33,6 +40,7 @@ FORMATS = (
     'setuppy',
     'wheel',
 )
+NON_PATH_FORMATS = ('imports', 'installed')
 
 FILES = (
     'setup.py',
@@ -74,24 +82,56 @@ EXTENSIONS = MappingProxyType(OrderedDict([
 ]))
 
 
+ARCHIVE_EXTENSIONS = (
+    '.tar.bz2',
+    '.tar.gz',
+    '.tar.lz',
+    '.tar.lzma',
+    '.tar.xz',
+    '.tar',
+    '.tbz',
+    '.tgz',
+    '.tlz',
+    '.txz',
+    '.whl',
+    '.zip',
+)
+
 # about name aliases: https://github.com/semver/semver/issues/411
 VERSION_MAJOR = ('major', 'breaking')
 VERSION_MINOR = ('minor', 'feature')
 VERSION_PATCH = ('patch', 'fix', 'micro')
 VERSION_PRE = ('pre', 'rc', 'alpha')
+VERSION_PRE_MAJOR = ('premajor', 'prebreaking')
+VERSION_PRE_MINOR = ('preminor', 'prefeature')
+VERSION_PRE_PATCH = ('prepatch', 'prefix', 'premicro')
+PRE_VERSIONS = VERSION_PRE + VERSION_PRE_MAJOR + VERSION_PRE_MINOR + VERSION_PRE_PATCH
+MAJOR_VERSIONS = VERSION_MAJOR + VERSION_PRE_MAJOR
+MINOR_VERSIONS = VERSION_MINOR + VERSION_PRE_MINOR
+PATCH_VERSIONS = VERSION_PATCH + VERSION_PRE_PATCH
+VERSION_RELEASE = ('release', )
 # semver has no post-releases: https://github.com/semver/semver/issues/200
 VERSION_POST = ('post', )
 VERSION_DEV = ('dev', )
 VERSION_LOCAL = ('local', )
 VERSION_SCHEMES = MappingProxyType(dict(
     # https://www.python.org/dev/peps/pep-0440/#version-scheme
-    pep=VERSION_MAJOR + VERSION_MINOR + VERSION_PATCH + VERSION_PRE + VERSION_POST + VERSION_DEV + VERSION_LOCAL,
+    pep=sum([
+        MAJOR_VERSIONS,
+        MINOR_VERSIONS,
+        PATCH_VERSIONS,
+        VERSION_PRE,
+        VERSION_POST,
+        VERSION_DEV,
+        VERSION_LOCAL,
+        VERSION_RELEASE,
+    ], ()),
     # https://semver.org/
-    semver=VERSION_MAJOR + VERSION_MINOR + VERSION_PATCH + VERSION_PRE + VERSION_LOCAL,
+    semver=MAJOR_VERSIONS + MINOR_VERSIONS + PATCH_VERSIONS + VERSION_PRE + VERSION_LOCAL + VERSION_RELEASE,
     # https://github.com/staltz/comver
-    comver=VERSION_MAJOR + VERSION_MINOR + VERSION_PRE + VERSION_LOCAL,
+    comver=MAJOR_VERSIONS + MINOR_VERSIONS + VERSION_PRE + VERSION_LOCAL + VERSION_RELEASE,
     # http://dafoster.net/articles/2015/03/14/semantic-versioning-vs-romantic-versioning/
-    romver=VERSION_MAJOR + VERSION_MINOR + VERSION_PRE,
+    romver=MAJOR_VERSIONS + MINOR_VERSIONS + VERSION_PRE + VERSION_RELEASE,
     # https://calver.org/
     calver=VERSION_MAJOR + VERSION_PATCH,
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#serial-versioning
@@ -99,7 +139,7 @@ VERSION_SCHEMES = MappingProxyType(dict(
     # Mac OS X reference
     roman=VERSION_MAJOR,
     # https://0ver.org/
-    zerover=VERSION_MINOR + VERSION_PATCH + VERSION_PRE + VERSION_LOCAL,
+    zerover=MINOR_VERSIONS + PATCH_VERSIONS + VERSION_PRE + VERSION_LOCAL + VERSION_RELEASE,
 ))
 VERSION_INIT = MappingProxyType(dict(
     pep='0.1.0',

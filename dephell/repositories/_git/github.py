@@ -5,7 +5,7 @@ import re
 import requests
 
 # app
-from ..utils import cached_property
+from ..cached_property import cached_property
 from .base import BaseRepo
 
 

@@ -12,6 +12,7 @@ My favorite issues collection.
 1. Pipenv doesn't support more than 2 environments for project ([pipfile#99](https://github.com/pypa/pipfile/issues/99)).
 1. Pipenv doesn't support "allow pre-releases" option for single dependency ([pipenv#1760](https://github.com/pypa/pipenv/issues/1760)).
 1. Pipenv doesn't support python version range ([pipfile#87](https://github.com/pypa/pipfile/issues/87)).
+1. Pipenv doesn't support local packages installation like `--find-links` in `pip` or `dependency_links` in `setup.py` do ([pipenv#2231](https://github.com/pypa/pipenv/issues/2231))
 
 ## Poetry
 

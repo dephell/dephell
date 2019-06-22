@@ -2,6 +2,7 @@
 from pathlib import Path
 
 # external
+import pytest
 from packaging.version import Version
 
 # project
@@ -11,6 +12,7 @@ from dephell.converters.pip import PIPConverter
 loader = PIPConverter(lock=False)
 
 
+@pytest.mark.allow_hosts()
 def test_one():
     resolver = loader.loads_resolver(content='Django<=1.11')
     resolved = resolver.resolve()
@@ -18,6 +20,7 @@ def test_one():
     assert 'django' in resolver.graph
 
 
+@pytest.mark.allow_hosts()
 def test_two_different():
     resolver = loader.load_resolver(path=Path('tests') / 'requirements' / 'django-deal.txt')
     resolved = resolver.resolve()
@@ -26,12 +29,14 @@ def test_two_different():
     assert 'deal' in resolver.graph
 
 
+@pytest.mark.allow_hosts()
 def test_unresolved():
     resolver = loader.load_resolver(path=Path('tests') / 'requirements' / 'django-django.txt')
     resolved = resolver.resolve()
     assert resolved is False
 
 
+@pytest.mark.allow_hosts()
 def test_resolution():
     resolver = loader.load_resolver(path=Path('tests') / 'requirements' / 'scipy-pandas-numpy.txt')
     resolved = resolver.resolve()
@@ -45,6 +50,7 @@ def test_resolution():
     assert str(resolver.graph.get('pandas').group.best_release.version) > '0.20.3'
 
 
+@pytest.mark.allow_hosts()
 def test_unlocked():
     resolver = loader.load_resolver(path=Path('tests') / 'requirements' / 'attrs-requests.txt')
     resolved = resolver.resolve()
@@ -53,6 +59,7 @@ def test_unlocked():
     assert 'requests' in resolver.graph
 
 
+@pytest.mark.allow_hosts()
 def test_subpackages():
     # https://github.com/sdispater/poetry#dependency-resolution
     resolver = loader.loads_resolver(content='oslo.utils==1.4.0')
@@ -63,6 +70,7 @@ def test_subpackages():
     # assert str(resolver.graph.get('oslo-i18n').group.best_release.version) == '2.1.0'
 
 
+@pytest.mark.allow_hosts()
 def test_arpeggio():
     # https://github.com/sdispater/poetry#dependency-resolution
     resolver = loader.loads_resolver(content='parver==0.2.1')

@@ -1,5 +1,4 @@
 # built-in
-from collections import OrderedDict
 from pathlib import Path
 from typing import List, Optional
 
@@ -9,9 +8,9 @@ from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
 # app
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import WareHouseRepo, get_repo
+from ..repositories import get_repo, WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -44,10 +43,11 @@ class PIPFileConverter(BaseConverter):
         deps = []
         root = RootDependency()
 
-        repos = dict()
+        repo = RepositoriesRegistry()
         if 'source' in doc:
-            for repo in doc['source']:
-                repos[repo['name']] = repo['url']
+            for repo_info in doc['source']:
+                repo.add_repo(name=repo_info['name'], url=repo_info['url'])
+        repo.attach_config()
 
         python = doc.get('requires', {}).get('python_version', '')
         if python not in {'', '*'}:
@@ -56,13 +56,12 @@ class PIPFileConverter(BaseConverter):
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             for name, content in doc.get(section, {}).items():
                 subdeps = self._make_deps(root, name, content)
-                if 'index' in content:
-                    repo_name = content.get('index')
+                if isinstance(content, dict) and 'index' in content:
+                    dep_repo = repo.make(name=content['index'])
                     for dep in subdeps:
-                        dep.repo = WareHouseRepo(
-                            name=repo_name,
-                            url=repos[repo_name],
-                        )
+                        if isinstance(dep.repo, WarehouseBaseRepo):
+                            dep.repo = dep_repo
+
                 for dep in subdeps:
                     # Pipfile doesn't support any other envs
                     dep.envs = {'dev'} if is_dev else {'main'}
@@ -76,28 +75,47 @@ class PIPFileConverter(BaseConverter):
         else:
             doc = tomlkit.document()
 
-        if 'source' not in doc:
-            doc['source'] = tomlkit.aot()
-
-        added_repos = {repo['name'] for repo in doc['source']}
+        # repositories
+        section = doc['source'] if 'source' in doc else tomlkit.aot()
+        added_repos = {repo['name'] for repo in section}
+        updated = False
         for req in reqs:
-            if not isinstance(req.dep.repo, WareHouseRepo):
+            if not isinstance(req.dep.repo, WarehouseBaseRepo):
                 continue
-            if req.dep.repo.name in added_repos:
-                continue
-            added_repos.add(req.dep.repo.name)
-            doc['source'].append(OrderedDict([
-                ('name', req.dep.repo.name),
-                ('url', req.dep.repo.pretty_url),
-                ('verify_ssl', True),
-            ]))
+            for repo in req.dep.repo.repos:
+                if repo.from_config:
+                    continue
+                if repo.name in added_repos:
+                    continue
+                # https://github.com/pypa/pipenv/issues/2231
+                if isinstance(repo, WarehouseLocalRepo):
+                    continue
+                added_repos.add(repo.name)
+                source = tomlkit.table()
+                source['name'] = repo.name
+                source['url'] = repo.pretty_url
+                source['verify_ssl'] = repo.pretty_url.startswith('https://')
+                section.append(source)
+                updated = True
+        # pipenv doesn't work without explicit repo
+        if not added_repos:
+            source = tomlkit.table()
+            source['name'] = 'pypi'
+            source['url'] = 'https://pypi.org/simple/'
+            source['verify_ssl'] = True
+            section.append(source)
+            updated = True
+        if updated:
+            doc['source'] = section
 
+        # python version
         if project.python:
             python = Pythons(abstract=True).get_by_spec(project.python)
             if 'requires' not in doc:
                 doc['requires'] = tomlkit.table()
             doc['requires']['python_version'] = str(python.get_short_version())
 
+        # dependencies
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             # create section if doesn't exist
             if section not in doc:
@@ -159,6 +177,8 @@ class PIPFileConverter(BaseConverter):
                 if isinstance(value, tuple):
                     value = list(value)
                 result[name] = value
+        if isinstance(req.dep.repo, WarehouseBaseRepo) and req.dep.repo.name != 'pypi':
+            result['index'] = req.dep.repo.name
         if 'version' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table

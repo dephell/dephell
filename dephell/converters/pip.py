@@ -1,8 +1,8 @@
 # built-in
+from itertools import chain
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Optional
-from urllib.parse import urlparse
 
 # external
 from dephell_links import DirLink
@@ -11,10 +11,9 @@ from pip._internal.index import PackageFinder
 from pip._internal.req import parse_requirements
 
 # app
-from ..config import config
-from ..controllers import DependencyMaker
+from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import RootDependency
-from ..repositories import WareHouseRepo
+from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -44,13 +43,9 @@ class PIPConverter(BaseConverter):
         deps = []
         root = RootDependency()
 
-        warehouse_url = urlparse(config['warehouse']).hostname
-        if warehouse_url in ('pypi.org', 'pypi.python.org'):
-            warehouse_url += '/simple'
-
         finder = PackageFinder(
             find_links=[],
-            index_urls=[warehouse_url],
+            index_urls=[],
             session=PipSession(),
         )
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py
@@ -77,13 +72,14 @@ class PIPConverter(BaseConverter):
             ))
 
         # update repository
-        if finder.index_urls:
-            finded_host = urlparse(finder.index_urls[0]).hostname
-            if finded_host != urlparse(warehouse_url).hostname:
-                repo = WareHouseRepo(url=finder.index_urls[0])
-                for dep in deps:
-                    if isinstance(dep.repo, WareHouseRepo):
-                        dep.repo = repo
+        if finder.index_urls or finder.find_links:
+            repo = RepositoriesRegistry()
+            for url in chain(finder.index_urls, finder.find_links):
+                repo.add_repo(url=url)
+            repo.attach_config()
+            for dep in deps:
+                if isinstance(dep.repo, WarehouseBaseRepo):
+                    dep.repo = repo
 
         root.attach_dependencies(deps)
         return root
@@ -93,23 +89,29 @@ class PIPConverter(BaseConverter):
         lines = []
 
         # get repos urls
-        urls = dict()
+        urls = []
+        paths = []
+        names = set()
         for req in reqs:
-            if isinstance(req.dep.repo, WareHouseRepo):
-                urls[req.dep.repo.name] = req.dep.repo.pretty_url
-
+            if not isinstance(req.dep.repo, WarehouseBaseRepo):
+                continue
+            for repo in req.dep.repo.repos:
+                if repo.from_config:
+                    continue
+                if repo.name in names:
+                    continue
+                names.add(repo.name)
+                if isinstance(repo, WarehouseLocalRepo):
+                    paths.append(repo.path)
+                else:
+                    urls.append(repo.pretty_url)
         # dump repos urls
-        # pip._internal.build_env
-        if len(urls) == 1:
-            _name, url = urls.popitem()
-        elif 'pypi' in urls:
-            url = urls.pop('pypi')
-        else:
-            url = None
-        if url:
-            lines.append('-i ' + url)
-        for url in urls.values():
+        if urls:
+            lines.append('-i ' + urls[0])
+        for url in urls[1:]:
             lines.append('--extra-index-url ' + url)
+        for path in paths:
+            lines.append('--find-links ' + path)
 
         # disable hashes when dir-based deps are presented
         # https://github.com/dephell/dephell/issues/41

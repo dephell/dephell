@@ -11,7 +11,7 @@ import tomlkit
 from cerberus import Validator
 
 # app
-from ..constants import SUFFIXES
+from ..constants import SUFFIXES, NON_PATH_FORMATS
 from .defaults import DEFAULT
 from .logging_config import LOGGING
 from .scheme import SCHEME
@@ -19,7 +19,11 @@ from .scheme import SCHEME
 
 class Config:
     env = ''
-    _skip = ('config', 'env', 'key', 'name', 'type')
+    _skip = (
+        'config', 'env',
+        'key', 'name', 'type',
+        'hostname', 'username', 'password',
+    )
 
     def __init__(self, data: Optional[dict] = None):
         self._data = data or DEFAULT.copy()
@@ -69,6 +73,10 @@ class Config:
     def _expand_converter(text: str) -> Dict[str, str]:
         from ..converters import CONVERTERS
 
+        # passed converter that doesn't require path
+        if text in NON_PATH_FORMATS:
+            return dict(format=text, path='')
+
         # if passed only format
         if text in CONVERTERS:
             converter = CONVERTERS[text]
@@ -76,7 +84,7 @@ class Config:
                 if path.suffix in SUFFIXES:
                     content = None if not path.is_file() else path.read_text()
                     if converter.can_parse(path=path, content=content):
-                        return {'format': text, 'path': str(path)}
+                        return dict(format=text, path=str(path))
             raise LookupError('cannot find file for converter: ' + str(text))
 
         # if passed only filename
@@ -84,7 +92,7 @@ class Config:
         content = None if not path.is_file() else path.read_text()
         for name, converter in CONVERTERS.items():
             if converter.can_parse(path=path, content=content):
-                return {'format': name, 'path': text}
+                return dict(format=name, path=text)
 
         raise LookupError('cannot determine converter for file: ' + str(text))
 

@@ -8,7 +8,7 @@ from dephell_links import VCSLink
 
 # project
 from dephell.config import config
-from dephell.repositories.git.git import GitRepo
+from dephell.repositories import GitRepo
 
 loop = asyncio.get_event_loop()
 git_path = Path(config['cache']['path']) / 'git' / 'dephell' / '.git'

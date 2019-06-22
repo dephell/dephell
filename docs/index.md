@@ -10,6 +10,18 @@
 + [Discover licenses](cmd-deps-licenses) of all project dependencies, show [outdated](cmd-deps-outdated) packages, [find security issues](cmd-deps-audit).
 + Generate [.editorconfig](cmd-generate-editorconfig), [LICENSE](cmd-generate-license), [AUTHORS](cmd-generate-authors), [.travis.yml](cmd-generate-travis).
 
+## Quick start
+
+1. [Install](installation) DepHell.
+1. [Convert](cmd-deps-convert) dependencies from one format to another.
+1. [Make config](config) for DepHell to simplify commands.
+
+And that's it! Now you can use any tools with any Python project. Every other commands build around ability to read project dependencies and metadata and resolve conflicts. When you ready to boost your productivity, read how to manage your environment with DepHell:
+
+1. [Create virtual environment](cmd-venv-create).
+1. [Install](cmd-deps-install) or [synchronize](cmd-deps-sync) dependencies.
+1. [Run](cmd-venv-run) commands inside or [activate virtual environment](cmd-venv-shell).
+
 ```eval_rst
 .. toctree::
     :maxdepth: 1
@@ -23,95 +35,23 @@
 
 .. toctree::
     :maxdepth: 1
-    :caption: Project dependencies
+    :caption: Commands
 
-    cmd-deps-add
-    cmd-deps-audit
-    cmd-deps-check
-    cmd-deps-convert
-    cmd-deps-install
-    cmd-deps-licenses
-    cmd-deps-outdated
-    cmd-deps-sync
-    cmd-deps-tree
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Files generation
-
-    cmd-generate-authors
-    cmd-generate-config
-    cmd-generate-editorconfig
-    cmd-generate-license
-    cmd-generate-travis
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Inspect
-
-    cmd-inspect-config
-    cmd-inspect-self
-    cmd-inspect-venv
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Isolation
-
-    cmd-jail-install
-    cmd-jail-list
-    cmd-jail-remove
-    cmd-jail-try
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Single package actions
-
-    cmd-package-downloads
-    cmd-package-install
-    cmd-package-list
-    cmd-package-purge
-    cmd-package-releases
-    cmd-package-remove
-    cmd-package-search
-    cmd-package-show
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Project
-
-    cmd-project-build
-    cmd-project-bump
-    cmd-project-test
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Virtual environment
-
-    cmd-venv-create
-    cmd-venv-destroy
-    cmd-venv-run
-    cmd-venv-shell
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Other commands
-
-    cmd-autocomplete
+    index-deps
+    index-generate
+    index-inspect
+    index-jail
+    index-package
+    index-project
+    index-venv
+    index-other
 
 .. toctree::
     :maxdepth: 1
     :caption: Dive deeper
 
+    index-use
     badge
     changelog
     hell
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Recipes and examples
-
-    use-git-hook
-    use-tree-git
-    use-poetry-lock
-    use-licenses
 ```
