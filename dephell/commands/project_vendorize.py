@@ -6,7 +6,7 @@ from tempfile import TemporaryDirectory
 from pathlib import Path
 
 from bowler import Query
-from packaging.utils import canonicalize_name
+from dephell_discover import Root as PackageRoot
 
 # app
 from ..config import builders
@@ -85,28 +85,24 @@ class ProjectVendorizeCommand(BaseCommand):
                 package_path = next(package_path.iterdir())
 
             # find modules
-            modules = []
-            for module_path in package_path.iterdir():
-                if canonicalize_name(module_path.name) in (dep.name, dep.name + '-py'):
-                    modules.append(module_path)
-            if not modules:
-                for module_path in package_path.iterdir():
-                    if module_path.is_dir() and '.' not in module_path.name:
-                        modules.append(module_path)
-            if not modules:
+            root = PackageRoot(name=dep.name, path=package_path)
+            if not root.packages:
                 self.error('cannot find modules', extra=dict(
                     dependency=dep.name,
                     version=dep.group.best_release.version,
                 ))
+                return
 
             # copy modules
+            modules = {module.root for module in root.packages}
             for module_path in modules:
+                module_path = module_path.relative_to(package_path)
                 self.info('copying module...', extra=dict(
-                    path=module_path.name,
+                    path=module_path,
                     dependency=dep.name,
                     version=dep.group.best_release.version,
                 ))
-                shutil.copytree(str(module_path), str(output_path / module_path.name))
+                shutil.copytree(str(module_path), str(output_path / module_path))
 
     def _patch_imports(self, resolver, output_path) -> int:
         # select modules to patch imports
