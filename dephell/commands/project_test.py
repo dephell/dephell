@@ -22,7 +22,7 @@ from .base import BaseCommand
 class ProjectTestCommand(BaseCommand):
     """Test project build in temporary venvs.
 
-    https://dephell.readthedocs.io/en/latest/cmd-project-test.html
+    https://dephell.readthedocs.io/ cmd-project-test.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

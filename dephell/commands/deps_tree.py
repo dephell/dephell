@@ -13,7 +13,7 @@ from .base import BaseCommand
 class DepsTreeCommand(BaseCommand):
     """Show dependencies tree.
 
-    https://dephell.readthedocs.io/en/latest/cmd-deps-tree.html
+    https://dephell.readthedocs.io/ cmd-deps-tree.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

@@ -10,7 +10,7 @@ from .base import BaseCommand
 class InspectConfigCommand(BaseCommand):
     """Show current config.
 
-    https://dephell.readthedocs.io/en/latest/cmd-inspect-config.html
+    https://dephell.readthedocs.io/ cmd-inspect-config.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

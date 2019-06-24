@@ -96,7 +96,7 @@ description = "Dependency resolution for Python"
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/dephell/dephell"
-documentation = "https://dephell.readthedocs.io/en/latest/"
+documentation = "https://dephell.readthedocs.io/ "
 keywords = [
     "dephell", "packaging", "dependency", "dependencies", "venv", "licenses",
     "pip", "poetry", "pipfile", "pipenv", "setuptools",

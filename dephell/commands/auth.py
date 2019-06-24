@@ -12,7 +12,7 @@ from .base import BaseCommand
 class AuthCommand(BaseCommand):
     """Insert, update or delete credentials.
 
-    https://dephell.readthedocs.io/en/latest/cmd-auth.html
+    https://dephell.readthedocs.io/ cmd-auth.html
     """
     _global_config_path = get_data_dir() / GLOBAL_CONFIG_NAME
 

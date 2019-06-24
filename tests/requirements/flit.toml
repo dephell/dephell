@@ -32,7 +32,7 @@ installfrom = [
 ]
 
 [tool.flit.metadata.urls]
-Documentation = "https://flit.readthedocs.io/en/latest/"
+Documentation = "https://flit.readthedocs.io/ "
 
 [tool.flit.scripts]
 flit = "flit:main"

@@ -9,7 +9,7 @@ from .deps_install import DepsInstallCommand
 class DepsSyncCommand(DepsInstallCommand):
     """Install project dependencies with removing all other packages from venv.
 
-    https://dephell.readthedocs.io/en/latest/cmd-deps-sync.html
+    https://dephell.readthedocs.io/ cmd-deps-sync.html
     """
     # DepsInstallCommand contains all logic for sync.
     # There we just set `sync` flag and change some minor metainfo.

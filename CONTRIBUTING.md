@@ -58,5 +58,5 @@ If you want to use an IDE to edit / test dephell code, you'll have to point that
 [help wanted]: https://github.com/dephell/dephell/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
 [good first issues]: https://github.com/dephell/dephell/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 
-[pytest]: https://docs.pytest.org/en/latest/
+[pytest]: https://docs.pytest.org/ 
 [PEP8]: https://www.python.org/dev/peps/pep-0008/

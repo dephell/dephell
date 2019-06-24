@@ -11,7 +11,7 @@ from .base import BaseCommand
 class PackageShowCommand(BaseCommand):
     """Show information about package from PyPI.org.
 
-    https://dephell.readthedocs.io/en/latest/cmd-package-show.html
+    https://dephell.readthedocs.io/ cmd-package-show.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

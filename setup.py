@@ -26,7 +26,7 @@ setup(
     python_requires='>=3.5',
     project_urls={
         'repository': 'https://github.com/dephell/dephell',
-        'documentation': 'https://dephell.readthedocs.io/en/latest/'
+        'documentation': 'https://dephell.readthedocs.io/ '
     },
     author='Gram',
     author_email='master_fess@mail.ru',

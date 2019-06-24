@@ -152,7 +152,7 @@ class SetupPyConverter(BaseConverter):
 
     def dumps(self, reqs, project: RootDependency, content=None) -> str:
         """
-        https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
+        https://setuptools.readthedocs.io/ setuptools.html#metadata
         """
         content = []
         content.append(('name', project.raw_name))

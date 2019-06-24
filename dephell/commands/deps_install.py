@@ -16,7 +16,7 @@ from .base import BaseCommand
 class DepsInstallCommand(BaseCommand):
     """Install project dependencies.
 
-    https://dephell.readthedocs.io/en/latest/cmd-deps-install.html
+    https://dephell.readthedocs.io/ cmd-deps-install.html
     """
     sync = False
 
