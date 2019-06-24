@@ -13,7 +13,7 @@ from .base import BaseCommand
 class DepsConvertCommand(BaseCommand):
     """Convert dependencies between formats.
 
-    https://dephell.readthedocs.io/ cmd-deps-convert.html
+    https://dephell.readthedocs.io/cmd-deps-convert.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

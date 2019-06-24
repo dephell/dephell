@@ -11,7 +11,7 @@ from .base import BaseCommand
 class GenerateAuthorsCommand(BaseCommand):
     """Create AUTHORS file for project by git log.
 
-    https://dephell.readthedocs.io/ cmd-generate-authors.html
+    https://dephell.readthedocs.io/cmd-generate-authors.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

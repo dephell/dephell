@@ -10,7 +10,7 @@ from .base import BaseCommand
 class InspectAuthCommand(BaseCommand):
     """Show saved credentials.
 
-    https://dephell.readthedocs.io/ cmd-inspect-auth.html
+    https://dephell.readthedocs.io/cmd-inspect-auth.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

@@ -14,7 +14,7 @@ from .base import BaseCommand
 class VenvCreateCommand(BaseCommand):
     """Create virtual environment for current project.
 
-    https://dephell.readthedocs.io/ cmd-venv-create.html
+    https://dephell.readthedocs.io/cmd-venv-create.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

@@ -13,7 +13,7 @@ from .base import BaseCommand
 class PackageRemoveCommand(BaseCommand):
     """Remove installed packages.
 
-    https://dephell.readthedocs.io/ cmd-package-remove.html
+    https://dephell.readthedocs.io/cmd-package-remove.html
     """
 
     @classmethod

@@ -22,7 +22,7 @@ DUMPERS = (
 class ProjectBuildCommand(BaseCommand):
     """Create dist archives for project.
 
-    https://dephell.readthedocs.io/ cmd-project-build.html
+    https://dephell.readthedocs.io/cmd-project-build.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

@@ -17,7 +17,7 @@ from .base import BaseCommand
 class VenvShellCommand(BaseCommand):
     """Activate virtual environment for current project.
 
-    https://dephell.readthedocs.io/ cmd-venv-shell.html
+    https://dephell.readthedocs.io/cmd-venv-shell.html
     """
 
     @classmethod

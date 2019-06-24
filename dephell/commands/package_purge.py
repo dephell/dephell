@@ -16,7 +16,7 @@ from .base import BaseCommand
 class PackagePurgeCommand(BaseCommand):
     """Remove given packages and their dependencies.
 
-    https://dephell.readthedocs.io/ cmd-package-purge.html
+    https://dephell.readthedocs.io/cmd-package-purge.html
     """
 
     @classmethod

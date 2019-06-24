@@ -13,7 +13,7 @@ from .base import BaseCommand
 class InspectVenvCommand(BaseCommand):
     """Show virtual environment information for current project.
 
-    https://dephell.readthedocs.io/ cmd-inspect-venv.html
+    https://dephell.readthedocs.io/cmd-inspect-venv.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

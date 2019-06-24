@@ -22,7 +22,7 @@ from .base import BaseCommand
 class JailTryCommand(BaseCommand):
     """Try packages into temporary isolated environment.
 
-    https://dephell.readthedocs.io/ cmd-jail-try.html
+    https://dephell.readthedocs.io/cmd-jail-try.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
