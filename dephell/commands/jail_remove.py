@@ -15,7 +15,7 @@ from .base import BaseCommand
 class JailRemoveCommand(BaseCommand):
     """Remove package isolated environment.
 
-    https://dephell.readthedocs.io/en/latest/cmd-jail-remove.html
+    https://dephell.readthedocs.io/cmd-jail-remove.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

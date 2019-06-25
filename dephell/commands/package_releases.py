@@ -10,7 +10,7 @@ from .base import BaseCommand
 class PackageReleasesCommand(BaseCommand):
     """Show package releases.
 
-    https://dephell.readthedocs.io/en/latest/cmd-package-releases.html
+    https://dephell.readthedocs.io/cmd-package-releases.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
