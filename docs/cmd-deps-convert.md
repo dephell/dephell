@@ -18,13 +18,13 @@ Dephell can try to guess the formats or paths you want to use given the other pi
 ## Supported formats
 
 1. Archives:
-    1. [*.egg-info](https://setuptools.readthedocs.io/ formats.html) (`egginfo`)
+    1. [*.egg-info](https://setuptools.readthedocs.io/en/latest/formats.html) (`egginfo`)
     1. [*.tar.gz](https://packaging.python.org/glossary/#term-distribution-package) (`sdist`)
     1. [*.whl](https://pythonwheels.com) (`wheel`)
 1. [pip](https://pip.pypa.io/en/stable/):
     1. [requirements.txt](https://pip.pypa.io/en/stable/user_guide/#requirements-files) (`pip`)
     1. [requirements.lock](https://nvie.com/posts/pin-your-packages/) (`piplock`)
-1. [pipenv](https://pipenv.readthedocs.io/ ):
+1. [pipenv](https://pipenv.readthedocs.io/en/latest/):
     1. [Pipfile](https://github.com/pypa/pipfile) (`pipfile`)
     1. [Pipfile.lock](https://stackoverflow.com/a/49867443/8704691) (`pipfilelock`)
 1. [poetry](https://github.com/sdispater/poetry):
@@ -35,8 +35,8 @@ Dephell can try to guess the formats or paths you want to use given the other pi
     1. Installed packages (`installed`). It works like [pip freeze](https://pip.pypa.io/en/stable/reference/pip_freeze/). Dephell can only read from this format, of course. If you want to install packages, use [install command](cmd-deps-install).
 1. Other:
     1. [setup.py](https://docs.python.org/3/distutils/setupscript.html) (`setuppy`)
-    1. [flit](https://flit.readthedocs.io/ pyproject_toml.html) (`flit`)
-    1. [conda](https://conda.io/ )'s [environment.yml](https://docs.conda.io/projects/conda/ user-guide/tasks/manage-environments.html#creating-an-environment-file-manually) (`conda`)
+    1. [flit](https://flit.readthedocs.io/en/latest/pyproject_toml.html) (`flit`)
+    1. [conda](https://conda.io/en/latest/)'s [environment.yml](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually) (`conda`)
     1. [pyproject.toml build-system requires](https://www.python.org/dev/peps/pep-0518/#build-system-table) (`pyproject`)
 
 ## Examples
@@ -93,7 +93,7 @@ You can convert anything to anything:
 
 ## Filter dependencies
 
-You can filter dependencies by envs with `--envs` flag. All dependencies included in `main` or `dev` env. Also, some dependencies can be included in [extras](https://setuptools.readthedocs.io/ setuptools.html#declaring-extras-optional-features-with-their-own-dependencies). There is an example of poetry config with envs in comments:
+You can filter dependencies by envs with `--envs` flag. All dependencies included in `main` or `dev` env. Also, some dependencies can be included in [extras](https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies). There is an example of poetry config with envs in comments:
 
 ```toml
 [tool.poetry.dependencies]

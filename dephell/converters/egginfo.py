@@ -230,7 +230,7 @@ class _Reader:
         return tuple(value.strip() for value in values if value.strip() != 'UNKNOWN')
 
 
-# https://setuptools.readthedocs.io/ formats.html
+# https://setuptools.readthedocs.io/en/latest/formats.html
 class _Writer:
     def dump(self, reqs, path: Path, project: RootDependency) -> None:
         if isinstance(path, str):

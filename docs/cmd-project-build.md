@@ -4,7 +4,7 @@ Build package for project:
 
 1. Get dependencies from `from` parameter.
 1. Make `setup.py` and `README.rst`.
-1. Make [egg-info](https://setuptools.readthedocs.io/ formats.html).
+1. Make [egg-info](https://setuptools.readthedocs.io/en/latest/formats.html).
 1. Make sdist (archived project source code and egg-info).
 1. Make [wheel](https://pythonwheels.com/).
 

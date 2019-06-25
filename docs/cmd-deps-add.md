@@ -36,7 +36,7 @@ See [configuration documentation](config) for more details.
 
 ## Specify dependencies environments
 
-Environments for dependencies is the name of dependencies section (`main` and `dev` for `poetry` and `pipfile`) or name of [extras](https://setuptools.readthedocs.io/ setuptools.html#declaring-extras-optional-features-with-their-own-dependencies). DepHell uses `main` by default, but you can specify another one:
+Environments for dependencies is the name of dependencies section (`main` and `dev` for `poetry` and `pipfile`) or name of [extras](https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies). DepHell uses `main` by default, but you can specify another one:
 
 ```bash
 dephell deps add --envs dev tests -- flake8==3.1.0 pytest
