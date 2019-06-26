@@ -13,7 +13,7 @@ from .base import BaseCommand
 class PackageDownloadsCommand(BaseCommand):
     """Show downloads statistic for package from PyPI.org.
 
-    https://dephell.readthedocs.io/en/latest/cmd-package-downloads.html
+    https://dephell.readthedocs.io/cmd-package-downloads.html
     """
 
     @classmethod

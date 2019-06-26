@@ -5,12 +5,12 @@ from tempfile import TemporaryDirectory
 from typing import Tuple
 from urllib.parse import urlparse
 
-from aiohttp import ClientSession
 from dephell_markers import Markers
 from packaging.requirements import InvalidRequirement, Requirement
 
 from ..base import Interface
 from ...cached_property import cached_property
+from ...networking import aiohttp_session
 
 
 try:
@@ -101,10 +101,7 @@ class WarehouseBaseRepo(Interface):
             return tuple(deps)
 
     async def _download(self, *, url: str, path: Path) -> None:
-        headers = dict()
-        if self.auth:
-            headers['Authorization'] = self.auth.encode()
-        async with ClientSession(headers=headers) as session:
+        async with aiohttp_session(auth=self.auth) as session:
             async with session.get(url) as response:
                 response.raise_for_status()
 

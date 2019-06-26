@@ -11,7 +11,7 @@ from .base import BaseCommand
 class DepsAuditCommand(BaseCommand):
     """Show known vulnerabilities for project dependencies.
 
-    https://dephell.readthedocs.io/en/latest/cmd-deps-audit.html
+    https://dephell.readthedocs.io/cmd-deps-audit.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

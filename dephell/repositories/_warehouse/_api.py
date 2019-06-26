@@ -10,7 +10,6 @@ from xmlrpc.client import ServerProxy
 # external
 import attr
 import requests
-from aiohttp import ClientSession
 from dephell_licenses import License, licenses
 from packaging.requirements import Requirement
 
@@ -20,6 +19,7 @@ from ...config import config
 from ...exceptions import PackageNotFoundError, InvalidFieldsError
 from ...models.author import Author
 from ...models.release import Release
+from ...networking import aiohttp_session
 from ._base import WarehouseBaseRepo
 
 
@@ -261,10 +261,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
     async def _get_from_json(self, *, name, version):
         url = urljoin(self.url, posixpath.join(name, str(version), 'json'))
-        headers = dict()
-        if self.auth:
-            headers['Authorization'] = self.auth.encode()
-        async with ClientSession(headers=headers) as session:
+        async with aiohttp_session(auth=self.auth) as session:
             async with session.get(url) as response:
                 if response.status == 404:
                     raise PackageNotFoundError(package=name, url=url)
