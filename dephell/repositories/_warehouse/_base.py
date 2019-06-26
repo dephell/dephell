@@ -5,12 +5,12 @@ from tempfile import TemporaryDirectory
 from typing import Tuple
 from urllib.parse import urlparse
 
-from aiohttp import ClientSession
 from dephell_markers import Markers
 from packaging.requirements import InvalidRequirement, Requirement
 
 from ..base import Interface
 from ...cached_property import cached_property
+from ...networking import aiohttp_session
 
 
 try:
@@ -81,10 +81,7 @@ class WarehouseBaseRepo(Interface):
 
     async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
         with TemporaryDirectory() as tmp:
-            headers = dict()
-            if self.auth:
-                headers['Authorization'] = self.auth.encode()
-            async with ClientSession(headers=headers) as session:
+            async with aiohttp_session(auth=self.auth) as session:
                 async with session.get(url) as response:
                     response.raise_for_status()
                     fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]

@@ -19,6 +19,7 @@ class LocalRepo(Interface):
         self.path = path
 
     def get_releases(self, dep) -> Tuple[Release, ...]:
+        releases = []
         dist_path = (self.path / 'dist')
         if dist_path.exists():
             repo = WarehouseLocalRepo(path=dist_path)
