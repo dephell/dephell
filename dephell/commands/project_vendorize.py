@@ -30,7 +30,7 @@ class ProjectVendorizeCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('--vendors', help='path to vendorized packages')
+        parser.add_argument('vendors', help='path to vendorized packages')
         return parser
 
     def __call__(self) -> bool:
@@ -39,7 +39,7 @@ class ProjectVendorizeCommand(BaseCommand):
             return False
         output_path = Path(self.config['vendors'])
 
-        self.logger.info('downloding packages...', extra=dict(output=output_path))
+        self.logger.info('downloading packages...', extra=dict(output=output_path))
         packages = self._download_packages(resolver=resolver, output_path=output_path)
 
         self.logger.info('patching imports...')
@@ -72,11 +72,12 @@ class ProjectVendorizeCommand(BaseCommand):
 
     def _extract_modules(self, dep, archive_path: Path, output_path: Path) -> bool:
         # say to shutils that wheel can be parsed as zip
-        shutil.register_unpack_format(
-            name='wheel',
-            extensions=['.whl'],
-            function=shutil._unpack_zipfile,
-        )
+        if 'wheel' not in shutil._UNPACK_FORMATS:
+            shutil.register_unpack_format(
+                name='wheel',
+                extensions=['.whl'],
+                function=shutil._unpack_zipfile,
+            )
 
         with TemporaryDirectory() as package_path:
             package_path = Path(package_path)
@@ -87,7 +88,7 @@ class ProjectVendorizeCommand(BaseCommand):
             # find modules
             root = PackageRoot(name=dep.name, path=package_path)
             if not root.packages:
-                self.error('cannot find modules', extra=dict(
+                self.logger.error('cannot find modules', extra=dict(
                     dependency=dep.name,
                     version=dep.group.best_release.version,
                 ))
@@ -100,7 +101,7 @@ class ProjectVendorizeCommand(BaseCommand):
                 path=module_path,
                 dependency=dep.name,
             ))
-            shutil.copytree(str(module_path), str(output_path / module_path))
+            shutil.copytree(str(package_path / module_path), str(output_path / module_path))
             return True
 
     def _patch_imports(self, resolver, output_path) -> int:
@@ -114,7 +115,7 @@ class ProjectVendorizeCommand(BaseCommand):
         # set renamings
         root = Path(self.config['project'])
         for library in output_path.iterdir():
-            library_module = '.'.join(library.relative_to(root).parts)
+            library_module = '.'.join(library.resolve().relative_to(root).parts)
             query = query.select_module(library.name).rename(library_module)
 
         # execute renaming

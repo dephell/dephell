@@ -86,7 +86,7 @@ class WarehouseBaseRepo(Interface):
         with TemporaryDirectory() as tmp:
             fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]
             path = Path(tmp) / fname
-            self._download(url=url, path=path)
+            await self._download(url=url, path=path)
 
             # load and make separated dep for every env
             root = converter.load(path)
