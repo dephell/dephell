@@ -1,5 +1,7 @@
+from dephell_versioning import get_schemes
+
 # app
-from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES, VERSION_SCHEMES
+from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES
 
 
 env_help = (
@@ -79,5 +81,5 @@ def build_other(parser):
 
     other_group.add_argument('--envs', nargs='*', help='environments (main, dev) or extras to install')
     other_group.add_argument('--tests', nargs='*', help='paths to test files')
-    other_group.add_argument('--versioning', choices=sorted(VERSION_SCHEMES),
+    other_group.add_argument('--versioning', choices=sorted(get_schemes()),
                              help='versioning scheme for project')
