@@ -12,14 +12,12 @@ from ._git import git_commit, git_tag
 from ._json import make_json
 from ._package import get_package, get_packages, get_resolver
 from ._python import get_python, get_python_env
-from ._roman import arabic2roman, roman2arabic
 from ._shutil import format_size, get_path_size
 from ._travis import make_travis
 from ._venv import get_venv
 
 
 __all__ = [
-    'arabic2roman',
     'attach_deps',
     'format_size',
     'get_downloads_by_category',
@@ -40,5 +38,4 @@ __all__ = [
     'make_travis',
     'make_zsh_autocomplete',
     'read_dotenv',
-    'roman2arabic',
 ]

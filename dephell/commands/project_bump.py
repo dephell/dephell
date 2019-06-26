@@ -89,7 +89,7 @@ class ProjectBumpCommand(BaseCommand):
             self.logger.info('file bumped', extra=dict(path=str(path)))
 
         # update version in project metadata
-        updated = self._update_metadata(root=root, paths=paths, loader=loader)
+        updated = self._update_metadata(root=root, loader=loader, new_version=new_version)
         if updated:
             paths.append(Path(self.config['from']['path']))
 
