@@ -2,7 +2,6 @@
 import os
 import platform
 from collections import OrderedDict
-from datetime import date
 from enum import Enum, unique
 from types import MappingProxyType
 
@@ -97,59 +96,6 @@ ARCHIVE_EXTENSIONS = (
     '.zip',
 )
 
-# about name aliases: https://github.com/semver/semver/issues/411
-VERSION_MAJOR = ('major', 'breaking')
-VERSION_MINOR = ('minor', 'feature')
-VERSION_PATCH = ('patch', 'fix', 'micro')
-VERSION_PRE = ('pre', 'rc', 'alpha')
-VERSION_PRE_MAJOR = ('premajor', 'prebreaking')
-VERSION_PRE_MINOR = ('preminor', 'prefeature')
-VERSION_PRE_PATCH = ('prepatch', 'prefix', 'premicro')
-PRE_VERSIONS = VERSION_PRE + VERSION_PRE_MAJOR + VERSION_PRE_MINOR + VERSION_PRE_PATCH
-MAJOR_VERSIONS = VERSION_MAJOR + VERSION_PRE_MAJOR
-MINOR_VERSIONS = VERSION_MINOR + VERSION_PRE_MINOR
-PATCH_VERSIONS = VERSION_PATCH + VERSION_PRE_PATCH
-VERSION_RELEASE = ('release', )
-# semver has no post-releases: https://github.com/semver/semver/issues/200
-VERSION_POST = ('post', )
-VERSION_DEV = ('dev', )
-VERSION_LOCAL = ('local', )
-VERSION_SCHEMES = MappingProxyType(dict(
-    # https://www.python.org/dev/peps/pep-0440/#version-scheme
-    pep=sum([
-        MAJOR_VERSIONS,
-        MINOR_VERSIONS,
-        PATCH_VERSIONS,
-        VERSION_PRE,
-        VERSION_POST,
-        VERSION_DEV,
-        VERSION_LOCAL,
-        VERSION_RELEASE,
-    ], ()),
-    # https://semver.org/
-    semver=MAJOR_VERSIONS + MINOR_VERSIONS + PATCH_VERSIONS + VERSION_PRE + VERSION_LOCAL + VERSION_RELEASE,
-    # https://github.com/staltz/comver
-    comver=MAJOR_VERSIONS + MINOR_VERSIONS + VERSION_PRE + VERSION_LOCAL + VERSION_RELEASE,
-    # http://dafoster.net/articles/2015/03/14/semantic-versioning-vs-romantic-versioning/
-    romver=MAJOR_VERSIONS + MINOR_VERSIONS + VERSION_PRE + VERSION_RELEASE,
-    # https://calver.org/
-    calver=VERSION_MAJOR + VERSION_PATCH,
-    # https://packaging.python.org/guides/distributing-packages-using-setuptools/#serial-versioning
-    serial=VERSION_MAJOR,
-    # Mac OS X reference
-    roman=VERSION_MAJOR,
-    # https://0ver.org/
-    zerover=MINOR_VERSIONS + PATCH_VERSIONS + VERSION_PRE + VERSION_LOCAL + VERSION_RELEASE,
-))
-VERSION_INIT = MappingProxyType(dict(
-    pep='0.1.0',
-    semver='0.1.0',
-    comver='0.1',
-    romver='0.1.0',
-    calver='{}.{}'.format(date.today().year, date.today().month),
-    roman='I',
-))
-
 
 DEPHELL_ECOSYSTEM = (
     'dephell_archive',
@@ -161,4 +107,5 @@ DEPHELL_ECOSYSTEM = (
     'dephell_shells',
     'dephell_specifier',
     'dephell_venvs',
+    'dephell_versioning',
 )

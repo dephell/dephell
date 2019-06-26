@@ -1,16 +1,27 @@
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
+from typing import Iterator
 
 # external
 from dephell_discover import Root as PackageRoot
+from dephell_versioning import bump_version, bump_file
 
 # app
-from ..actions import bump_project, bump_version, get_version_from_project, git_commit, git_tag
+from ..actions import git_commit, git_tag
 from ..config import builders
 from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
+
+
+FILE_NAMES = (
+    '__init__.py',
+    '__version__.py',
+    '__about__.py',
+    '_version.py',
+    '_about.py',
+)
 
 
 class ProjectBumpCommand(BaseCommand):
@@ -36,6 +47,7 @@ class ProjectBumpCommand(BaseCommand):
     def __call__(self) -> bool:
         old_version = None
         root = None
+        loader = None
         package = PackageRoot(path=Path(self.config['project']))
 
         if 'from' in self.config:
@@ -50,8 +62,8 @@ class ProjectBumpCommand(BaseCommand):
         else:
             self.logger.warning('`from` file is not specified')
 
-        if old_version is None:
-            old_version = get_version_from_project(project=package)
+        if old_version is None and package.metainfo:
+            old_version = package.metainfo.version
 
         if old_version is None:
             if self.args.name == 'init':
@@ -73,53 +85,79 @@ class ProjectBumpCommand(BaseCommand):
 
         # update version in project files
         paths = []
-        for path in bump_project(project=package, old=old_version, new=new_version):
+        for path in self._bump_project(project=package, old=old_version, new=new_version):
             paths.append(path)
             self.logger.info('file bumped', extra=dict(path=str(path)))
 
         # update version in project metadata
-        if root is not None and root.version != '0.0.0':
-            # we can reproduce metadata only for poetry yet
-            if self.config['from']['format'] == 'poetry':
-                paths.append(Path(self.config['from']['path']))
-                root.version = new_version
-                loader.dump(
-                    project=root,
-                    path=self.config['from']['path'],
-                    reqs=[Requirement(dep=dep, lock=loader.lock) for dep in root.dependencies],
-                )
-            else:
-                path = Path(self.config['from']['path'])
-                with path.open('r', encoding='utf8') as stream:
-                    content = stream.read()
-                new_content = content.replace(str(root.version), str(new_version))
-                if new_content == content:
-                    self.logger.warning('cannot bump version in metadata file')
-                else:
-                    with path.open('w', encoding='utf8') as stream:
-                        stream.write(new_content)
+        updated = self._update_metadata(root=root, loader=loader, new_version=new_version)
+        if updated:
+            paths.append(Path(self.config['from']['path']))
 
         # set git tag
         if self.config.get('tag'):
-            project = Path(self.config['project'])
-            if (project / '.git').exists():
-                self.logger.info('commit and tag')
-                ok = git_commit(
-                    message='bump version to {}'.format(str(new_version)),
-                    paths=paths,
-                    project=project,
-                )
-                if not ok:
-                    self.logger.error('cannot commit files')
-                    return False
-                ok = git_tag(
-                    name='v.' + str(new_version),
-                    project=project,
-                )
-                if not ok:
-                    self.logger.error('cannot add tag into git repo')
-                    return False
-
-                self.logger.info('tag created, do not forget to push it: git push --tags')
+            self._add_git_tag(paths=paths, new_version=new_version)
 
         return True
+
+    @staticmethod
+    def _bump_project(project: PackageRoot, old: str, new: str) -> Iterator[Path]:
+        for package in project.packages:
+            for path in package:
+                if path.name not in FILE_NAMES:
+                    continue
+                file_bumped = bump_file(path=path, old=old, new=new)
+                if file_bumped:
+                    yield path
+
+    def _update_metadata(self, root, loader, new_version) -> bool:
+        if root is None:
+            return False
+        if root.version == '0.0.0':
+            return False
+
+        # we can reproduce metadata only for poetry yet
+        if self.config['from']['format'] == 'poetry':
+            root.version = new_version
+            loader.dump(
+                project=root,
+                path=self.config['from']['path'],
+                reqs=[Requirement(dep=dep, lock=loader.lock) for dep in root.dependencies],
+            )
+            return True
+
+        # try to replace version in file as string
+        path = Path(self.config['from']['path'])
+        with path.open('r', encoding='utf8') as stream:
+            content = stream.read()
+        new_content = content.replace(str(root.version), str(new_version))
+        if new_content == content:
+            self.logger.warning('cannot bump version in metadata file')
+            return False
+        with path.open('w', encoding='utf8') as stream:
+            stream.write(new_content)
+        return True
+
+    def _add_git_tag(self, paths, new_version):
+        project = Path(self.config['project'])
+        if not (project / '.git').exists():
+            return
+
+        self.logger.info('commit and tag')
+        ok = git_commit(
+            message='bump version to {}'.format(str(new_version)),
+            paths=paths,
+            project=project,
+        )
+        if not ok:
+            self.logger.error('cannot commit files')
+            return False
+        ok = git_tag(
+            name='v.' + str(new_version),
+            project=project,
+        )
+        if not ok:
+            self.logger.error('cannot add tag into git repo')
+            return False
+
+        self.logger.info('tag created, do not forget to push it: git push --tags')

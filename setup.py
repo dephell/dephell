@@ -54,8 +54,9 @@ setup(
         'dephell-licenses>=0.1.6', 'dephell-links>=0.1.4',
         'dephell-markers>=0.2.6', 'dephell-pythons>=0.1.11',
         'dephell-shells>=0.1.3', 'dephell-specifier>=0.1.7',
-        'dephell-venvs>=0.1.16', 'html5lib', 'jinja2', 'm2r', 'packaging',
-        'pip>=18.0', 'pyyaml', 'requests', 'setuptools', 'tomlkit', 'yaspin'
+        'dephell-venvs>=0.1.16', 'dephell-versioning', 'html5lib', 'jinja2',
+        'm2r', 'packaging', 'pip>=18.0', 'pyyaml', 'requests', 'setuptools',
+        'tomlkit', 'yaspin'
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
