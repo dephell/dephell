@@ -11,7 +11,6 @@ from typing import Dict, List, Any, Optional
 import asyncio
 import attr
 import requests
-from aiohttp import ClientSession
 from dephell_specifier import RangeSpecifier
 from jinja2 import Environment
 
@@ -21,6 +20,7 @@ from ...config import config
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
 from ...cached_property import cached_property
+from ...networking import aiohttp_session
 from ._base import CondaBaseRepo
 
 
@@ -188,7 +188,7 @@ class CondaGitRepo(CondaBaseRepo):
     async def _get_meta(self, rev: str, repo: str, path: str, **kwargs) -> Optional[Dict[str, Any]]:
         # download
         url = CONTENT_URL.format(repo=repo, path=path, rev=rev)
-        async with ClientSession() as session:
+        async with aiohttp_session() as session:
             async with session.get(url) as response:
                 if response.status != 200:
                     raise ValueError('invalid response: {} {} ({})'.format(
