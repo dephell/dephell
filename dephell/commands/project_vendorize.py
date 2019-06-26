@@ -54,7 +54,9 @@ class ProjectVendorizeCommand(BaseCommand):
 
             loop = asyncio.get_event_loop()
             tasks = []
+            deps = []
             for dep in resolver.graph:
+                deps.append(dep)
                 tasks.append(dep.repo.download(
                     name=dep.name,
                     version=dep.group.best_release.version,
@@ -62,7 +64,7 @@ class ProjectVendorizeCommand(BaseCommand):
                 ))
             loop.run_until_complete(asyncio.gather(*tasks))
 
-            for archive_path in archives_path.iterdir():
+            for dep, archive_path in zip(deps, archives_path.iterdir()):
                 self._extract_modules(
                     dep=dep,
                     archive_path=archive_path,
