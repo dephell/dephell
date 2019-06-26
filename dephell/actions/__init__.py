@@ -16,15 +16,11 @@ from ._roman import arabic2roman, roman2arabic
 from ._shutil import format_size, get_path_size
 from ._travis import make_travis
 from ._venv import get_venv
-from ._version import bump_file, bump_project, bump_version, get_version_from_file, get_version_from_project
 
 
 __all__ = [
     'arabic2roman',
     'attach_deps',
-    'bump_file',
-    'bump_project',
-    'bump_version',
     'format_size',
     'get_downloads_by_category',
     'get_entrypoints',
@@ -36,8 +32,6 @@ __all__ = [
     'get_resolver',
     'get_total_downloads',
     'get_venv',
-    'get_version_from_file',
-    'get_version_from_project',
     'git_commit',
     'git_tag',
     'make_bash_autocomplete',
