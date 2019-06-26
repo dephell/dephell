@@ -47,6 +47,7 @@ class ProjectBumpCommand(BaseCommand):
     def __call__(self) -> bool:
         old_version = None
         root = None
+        loader = None
         package = PackageRoot(path=Path(self.config['project']))
 
         if 'from' in self.config:
