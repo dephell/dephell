@@ -1,6 +1,7 @@
 from bowler import LN, Capture, Filename, Query
 from bowler.helpers import power_parts, quoted_parts, dotted_parts
 from fissix.pytree import Node, Leaf
+from fissix.pgen2 import token
 from fissix.fixer_util import syms, Name, Dot
 
 
@@ -34,18 +35,11 @@ class ModuleImportModifier:
     selector = """
         import_name< 'import'
             (
-                module_name='{name}'
+                module_name='{name}' any*
+            |
+                dotted_as_names< (any ',')* module_name='{name}' (',' any)* >
             |
                 module_name=dotted_name< {dotted_name} any* >
-            |
-                dotted_as_name<
-                    (
-                        module_name='{name}'
-                    |
-                        module_name=dotted_name< {dotted_name} any* >
-                    )
-                    'as' module_nickname=any
-                >
             )
         >
         """
@@ -65,6 +59,7 @@ class ModuleImportModifier:
             self._modify(capture['node'])
 
     def _modify(self, node: Node):
+        print(repr(node))
         if '.' in self.old_name:
             children = []
             for part in dotted_parts(self.old_name):
@@ -79,7 +74,16 @@ class ModuleImportModifier:
         else:
             old_name_node = Name(self.old_name, prefix=' ')
 
-        old_leaf = node.children[1]
+        if node.children[1].type == syms.dotted_as_names:
+            for child in node.children[1].children:
+                if child.type == token.NAME and child.value == self.old_name:
+                    old_leaf = child
+                    break
+            else:
+                raise RuntimeError('cannot find given module')
+        else:
+            old_leaf = node.children[1]
+
         new_node = Node(
             type=syms.dotted_as_name,
             children=[
