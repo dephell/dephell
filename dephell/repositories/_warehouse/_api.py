@@ -169,10 +169,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
         response = cache.load()
         if response is None:
             url = urljoin(self.url, posixpath.join(name, str(version), 'json'))
-            headers = dict()
-            if self.auth:
-                headers['Authorization'] = self.auth.encode()
-            async with ClientSession(headers=headers) as session:
+            async with aiohttp_session(auth=self.auth) as session:
                 async with session.get(url) as response:
                     if response.status == 404:
                         raise PackageNotFoundError(package=name, url=url)
