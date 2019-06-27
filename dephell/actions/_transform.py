@@ -4,7 +4,7 @@ from fissix.pytree import Node, Leaf
 from fissix.fixer_util import syms, Name
 
 
-MODULE_IMPORT_SELECTOR = """
+IMPORT_SELECTOR = """
     import_name< 'import'
         (
             module_name='{name}'
@@ -24,9 +24,9 @@ MODULE_IMPORT_SELECTOR = """
     """
 
 
-def transform_as_import(query: Query, old_name: str, new_name: str) -> Query:
-    modifier = AsImportModifier(old_name=old_name, new_name=new_name)
-    selector = MODULE_IMPORT_SELECTOR.format(
+def transform_imports(query: Query, old_name: str, new_name: str) -> Query:
+    modifier = ImportModifier(old_name=old_name, new_name=new_name)
+    selector = IMPORT_SELECTOR.format(
         name=old_name,
         dotted_name=' '.join(quoted_parts(old_name)),
         power_name=' '.join(power_parts(old_name)),
@@ -34,12 +34,13 @@ def transform_as_import(query: Query, old_name: str, new_name: str) -> Query:
     return query.select(selector).modify(modifier)
 
 
-class AsImportModifier:
+class ImportModifier:
     def __init__(self, old_name, new_name):
         self.old_name = old_name
         self.new_name = new_name
 
     def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+        print(capture)
         if capture['node'].type == syms.import_name:
             if capture['module_name'].value == self.old_name:
                 self._modify_to_as(capture['node'])
