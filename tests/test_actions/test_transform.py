@@ -7,12 +7,15 @@ from dephell.actions._transform import transform_imports
 
 
 @pytest.mark.parametrize('code_in, code_out, old_name, new_name', [
+    # import foo -> import bar as foo
     ('import astana', 'import nursultan as astana', 'astana', 'nursultan'),
     ('import astana', 'import nurs.ultan as astana', 'astana', 'nurs.ultan'),
     ('import foo', 'import foo', 'bar', 'baz'),
     ('import foo, bar', 'import baz as foo, bar', 'foo', 'baz'),
     ('import bar, foo', 'import bar, baz as foo', 'foo', 'baz'),
-    # ('from foo import bar', 'from baz import bar', 'foo', 'baz'),
+
+    # from foo import bar -> from baz import bar
+    ('from foo import bar', 'from baz import bar', 'foo', 'baz'),
 ])
 def test_transform_as_import(code_in: str, code_out: str, old_name: str, new_name: str, temp_path: Path):
     code_in += '\n'

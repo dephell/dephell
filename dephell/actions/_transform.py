@@ -29,7 +29,7 @@ def transform_imports(query: Query, old_name: str, new_name: str) -> Query:
 
 @_register
 class ModuleImportModifier:
-    """import foo -> import foo as bar
+    """import foo -> import bar as foo
     """
 
     selector = """
@@ -59,7 +59,6 @@ class ModuleImportModifier:
             self._modify(capture['node'])
 
     def _modify(self, node: Node):
-        print(repr(node))
         if '.' in self.old_name:
             children = []
             for part in dotted_parts(self.old_name):
@@ -96,6 +95,52 @@ class ModuleImportModifier:
                 old_name_node,
             ],
         )
-        print(old_leaf)
         old_leaf.replace(new_node)
-        print(old_leaf)
+
+
+@_register
+class FromImportModifier:
+    """import foo -> import bar as foo
+    """
+
+    selector = """
+        import_from< 'from'
+            (
+                module_name='{name}'
+            |
+                module_name=dotted_name< {dotted_name} any* >
+            )
+            'import' any*
+        >
+        """
+
+    def __init__(self, old_name, new_name):
+        self.old_name = old_name
+        self.new_name = new_name
+
+    def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+        if capture['node'].type != syms.import_from:
+            return
+        if type(capture['module_name']) is Node:
+            module_name = ''.join(child.value for child in capture['module_name'].children)
+        else:
+            module_name = capture['module_name'].value
+        if module_name == self.old_name:
+            self._modify(capture['node'])
+
+    def _modify(self, node: Node):
+        if '.' in self.new_name:
+            children = []
+            for part in dotted_parts(self.new_name):
+                if part == '.':
+                    children.append(Dot())
+                else:
+                    children.append(Name(part))
+            new_name_node = Node(
+                type=syms.dotted_name,
+                children=children,
+            )
+        else:
+            new_name_node = Name(self.new_name, prefix=' ')
+
+        node.children[1].replace(new_name_node)
