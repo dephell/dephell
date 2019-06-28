@@ -121,14 +121,23 @@ class FromImportModifier:
     def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
         if capture['node'].type != syms.import_from:
             return
+
+        # build given module name from nodes
         if type(capture['module_name']) is Node:
             module_name = ''.join(child.value for child in capture['module_name'].children)
         else:
             module_name = capture['module_name'].value
+
+        # modify module name if it's old_name module or import from old_name module
         if module_name == self.old_name:
+            self._modify(capture['node'])
+        elif module_name.startswith(self.old_name + '.'):
             self._modify(capture['node'])
 
     def _modify(self, node: Node):
+        old_name_node = node.children[1]
+
+        # build new node from new_name
         if '.' in self.new_name:
             children = []
             for part in dotted_parts(self.new_name):
@@ -136,11 +145,22 @@ class FromImportModifier:
                     children.append(Dot())
                 else:
                     children.append(Name(part))
-            new_name_node = Node(
-                type=syms.dotted_name,
-                children=children,
-            )
         else:
-            new_name_node = Name(self.new_name, prefix=' ')
+            children = [Name(self.new_name)]
 
-        node.children[1].replace(new_name_node)
+        # attach to the new node subimports from the old module
+        if type(old_name_node) is Node:
+            original_name_size = len(dotted_parts(self.old_name))
+            for part in old_name_node.children[original_name_size:]:
+                if part.value == '.':
+                    children.append(Dot())
+                else:
+                    children.append(Name(part.value))
+
+        new_name_node = Node(
+            type=syms.dotted_name,
+            children=children,
+            prefix=old_name_node.prefix,
+        )
+
+        old_name_node.replace(new_name_node)

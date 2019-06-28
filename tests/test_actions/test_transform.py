@@ -17,8 +17,11 @@ from dephell.actions._transform import transform_imports
 
     # from foo import bar -> from baz import bar
     ('from foo import bar', 'from baz import bar', 'foo', 'baz'),
+    ('from root.foo import bar', 'from baz import bar', 'root.foo', 'baz'),
+    ('from foo import bar', 'from root.baz import bar', 'foo', 'root.baz'),
     ('from foo import bar, baz', 'from baz import bar, baz', 'foo', 'baz'),
     ('from foo import bar, foo', 'from baz import bar, foo', 'foo', 'baz'),
+    ('from foo.bar import baz', 'from root.bar import baz', 'foo', 'root'),
 ])
 def test_transform_as_import(code_in: str, code_out: str, old_name: str, new_name: str, temp_path: Path):
     code_in += '\n'
