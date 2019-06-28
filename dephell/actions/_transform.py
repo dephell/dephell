@@ -136,33 +136,12 @@ class FromImportModifier:
 
     def _modify(self, node: Node):
         old_name_node = node.children[1]
-
-        # build new node from new_name
-        if '.' in self.new_name:
-            children = []
-            for part in dotted_parts(self.new_name):
-                if part == '.':
-                    children.append(Dot())
-                else:
-                    children.append(Name(part))
-        else:
-            children = [Name(self.new_name)]
-
-        # attach to the new node subimports from the old module
-        if type(old_name_node) is Node:
-            original_name_size = len(dotted_parts(self.old_name))
-            for part in old_name_node.children[original_name_size:]:
-                if part.value == '.':
-                    children.append(Dot())
-                else:
-                    children.append(Name(part.value))
-
-        new_name_node = Node(
-            type=syms.dotted_name,
-            children=children,
-            prefix=old_name_node.prefix,
+        new_name_node = _build_new_name_node(
+            old_name_node=old_name_node,
+            new_name=self.new_name,
+            old_name=self.old_name,
+            attach=True,
         )
-
         old_name_node.replace(new_name_node)
 
 
@@ -203,31 +182,38 @@ class ModuleAsImportModifier:
 
     def _modify(self, node: Node):
         old_name_node = node.children[1].children[0]
-
-        # build new node from new_name
-        if '.' in self.new_name:
-            children = []
-            for part in dotted_parts(self.new_name):
-                if part == '.':
-                    children.append(Dot())
-                else:
-                    children.append(Name(part))
-        else:
-            children = [Name(self.new_name)]
-
-        # attach to the new node subimports from the old module
-        if type(old_name_node) is Node:
-            original_name_size = len(dotted_parts(self.old_name))
-            for part in old_name_node.children[original_name_size:]:
-                if part.value == '.':
-                    children.append(Dot())
-                else:
-                    children.append(Name(part.value))
-
-        new_name_node = Node(
-            type=syms.dotted_name,
-            children=children,
-            prefix=old_name_node.prefix,
+        new_name_node = _build_new_name_node(
+            old_name_node=old_name_node,
+            new_name=self.new_name,
+            old_name=self.old_name,
+            attach=True,
         )
-
         old_name_node.replace(new_name_node)
+
+
+def _build_new_name_node(old_name_node, new_name: str, old_name: str, attach: bool):
+    # build new node from new_name
+    if '.' in new_name:
+        children = []
+        for part in dotted_parts(new_name):
+            if part == '.':
+                children.append(Dot())
+            else:
+                children.append(Name(part))
+    else:
+        children = [Name(new_name)]
+
+    # attach to the new node subimports from the old module
+    if attach and type(old_name_node) is Node:
+        original_name_size = len(dotted_parts(old_name))
+        for part in old_name_node.children[original_name_size:]:
+            if part.value == '.':
+                children.append(Dot())
+            else:
+                children.append(Name(part.value))
+
+    return Node(
+        type=syms.dotted_name,
+        children=children,
+        prefix=old_name_node.prefix,
+    )
