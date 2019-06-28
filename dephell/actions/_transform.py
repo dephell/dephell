@@ -59,43 +59,29 @@ class ModuleImportModifier:
             self._modify(capture['node'])
 
     def _modify(self, node: Node):
-        if '.' in self.old_name:
-            children = []
-            for part in dotted_parts(self.old_name):
-                if part == '.':
-                    children.append(Dot())
-                else:
-                    children.append(Name(part))
-            old_name_node = Node(
-                type=syms.dotted_name,
-                children=children,
-            )
-        else:
-            old_name_node = Name(self.old_name, prefix=' ')
-
         if node.children[1].type == syms.dotted_as_names:
             for child in node.children[1].children:
                 if child.type == token.NAME and child.value == self.old_name:
-                    old_leaf = child
+                    old_name_node = child
                     break
             else:
                 raise RuntimeError('cannot find given module')
         else:
-            old_leaf = node.children[1]
+            old_name_node = node.children[1]
 
         new_node = Node(
             type=syms.dotted_as_name,
             children=[
                 Leaf(
-                    type=old_leaf.type,
+                    type=old_name_node.type,
                     value=self.new_name,
-                    prefix=old_leaf.prefix,
+                    prefix=old_name_node.prefix,
                 ),
                 Name('as', prefix=' '),
-                old_name_node,
+                old_name_node.clone(),
             ],
         )
-        old_leaf.replace(new_node)
+        old_name_node.replace(new_node)
 
 
 @_register
