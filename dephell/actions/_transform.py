@@ -104,23 +104,13 @@ class FromImportModifier:
         self.new_name = new_name
 
     def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
-        if capture['node'].type != syms.import_from:
-            return
-        module_name = get_module_name_from_node(capture['module_name'])
-        if module_name == self.old_name:
-            self._modify(capture['node'])
-        elif module_name.startswith(self.old_name + '.'):
-            self._modify(capture['node'])
-
-    def _modify(self, node: Node):
-        old_name_node = node.children[1]
         new_name_node = build_new_name_node(
-            old_name_node=old_name_node,
+            old_node=capture['module_name'],
             new_name=self.new_name,
             old_name=self.old_name,
             attach=True,
         )
-        old_name_node.replace(new_name_node)
+        capture['module_name'].replace(new_name_node)
 
 
 @_register
@@ -161,57 +151,13 @@ class ModuleAsImportModifier:
         self.new_name = new_name
 
     def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
-        if capture['node'].type != syms.import_name:
-            return
-        module_name = get_module_name_from_node(capture['module_name'])
-        if module_name == self.old_name:
-            self._modify(capture['node'])
-        elif module_name.startswith(self.old_name + '.'):
-            self._modify(capture['node'])
-
-    def _modify(self, node: Node):
-        old_name_node = find_node_by_module_name(root=node, name=self.old_name)
-        if old_name_node is None:
-            raise RuntimeError('cannot find module')
-
         new_name_node = build_new_name_node(
-            old_name_node=old_name_node,
+            old_node=capture['module_name'],
             new_name=self.new_name,
             old_name=self.old_name,
             attach=True,
         )
-        old_name_node.replace(new_name_node)
-
-
-def find_node_by_module_name(root, name):
-    # `foo as bar`
-    if root.type == syms.dotted_as_name:
-        return find_node_by_module_name(root=root.children[0], name=name)
-
-    # `foo` or `foo.bar`
-    module_name = get_module_name_from_node(node=root)
-    if module_name is not None:
-        if module_name == name or module_name.startswith(name + '.'):
-            return root
-        return None
-
-    # `foo, bar`
-    if root.type == syms.dotted_as_names:
-        for node in root.children:
-            good_node = find_node_by_module_name(root=node, name=name)
-            if good_node is not None:
-                return good_node
-        return None
-
-    # `import foo`
-    if root.type == syms.import_name:
-        for node in root.children[1:]:
-            good_node = find_node_by_module_name(root=node, name=name)
-            if good_node is not None:
-                return good_node
-        return None
-
-    return None
+        capture['module_name'].replace(new_name_node)
 
 
 def get_module_name_from_node(node) -> Optional[str]:
@@ -226,7 +172,7 @@ def get_module_name_from_node(node) -> Optional[str]:
     return None
 
 
-def build_new_name_node(old_name_node, new_name: str, old_name: str, attach: bool):
+def build_new_name_node(old_node, new_name: str, old_name: str, attach: bool):
     # build new node from new_name
     if '.' in new_name:
         children = []
@@ -239,9 +185,9 @@ def build_new_name_node(old_name_node, new_name: str, old_name: str, attach: boo
         children = [Name(new_name)]
 
     # attach to the new node subimports from the old module
-    if attach and type(old_name_node) is Node:
+    if attach and type(old_node) is Node:
         original_name_size = len(dotted_parts(old_name))
-        for part in old_name_node.children[original_name_size:]:
+        for part in old_node.children[original_name_size:]:
             if part.value == '.':
                 children.append(Dot())
             else:
@@ -250,5 +196,5 @@ def build_new_name_node(old_name_node, new_name: str, old_name: str, attach: boo
     return Node(
         type=syms.dotted_name,
         children=children,
-        prefix=old_name_node.prefix,
+        prefix=old_node.prefix,
     )
