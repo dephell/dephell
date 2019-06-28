@@ -5,19 +5,17 @@ from argparse import ArgumentParser
 from tempfile import TemporaryDirectory
 from pathlib import Path
 
-from bowler import Query
 from dephell_discover import Root as PackageRoot
 
 # app
-from ..actions import transform_imports
 from ..config import builders
 from .base import BaseCommand
 
 
-class ProjectVendorizeCommand(BaseCommand):
-    """Vendorize project dependencies.
+class VendorDownloadCommand(BaseCommand):
+    """Download and extract project dependencies.
 
-    https://dephell.readthedocs.io/en/latest/cmd-project-vendorize.html
+    https://dephell.readthedocs.io/en/latest/cmd-vendor-download.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
@@ -39,14 +37,9 @@ class ProjectVendorizeCommand(BaseCommand):
         if resolver is None:
             return False
         output_path = Path(self.config['vendors'])
-
         self.logger.info('downloading packages...', extra=dict(output=output_path))
         packages = self._download_packages(resolver=resolver, output_path=output_path)
-
-        self.logger.info('patching imports...')
-        modules = self._patch_imports(resolver=resolver, output_path=output_path)
-
-        self.logger.info('done!', extra=dict(packages=packages, modules=modules))
+        self.logger.info('done!', extra=dict(packages=packages))
         return True
 
     def _download_packages(self, resolver, output_path: Path) -> int:
@@ -106,25 +99,3 @@ class ProjectVendorizeCommand(BaseCommand):
             ))
             shutil.copytree(str(package_path / module_path), str(output_path / module_path))
             return True
-
-    def _patch_imports(self, resolver, output_path) -> int:
-        # select modules to patch imports
-        query = Query()
-        query.paths = []
-        for package in resolver.graph.metainfo.package.packages:
-            for module_path in package:
-                query.paths.append(str(module_path))
-
-        # set renamings
-        root = Path(self.config['project'])
-        for library in output_path.iterdir():
-            library_module = '.'.join(library.resolve().relative_to(root).parts)
-            query = transform_imports(
-                query=query,
-                old_name=library.name,
-                new_name=library_module,
-            )
-
-        # execute renaming
-        query.execute(interactive=False, write=True, silent=True)
-        return len(query.paths)

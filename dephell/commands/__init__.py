@@ -35,7 +35,8 @@ from .package_show import PackageShowCommand
 from .project_build import ProjectBuildCommand
 from .project_bump import ProjectBumpCommand
 from .project_test import ProjectTestCommand
-from .project_vendorize import ProjectVendorizeCommand
+from .vendor_download import VendorDownloadCommand
+from .vendor_import import VendorImportCommand
 from .venv_create import VenvCreateCommand
 from .venv_destroy import VenvDestroyCommand
 from .venv_run import VenvRunCommand
@@ -87,7 +88,9 @@ COMMANDS = {
     'project build': ProjectBuildCommand,
     'project bump': ProjectBumpCommand,
     'project test': ProjectTestCommand,
-    'project vendorize': ProjectVendorizeCommand,
+
+    'vendor download': VendorDownloadCommand,
+    'vendor import': VendorImportCommand,
 
     'venv create': VenvCreateCommand,
     'venv destroy': VenvDestroyCommand,
