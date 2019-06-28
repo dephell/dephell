@@ -53,10 +53,7 @@ class ModuleImportModifier:
     def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
         if capture['node'].type != syms.import_name:
             return
-        if type(capture['module_name']) is Node:
-            module_name = ''.join(child.value for child in capture['module_name'].children)
-        else:
-            module_name = capture['module_name'].value
+        module_name = get_module_name_from_node(capture['module_name'])
         if module_name == self.old_name:
             self._modify(capture['node'])
 
@@ -109,14 +106,7 @@ class FromImportModifier:
     def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
         if capture['node'].type != syms.import_from:
             return
-
-        # build given module name from nodes
-        if type(capture['module_name']) is Node:
-            module_name = ''.join(child.value for child in capture['module_name'].children)
-        else:
-            module_name = capture['module_name'].value
-
-        # modify module name if it's old_name module or import from old_name module
+        module_name = get_module_name_from_node(capture['module_name'])
         if module_name == self.old_name:
             self._modify(capture['node'])
         elif module_name.startswith(self.old_name + '.'):
@@ -124,7 +114,7 @@ class FromImportModifier:
 
     def _modify(self, node: Node):
         old_name_node = node.children[1]
-        new_name_node = _build_new_name_node(
+        new_name_node = build_new_name_node(
             old_name_node=old_name_node,
             new_name=self.new_name,
             old_name=self.old_name,
@@ -173,11 +163,7 @@ class ModuleAsImportModifier:
     def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
         if capture['node'].type != syms.import_name:
             return
-        if type(capture['module_name']) is Node:
-            module_name = ''.join(child.value for child in capture['module_name'].children)
-        else:
-            module_name = capture['module_name'].value
-
+        module_name = get_module_name_from_node(capture['module_name'])
         if module_name == self.old_name:
             self._modify(capture['node'])
         elif module_name.startswith(self.old_name + '.'):
@@ -188,7 +174,7 @@ class ModuleAsImportModifier:
         if old_name_node is None:
             raise RuntimeError('cannot find module')
 
-        new_name_node = _build_new_name_node(
+        new_name_node = build_new_name_node(
             old_name_node=old_name_node,
             new_name=self.new_name,
             old_name=self.old_name,
@@ -240,7 +226,7 @@ def get_module_name_from_node(node) -> Optional[str]:
     return None
 
 
-def _build_new_name_node(old_name_node, new_name: str, old_name: str, attach: bool):
+def build_new_name_node(old_name_node, new_name: str, old_name: str, attach: bool):
     # build new node from new_name
     if '.' in new_name:
         children = []
