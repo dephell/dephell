@@ -9,6 +9,7 @@ from bowler import Query
 from dephell_discover import Root as PackageRoot
 
 # app
+from ..actions import transform_imports
 from ..config import builders
 from .base import BaseCommand
 
@@ -118,7 +119,11 @@ class ProjectVendorizeCommand(BaseCommand):
         root = Path(self.config['project'])
         for library in output_path.iterdir():
             library_module = '.'.join(library.resolve().relative_to(root).parts)
-            query = query.select_module(library.name).rename(library_module)
+            query = transform_imports(
+                query=query,
+                old_name=library.name,
+                new_name=library_module,
+            )
 
         # execute renaming
         query.execute(interactive=False, write=True, silent=True)

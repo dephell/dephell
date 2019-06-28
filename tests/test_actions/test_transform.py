@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from bowler import Query
 
-from dephell.actions._transform import transform_imports
+from dephell.actions import transform_imports
 
 
 @pytest.mark.parametrize('code_in, code_out, old_name, new_name', [
@@ -28,6 +28,8 @@ from dephell.actions._transform import transform_imports
     ('import foo.sub as bar', 'import baz.sub as bar', 'foo', 'baz'),
     ('import foo as bar, boo', 'import baz as bar, boo', 'foo', 'baz'),
     ('import boo, foo as bar', 'import boo, baz as bar', 'foo', 'baz'),
+    ('import boo, root.foo as bar', 'import boo, baz as bar', 'root.foo', 'baz'),
+    ('import boo, root.foo as bar', 'import boo, baz.foo as bar', 'root', 'baz'),
     ('import boo as foo', 'import boo as foo', 'foo', 'baz'),
 ])
 def test_transform_as_import(code_in: str, code_out: str, old_name: str, new_name: str, temp_path: Path):
