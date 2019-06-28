@@ -1,9 +1,6 @@
-from typing import Optional
-
 from bowler import LN, Capture, Filename, Query
 from bowler.helpers import power_parts, quoted_parts, dotted_parts
 from fissix.pytree import Node, Leaf
-from fissix.pgen2 import token
 from fissix.fixer_util import syms, Name, Dot
 
 
@@ -51,36 +48,20 @@ class ModuleImportModifier:
         self.new_name = new_name
 
     def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
-        if capture['node'].type != syms.import_name:
-            return
-        module_name = get_module_name_from_node(capture['module_name'])
-        if module_name == self.old_name:
-            self._modify(capture['node'])
-
-    def _modify(self, node: Node):
-        if node.children[1].type == syms.dotted_as_names:
-            for child in node.children[1].children:
-                if child.type == token.NAME and child.value == self.old_name:
-                    old_name_node = child
-                    break
-            else:
-                raise RuntimeError('cannot find given module')
-        else:
-            old_name_node = node.children[1]
-
+        old_node = capture['module_name']
         new_node = Node(
             type=syms.dotted_as_name,
             children=[
                 Leaf(
-                    type=old_name_node.type,
+                    type=old_node.type,
                     value=self.new_name,
-                    prefix=old_name_node.prefix,
+                    prefix=old_node.prefix,
                 ),
                 Name('as', prefix=' '),
-                old_name_node.clone(),
+                old_node.clone(),
             ],
         )
-        old_name_node.replace(new_node)
+        old_node.replace(new_node)
 
 
 @_register
@@ -158,18 +139,6 @@ class ModuleAsImportModifier:
             attach=True,
         )
         capture['module_name'].replace(new_name_node)
-
-
-def get_module_name_from_node(node) -> Optional[str]:
-    # foo.bar
-    if node.type == token.NAME:
-        if node.value == 'import':
-            return None
-        return node.value
-    # foo
-    if node.type == syms.dotted_name:
-        return ''.join(child.value for child in node.children)
-    return None
 
 
 def build_new_name_node(old_node, new_name: str, old_name: str, attach: bool):
