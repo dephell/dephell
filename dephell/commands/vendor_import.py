@@ -52,6 +52,10 @@ class VendorImportCommand(BaseCommand):
         root = Path(self.config['project'])
         for library in output_path.iterdir():
             library_module = '.'.join(library.resolve().relative_to(root).parts)
+            self.logger.debug('patch imports', extra=dict(
+                old_name=library.name,
+                new_name=library_module,
+            ))
             query = transform_imports(
                 query=query,
                 old_name=library.name,

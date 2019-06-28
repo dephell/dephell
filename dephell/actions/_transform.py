@@ -52,10 +52,10 @@ class ModuleImportModifier:
         new_node = Node(
             type=syms.dotted_as_name,
             children=[
-                Leaf(
-                    type=old_node.type,
-                    value=self.new_name,
-                    prefix=old_node.prefix,
+                build_new_name_node(
+                    old_node=old_node,
+                    new_name=self.new_name,
+                    attach=False,
                 ),
                 Name('as', prefix=' '),
                 old_node.clone(),
@@ -141,7 +141,7 @@ class ModuleAsImportModifier:
         capture['module_name'].replace(new_name_node)
 
 
-def build_new_name_node(old_node, new_name: str, old_name: str, attach: bool):
+def build_new_name_node(*, old_node, attach: bool, new_name: str, old_name: str = None):
     # build new node from new_name
     if '.' in new_name:
         children = []
