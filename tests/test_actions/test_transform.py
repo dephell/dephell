@@ -26,6 +26,8 @@ from dephell.actions._transform import transform_imports
     ('import foo as bar', 'import baz as bar', 'foo', 'baz'),
     ('import root.foo as bar', 'import baz as bar', 'root.foo', 'baz'),
     ('import foo.sub as bar', 'import baz.sub as bar', 'foo', 'baz'),
+    ('import foo as bar, boo', 'import baz as bar, boo', 'foo', 'baz'),
+    ('import boo, foo as bar', 'import boo, baz as bar', 'foo', 'baz'),
 ])
 def test_transform_as_import(code_in: str, code_out: str, old_name: str, new_name: str, temp_path: Path):
     code_in += '\n'

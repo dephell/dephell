@@ -1,3 +1,5 @@
+from typing import Optional
+
 from bowler import LN, Capture, Filename, Query
 from bowler.helpers import power_parts, quoted_parts, dotted_parts
 from fissix.pytree import Node, Leaf
@@ -138,14 +140,29 @@ class ModuleAsImportModifier:
 
     selector = """
         import_name< 'import'
-            dotted_as_name<
-                (
-                    module_name='{name}'
-                |
-                    module_name=dotted_name< {dotted_name} any* >
-                )
-                'as' module_nickname=any
-            >
+            (
+                dotted_as_name<
+                    (
+                        module_name='{name}'
+                    |
+                        module_name=dotted_name< {dotted_name} any* >
+                    )
+                    'as' module_nickname=any
+                >
+            |
+                dotted_as_names<
+                    (any ',')*
+                    dotted_as_name<
+                        (
+                            module_name='{name}'
+                        |
+                            module_name=dotted_name< {dotted_name} any* >
+                        )
+                        'as' module_nickname=any
+                    >
+                    (',' any)*
+                >
+            )
         >
         """
 
@@ -167,7 +184,10 @@ class ModuleAsImportModifier:
             self._modify(capture['node'])
 
     def _modify(self, node: Node):
-        old_name_node = node.children[1].children[0]
+        old_name_node = find_node_by_module_name(root=node, name=self.old_name)
+        if old_name_node is None:
+            raise RuntimeError('cannot find module')
+
         new_name_node = _build_new_name_node(
             old_name_node=old_name_node,
             new_name=self.new_name,
@@ -175,6 +195,49 @@ class ModuleAsImportModifier:
             attach=True,
         )
         old_name_node.replace(new_name_node)
+
+
+def find_node_by_module_name(root, name):
+    # `foo as bar`
+    if root.type == syms.dotted_as_name:
+        return find_node_by_module_name(root=root.children[0], name=name)
+
+    # `foo` or `foo.bar`
+    module_name = get_module_name_from_node(node=root)
+    if module_name is not None:
+        if module_name == name or module_name.startswith(name + '.'):
+            return root
+        return None
+
+    # `foo, bar`
+    if root.type == syms.dotted_as_names:
+        for node in root.children:
+            good_node = find_node_by_module_name(root=node, name=name)
+            if good_node is not None:
+                return good_node
+        return None
+
+    # `import foo`
+    if root.type == syms.import_name:
+        for node in root.children[1:]:
+            good_node = find_node_by_module_name(root=node, name=name)
+            if good_node is not None:
+                return good_node
+        return None
+
+    return None
+
+
+def get_module_name_from_node(node) -> Optional[str]:
+    # foo.bar
+    if node.type == token.NAME:
+        if node.value == 'import':
+            return None
+        return node.value
+    # foo
+    if node.type == syms.dotted_name:
+        return ''.join(child.value for child in node.children)
+    return None
 
 
 def _build_new_name_node(old_name_node, new_name: str, old_name: str, attach: bool):
