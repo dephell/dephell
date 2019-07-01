@@ -1,6 +1,6 @@
 from bowler import LN, Capture, Filename, Query
 from bowler.helpers import power_parts, quoted_parts, dotted_parts
-from fissix.pytree import Node, Leaf
+from fissix.pytree import Node
 from fissix.fixer_util import syms, Name, Dot
 
 
@@ -139,6 +139,39 @@ class ModuleAsImportModifier:
             attach=True,
         )
         capture['module_name'].replace(new_name_node)
+
+
+@_register
+class StringModifier:
+    """sys.modules["foo"] -> sys.modules["bar"]
+    """
+
+    selector = """
+        string=STRING
+        """
+
+    def __init__(self, old_name, new_name):
+        self.old_name = old_name
+        self.new_name = new_name
+
+    def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+        if not self._capture(capture['string'].value):
+            return
+
+        old_node = capture['string']
+        new_node = old_node.clone()
+        new_node.value = old_node.value.replace(self.old_name, self.new_name)
+        old_node.replace(new_node)
+
+    def _capture(self, value):
+        if value[0] in 'uUrRbBfF':
+            value = value[1:]
+        for quote in ('"', "'"):
+            if value.strip(quote) == self.old_name:
+                return True
+            if value.strip(quote).startswith(self.old_name + '.'):
+                return True
+        return False
 
 
 def build_new_name_node(*, old_node, attach: bool, new_name: str, old_name: str = None):
