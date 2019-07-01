@@ -24,7 +24,7 @@ Command steps:
 1. Write new version in `from` file.
 
 Also, the command adds git tag if `--tag` option (or `tag = <your_template>` in the config) is specified as template.
- Template can be string with `{version}` placeholder (e.g. `v.{version}`) or just prefix string (e.g. `v.`)
+Template can be string with `{version}` placeholder (e.g. `v.{version}`) or just prefix string (e.g. `v.`)
 
 ```bash
 $ dephell project bump --tag=v.
