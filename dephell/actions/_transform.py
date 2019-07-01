@@ -37,8 +37,6 @@ class ModuleImportModifier:
                 module_name='{name}' any*
             |
                 dotted_as_names< (any ',')* module_name='{name}' (',' any)* >
-            |
-                module_name=dotted_name< {dotted_name} any* >
             )
         >
         """
@@ -172,6 +170,55 @@ class StringModifier:
             if value.strip(quote).startswith(self.old_name + '.'):
                 return True
         return False
+
+
+@_register
+class DottedModuleImportModifier:
+    """import foo.bar -> import baz.bar
+    """
+
+    selector = """
+        (
+            import_name< 'import' module_name=dotted_name< {dotted_name} any* > >
+        |
+            power< {power_name} any* >
+        )
+        """
+
+    def __init__(self, old_name, new_name):
+        self.old_name = old_name
+        self.new_name = new_name
+
+    def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+        if node.type == syms.power:
+            self._modify_power(node)
+        else:
+            self._modify_import(capture)
+
+    def _modify_import(self, capture):
+        new_name_node = build_new_name_node(
+            old_node=capture['module_name'],
+            new_name=self.new_name,
+            old_name=self.old_name,
+            attach=True,
+        )
+        capture['module_name'].replace(new_name_node)
+
+    def _modify_power(self, node):
+        # remove old prefix
+        parts = dotted_parts(self.old_name)
+        for _ in range((len(parts) + 1) // 2):
+            node.children.pop(0)
+
+        # add new prefix
+        head = Name(self.new_name.split('.', maxsplit=1)[0])
+        children = []
+        for part in dotted_parts(self.new_name)[2::2]:
+            children.append(Node(
+                type=syms.trailer,
+                children=[Dot(), Name(part)],
+            ))
+        node.children = [head] + children + node.children
 
 
 def build_new_name_node(*, old_node, attach: bool, new_name: str, old_name: str = None):
