@@ -149,7 +149,7 @@ class ProjectBumpCommand(BaseCommand):
             tag_name = '{prefix}{version}'.format(prefix=tag_prefix_or_template, version=new_version)
         project = Path(self.config['project'])
         if not (project / '.git').exists():
-            self.logger.error('project doesn\'t contains .git in root folder, cannot create git tag')
+            self.logger.error("project doesn\'t contains .git in root folder, cannot create git tag")
             return
 
         self.logger.info('commit and tag')
