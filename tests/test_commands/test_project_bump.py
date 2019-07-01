@@ -29,7 +29,7 @@ def test_bump_command(temp_path: Path):
     ('prefix.', 'prefix.1.2.4'),
     ('with.{version}.placeholder', 'with.1.2.4.placeholder'),
     ('', '1.2.4'),
-    ('{version}', '1.2.4')
+    ('{version}', '1.2.4'),
 ])
 def test_bump_command_with_placeholder_tag(temp_path: Path, tag_template, expected_tag):
     project_path = (temp_path / 'project')
@@ -46,12 +46,12 @@ def test_bump_command_with_placeholder_tag(temp_path: Path, tag_template, expect
 
     # it's needed because bump command with tag generates not only tag, but also commit with --update flag
     # --update add to commit only modified files, not created (__init__.py in this case is created)
-    _run(["git", "add", "."], project=project_path)
+    _run(['git', 'add', '.'], project=project_path)
 
     command = ProjectBumpCommand(argv=['fix'], config=config)
     result = command()
     assert result is True
 
     # just read stdout from git tag command
-    _, tags = _run(["git", "tag"], project=project_path)
+    _, tags = _run(['git', 'tag'], project=project_path)
     assert tags == expected_tag
