@@ -39,6 +39,7 @@ class VendorDownloadCommand(BaseCommand):
         output_path = Path(self.config['vendors'])
         self.logger.info('downloading packages...', extra=dict(output=output_path))
         packages = self._download_packages(resolver=resolver, output_path=output_path)
+        (output_path / '__init__.py').touch(0o777)
         self.logger.info('done!', extra=dict(packages=packages))
         return True
 
