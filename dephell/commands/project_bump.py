@@ -96,7 +96,7 @@ class ProjectBumpCommand(BaseCommand):
 
         # set git tag
         if self.config.get('tag'):
-            self._add_git_tag(paths=paths, new_version=new_version, tag_template=self.config['tag'])
+            self._add_git_tag(paths=paths, new_version=new_version, tag_prefix_or_template=self.config['tag'])
 
         return True
 
@@ -138,14 +138,15 @@ class ProjectBumpCommand(BaseCommand):
             stream.write(new_content)
         return True
 
-    def _add_git_tag(self, paths, new_version, tag_template):
-        # we can use only template with `{new_version}` placeholder
-        # for example: template `v.{new_version}` will be transform to `v.3.0.1`
-        try:
-            tag_name = tag_template.format(new_version=new_version)
-        except KeyError:
-            self.logger.error('cannot use tag name template (doesn\'t contains {new_version} placeholder)')
-            return False
+    def _add_git_tag(self, paths, new_version, tag_prefix_or_template):
+        if '{version}' in tag_prefix_or_template:
+            # if used template with `{version}` placeholder
+            # for example: `--tag=v.{version}` will be transform to `v.3.0.1`
+            tag_name = tag_prefix_or_template.format(version=new_version)
+        else:
+            # if we don't found placeholder, we use template as a prefix
+            # for example: `--tag=v.` will be transform to `v.3.0.1`
+            tag_name = '{prefix}{version}'.format(prefix=tag_prefix_or_template, version=new_version)
         project = Path(self.config['project'])
         if not (project / '.git').exists():
             self.logger.error('project doesn\'t contains .git in root folder, cannot create git tag')
