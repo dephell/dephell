@@ -25,14 +25,12 @@ def test_bump_command(temp_path: Path):
     assert init_path.read_text() == '__version__ = "1.2.4"'
 
 
-@pytest.mark.parametrize(
-    'tag_template,expected_tag', [
-        ('prefix.', 'prefix.1.2.4'),
-        ('with.{version}.placeholder', 'with.1.2.4.placeholder'),
-        ('', '1.2.4'),
-        ('{version}', '1.2.4')
-    ]
-)
+@pytest.mark.parametrize('tag_template, expected_tag', [
+    ('prefix.', 'prefix.1.2.4'),
+    ('with.{version}.placeholder', 'with.1.2.4.placeholder'),
+    ('', '1.2.4'),
+    ('{version}', '1.2.4')
+])
 def test_bump_command_with_placeholder_tag(temp_path: Path, tag_template, expected_tag):
     project_path = (temp_path / 'project')
     project_path.mkdir()
