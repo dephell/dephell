@@ -205,13 +205,15 @@ class DottedModuleImportModifier:
         capture['module_name'].replace(new_name_node)
 
     def _modify_power(self, node):
+        prefix = node.children[0].prefix
+
         # remove old prefix
         parts = dotted_parts(self.old_name)
         for _ in range((len(parts) + 1) // 2):
             node.children.pop(0)
 
         # add new prefix
-        head = Name(self.new_name.split('.', maxsplit=1)[0])
+        head = Name(self.new_name.split('.', maxsplit=1)[0], prefix=prefix)
         children = []
         for part in dotted_parts(self.new_name)[2::2]:
             children.append(Node(
