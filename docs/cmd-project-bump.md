@@ -23,10 +23,11 @@ Command steps:
 1. Write new version in source code. DepHell looks for `__version__` variable in project source and writes new version in it.
 1. Write new version in `from` file.
 
-Also, the command adds git tag if `--tag` option (or `tag = True` in the config) is specified:
+Also, the command adds git tag if `--tag` option (or `tag = <your_template>` in the config) is specified as template 
+with `{new_version}` placeholder:
 
 ```bash
-$ dephell project bump --tag minor
+$ dephell project bump --tag 'v.{new_version}'
 INFO generated new version (old=0.8.0, new=0.9.0)
 INFO file bumped (path=/home/gram/Documents/dephell/dephell/__init__.py)
 INFO commit and tag

@@ -40,7 +40,7 @@ class ProjectBumpCommand(BaseCommand):
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
-        parser.add_argument('--tag', action='store_true', help='create git tag')
+        parser.add_argument('--tag', action='store', help='create git tag')
         parser.add_argument('name', help='bumping rule name or new version')
         return parser
 
@@ -96,7 +96,7 @@ class ProjectBumpCommand(BaseCommand):
 
         # set git tag
         if self.config.get('tag'):
-            self._add_git_tag(paths=paths, new_version=new_version)
+            self._add_git_tag(paths=paths, new_version=new_version, tag_template=self.config['tag'])
 
         return True
 
@@ -138,9 +138,17 @@ class ProjectBumpCommand(BaseCommand):
             stream.write(new_content)
         return True
 
-    def _add_git_tag(self, paths, new_version):
+    def _add_git_tag(self, paths, new_version, tag_template):
+        # we can use only template with `{new_version}` placeholder
+        # for example: template `v.{new_version}` will be transform to `v.3.0.1`
+        try:
+            tag_name = tag_template.format(new_version=new_version)
+        except KeyError:
+            self.logger.error('cannot use tag name template (doesn\'t contains {new_version} placeholder)')
+            return False
         project = Path(self.config['project'])
         if not (project / '.git').exists():
+            self.logger.error('project doesn\'t contains .git in root folder, cannot create git tag')
             return
 
         self.logger.info('commit and tag')
@@ -153,7 +161,7 @@ class ProjectBumpCommand(BaseCommand):
             self.logger.error('cannot commit files')
             return False
         ok = git_tag(
-            name='v.' + str(new_version),
+            name=tag_name,
             project=project,
         )
         if not ok:
