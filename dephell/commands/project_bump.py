@@ -95,10 +95,11 @@ class ProjectBumpCommand(BaseCommand):
             paths.append(Path(self.config['from']['path']))
 
         # set git tag
-        if self.config.get('tag'):
-            self._add_git_tag(paths=paths, new_version=new_version, tag_prefix_or_template=self.config['tag'])
+        tagged = True
+        if self.config.get('tag') is not None:
+            tagged = self._add_git_tag(paths=paths, new_version=new_version, tag_prefix_or_template=self.config['tag'])
 
-        return True
+        return tagged
 
     @staticmethod
     def _bump_project(project: PackageRoot, old: str, new: str) -> Iterator[Path]:
@@ -138,7 +139,7 @@ class ProjectBumpCommand(BaseCommand):
             stream.write(new_content)
         return True
 
-    def _add_git_tag(self, paths, new_version, tag_prefix_or_template):
+    def _add_git_tag(self, paths, new_version, tag_prefix_or_template: str) -> bool:
         if '{version}' in tag_prefix_or_template:
             # if used template with `{version}` placeholder
             # for example: `--tag=v.{version}` will be transform to `v.3.0.1`
@@ -150,7 +151,7 @@ class ProjectBumpCommand(BaseCommand):
         project = Path(self.config['project'])
         if not (project / '.git').exists():
             self.logger.error("project doesn\'t contains .git in root folder, cannot create git tag")
-            return
+            return False
 
         self.logger.info('commit and tag')
         ok = git_commit(
@@ -170,3 +171,5 @@ class ProjectBumpCommand(BaseCommand):
             return False
 
         self.logger.info('tag created, do not forget to push it: git push --tags')
+
+        return True
