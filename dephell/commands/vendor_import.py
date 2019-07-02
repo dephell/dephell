@@ -39,13 +39,18 @@ class VendorImportCommand(BaseCommand):
         self.logger.info('done!', extra=dict(modules=modules))
         return True
 
-    def _patch_imports(self, resolver, output_path) -> int:
+    def _patch_imports(self, resolver, output_path: Path) -> int:
         # select modules to patch imports
         query = Query()
         query.paths = []
         for package in resolver.graph.metainfo.package.packages:
             for module_path in package:
                 query.paths.append(str(module_path))
+
+        # patch vendors if it's outside of main package
+        package_path = resolver.graph.metainfo.package.packages[0].path
+        if package_path.resolve() not in output_path.resolve().parents:
+            query.paths.append(str(output_path))
 
         # set renamings
         root = Path(self.config['project'])

@@ -172,7 +172,7 @@ class StringModifier:
         return False
 
 
-@_register
+# @_register
 class DottedModuleImportModifier:
     """import foo.bar -> import baz.bar
     """
