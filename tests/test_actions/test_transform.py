@@ -50,8 +50,8 @@ def test_transform_imports(code_in: str, code_out: str, old_name: str, new_name:
     code_out += '\n'
     path = temp_path / 'tmp.py'
     path.write_text(code_in)
-    q = transform_imports(query=Query(str(path)), old_name=old_name, new_name=new_name)
-    q.execute(silent=True, write=True, interactive=False)
+    query = transform_imports(query=Query(str(path)), old_name=old_name, new_name=new_name)
+    query.execute(silent=True, write=True, interactive=False)
     result = path.read_text()
     if code_in == code_out:
         assert result == code_out, 'unexpected changes'
