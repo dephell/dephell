@@ -40,7 +40,7 @@ class ProjectBumpCommand(BaseCommand):
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
-        parser.add_argument('--tag', action='store', help='create git tag')
+        parser.add_argument('--tag', help='create git tag')
         parser.add_argument('name', help='bumping rule name or new version')
         return parser
 
@@ -97,7 +97,7 @@ class ProjectBumpCommand(BaseCommand):
         # set git tag
         tagged = True
         if self.config.get('tag') is not None:
-            tagged = self._add_git_tag(paths=paths, new_version=new_version, tag_prefix_or_template=self.config['tag'])
+            tagged = self._add_git_tag(paths=paths, new_version=new_version, template=self.config['tag'])
 
         return tagged
 
@@ -139,18 +139,14 @@ class ProjectBumpCommand(BaseCommand):
             stream.write(new_content)
         return True
 
-    def _add_git_tag(self, paths, new_version, tag_prefix_or_template: str) -> bool:
-        if '{version}' in tag_prefix_or_template:
-            # if used template with `{version}` placeholder
-            # for example: `--tag=v.{version}` will be transform to `v.3.0.1`
-            tag_name = tag_prefix_or_template.format(version=new_version)
-        else:
-            # if we don't found placeholder, we use template as a prefix
-            # for example: `--tag=v.` will be transform to `v.3.0.1`
-            tag_name = '{prefix}{version}'.format(prefix=tag_prefix_or_template, version=new_version)
+    def _add_git_tag(self, paths, new_version, template: str) -> bool:
+        if '{version}' not in template:
+            # add placeholder to the end if it isn't specified
+            template += '{version}'
+        tag_name = template.format(version=new_version)
         project = Path(self.config['project'])
         if not (project / '.git').exists():
-            self.logger.error("project doesn\'t contains .git in root folder, cannot create git tag")
+            self.logger.error("project doesn't contain .git in the root folder, cannot create git tag")
             return False
 
         self.logger.info('commit and tag')

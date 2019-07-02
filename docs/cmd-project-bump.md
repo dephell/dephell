@@ -27,7 +27,7 @@ Also, the command adds git tag if `--tag` option (or `tag = <your_template>` in 
 Template can be string with `{version}` placeholder (e.g. `v.{version}`) or just prefix string (e.g. `v.`)
 
 ```bash
-$ dephell project bump --tag=v.
+$ dephell project bump --tag=v. minor
 INFO generated new version (old=0.8.0, new=0.9.0)
 INFO file bumped (path=/home/gram/Documents/dephell/dephell/__init__.py)
 INFO commit and tag
