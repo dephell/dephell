@@ -27,7 +27,6 @@ class VendorImportCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('vendors', help='path to vendorized packages')
         return parser
 
     def __call__(self) -> bool:
