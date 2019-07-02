@@ -75,8 +75,11 @@ from = {format = "poetry", path = "pyproject.toml"}
 to = {format = "wheel", path = "dist-vendored/"}
 envs = ["main"]
 
+# Make vendorized version of the project:
+# dephell vendor download --env=vendorized
+# dephell vendor import --env=vendorized
 [tool.dephell.vendorized.vendor]
-path = "./dephell/_vendor"
+path = "dephell_vendor"
 exclude = ["jinja2", "test"]
 
 

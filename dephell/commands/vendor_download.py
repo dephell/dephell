@@ -86,7 +86,7 @@ class VendorDownloadCommand(BaseCommand):
                 function=shutil._unpack_zipfile,
             )
 
-        with TemporaryDirectory() as package_path:
+        with TemporaryDirectory(suffix=dep.name) as package_path:
             package_path = Path(package_path)
             shutil.unpack_archive(str(archive_path), str(package_path))
             if len(list(package_path.iterdir())) == 1:
