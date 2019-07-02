@@ -35,18 +35,13 @@ class DepsInstallCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        resolver = self._get_locked()
+        resolver = self._get_locked(default_envs={'main'})
         if resolver is None:
             return False
 
-        # get executable
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
-
-        # filter deps by envs and markers
-        resolver.apply_envs(set(self.config.get('envs', {'main'})))
         resolver.apply_markers(python=python)
-
         install, remove = self._get_install_remove(graph=resolver.graph, python=python)
 
         # remove

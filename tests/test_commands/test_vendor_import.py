@@ -28,5 +28,5 @@ def test_patch_imports(temp_path: Path):
         output_path=temp_path / 'project' / 'vendor',
     )
 
-    expected = 'import project.vendor.requests\nimport django'
+    expected = 'import project.vendor.requests as requests\nimport django'
     assert (temp_path / 'project' / '__init__.py').read_text() == expected

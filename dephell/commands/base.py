@@ -104,7 +104,7 @@ class BaseCommand:
         attach_deps(resolver=resolver, config=self.config, merge=False)
         return self._resolve(resolver=resolver, default_envs=default_envs)
 
-    def _resolve(self, resolver, default_envs):
+    def _resolve(self, resolver, default_envs: Set[str] = None):
         # resolve
         if len(resolver.graph._layers) <= 1:  # if it isn't resolved yet
             self.logger.info('build dependencies graph...')

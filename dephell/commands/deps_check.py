@@ -43,7 +43,6 @@ class DepsCheckCommand(BaseCommand):
         installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
 
         # filter deps by envs and markers
-        resolver.apply_envs(set(self.config.get('envs', {'main'})))
         resolver.apply_markers(python=python)
 
         data = []

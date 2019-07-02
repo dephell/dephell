@@ -12,14 +12,14 @@ from dephell.commands import DepsOutdatedCommand
 from dephell.config import Config
 
 
-@pytest.mark.allow_hosts(['pypi.org'])
+@pytest.mark.allow_hosts()
 def test_deps_outdated_command_file(temp_path: Path, capsys):
     reqs_path = temp_path / 'requirements.txt'
     reqs_path.write_text('six==1.11.0')
 
     config = Config()
     config.attach({
-        'to': dict(format='piplock', path=str(reqs_path)),
+        'from': dict(format='piplock', path=str(reqs_path)),
         'level': 'WARNING',
         'silent': True,
     })

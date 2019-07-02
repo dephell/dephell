@@ -3,7 +3,7 @@ from argparse import REMAINDER, ArgumentParser
 from typing import List
 
 # app
-from ..actions import make_json
+from ..actions import make_json, get_resolver
 from ..config import builders
 from .base import BaseCommand
 
@@ -31,7 +31,11 @@ class DepsTreeCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        resolver = self._get_locked()
+        if self.args.name:
+            resolver = get_resolver(reqs=self.args.name)
+            resolver = self._resolve(resolver=resolver)
+        else:
+            resolver = self._get_locked()
         if resolver is None:
             return False
 
