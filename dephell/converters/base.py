@@ -64,13 +64,8 @@ class BaseConverter:
         root = self.loads(content)
         return self._get_resolver(root)
 
-    def load_resolver(self, path=None, paths=None) -> Resolver:
-        if path is not None:
-            root = self.load(path=path)
-        elif paths is not None:
-            root = self.load(paths=paths)
-        else:
-            raise NameError('path is required')
+    def load_resolver(self, path) -> Resolver:
+        root = self.load(path=path)
         return self._get_resolver(root)
 
     # helpers
