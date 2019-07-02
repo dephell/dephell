@@ -34,7 +34,7 @@ class VendorImportCommand(BaseCommand):
         resolver = self._get_locked()
         if resolver is None:
             return False
-        output_path = Path(self.config['vendors'])
+        output_path = Path(self.config['vendor']['path'])
         self.logger.info('patching imports...')
         modules = self._patch_imports(resolver=resolver, output_path=output_path)
         self.logger.info('done!', extra=dict(modules=modules))

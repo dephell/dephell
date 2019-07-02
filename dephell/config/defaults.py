@@ -33,14 +33,16 @@ DEFAULT = dict(
     venv=str(get_data_dir() / 'venvs' / '{project}-{digest}' / '{env}'),
     dotenv=str(Path('.').resolve()),
 
-    # cache
+    # other
     cache=dict(
         path=str(get_cache_dir()),
         ttl=3600,
     ),
-
-    # other
     bin=str(Path.home() / '.local' / 'bin'),
     project=str(Path('.').resolve()),
     versioning='semver',
+    vendor=dict(
+        path='_vendor',
+        exclude=[],
+    ),
 )

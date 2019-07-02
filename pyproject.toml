@@ -70,6 +70,16 @@ envs = ["docs"]
 # run this command:
 command = "sphinx-build -M html docs docs/build"
 
+[tool.dephell.vendorized]
+from = {format = "poetry", path = "pyproject.toml"}
+to = {format = "wheel", path = "dist-vendored/"}
+envs = ["main"]
+
+[tool.dephell.vendorized.vendor]
+path = "./dephell/_vendor"
+exclude = ["jinja2"]
+
+
 # -- ISORT -- #
 
 [tool.isort]

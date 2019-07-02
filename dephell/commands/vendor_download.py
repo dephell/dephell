@@ -2,8 +2,9 @@
 import asyncio
 import shutil
 from argparse import ArgumentParser
-from tempfile import TemporaryDirectory
 from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Iterable
 
 from dephell_discover import Root as PackageRoot
 
@@ -29,21 +30,26 @@ class VendorDownloadCommand(BaseCommand):
         builders.build_api(parser)
         builders.build_output(parser)
         builders.build_other(parser)
-        parser.add_argument('vendors', help='path to vendorized packages')
         return parser
 
     def __call__(self) -> bool:
         resolver = self._get_locked()
         if resolver is None:
             return False
-        output_path = Path(self.config['vendors'])
+        output_path = Path(self.config['vendor']['path'])
         self.logger.info('downloading packages...', extra=dict(output=output_path))
-        packages = self._download_packages(resolver=resolver, output_path=output_path)
+        packages = self._download_packages(
+            resolver=resolver,
+            output_path=output_path,
+            exclude=self.config['vendor']['exclude'],
+        )
         (output_path / '__init__.py').touch(0o777)
         self.logger.info('done!', extra=dict(packages=packages))
         return True
 
-    def _download_packages(self, resolver, output_path: Path) -> int:
+    def _download_packages(self, resolver, output_path: Path,
+                           exclude: Iterable[str] = None) -> int:
+        exclude = set(exclude or [])
         with TemporaryDirectory() as archives_path:
             archives_path = Path(archives_path)
 
@@ -51,6 +57,10 @@ class VendorDownloadCommand(BaseCommand):
             tasks = []
             deps = []
             for dep in resolver.graph:
+                if dep.name in exclude:
+                    self.logger.debug('exclude package', extra=dict(package_name=dep.name))
+                    continue
+
                 deps.append(dep)
                 tasks.append(dep.repo.download(
                     name=dep.name,
@@ -93,10 +103,13 @@ class VendorDownloadCommand(BaseCommand):
 
             # copy modules
             module_path = root.packages[0].path
-            module_path = module_path.relative_to(package_path)
+            module_name = root.packages[0].module
             self.logger.info('copying module...', extra=dict(
-                path=module_path,
+                path=str(module_path.relative_to(package_path)),
                 dependency=dep.name,
             ))
-            shutil.copytree(str(package_path / module_path), str(output_path / module_path))
+            shutil.copytree(
+                src=str(module_path),
+                dst=output_path.joinpath(*module_name.split('.')),
+            )
             return True
