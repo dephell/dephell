@@ -80,7 +80,7 @@ envs = ["main"]
 # dephell vendor import --env=vendorized
 [tool.dephell.vendorized.vendor]
 path = "dephell_vendor"
-exclude = ["jinja2", "test"]
+exclude = ["jinja2", "test", "setuptools", "pip"]
 
 
 # -- ISORT -- #
