@@ -77,7 +77,7 @@ envs = ["main"]
 
 [tool.dephell.vendorized.vendor]
 path = "./dephell/_vendor"
-exclude = ["jinja2"]
+exclude = ["jinja2", "test"]
 
 
 # -- ISORT -- #
