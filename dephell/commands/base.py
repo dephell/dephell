@@ -3,7 +3,7 @@ import os.path
 from argparse import ArgumentParser
 from pathlib import Path
 from logging import getLogger
-from typing import Dict
+from typing import Dict, Set
 
 # external
 import tomlkit
@@ -83,11 +83,12 @@ class BaseCommand:
         cls.logger.warning('cannot find config file')
         return False
 
-    def _get_locked(self):
+    def _get_locked(self, default_envs: Set[str] = None):
         if 'from' not in self.config:
             python = get_python_env(config=self.config)
             self.logger.debug('choosen python', extra=dict(path=str(python.path)))
-            return InstalledConverter().load_resolver(paths=python.lib_paths)
+            resolver = InstalledConverter().load_resolver(paths=python.lib_paths)
+            return self._resolve(resolver=resolver, default_envs=default_envs)
 
         loader_config = self._get_loader_config_for_lockfile()
         if not Path(loader_config['path']).exists():
@@ -101,19 +102,24 @@ class BaseCommand:
         loader = CONVERTERS[loader_config['format']]
         resolver = loader.load_resolver(path=loader_config['path'])
         attach_deps(resolver=resolver, config=self.config, merge=False)
+        return self._resolve(resolver=resolver, default_envs=default_envs)
 
+    def _resolve(self, resolver, default_envs):
         # resolve
-        self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve(silent=self.config['silent'])
-        if not resolved:
-            conflict = analyze_conflict(resolver=resolver)
-            self.logger.warning('conflict was found')
-            print(conflict)
-            return None
+        if len(resolver.graph._layers) <= 1:  # if it isn't resolved yet
+            self.logger.info('build dependencies graph...')
+            resolved = resolver.resolve(silent=self.config['silent'])
+            if not resolved:
+                conflict = analyze_conflict(resolver=resolver)
+                self.logger.warning('conflict was found')
+                print(conflict)
+                return None
 
         # apply envs if needed
         if 'envs' in self.config:
             resolver.apply_envs(set(self.config['envs']))
+        elif default_envs:
+            resolver.apply_envs(default_envs)
 
         return resolver
 
