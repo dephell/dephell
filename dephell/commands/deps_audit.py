@@ -20,7 +20,7 @@ class DepsAuditCommand(BaseCommand):
             description=cls.__doc__,
         )
         builders.build_config(parser)
-        builders.build_to(parser)
+        builders.build_from(parser)
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
