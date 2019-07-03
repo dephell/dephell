@@ -126,6 +126,9 @@ class Config:
             if len(parsed) == 1:
                 data[name] = value
             else:
+                # if old content isn't a dict, override it
+                if not isinstance(data[parsed[0]], dict):
+                    data[parsed[0]] = dict()
                 data[parsed[0]][parsed[1]] = value
         self.attach(data)
         return dict(data)
