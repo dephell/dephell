@@ -40,7 +40,7 @@ class ProjectBumpCommand(BaseCommand):
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
-        parser.add_argument('--tag', action='store_true', help='create git tag')
+        parser.add_argument('--tag', help='create git tag')
         parser.add_argument('name', help='bumping rule name or new version')
         return parser
 
@@ -95,10 +95,11 @@ class ProjectBumpCommand(BaseCommand):
             paths.append(Path(self.config['from']['path']))
 
         # set git tag
-        if self.config.get('tag'):
-            self._add_git_tag(paths=paths, new_version=new_version)
+        tagged = True
+        if self.config.get('tag') is not None:
+            tagged = self._add_git_tag(paths=paths, new_version=new_version, template=self.config['tag'])
 
-        return True
+        return tagged
 
     @staticmethod
     def _bump_project(project: PackageRoot, old: str, new: str) -> Iterator[Path]:
@@ -138,10 +139,15 @@ class ProjectBumpCommand(BaseCommand):
             stream.write(new_content)
         return True
 
-    def _add_git_tag(self, paths, new_version):
+    def _add_git_tag(self, paths, new_version, template: str) -> bool:
+        if '{version}' not in template:
+            # add placeholder to the end if it isn't specified
+            template += '{version}'
+        tag_name = template.format(version=new_version)
         project = Path(self.config['project'])
         if not (project / '.git').exists():
-            return
+            self.logger.error("project doesn't contain .git in the root folder, cannot create git tag")
+            return False
 
         self.logger.info('commit and tag')
         ok = git_commit(
@@ -153,7 +159,7 @@ class ProjectBumpCommand(BaseCommand):
             self.logger.error('cannot commit files')
             return False
         ok = git_tag(
-            name='v.' + str(new_version),
+            name=tag_name,
             project=project,
         )
         if not ok:
@@ -161,3 +167,5 @@ class ProjectBumpCommand(BaseCommand):
             return False
 
         self.logger.info('tag created, do not forget to push it: git push --tags')
+
+        return True

@@ -79,7 +79,7 @@ SCHEME = {
 
     # other
     'owner':    dict(type='string', required=False),
-    'tag':      dict(type='boolean', required=False),
+    'tag':      dict(type='string', required=False),
     'cache':    dict(
         type='dict',
         required=True,
