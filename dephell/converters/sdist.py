@@ -80,7 +80,7 @@ class SDistConverter(BaseConverter):
         project_name = project.raw_name.replace('-', '_')
         release_name = '{name}-{version}'.format(
             name=project.raw_name,
-            version=str(project.version),
+            version=project.pep_version,
         )
         subdir = release_name + '/' if self.subdir else ''
 
