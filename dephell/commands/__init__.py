@@ -10,6 +10,8 @@ from .deps_licenses import DepsLicensesCommand
 from .deps_outdated import DepsOutdatedCommand
 from .deps_sync import DepsSyncCommand
 from .deps_tree import DepsTreeCommand
+from .docker_create import DockerCreateCommand
+from .docker_remove import DockerRemoveCommand
 from .generate_authors import GenerateAuthorsCommand
 from .generate_config import GenerateConfigCommand
 from .generate_editorconfig import GenerateEditorconfigCommand
@@ -55,6 +57,9 @@ COMMANDS = {
     'deps sync': DepsSyncCommand,
     'deps tree': DepsTreeCommand,
     # 'deps remove': ...,
+
+    'docker create': DockerCreateCommand,
+    'docker remove': DockerRemoveCommand,
 
     'generate authors': GenerateAuthorsCommand,
     'generate config': GenerateConfigCommand,

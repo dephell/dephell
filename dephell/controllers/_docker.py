@@ -9,10 +9,10 @@ from dephell_venvs import VEnvs
 from ..cached_property import cached_property
 
 
-DOCKER_PREFIX = 'dephell_'
+DOCKER_PREFIX = 'dephell-'
 
 
-class Dockers:
+class DockerContainers:
     @cached_property
     def client(self) -> docker.DockerClient:
         return docker.from_env()
@@ -25,7 +25,7 @@ class Dockers:
 
 
 @attr.s()
-class Docker:
+class DockerContainer:
     path = attr.ib(type=Path)
     env = attr.ib(type=str)
 
@@ -38,7 +38,8 @@ class Docker:
 
     @cached_property
     def container_name(self) -> str:
-        return '{name}-{digest}-{env}'.format(
+        return '{prefix}{name}-{digest}-{env}'.format(
+            prefix=DOCKER_PREFIX,
             name=self.path.name,
             digest=VEnvs._encode(str(self.path)),
             env=self.env,
@@ -46,7 +47,7 @@ class Docker:
 
     @cached_property
     def network_name(self) -> str:
-        return self.container_name + '_network'
+        return self.container_name + '-network'
 
     @property
     def image_name(self) -> str:
@@ -76,7 +77,12 @@ class Docker:
         except docker.errors.ImageNotFound:
             if not pull:
                 raise
+            self.logger.info('image not found, pulling...', extra=dict(
+                repository=self.repository,
+                tag=self.tag,
+            ))
             image = self.client.images.pull(repository=self.repository, tag=self.tag)
+            self.logger.info('pulled')
 
         # create network
         self.client.networks.create(self.network_name, check_duplicate=True)
@@ -84,7 +90,7 @@ class Docker:
         # create container
         mount = docker.types.Mount(
             target='/opt',
-            source=self.path,
+            source=str(self.path),
             type='bind',
         )
         self.client.containers.create(
