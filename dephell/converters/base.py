@@ -78,4 +78,4 @@ class BaseConverter:
         extra, marker = text.split(':')
         if not extra:
             extra = 'main'
-        return extra, None
+        return extra, marker
