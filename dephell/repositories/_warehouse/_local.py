@@ -39,10 +39,10 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
     def get_releases(self, dep) -> tuple:
 
         releases_info = dict()
-        for path in self.path.glob('**/*'):
-            if not path.name.endswith(ARCHIVE_EXTENSIONS):
+        for archive_path in self.path.glob('**/*'):
+            if not archive_path.name.endswith(ARCHIVE_EXTENSIONS):
                 continue
-            name, version = self._parse_name(path.name)
+            name, version = self._parse_name(archive_path.name)
             if canonicalize_name(name) != dep.name:
                 continue
             if not version:
@@ -50,7 +50,7 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
 
             if version not in releases_info:
                 releases_info[version] = []
-            releases_info[version].append(self._get_hash(path=path))
+            releases_info[version].append(self._get_hash(path=archive_path))
 
         # init releases
         releases = []
@@ -60,7 +60,7 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
             release = Release(
                 raw_name=dep.raw_name,
                 version=version,
-                time=datetime.fromtimestamp(path.stat().st_mtime),
+                time=datetime.fromtimestamp(self.path.stat().st_mtime),
                 hashes=hashes,
                 extra=dep.extra,
             )

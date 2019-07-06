@@ -24,12 +24,6 @@ from ...networking import aiohttp_session
 from ._base import CondaBaseRepo
 
 
-try:
-    import yaml as pyyaml
-except ImportError:
-    pyyaml = None
-
-
 # source: conda-build/metadata.py
 # Selectors must be either:
 # - at end of the line

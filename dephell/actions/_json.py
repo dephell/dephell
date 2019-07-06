@@ -19,7 +19,7 @@ def _each(value):
     return new_value
 
 
-def _flatten(value):
+def _flatten(value) -> list:
     if not isinstance(value, (list, tuple)):
         return [value]
     new_value = []
@@ -33,24 +33,24 @@ FILTERS = {
     'first()': lambda v: v[0],
     'flatten()': _flatten,
     'last()': lambda v: v[-1],
-    'len()': lambda v: len(v),
-    'max()': lambda v: max(v),
-    'min()': lambda v: min(v),
+    'len()': len,
+    'max()': max,
+    'min()': min,
     'reverse()': lambda v: v[::-1],
-    'sort()': lambda v: sorted(v),
-    'sum()': lambda v: sum(v),
+    'sort()': sorted,
+    'sum()': sum,
     'type()': lambda v: type(v).__name__,
     'zip()': lambda v: list(map(list, zip(*v))),
 
     # aliases
     '#': _each,
-    'count()': lambda v: len(v),
+    'count()': len,
     'flat()': _flatten,
     'latest()': lambda v: v[-1],
-    'length()': lambda v: len(v),
+    'length()': len,
     'reversed()': lambda v: v[::-1],
-    'size()': lambda v: len(v),
-    'sorted()': lambda v: sorted(v),
+    'size()': len,
+    'sorted()': sorted,
 }
 
 
