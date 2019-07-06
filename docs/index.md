@@ -43,6 +43,7 @@ And that's it! Now you can use any tools with any Python project. Every other co
     index-jail
     index-package
     index-project
+    index-vendor
     index-venv
     index-other
 
