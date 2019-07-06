@@ -68,7 +68,7 @@ from = {format = "poetry", path = "pyproject.toml"}
 # install only `docs` extra dependencies
 envs = ["docs"]
 # run this command:
-command = "sphinx-build -M html docs docs/build"
+command = "sphinx-build -W docs docs/build"
 
 [tool.dephell.vendorized]
 from = {format = "poetry", path = "pyproject.toml"}
