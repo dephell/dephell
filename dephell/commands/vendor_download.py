@@ -110,6 +110,6 @@ class VendorDownloadCommand(BaseCommand):
             ))
             shutil.copytree(
                 src=str(module_path),
-                dst=output_path.joinpath(*module_name.split('.')),
+                dst=str(output_path.joinpath(*module_name.split('.'))),
             )
             return True

@@ -53,26 +53,25 @@ class DepsAuditCommand(BaseCommand):
 
         data = []
         for dep in packages:
-            versions = str(dep.constraint).replace('=', '').split(' || ')
-            for version in versions:
-                vulns = safety.get(name=dep.name, version=version)
-                vulns += snyk.get(name=dep.name, version=version)
-                if not vulns:
-                    continue
-                releases = dep.repo.get_releases(dep)
-                for vuln in vulns:
-                    data.append(dict(
-                        # local info
-                        name=dep.name,
-                        current=version,
-                        # pypi info
-                        latest=str(releases[0].version),
-                        updated=str(releases[0].time.date()),
-                        # vuln info
-                        description=vuln.description,
-                        links=vuln.links,
-                        vulnerable=str(vuln.specifier),
-                    ))
+            release = dep.group.best_release
+            vulns = safety.get(name=dep.name, version=release.version)
+            vulns += snyk.get(name=dep.name, version=release.version)
+            if not vulns:
+                continue
+            releases = dep.repo.get_releases(dep)
+            for vuln in vulns:
+                data.append(dict(
+                    # local info
+                    name=dep.name,
+                    current=str(release.version),
+                    # pypi info
+                    latest=str(releases[0].version),
+                    updated=str(releases[0].time.date()),
+                    # vuln info
+                    description=vuln.description,
+                    links=vuln.links,
+                    vulnerable=str(vuln.specifier),
+                ))
 
         if data:
             print(make_json(data=data, key=self.config.get('filter')))
