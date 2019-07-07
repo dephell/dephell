@@ -1,5 +1,6 @@
 # built-in
 import os.path
+import re
 from argparse import ArgumentParser
 from pathlib import Path
 from logging import getLogger
@@ -14,6 +15,9 @@ from ..controllers import analyze_conflict
 from ..converters import CONVERTERS, InstalledConverter
 from ..config import Config, config, get_data_dir
 from ..constants import CONFIG_NAMES, GLOBAL_CONFIG_NAME
+
+
+REX_WORD = re.compile(r'([a-z\d])([A-Z])')
 
 
 class BaseCommand:
@@ -52,6 +56,21 @@ class BaseCommand:
         raise NotImplementedError
 
     # helpers
+
+    @classmethod
+    def _get_name(cls):
+        worded = REX_WORD.sub(r'\1 \2', cls.__name__)
+        return worded.rsplit(' ', maxsplit=1)[0].lower()
+
+    @classmethod
+    def _get_default_parser(cls, usage=''):
+        name = cls._get_name()
+        return ArgumentParser(
+            prog='dephell ' + name,
+            usage='dephell {} [OPTIONS] {}'.format(name, usage.upper()),
+            description=cls.__doc__,
+            epilog='https://dephell.readthedocs.io/cmd-{}.html'.format(name.replace(' ', '-')),
+        )
 
     @classmethod
     def _attach_global_config_file(cls) -> bool:
