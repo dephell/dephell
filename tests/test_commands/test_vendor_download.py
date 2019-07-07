@@ -1,8 +1,10 @@
+# built-in
 from pathlib import Path
 
+# project
 from dephell.commands import VendorDownloadCommand
-from dephell.controllers import DependencyMaker
 from dephell.config import Config
+from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
 
 

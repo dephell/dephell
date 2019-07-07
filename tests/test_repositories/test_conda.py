@@ -1,11 +1,13 @@
+# built-in
 from os import environ
 
+# external
 import pytest
 
 # project
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
-from dephell.repositories import CondaRepo, CondaGitRepo, CondaCloudRepo
+from dephell.repositories import CondaCloudRepo, CondaGitRepo, CondaRepo
 
 
 @pytest.mark.allow_hosts()

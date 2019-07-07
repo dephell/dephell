@@ -2,8 +2,10 @@
 from datetime import date
 from pathlib import Path
 
-# project
+# external
 import pytest
+
+# project
 from dephell.commands import GenerateLicenseCommand
 from dephell.config import Config
 

@@ -1,13 +1,14 @@
 # built-in
 from pathlib import Path
 
+# external
 # third-party
 import pytest
 
 # project
+from dephell.actions._git import _run
 from dephell.commands import ProjectBumpCommand
 from dephell.config import Config
-from dephell.actions._git import _run
 
 
 def test_bump_command(temp_path: Path):
