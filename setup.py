@@ -31,7 +31,8 @@ setup(
     author='Gram',
     author_email='master_fess@mail.ru',
     license='MIT',
-    keywords='dephell packaging dependency dependencies venv licenses pip poetry pipfile pipenv setuptools',
+    keywords=
+    'dephell packaging dependency dependencies venv licenses pip poetry pipfile pipenv setuptools',
     classifiers=[
         'Development Status :: 4 - Beta', 'Environment :: Console',
         'Framework :: Setuptools Plugin', 'Intended Audience :: Developers',
@@ -49,10 +50,11 @@ setup(
     ],
     package_data={'dephell': ['templates/*.j2']},
     install_requires=[
-        'aiohttp', 'appdirs', 'attrs', 'cerberus>=1.3',
+        'aiohttp', 'appdirs', 'attrs', 'bowler; python_version >= "3.6"',
+        'bowler-py35>=0.9.1; python_version < "3.6"', 'cerberus>=1.3',
         'dephell-archive>=0.1.5', 'dephell-discover>=0.2.6',
         'dephell-licenses>=0.1.6', 'dephell-links>=0.1.4',
-        'dephell-markers>=0.2.6', 'dephell-pythons>=0.1.11',
+        'dephell-markers>=1.0.0', 'dephell-pythons>=0.1.11',
         'dephell-shells>=0.1.3', 'dephell-specifier>=0.1.7',
         'dephell-venvs>=0.1.16', 'dephell-versioning', 'html5lib', 'jinja2',
         'm2r', 'packaging', 'pip>=18.0', 'pyyaml', 'requests', 'setuptools',
@@ -60,11 +62,11 @@ setup(
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
+        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'dev': [
             'aioresponses', 'pygments-github-lexers', 'pytest', 'recommonmark',
             'requests-mock', 'sphinx', 'sphinx-rtd-theme'
         ],
-        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'docs': [
             'pygments-github-lexers', 'recommonmark', 'sphinx',
             'sphinx-rtd-theme'
