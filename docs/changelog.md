@@ -2,6 +2,19 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## Future release
+
++ Docker support
+
+## v.0.7.5
+
++ Vendorization ([dephell vendor download](cmd-vendor-download) and [dephell vendor import](cmd-vendor-import)) ([#194](https://github.com/dephell/dephell/pull/194), [#109](https://github.com/dephell/dephell/issues/109))
++ Now CLI for some commands accepts `--from` instead of `--to`, because it makes much more sense ([#194](https://github.com/dephell/dephell/pull/194), [#138](https://github.com/dephell/dephell/issues/138))
++ Always PEP-compatible name for names of wheel and sdist ([#203](https://github.com/dephell/dephell/pull/203), [#192](https://github.com/dephell/dephell/issues/192))
++ Now `--tag` option for [dephell project bump](cmd-project-bump) allows to specify tag prefix or template ([#199](https://github.com/dephell/dephell/pull/199), [#197](https://github.com/dephell/dephell/issues/197))
++ Meet [dephell_versioning](https://github.com/dephell/dephell_versioning), our new friend to handle packages versioning ([#191](https://github.com/dephell/dephell/pull/191), [#147](https://github.com/dephell/dephell/issues/147))
++ Shorter links in documentation ([#183](https://github.com/dephell/dephell/pull/183), [#182](https://github.com/dephell/dephell/issues/182))
+
 ## v.0.7.4
 
 + Custom warehouse and simple index support ([#53](https://github.com/dephell/dephell/issues/53), [#128](https://github.com/dephell/dephell/pull/128)).

@@ -50,6 +50,7 @@ class PackageListCommand(BaseCommand):
                 license=getattr(dep.license, 'id', dep.license),
                 links=dep.links,
                 authors=[str(author) for author in dep.authors],
+                updated=str(releases[0].time.date()),
             ))
         print(make_json(data=data, key=self.config.get('filter')))
         return True
