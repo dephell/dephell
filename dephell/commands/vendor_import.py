@@ -57,7 +57,7 @@ class VendorImportCommand(BaseCommand):
         for library in output_path.iterdir():
             if library.name in self.config['vendor']['exclude']:
                 continue
-            library_module = '.'.join(library.resolve().relative_to(root).parts)
+            library_module = '.'.join(library.resolve().relative_to(str(root)).parts)
             self.logger.debug('patch imports', extra=dict(
                 old_name=library.name,
                 new_name=library_module,
