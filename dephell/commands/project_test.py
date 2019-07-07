@@ -126,8 +126,13 @@ class ProjectTestCommand(BaseCommand):
 
                 # install project
                 self.logger.info('install project', extra=dict(path=str(wheel_path)))
+                dep_spec = str(wheel_path)
+                extras = set(self.config.get('envs', [])) - {'main'}
+                if extras:
+                    dep_spec += '[{}]'.format(','.join(extras))
+                # we are using pip here to make it closer to the real installation
                 result = subprocess.run(
-                    [str(venv.bin_path / 'pip'), 'install', str(wheel_path)],
+                    [str(venv.bin_path / 'pip'), 'install', dep_spec],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 )
