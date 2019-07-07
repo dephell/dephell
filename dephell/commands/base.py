@@ -125,7 +125,7 @@ class BaseCommand:
 
     def _get_loader_config_for_lockfile(self) -> Dict[str, str]:
         # if path specified in CLI, use it
-        if self.args.__dict__['from'] or self.args.from_format or self.args.from_path:
+        if set(self.args.__dict__) & {'from', 'from_format', 'from_path'}:
             return self.config['from']
 
         dumper_config = self.config.get('to')

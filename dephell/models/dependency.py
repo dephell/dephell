@@ -109,6 +109,10 @@ class Dependency:
         constraint = str(self.constraint)
         if not constraint.startswith('==') or ',' in constraint or '||' in constraint:
             raise ValueError('cannot set deps for non-locked dependency', self.name, str(self.constraint))
+        # propagate envs to deps of this dep
+        for dep in dependencies:
+            dep.inherited_envs.update(self.envs)
+            dep.inherited_envs.update(self.inherited_envs)
         self.__dict__['dependencies'] = dependencies
 
     @property
@@ -231,6 +235,7 @@ class Dependency:
         self.envs.update(dep.envs)
         if 'main' in self.envs and 'dev' in self.envs:
             self.envs.remove('dev')
+        self.inherited_envs.update(dep.inherited_envs)
 
         self.constraint &= dep.constraint
         self.locations |= dep.locations

@@ -68,7 +68,7 @@ class DepsInstallCommand(BaseCommand):
         if not install and not remove:
             self.logger.info('everything is up-to-date')
         else:
-            self.logger.info('installed')
+            self.logger.info('synced' if self.sync else 'installed')
         return True
 
     def _get_install_remove(self, graph, python) -> Tuple[list, list]:
