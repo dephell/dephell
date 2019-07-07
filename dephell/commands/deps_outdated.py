@@ -34,8 +34,8 @@ class DepsOutdatedCommand(BaseCommand):
         for dep in resolver.graph:
             releases = dep.repo.get_releases(dep)
             latest = str(releases[0].version)
-            installed = str(dep.constraint).replace('=', '').split(' || ')
-            if latest in installed:
+            installed = str(dep.group.best_release.version)
+            if latest == installed:
                 continue
             data.append(dict(
                 name=dep.name,
