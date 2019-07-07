@@ -21,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.7.4',
+    version='0.7.5',
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
