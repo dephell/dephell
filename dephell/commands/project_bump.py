@@ -26,8 +26,6 @@ FILE_NAMES = (
 
 class ProjectBumpCommand(BaseCommand):
     """Bump project version.
-
-    
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
