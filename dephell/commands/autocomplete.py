@@ -16,8 +16,6 @@ from .base import BaseCommand
 
 class AutocompleteCommand(BaseCommand):
     """Enable DepHell commands autocomplete for current shell.
-
-    https://dephell.readthedocs.io/cmd-autocomplete.html
     """
 
     @classmethod

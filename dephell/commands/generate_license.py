@@ -16,8 +16,6 @@ from .base import BaseCommand
 
 class GenerateLicenseCommand(BaseCommand):
     """Create LICENSE file.
-
-    https://dephell.readthedocs.io/cmd-generate-license.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

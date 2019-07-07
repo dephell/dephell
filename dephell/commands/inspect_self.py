@@ -14,8 +14,6 @@ from .base import BaseCommand
 
 class InspectSelfCommand(BaseCommand):
     """Show information about DepHell installation.
-
-    https://dephell.readthedocs.io/cmd-inspect-self.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

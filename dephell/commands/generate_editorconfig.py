@@ -10,8 +10,6 @@ from .base import BaseCommand
 
 class GenerateEditorconfigCommand(BaseCommand):
     """Create EditorConfig for project.
-
-    https://dephell.readthedocs.io/cmd-generate-editorconfig.html
     https://editorconfig.org/
     """
     @classmethod

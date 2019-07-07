@@ -27,7 +27,7 @@ FILE_NAMES = (
 class ProjectBumpCommand(BaseCommand):
     """Bump project version.
 
-    https://dephell.readthedocs.io/cmd-project-bump.html
+    
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

@@ -18,8 +18,6 @@ from .base import BaseCommand
 
 class JailInstallCommand(BaseCommand):
     """Download and install package into isolated environment.
-
-    https://dephell.readthedocs.io/cmd-jail-install.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

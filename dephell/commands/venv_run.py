@@ -20,8 +20,6 @@ from .base import BaseCommand
 
 class VenvRunCommand(BaseCommand):
     """Run command in the project virtual environment
-
-    https://dephell.readthedocs.io/cmd-venv-run.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

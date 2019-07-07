@@ -9,8 +9,6 @@ from .base import BaseCommand
 
 class DepsOutdatedCommand(BaseCommand):
     """Show outdated project dependencies.
-
-    https://dephell.readthedocs.io/cmd-deps-outdated.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

@@ -11,8 +11,6 @@ from .base import BaseCommand
 
 class DepsCheckCommand(BaseCommand):
     """Show difference between venv and project dependencies.
-
-    https://dephell.readthedocs.io/cmd-deps-check.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

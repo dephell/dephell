@@ -10,8 +10,6 @@ from .base import BaseCommand
 
 class DepsLicensesCommand(BaseCommand):
     """Show licenses for all project dependencies.
-
-    https://dephell.readthedocs.io/cmd-deps-licenses.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

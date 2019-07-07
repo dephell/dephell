@@ -15,8 +15,6 @@ from .base import BaseCommand
 
 class GenerateConfigCommand(BaseCommand):
     """Create config file for DepHell.
-
-    https://dephell.readthedocs.io/cmd-generate-config.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

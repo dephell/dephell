@@ -11,8 +11,6 @@ from .base import BaseCommand
 
 class PackageListCommand(BaseCommand):
     """Show all installed packages.
-
-    https://dephell.readthedocs.io/cmd-package-list.html
     """
 
     @classmethod

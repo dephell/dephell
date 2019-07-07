@@ -12,8 +12,6 @@ from .base import BaseCommand
 
 class PackageInstallCommand(BaseCommand):
     """Download and install package into project environment.
-
-    https://dephell.readthedocs.io/cmd-package-install.html
     """
 
     @classmethod

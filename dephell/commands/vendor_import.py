@@ -12,8 +12,6 @@ from .base import BaseCommand
 
 class VendorImportCommand(BaseCommand):
     """Patch all imports in project to use vendored dependencies.
-
-    https://dephell.readthedocs.io/en/latest/cmd-vendor-import.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

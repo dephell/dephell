@@ -10,8 +10,6 @@ from .base import BaseCommand
 
 class DepsTreeCommand(BaseCommand):
     """Show dependencies tree.
-
-    https://dephell.readthedocs.io/cmd-deps-tree.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

@@ -12,8 +12,6 @@ from .base import BaseCommand
 
 class VenvDestroyCommand(BaseCommand):
     """Destroy virtual environment for current project.
-
-    https://dephell.readthedocs.io/cmd-venv-destroy.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

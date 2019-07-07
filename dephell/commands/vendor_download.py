@@ -15,8 +15,6 @@ from .base import BaseCommand
 
 class VendorDownloadCommand(BaseCommand):
     """Download and extract project dependencies.
-
-    https://dephell.readthedocs.io/en/latest/cmd-vendor-download.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

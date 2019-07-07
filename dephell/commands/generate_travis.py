@@ -13,9 +13,6 @@ from .base import BaseCommand
 
 class GenerateTravisCommand(BaseCommand):
     """Create .travis.yml for DepHell-based project.
-
-    https://dephell.readthedocs.io/cmd-generate-travis.html
-
     https://docs.travis-ci.com/user/languages/python/
     https://docs.travis-ci.com/user/customizing-the-build
     """

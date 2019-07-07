@@ -10,8 +10,6 @@ from .base import BaseCommand
 
 class PackageSearchCommand(BaseCommand):
     """Search packages on PyPI.org or Anaconda Cloud.
-
-    https://dephell.readthedocs.io/cmd-package-search.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
