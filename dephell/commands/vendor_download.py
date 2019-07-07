@@ -6,6 +6,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Iterable
 
+# external
 from dephell_discover import Root as PackageRoot
 
 # app

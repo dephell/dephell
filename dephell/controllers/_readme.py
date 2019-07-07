@@ -9,8 +9,8 @@ import attr
 from m2r import convert
 
 # app
-from ..constants import EXTENSIONS
 from ..cached_property import cached_property
+from ..constants import EXTENSIONS
 
 
 CODE = """

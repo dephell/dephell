@@ -1,5 +1,7 @@
-from typing import Optional, FrozenSet
+# built-in
+from typing import FrozenSet, Optional
 
+# external
 import attr
 from packaging.requirements import Requirement
 

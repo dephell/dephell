@@ -1,12 +1,15 @@
+# built-in
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional, Iterable, List, Dict
+from typing import Dict, Iterable, List, Optional
 from urllib.parse import urljoin, urlparse
 
+# external
 import attr
 import requests
-from requests.exceptions import SSLError, ConnectionError
+from requests.exceptions import ConnectionError, SSLError
 
+# app
 from ..config import config as global_config
 from ..constants import WAREHOUSE_DOMAINS
 from ..exceptions import PackageNotFoundError

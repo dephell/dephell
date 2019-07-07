@@ -6,8 +6,8 @@ from typing import Optional
 import attr
 
 # app
-from ..config import config
 from ..cached_property import cached_property
+from ..config import config
 from .group import Group
 
 

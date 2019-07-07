@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+# project
 from bowler import Query
 
 # app
