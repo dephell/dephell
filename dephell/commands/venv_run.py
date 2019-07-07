@@ -25,10 +25,7 @@ class VenvRunCommand(BaseCommand):
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell venv run',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_api(parser)
         builders.build_venv(parser)

@@ -21,10 +21,7 @@ class GenerateLicenseCommand(BaseCommand):
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell generate license',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)

@@ -17,10 +17,7 @@ class PackageListCommand(BaseCommand):
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell package list',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)
