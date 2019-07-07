@@ -74,17 +74,30 @@ def test_load_dump_load_deps(converter, path):
 
 @pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path, exclude', [
-    (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml', ['raw_name']),
-    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json', ['raw_name', 'python']),
-
+    (
+        converters.PIPFileConverter(),
+        Path('tests') / 'requirements' / 'pipfile.toml',
+        ['raw_name'],
+    ),
+    (
+        converters.PIPFileLockConverter(),
+        Path('tests') / 'requirements' / 'pipfile.lock.json',
+        ['raw_name', 'python'],
+    ),
     (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml', []),
-
     (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml', []),
     (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml', []),
-
     (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py', []),
-    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info', ['package', 'entrypoints', 'readme']),
-    (converters.WheelConverter(), Path('tests') / 'requirements' / 'wheel.whl', ['package', 'entrypoints']),
+    (
+        converters.EggInfoConverter(),
+        Path('tests') / 'requirements' / 'egg-info',
+        ['package', 'entrypoints', 'readme'],
+    ),
+    (
+        converters.WheelConverter(),
+        Path('tests') / 'requirements' / 'wheel.whl',
+        ['package', 'entrypoints'],
+    ),
 ])
 def test_load_dump_load_metainfo(converter, path, exclude):
     root1 = converter.load(path)

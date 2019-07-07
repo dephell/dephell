@@ -26,7 +26,7 @@ REX_WORD = re.compile('[a-zA-Z]+')
 class WarehouseBaseRepo(Interface):
     # I'm not sure how to combine `@abstractproperty` and `= attr.ib()`
     @cached_property
-    def prereleases(self):
+    def prereleases(self) -> bool:
         raise NotImplementedError
 
     @cached_property
@@ -36,6 +36,9 @@ class WarehouseBaseRepo(Interface):
     @cached_property
     def repos(self):
         return [self]
+
+    async def download(self, name: str, version: str, path: Path) -> bool:
+        raise NotImplementedError
 
     @staticmethod
     def _convert_deps(*, deps, name, version, extra):
@@ -81,27 +84,9 @@ class WarehouseBaseRepo(Interface):
 
     async def _download_and_parse(self, *, url: str, converter) -> Tuple[str, ...]:
         with TemporaryDirectory() as tmp:
-            async with aiohttp_session(auth=self.auth) as session:
-                async with session.get(url) as response:
-                    response.raise_for_status()
-                    fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]
-                    path = Path(tmp) / fname
-
-                    # download file
-                    if aiofiles is not None:
-                        async with aiofiles.open(str(path), mode='wb') as stream:
-                            while True:
-                                chunk = await response.content.read(1024)
-                                if not chunk:
-                                    break
-                                await stream.write(chunk)
-                    else:
-                        with path.open(mode='wb') as stream:
-                            while True:
-                                chunk = await response.content.read(1024)
-                                if not chunk:
-                                    break
-                                stream.write(chunk)
+            fname = urlparse(url).path.strip('/').rsplit('/', maxsplit=1)[-1]
+            path = Path(tmp) / fname
+            await self._download(url=url, path=path)
 
             # load and make separated dep for every env
             root = converter.load(path)
@@ -114,6 +99,27 @@ class WarehouseBaseRepo(Interface):
                         dep.envs = {env}
                         deps.append(str(dep))
             return tuple(deps)
+
+    async def _download(self, *, url: str, path: Path) -> None:
+        async with aiohttp_session(auth=self.auth) as session:
+            async with session.get(url) as response:
+                response.raise_for_status()
+
+                # download file
+                if aiofiles is not None:
+                    async with aiofiles.open(str(path), mode='wb') as stream:
+                        while True:
+                            chunk = await response.content.read(1024)
+                            if not chunk:
+                                break
+                            await stream.write(chunk)
+                else:
+                    with path.open(mode='wb') as stream:
+                        while True:
+                            chunk = await response.content.read(1024)
+                            if not chunk:
+                                break
+                            stream.write(chunk)
 
     @staticmethod
     def _parse_name(fname: str) -> Tuple[str, str]:

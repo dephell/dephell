@@ -10,12 +10,10 @@
 <div>
   Supported:
   <ul>
-    {% for group in self.groups %}
-      {% for release in group.releases %}
-        <li>
-          Version {{ release.version }} compatible with python {{ release.python or '*' }}.
-        </li>
-      {% endfor %}
+    {% for release in conflict.groups.releases %}
+      <li>
+        Version {{ release.version }} compatible with python {{ release.python or '*' }}.
+      </li>
     {% endfor %}
   </ul>
 </div>
