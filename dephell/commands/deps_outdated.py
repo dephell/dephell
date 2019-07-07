@@ -34,13 +34,13 @@ class DepsOutdatedCommand(BaseCommand):
         for dep in resolver.graph:
             releases = dep.repo.get_releases(dep)
             latest = str(releases[0].version)
-            installed = str(dep.group.best_release.version)
-            if latest == installed:
+            locked = str(dep.group.best_release.version)
+            if latest == locked:
                 continue
             data.append(dict(
                 name=dep.name,
                 latest=latest,
-                installed=installed,
+                locked=locked,
                 updated=str(releases[0].time.date()),
                 description=dep.description,
             ))

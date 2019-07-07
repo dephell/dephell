@@ -32,7 +32,7 @@ def test_deps_outdated_command_file(temp_path: Path, capsys):
     assert result is False
     assert len(output) == 1
     assert output[0]['name'] == 'six'
-    assert output[0]['installed'] == ['1.11.0']
+    assert output[0]['locked'] == '1.11.0'
     assert output[0]['latest'] != '1.11.0'
 
 
