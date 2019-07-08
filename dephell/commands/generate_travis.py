@@ -13,18 +13,12 @@ from .base import BaseCommand
 
 class GenerateTravisCommand(BaseCommand):
     """Create .travis.yml for DepHell-based project.
-
-    https://dephell.readthedocs.io/cmd-generate-travis.html
-
     https://docs.travis-ci.com/user/languages/python/
     https://docs.travis-ci.com/user/customizing-the-build
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell generate travis',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)

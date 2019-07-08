@@ -10,15 +10,10 @@ from .base import BaseCommand
 
 class DepsAuditCommand(BaseCommand):
     """Show known vulnerabilities for project dependencies.
-
-    https://dephell.readthedocs.io/cmd-deps-audit.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps audit',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser('packages')
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_output(parser)

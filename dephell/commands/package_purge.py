@@ -15,16 +15,11 @@ from .base import BaseCommand
 
 class PackagePurgeCommand(BaseCommand):
     """Remove given packages and their dependencies.
-
-    https://dephell.readthedocs.io/cmd-package-purge.html
     """
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell package purge',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)

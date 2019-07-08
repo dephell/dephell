@@ -49,10 +49,7 @@ class InspectGadgetCommand(BaseCommand):
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell inspect config',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         return parser
 

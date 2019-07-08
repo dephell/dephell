@@ -21,15 +21,10 @@ from .base import BaseCommand
 
 class ProjectTestCommand(BaseCommand):
     """Test project build in temporary venvs.
-
-    https://dephell.readthedocs.io/cmd-project-test.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell project test',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_venv(parser)

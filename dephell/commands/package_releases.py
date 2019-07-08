@@ -9,15 +9,10 @@ from .base import BaseCommand
 
 class PackageReleasesCommand(BaseCommand):
     """Show package releases.
-
-    https://dephell.readthedocs.io/cmd-package-releases.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell package releases',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_api(parser)

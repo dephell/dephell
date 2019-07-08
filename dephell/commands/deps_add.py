@@ -13,8 +13,6 @@ from .base import BaseCommand
 
 class DepsAddCommand(BaseCommand):
     """Add new packages into project dependencies.
-
-    https://dephell.readthedocs.io/cmd-deps-add.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
