@@ -12,8 +12,8 @@ from packaging.version import parse as parse_version
 
 # app
 from ..cached_property import cached_property
-from .group import Group
 from .author import Author
+from .group import Group
 
 
 @attr.s()

@@ -1,25 +1,27 @@
+# built-in
 import json
 import sys
 from bz2 import BZ2Decompressor
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 from datetime import datetime
 from logging import getLogger
 from platform import uname
-from typing import Any, Dict, List, Iterator, Iterable
+from typing import Any, Dict, Iterable, Iterator, List
 
+# external
 import attr
 import requests
 from dephell_specifier import RangeSpecifier
-from packaging.version import parse
 from packaging.utils import canonicalize_name
+from packaging.version import parse
 
-
-from ._base import CondaBaseRepo
+# app
 from ...cache import JSONCache
+from ...cached_property import cached_property
 from ...config import config
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
-from ...cached_property import cached_property
+from ._base import CondaBaseRepo
 
 
 # https://conda.anaconda.org/conda-forge/linux-64

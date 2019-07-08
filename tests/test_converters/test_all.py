@@ -1,13 +1,13 @@
 # external
-import attr
-import pytest
-
 # built-in
 from pathlib import Path
 
+import attr
+import pytest
+
 # project
 from dephell import converters
-from dephell.controllers import Graph, RepositoriesRegistry, DependencyMaker
+from dephell.controllers import DependencyMaker, Graph, RepositoriesRegistry
 from dephell.models import Requirement, RootDependency
 
 

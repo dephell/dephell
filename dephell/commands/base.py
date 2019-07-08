@@ -2,8 +2,8 @@
 import os.path
 import re
 from argparse import ArgumentParser
-from pathlib import Path
 from logging import getLogger
+from pathlib import Path
 from typing import Dict, Set
 
 # external
@@ -11,10 +11,10 @@ import tomlkit
 
 # app
 from ..actions import attach_deps, get_python_env
-from ..controllers import analyze_conflict
-from ..converters import CONVERTERS, InstalledConverter
 from ..config import Config, config, get_data_dir
 from ..constants import CONFIG_NAMES, GLOBAL_CONFIG_NAME
+from ..controllers import analyze_conflict
+from ..converters import CONVERTERS, InstalledConverter
 
 
 REX_WORD = re.compile(r'([a-z\d])([A-Z])')

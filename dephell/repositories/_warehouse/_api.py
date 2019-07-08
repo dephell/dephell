@@ -4,7 +4,7 @@ import posixpath
 from logging import getLogger
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple, Union
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin, urlparse
 from xmlrpc.client import ServerProxy
 
 # external
@@ -16,7 +16,7 @@ from packaging.requirements import Requirement
 # app
 from ...cache import JSONCache, TextCache
 from ...config import config
-from ...exceptions import PackageNotFoundError, InvalidFieldsError
+from ...exceptions import InvalidFieldsError, PackageNotFoundError
 from ...models.author import Author
 from ...models.release import Release
 from ...networking import aiohttp_session

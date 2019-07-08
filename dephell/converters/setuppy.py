@@ -1,14 +1,14 @@
 # built-in
 from collections import defaultdict
 from distutils.core import run_setup
-from io import StringIO, BytesIO
+from io import BytesIO, StringIO
 from logging import getLogger
 from pathlib import Path
 from typing import Optional
 
 # external
+from dephell_links import DirLink, FileLink, URLLink, VCSLink, parse_link
 from dephell_specifier import RangeSpecifier
-from dephell_links import DirLink, FileLink, VCSLink, URLLink, parse_link
 from packaging.requirements import Requirement
 from setuptools.dist import Distribution
 

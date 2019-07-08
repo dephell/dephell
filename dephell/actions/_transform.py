@@ -1,7 +1,8 @@
+# project
 from bowler import LN, Capture, Filename, Query
-from bowler.helpers import power_parts, quoted_parts, dotted_parts
+from bowler.helpers import dotted_parts, power_parts, quoted_parts
+from fissix.fixer_util import Dot, Name, syms
 from fissix.pytree import Node
-from fissix.fixer_util import syms, Name, Dot
 
 
 modifiers = []

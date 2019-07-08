@@ -1,20 +1,22 @@
 # built-in
 import asyncio
+import html
 import posixpath
 from datetime import datetime
 from logging import getLogger
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
-from urllib.parse import urlparse, urljoin, parse_qs, quote
+from urllib.parse import parse_qs, quote, urljoin, urlparse
 
 # external
 import attr
-import html
-import html5lib
 import requests
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
+
+# project
+import html5lib
 
 # app
 from ...cache import JSONCache, TextCache

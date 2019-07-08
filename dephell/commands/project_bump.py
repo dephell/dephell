@@ -5,7 +5,9 @@ from typing import Iterator
 
 # external
 from dephell_discover import Root as PackageRoot
-from dephell_versioning import bump_version, bump_file
+
+# project
+from dephell_versioning import bump_file, bump_version
 
 # app
 from ..actions import git_commit, git_tag

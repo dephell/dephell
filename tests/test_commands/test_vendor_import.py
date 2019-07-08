@@ -1,10 +1,13 @@
+# built-in
 from pathlib import Path
 
+# external
 from dephell_discover import Root as PackageRoot
 
+# project
 from dephell.commands import VendorImportCommand
-from dephell.controllers import Resolver, Graph, Mutator
 from dephell.config import Config
+from dephell.controllers import Graph, Mutator, Resolver
 from dephell.models import RootDependency
 
 

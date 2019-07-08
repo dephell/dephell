@@ -1,10 +1,13 @@
+# built-in
 import asyncio
 import re
 from pathlib import Path
 from urllib.parse import urlparse
 
+# external
 import pytest
 
+# project
 from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.controllers import DependencyMaker
 from dephell.models import Auth, RootDependency

@@ -1,8 +1,9 @@
 # built-in
 from pathlib import Path
 
-from .app_dirs import get_cache_dir, get_data_dir
+# app
 from ..constants import DEFAULT_WAREHOUSE
+from .app_dirs import get_cache_dir, get_data_dir
 
 
 DEFAULT = dict(

@@ -1,8 +1,11 @@
+# built-in
 from pathlib import Path
 
+# external
 import pytest
-from bowler import Query
 
+# project
+from bowler import Query
 from dephell.actions import transform_imports
 
 

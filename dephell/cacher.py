@@ -15,8 +15,8 @@ import requests
 from packaging.requirements import Requirement
 
 # project
-from dephell.controllers import DependencyMaker
 from dephell.constants import DEFAULT_WAREHOUSE
+from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
 from dephell.repositories import WarehouseAPIRepo
 
