@@ -78,6 +78,17 @@ SCHEME = {
         required=False,
     ),
 
+    # docker
+    'docker': dict(
+        type='dict',
+        required=True,
+        schema={
+            'repo': dict(type='string', regex=r'[a-zA-Z0-9\.\-\_\/]', required=True),
+            'tag':  dict(type='string', required=True),
+        },
+    ),
+
+
     # other
     'owner':    dict(type='string', required=False),
     'tag':      dict(type='string', required=False),

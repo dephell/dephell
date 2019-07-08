@@ -15,10 +15,7 @@ class DockerRemoveCommand(BaseCommand):
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell docker remove',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_venv(parser)
@@ -29,7 +26,9 @@ class DockerRemoveCommand(BaseCommand):
     def __call__(self) -> bool:
         container = DockerContainer(
             path=Path(self.config['project']),
-            env=self.config.env
+            env=self.config.env,
+            repository=self.config['docker']['repo'],
+            tag=self.config['docker']['tag'],
         )
         if not container.exists():
             self.logger.error('container does not exist', extra=dict(

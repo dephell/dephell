@@ -71,6 +71,12 @@ def build_venv(parser):
     venv_group.add_argument('--dotenv', help='path to .env file')
 
 
+def build_docker(parser):
+    venv_group = parser.add_argument_group('Docker container')
+    venv_group.add_argument('--docker-repo', help='image name without tag')
+    venv_group.add_argument('--docker-tag', help='image tag')
+
+
 def build_other(parser):
     other_group = parser.add_argument_group('Other')
 
