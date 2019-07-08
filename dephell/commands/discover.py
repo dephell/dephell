@@ -19,6 +19,7 @@ _NAMES = (
     'docker remove',
     'docker run',
     'docker shell',
+    'docker tags',
     'generate authors',
     'generate config',
     'generate editorconfig',

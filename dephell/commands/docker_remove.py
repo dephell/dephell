@@ -10,8 +10,6 @@ from .base import BaseCommand
 
 class DockerRemoveCommand(BaseCommand):
     """Remove docker container for current project.
-
-    https://dephell.readthedocs.io/cmd-docker-remove.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:

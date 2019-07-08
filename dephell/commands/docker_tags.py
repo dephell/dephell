@@ -3,13 +3,14 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # app
+from ..actions import make_json
 from ..config import builders
 from ..controllers import DockerContainer
 from .base import BaseCommand
 
 
-class DockerCreateCommand(BaseCommand):
-    """Create docker container for current project.
+class DockerTagsCommand(BaseCommand):
+    """Show available tags for image.
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
@@ -28,15 +29,5 @@ class DockerCreateCommand(BaseCommand):
             repository=self.config['docker']['repo'],
             tag=self.config['docker']['tag'],
         )
-        if container.exists():
-            self.logger.error('container already exists', extra=dict(
-                container=container.container_name,
-            ))
-            return False
-
-        self.logger.info('creating container for project...', extra=dict(
-            container=container.container_name,
-        ))
-        container.create()
-        self.logger.info('container created')
+        print(make_json(data=container.tags, key=self.config.get('filter')))
         return True

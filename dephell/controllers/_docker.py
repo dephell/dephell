@@ -5,6 +5,7 @@ from typing import List, Optional
 import attr
 import docker
 import dockerpty
+import requests
 from dephell_venvs import VEnvs
 
 from ..cached_property import cached_property
@@ -53,6 +54,22 @@ class DockerContainer:
     @property
     def image_name(self) -> str:
         return '{}:{}'.format(self.repository, self.tag)
+
+    @property
+    def tags(self):
+        repository = self.repository
+        if '/' not in repository:
+            repository = 'library/' + repository
+        url = 'https://hub.docker.com/v2/repositories/{}/tags/'.format(repository)
+        tags = dict()
+        while url is not None:
+            response = requests.get(url)
+            response.raise_for_status()
+            content = response.json()
+            url = content['next']
+            for tag in content['results']:
+                tags[tag['name']] = tag['last_updated'] or ''
+        return sorted(tags, key=lambda tag: tags[tag], reverse=True)
 
     @cached_property
     def client(self) -> docker.DockerClient:
