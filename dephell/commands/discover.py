@@ -17,6 +17,7 @@ _NAMES = (
     'deps tree',
     'docker create',
     'docker remove',
+    'docker run',
     'docker shell',
     'generate authors',
     'generate config',

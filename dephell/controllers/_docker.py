@@ -1,6 +1,6 @@
 from logging import getLogger
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import attr
 import docker
@@ -107,6 +107,7 @@ class DockerContainer:
         )
 
     def remove(self) -> None:
+        self.container.stop()
         self.container.remove(force=True)
         for container in self.network.containers:
             self.network.disconnect(container, force=True)
@@ -123,5 +124,10 @@ class DockerContainer:
             container=self.container.id,
         )
 
-    def deactivate(self) -> None:
-        self.container.stop()
+    def run(self, command: List[str]) -> None:
+        self.container.start()
+        dockerpty.exec_command(
+            client=self.client.api,
+            container=self.container.id,
+            command=command,
+        )
