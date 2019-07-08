@@ -1,16 +1,15 @@
 # built-in
+import os
 from argparse import ArgumentParser
 from pathlib import Path
 from platform import platform
-import os
 
 # external
-from ..config import get_data_dir
 from dephell_shells import Shells
 
 # app
 from ..actions import make_bash_autocomplete, make_zsh_autocomplete
-from ..config import builders
+from ..config import builders, get_data_dir
 from .base import BaseCommand
 
 

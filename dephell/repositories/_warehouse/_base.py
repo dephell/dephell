@@ -1,3 +1,4 @@
+# built-in
 import re
 from logging import getLogger
 from pathlib import Path
@@ -5,12 +6,14 @@ from tempfile import TemporaryDirectory
 from typing import Tuple
 from urllib.parse import urlparse
 
+# external
 from dephell_markers import Markers
 from packaging.requirements import InvalidRequirement, Requirement
 
-from ..base import Interface
+# app
 from ...cached_property import cached_property
 from ...networking import aiohttp_session
+from ..base import Interface
 
 
 try:

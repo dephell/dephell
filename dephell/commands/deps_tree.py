@@ -3,7 +3,7 @@ from argparse import REMAINDER, ArgumentParser
 from typing import List
 
 # app
-from ..actions import make_json, get_resolver
+from ..actions import get_resolver, make_json
 from ..config import builders
 from .base import BaseCommand
 

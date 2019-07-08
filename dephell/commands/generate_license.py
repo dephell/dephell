@@ -5,8 +5,8 @@ from getpass import getuser
 from pathlib import Path
 
 # external
-from dephell_licenses import licenses
 from dephell_discover import Root as PackageRoot
+from dephell_licenses import licenses
 
 # app
 from ..config import builders

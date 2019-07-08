@@ -10,7 +10,7 @@ from dephell_specifier import RangeSpecifier
 # app
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import get_repo, WarehouseBaseRepo, WarehouseLocalRepo
+from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo, get_repo
 from .base import BaseConverter
 
 

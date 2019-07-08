@@ -1,8 +1,9 @@
 # built-in
 from ssl import create_default_context
 
+# external
 import certifi
-from aiohttp import TCPConnector, ClientSession
+from aiohttp import ClientSession, TCPConnector
 
 
 def aiohttp_session(*, auth=None, **kwargs):

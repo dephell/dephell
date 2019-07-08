@@ -4,7 +4,7 @@ from ._getter import get_repo
 from ._git.git import GitRepo
 from ._local import LocalRepo
 from ._release import ReleaseRepo
-from ._warehouse import WarehouseBaseRepo, WarehouseSimpleRepo, WarehouseAPIRepo, WarehouseLocalRepo
+from ._warehouse import WarehouseAPIRepo, WarehouseBaseRepo, WarehouseLocalRepo, WarehouseSimpleRepo
 
 
 __all__ = [

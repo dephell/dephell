@@ -1,12 +1,13 @@
 # built-in
 from argparse import ArgumentParser
 
+# external
 from packaging.utils import canonicalize_name
 
 # app
 from ..actions import get_python_env
 from ..config import builders
-from ..controllers import analyze_conflict, Resolver, Mutator, Graph
+from ..controllers import Graph, Mutator, Resolver, analyze_conflict
 from ..converters import InstalledConverter
 from ..models import Requirement
 from ..package_manager import PackageManager

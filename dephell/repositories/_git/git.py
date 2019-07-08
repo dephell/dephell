@@ -9,13 +9,13 @@ from typing import Optional
 
 # app
 from ...cache import RequirementsCache
+from ...cached_property import cached_property
 from ...config import config
 from ...context_tools import chdir
 from ...models.git_release import GitRelease
 from ...models.release import Release
-from ...cached_property import cached_property
-from ..base import Interface
 from .._local import LocalRepo
+from ..base import Interface
 
 
 logger = getLogger(__name__)

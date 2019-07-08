@@ -1,6 +1,6 @@
 # built-in
 from logging import getLogger
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 # external
 from dephell_venvs import VEnv

@@ -6,8 +6,8 @@ from time import time
 from typing import List
 
 # app
-from .config import config
 from .cached_property import cached_property
+from .config import config
 
 
 class BaseCache:
