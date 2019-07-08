@@ -48,7 +48,7 @@ SCHEME = {
     ),
 
     # api
-    'warehouse':    dict(type='list', required=False, empty=True),
+    'warehouse':    dict(type='list', schema=dict(type='string'), required=False, empty=True),
     'bitbucket':    dict(type='string', required=True),
     'repo':         dict(type='string', required=False, allowed=REPOSITORIES),
 
@@ -90,8 +90,16 @@ SCHEME = {
     ),
     'project':      dict(type='string', required=True),
     'bin':          dict(type='string', required=True),
-    'envs':         dict(type='list', required=False, empty=False),
-    'tests':        dict(type='list', required=True),
+    'envs':         dict(type='list', schema=dict(type='string'), required=False, empty=False),
+    'tests':        dict(type='list', schema=dict(type='string'), required=True),
     'versioning':   dict(type='string', required=True, allowed=get_schemes()),
     'command':      dict(type='string', required=False),
+    'vendor':       dict(
+        type='dict',
+        required=True,
+        schema={
+            'exclude': dict(type='list', schema=dict(type='string'), required=True, empty=True),
+            'path':  dict(type='string', required=True),
+        },
+    ),
 }

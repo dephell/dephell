@@ -12,15 +12,10 @@ from .base import BaseCommand
 
 class DepsConvertCommand(BaseCommand):
     """Convert dependencies between formats.
-
-    https://dephell.readthedocs.io/cmd-deps-convert.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps convert',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_to(parser)
@@ -31,6 +26,12 @@ class DepsConvertCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        if 'from' not in self.config:
+            self.error('`--from` is required for this command')
+            return False
+        if 'to' not in self.config:
+            self.error('`--to` is required for this command')
+            return False
         loader = CONVERTERS[self.config['from']['format']]
         dumper = CONVERTERS[self.config['to']['format']]
 
@@ -60,18 +61,6 @@ class DepsConvertCommand(BaseCommand):
                 print(conflict)
                 return False
             self.logger.debug('resolved')
-
-        # apply envs if needed
-        if 'envs' in self.config:
-            if len(resolver.graph._layers) <= 1:
-                self.logger.debug('resolving...')
-                resolved = resolver.resolve(level=1, silent=self.config['silent'])
-                if not resolved:
-                    conflict = analyze_conflict(resolver=resolver)
-                    self.logger.warning('conflict was found')
-                    print(conflict)
-                    return False
-            resolver.apply_envs(set(self.config['envs']))
 
         # dump
         self.logger.debug('dump dependencies...', extra=dict(
