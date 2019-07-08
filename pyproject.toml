@@ -139,6 +139,7 @@ bowler = {python = ">=3.6",version = "*"}
 bowler-py35 = {version = ">=0.9.1",python = "<3.6"}
 cerberus = ">=1.3"
 docker = "*"
+dockerpty = "*"
 html5lib = "*"
 jinja2 = "*"
 m2r = "*"

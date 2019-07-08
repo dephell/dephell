@@ -2,6 +2,7 @@
 from importlib import import_module
 
 
+# keep sorted
 _NAMES = (
     'auth',
     'autocomplete',
@@ -14,6 +15,9 @@ _NAMES = (
     'deps outdated',
     'deps sync',
     'deps tree',
+    'docker create',
+    'docker remove',
+    'docker shell',
     'generate authors',
     'generate config',
     'generate editorconfig',

@@ -41,7 +41,7 @@ SCHEME = {
         valuesrules=dict(
             type='dict',
             schema={
-                'hostname': dict(type='string', regex=r'[a-z0-9\.\-\_]'),
+                'hostname': dict(type='string', regex=r'[a-z0-9\.\-\_]+'),
                 'username': dict(type='string', required=True),
                 'password': dict(type='string', required=True),
             },
@@ -83,7 +83,7 @@ SCHEME = {
         type='dict',
         required=True,
         schema={
-            'repo': dict(type='string', regex=r'[a-zA-Z0-9\.\-\_\/]', required=True),
+            'repo': dict(type='string', regex=r'[a-zA-Z0-9\.\-\_\/]+', required=True),
             'tag':  dict(type='string', required=True),
         },
     ),

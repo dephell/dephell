@@ -4,6 +4,7 @@ from typing import Optional
 
 import attr
 import docker
+import dockerpty
 from dephell_venvs import VEnvs
 
 from ..cached_property import cached_property
@@ -71,6 +72,8 @@ class DockerContainer:
     # public methods
 
     def create(self, *, pull=True) -> None:
+        if 'container' in self.__dict__:
+            del self.__dict__['container']
         # get image
         try:
             image = self.client.images.get(self.image_name)
@@ -99,6 +102,8 @@ class DockerContainer:
             name=self.container_name,
             mounts=[mount],
             network=self.network_name,
+            tty=True,
+            stdin_open=True,
         )
 
     def remove(self) -> None:
@@ -113,7 +118,10 @@ class DockerContainer:
         return self.container is not None
 
     def activate(self) -> None:
-        self.container.start()
+        dockerpty.start(
+            client=self.client.api,
+            container=self.container.id,
+        )
 
     def deactivate(self) -> None:
         self.container.stop()
