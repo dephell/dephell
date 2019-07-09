@@ -7,7 +7,7 @@ from ..config import builders
 from .base import BaseCommand
 
 
-class DockerRemoveCommand(BaseCommand):
+class DockerDestroyCommand(BaseCommand):
     """Remove docker container for current project.
     """
     @classmethod

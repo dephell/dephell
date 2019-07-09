@@ -18,8 +18,8 @@ _NAMES = (
     'deps tree',
 
     'docker create',
+    'docker destroy',
     'docker prepare',
-    'docker remove',
     'docker run',
     'docker shell',
     'docker stop',
