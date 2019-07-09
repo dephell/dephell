@@ -3,8 +3,8 @@ from argparse import ArgumentParser, REMAINDER
 from pathlib import Path
 
 # app
+from ..actions import get_docker_container
 from ..config import builders
-from ..controllers import DockerContainer
 from .base import BaseCommand
 
 
@@ -24,13 +24,7 @@ class DockerPrepareCommand(BaseCommand):
 
     def __call__(self) -> bool:
         script_path = Path(__file__).parent.parent / 'templates' / 'docker_prepare.sh'
-
-        container = DockerContainer(
-            path=Path(self.config['project']),
-            env=self.config.env,
-            repository=self.config['docker']['repo'],
-            tag=self.config['docker']['tag'],
-        )
+        container = get_docker_container(config=self.config)
         if not container.exists():
             self.logger.warning('creating container...', extra=dict(
                 container=container.container_name,
