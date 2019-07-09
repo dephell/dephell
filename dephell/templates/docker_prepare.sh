@@ -19,7 +19,6 @@ echo "\nautoload -U promptinit\npromptinit\nprompt pure\n" >> ~/.zshrc
 # dephell
 python3 -m pip install -U pip
 wget -O /tmp/install.py https://raw.githubusercontent.com/dephell/dephell/master/install.py
-# pip can't update itself from the first try >.<
-bash -c "python3 /tmp/install.py || python3 /tmp/install.py"
+bash -c "python3 /tmp/install.py"
 rm /tmp/install.py
 dephell autocomplete
