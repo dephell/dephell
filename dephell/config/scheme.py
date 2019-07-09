@@ -84,7 +84,8 @@ SCHEME = {
         required=True,
         schema={
             'repo': dict(type='string', regex=r'[a-zA-Z0-9\.\-\_\/]+', required=True),
-            'tag':  dict(type='string', required=True),
+            'tag': dict(type='string', required=True),
+            'container': dict(type='string', required=False),
         },
     ),
 
