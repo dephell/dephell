@@ -123,8 +123,11 @@ class DockerContainer:
             stdin_open=True,
         )
 
-    def remove(self) -> None:
+    def stop(self) -> None:
         self.container.stop()
+
+    def remove(self) -> None:
+        self.stop()
         self.container.remove(force=True)
         for container in self.network.containers:
             self.network.disconnect(container, force=True)
