@@ -16,6 +16,7 @@ _NAMES = (
     'deps sync',
     'deps tree',
     'docker create',
+    'docker prepare',
     'docker remove',
     'docker run',
     'docker shell',

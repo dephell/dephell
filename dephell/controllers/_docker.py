@@ -109,13 +109,13 @@ class DockerContainer:
 
         # create container
         mount = docker.types.Mount(
-            target='/opt',
+            target='/opt/project',
             source=str(self.path),
             type='bind',
         )
         self.client.containers.create(
             image=image,
-            command='/bin/sh',
+            command='/bin/sh -c "bash || sh"',
             name=self.container_name,
             mounts=[mount],
             network=self.network_name,
@@ -136,10 +136,7 @@ class DockerContainer:
         return self.container is not None
 
     def activate(self) -> None:
-        dockerpty.start(
-            client=self.client.api,
-            container=self.container.id,
-        )
+        return self.run(['sh', '-c', 'zsh || bash || sh'])
 
     def run(self, command: List[str]) -> None:
         self.container.start()

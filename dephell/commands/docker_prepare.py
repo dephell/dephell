@@ -1,5 +1,4 @@
 # built-in
-import shlex
 from argparse import ArgumentParser, REMAINDER
 from pathlib import Path
 
@@ -9,8 +8,8 @@ from ..controllers import DockerContainer
 from .base import BaseCommand
 
 
-class DockerRunCommand(BaseCommand):
-    """Run command inside of docker container.
+class DockerPrepareCommand(BaseCommand):
+    """Make docker container nice.
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
@@ -24,15 +23,7 @@ class DockerRunCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        # get command
-        command = self.args.name
-        if not command:
-            command = self.config.get('command')
-            if not command:
-                self.logger.error('command required')
-                return False
-        if isinstance(command, str):
-            command = shlex.split(command)
+        script_path = Path(__file__).parent.parent / 'templates' / 'docker_prepare.sh'
 
         container = DockerContainer(
             path=Path(self.config['project']),
@@ -48,8 +39,7 @@ class DockerRunCommand(BaseCommand):
 
         self.logger.info('running...', extra=dict(
             container=container.container_name,
-            command=command,
         ))
-        container.run(command)
-        self.logger.info('done')
+        container.run(['sh', '-c', script_path.read_text()])
+        self.logger.info('ready')
         return True
