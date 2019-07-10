@@ -295,6 +295,10 @@ class PoetryConverter(BaseConverter):
 
         section['source'] = sources
 
+        # remove section if empty
+        if not section['source'].value:
+            del section['source']
+
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod
     def _make_deps(root, name: str, content, envs: set) -> List[Dependency]:
