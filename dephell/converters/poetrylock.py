@@ -1,6 +1,7 @@
 # built-in
 from collections import defaultdict
 from pathlib import Path
+from itertools import chain
 from typing import List, Optional
 
 # external
@@ -37,11 +38,11 @@ class PoetryLockConverter(BaseConverter):
         root.python = RangeSpecifier(doc.get('metadata', {}).get('python-versions', '*'))
 
         # get repositories
-        repo = RepositoriesRegistry()
+        root.repo = RepositoriesRegistry()
         if doc.get('source'):
             for source in doc['source']:
-                repo.add_repo(url=source['url'], name=source['name'])
-        repo.attach_config()
+                root.repo.add_repo(url=source['url'], name=source['name'])
+        root.repo.attach_config()
 
         envs = defaultdict(set)
         for extra, deps in doc.get('extras', {}).items():
@@ -57,7 +58,7 @@ class PoetryLockConverter(BaseConverter):
                 root=root,
                 content=content,
                 envs=envs[content['name']],
-                repo=repo,
+                repo=root.repo,
             ))
         root.attach_dependencies(deps)
         return root
@@ -81,10 +82,10 @@ class PoetryLockConverter(BaseConverter):
         # add repositories
         sources = tomlkit.aot()
         added = set()
-        for req in reqs:
-            if not isinstance(req.dep.repo, RepositoriesRegistry):
+        for dep in chain((req.dep for req in reqs), [project]):
+            if not isinstance(dep.repo, RepositoriesRegistry):
                 continue
-            for repo in req.dep.repo.repos:
+            for repo in dep.repo.repos:
                 if repo.from_config:
                     continue
                 if repo.name in added:
