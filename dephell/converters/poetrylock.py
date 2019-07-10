@@ -1,7 +1,6 @@
 # built-in
 from collections import defaultdict
 from pathlib import Path
-from itertools import chain
 from typing import List, Optional
 
 # external
@@ -81,23 +80,13 @@ class PoetryLockConverter(BaseConverter):
 
         # add repositories
         sources = tomlkit.aot()
-        added = set()
-        for dep in chain((req.dep for req in reqs), [project]):
-            if not isinstance(dep.repo, RepositoriesRegistry):
+        for repo in project.warehouses:
+            if isinstance(repo, WarehouseLocalRepo):
                 continue
-            for repo in dep.repo.repos:
-                if repo.from_config:
-                    continue
-                if repo.name in added:
-                    continue
-                if isinstance(repo, WarehouseLocalRepo):
-                    continue
-                added.add(repo.name)
-
-                source = tomlkit.table()
-                source['name'] = repo.name
-                source['url'] = repo.pretty_url
-                sources.append(source)
+            source = tomlkit.table()
+            source['name'] = repo.name
+            source['url'] = repo.pretty_url
+            sources.append(source)
         if sources:
             doc['source'] = sources
 

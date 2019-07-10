@@ -1,5 +1,6 @@
 # built-in
 from contextlib import suppress
+from itertools import chain
 from pathlib import Path
 from typing import Tuple
 
@@ -94,6 +95,22 @@ class RootDependency:
     @property
     def python_compat(self) -> bool:
         return True
+
+    @property
+    def warehouses(self) -> tuple:
+        from ..repositories import WarehouseBaseRepo
+
+        repos = dict()
+        for dep in chain(self.dependencies, [self]):
+            if dep.repo is None:
+                continue
+            if not isinstance(dep.repo, WarehouseBaseRepo):
+                continue
+            for repo in dep.repo.repos:
+                if repo.from_config:
+                    continue
+                repos[repo.name] = repo
+        return tuple(repos.values())
 
     def attach_dependencies(self, dependencies) -> None:
         self.dependencies.extend(dependencies)

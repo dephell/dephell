@@ -1,8 +1,7 @@
 # built-in
 from collections import defaultdict
-from itertools import chain
 from pathlib import Path
-from typing import List, Optional, Iterable
+from typing import List, Optional
 
 # external
 import tomlkit
@@ -207,7 +206,7 @@ class PoetryConverter(BaseConverter):
             # deop all old extras if there are no new extras
             del section['extras']
 
-        self._add_repositories(section=section, reqs=reqs, root=project)
+        self._add_repositories(section=section, root=project)
         return tomlkit.dumps(doc).rstrip() + '\n'
 
     @staticmethod
@@ -258,18 +257,13 @@ class PoetryConverter(BaseConverter):
             section['plugins'][entrypoint.group][entrypoint.name] = entrypoint.path
 
     @staticmethod
-    def _add_repositories(section, reqs: Iterable, root: RootDependency):
+    def _add_repositories(section, root: RootDependency):
         # get repositories
         urls = dict()
-        for dep in chain((req.dep for req in reqs), [root]):
-            if not isinstance(dep.repo, WarehouseBaseRepo):
+        for repo in root.warehouses:
+            if isinstance(repo, WarehouseLocalRepo):
                 continue
-            for repo in dep.repo.repos:
-                if repo.from_config:
-                    continue
-                if isinstance(repo, WarehouseLocalRepo):
-                    continue
-                urls[repo.name] = repo.pretty_url
+            urls[repo.name] = repo.pretty_url
 
         # remove or update old repositories
         added = []
