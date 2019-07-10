@@ -2,8 +2,8 @@
 from pathlib import Path
 
 # external
-# third-party
 import pytest
+import tomlkit
 
 # project
 from dephell.actions._git import _run
@@ -27,10 +27,6 @@ def test_bump_command(temp_path: Path):
 
 
 def test_bump_pyproject(temp_path):
-    import os
-    import tomlkit
-
-    os.chdir(str(temp_path))
     (temp_path / 'project').mkdir()
     from_path = temp_path / 'pyproject.toml'
     from_path.write_text("""
@@ -39,8 +35,12 @@ def test_bump_pyproject(temp_path):
         versioning = "semver"
 
         [tool.poetry]
+        name = "check-me"
         version = "1.2.3"
-        
+
+        [tool.poetry.dependencies]
+        python = "*"
+
         [[tool.poetry.source]]
         name = "pypi"
         url = "https://pypi.org/pypi"
@@ -48,6 +48,9 @@ def test_bump_pyproject(temp_path):
     before_toml = tomlkit.loads(from_path.read_text())
     config = Config()
     config.attach_file(str(from_path), 'main')
+    config.attach({
+        'project': str(temp_path),
+    })
 
     command = ProjectBumpCommand(argv=['fix'], config=config)
     result = command()
@@ -89,4 +92,3 @@ def test_bump_command_with_placeholder_tag(temp_path: Path, tag_template, expect
     # just read stdout from git tag command
     _, tags = _run(['git', 'tag'], project=project_path)
     assert tags == expected_tag
-
