@@ -1,7 +1,8 @@
 # built-in
 from collections import defaultdict
+from itertools import chain
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Iterable
 
 # external
 import tomlkit
@@ -109,6 +110,7 @@ class PoetryConverter(BaseConverter):
             for source in section['source']:
                 repo.add_repo(url=source['url'], name=source['name'])
             repo.attach_config()
+            root.repo = repo
             for dep in deps:
                 if isinstance(dep.repo, WarehouseBaseRepo):
                     dep.repo = repo
@@ -205,7 +207,7 @@ class PoetryConverter(BaseConverter):
             # deop all old extras if there are no new extras
             del section['extras']
 
-        self._add_repositories(section=section, reqs=reqs)
+        self._add_repositories(section=section, reqs=reqs, root=project)
         return tomlkit.dumps(doc).rstrip() + '\n'
 
     @staticmethod
@@ -256,13 +258,13 @@ class PoetryConverter(BaseConverter):
             section['plugins'][entrypoint.group][entrypoint.name] = entrypoint.path
 
     @staticmethod
-    def _add_repositories(section, reqs):
+    def _add_repositories(section, reqs: Iterable, root: RootDependency):
         # get repositories
         urls = dict()
-        for req in reqs:
-            if not isinstance(req.dep.repo, WarehouseBaseRepo):
+        for dep in chain((req.dep for req in reqs), [root]):
+            if not isinstance(dep.repo, WarehouseBaseRepo):
                 continue
-            for repo in req.dep.repo.repos:
+            for repo in dep.repo.repos:
                 if repo.from_config:
                     continue
                 if isinstance(repo, WarehouseLocalRepo):
@@ -296,7 +298,7 @@ class PoetryConverter(BaseConverter):
         section['source'] = sources
 
         # remove section if empty
-        if not section['source'].value:
+        if not section['source']:
             del section['source']
 
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml

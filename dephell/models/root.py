@@ -38,6 +38,7 @@ class RootRelease:
 class RootDependency:
     raw_name = attr.ib(default='root')
     dependencies = attr.ib(factory=list, repr=False)
+    repo = attr.ib(default=None, repr=False)
 
     # additional info strings
     version = attr.ib(default='0.0.0', repr=False)      # Version
@@ -57,7 +58,6 @@ class RootDependency:
     python = attr.ib(default=RangeSpecifier(), repr=False)  # Requires-Python
     readme = attr.ib(default=None, repr=False)              # Description
 
-    repo = None
     applied = False
     locked = False
     compat = True
