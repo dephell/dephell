@@ -1,3 +1,6 @@
+# project
+from dephell_versioning import get_schemes
+
 # app
 from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES
 
@@ -46,7 +49,7 @@ SCHEME = {
     ),
 
     # api
-    'warehouse':    dict(type='list', required=False, empty=True),
+    'warehouse':    dict(type='list', schema=dict(type='string'), required=False, empty=True),
     'bitbucket':    dict(type='string', required=True),
     'repo':         dict(type='string', required=False, allowed=REPOSITORIES),
 
@@ -77,7 +80,7 @@ SCHEME = {
 
     # other
     'owner':    dict(type='string', required=False),
-    'tag':      dict(type='boolean', required=False),
+    'tag':      dict(type='string', required=False),
     'cache':    dict(
         type='dict',
         required=True,
@@ -88,8 +91,16 @@ SCHEME = {
     ),
     'project':      dict(type='string', required=True),
     'bin':          dict(type='string', required=True),
-    'envs':         dict(type='list', required=False, empty=False),
-    'tests':        dict(type='list', required=True),
-    'versioning':   dict(type='string', required=True),
+    'envs':         dict(type='list', schema=dict(type='string'), required=False, empty=False),
+    'tests':        dict(type='list', schema=dict(type='string'), required=True),
+    'versioning':   dict(type='string', required=True, allowed=get_schemes()),
     'command':      dict(type='string', required=False),
+    'vendor':       dict(
+        type='dict',
+        required=True,
+        schema={
+            'exclude': dict(type='list', schema=dict(type='string'), required=True, empty=True),
+            'path':  dict(type='string', required=True),
+        },
+    ),
 }

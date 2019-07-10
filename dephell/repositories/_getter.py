@@ -5,7 +5,7 @@ from dephell_links import DirLink, FileLink
 from ..constants import DEFAULT_WAREHOUSE
 from ._conda import CondaCloudRepo, CondaGitRepo, CondaRepo
 from ._git.git import GitRepo
-from ._local_single import LocalRepo
+from ._local import LocalRepo
 from ._release import ReleaseRepo
 from ._warehouse import WarehouseAPIRepo
 

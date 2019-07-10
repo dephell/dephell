@@ -1,12 +1,15 @@
+# built-in
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional, Iterable, List, Dict
+from typing import Dict, Iterable, List, Optional
 from urllib.parse import urljoin, urlparse
 
+# external
 import attr
 import requests
-from requests.exceptions import SSLError, ConnectionError
+from requests.exceptions import ConnectionError, SSLError
 
+# app
 from ..config import config as global_config
 from ..constants import WAREHOUSE_DOMAINS
 from ..exceptions import PackageNotFoundError
@@ -149,6 +152,12 @@ class RepositoriesRegistry(WarehouseBaseRepo):
             if isinstance(repo, WarehouseAPIRepo):
                 return repo.search(query=query)
         return self.repos[0].search(query=query)
+
+    async def download(self, name: str, version: str, path: Path) -> bool:
+        for repo in self.repos:
+            if not isinstance(repo, WarehouseLocalRepo):
+                return await repo.download(name=name, version=version, path=path)
+        return await self.repos[0].download(name=name, version=version, path=path)
 
     # properties
 

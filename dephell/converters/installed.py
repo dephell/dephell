@@ -23,6 +23,13 @@ class InstalledConverter(BaseConverter):
         'command-not-found',    # https://stackoverflow.com/a/22676267
     }
 
+    def load_resolver(self, path=None, paths=None):
+        if path is not None:
+            root = self.load(path=path)
+        else:
+            root = self.load(paths=paths)
+        return self._get_resolver(root)
+
     def load(self, path: Union[Path, str] = None, paths: Iterable[Union[Path, str]] = None,
              names: Iterable[str] = None) -> RootDependency:
         if names:

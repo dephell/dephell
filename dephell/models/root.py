@@ -8,11 +8,12 @@ import attr
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
+from packaging.version import parse as parse_version
 
 # app
 from ..cached_property import cached_property
-from .group import Group
 from .author import Author
+from .group import Group
 
 
 @attr.s()
@@ -67,6 +68,12 @@ class RootDependency:
     def name(self) -> str:
         return canonicalize_name(self.raw_name)
 
+    @property
+    def pep_version(self) -> str:
+        """Returns PEP-formatted version
+        """
+        return str(parse_version(self.version))
+
     @cached_property
     def all_releases(self) -> Tuple[RootRelease]:
         release = RootRelease(
@@ -85,10 +92,10 @@ class RootDependency:
         return (self.group, )
 
     @property
-    def python_compat(self):
+    def python_compat(self) -> bool:
         return True
 
-    def attach_dependencies(self, dependencies):
+    def attach_dependencies(self, dependencies) -> None:
         self.dependencies.extend(dependencies)
 
     def unlock(self):
@@ -100,11 +107,11 @@ class RootDependency:
     def unapply(self, name: str):
         raise NotImplementedError
 
-    def copy(self):
+    def copy(self) -> 'RootDependency':
         return type(self)(**attr.asdict(self, recurse=False))
 
     @classmethod
-    def get_metainfo(cls, other, *others):
+    def get_metainfo(cls, other, *others) -> 'RootDependency':
         """Merge metainfo, but not dependencies
         """
         merged = attr.asdict(other, recurse=False)
@@ -133,8 +140,8 @@ class RootDependency:
 
         return root
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{cls}({name})'.format(cls=self.__class__.__name__, name=self.name)

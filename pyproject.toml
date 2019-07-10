@@ -68,7 +68,20 @@ from = {format = "poetry", path = "pyproject.toml"}
 # install only `docs` extra dependencies
 envs = ["docs"]
 # run this command:
-command = "sphinx-build -M html docs docs/build"
+command = "sphinx-build -W docs docs/build"
+
+[tool.dephell.vendorized]
+from = {format = "poetry", path = "pyproject.toml"}
+to = {format = "wheel", path = "dist-vendored/"}
+envs = ["main"]
+
+# Make vendorized version of the project:
+# dephell vendor download --env=vendorized
+# dephell vendor import --env=vendorized
+[tool.dephell.vendorized.vendor]
+path = "dephell_vendor"
+exclude = ["jinja2", "test", "setuptools", "pip"]
+
 
 # -- ISORT -- #
 
@@ -90,13 +103,13 @@ import_heading_localfolder = "app"
 
 [tool.poetry]
 name = "dephell"
-version = "0.7.4"
+version = "0.7.5"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/dephell/dephell"
-documentation = "https://dephell.readthedocs.io/en/latest/"
+documentation = "https://dephell.readthedocs.io/ "
 keywords = [
     "dephell", "packaging", "dependency", "dependencies", "venv", "licenses",
     "pip", "poetry", "pipfile", "pipenv", "setuptools",
@@ -122,6 +135,8 @@ python = ">=3.5"
 aiohttp = "*"
 appdirs = "*"
 attrs = "*"
+bowler = {python = ">=3.6",version = "*"}
+bowler-py35 = {version = ">=0.9.1",python = "<3.6"}
 cerberus = ">=1.3"
 html5lib = "*"
 jinja2 = "*"
@@ -146,11 +161,12 @@ dephell-archive = ">=0.1.5"
 dephell-discover = ">=0.2.6"
 dephell-licenses = ">=0.1.6"
 dephell-links = ">=0.1.4"
-dephell-markers = ">=0.2.6"
+dephell-markers = ">=1.0.0"
 dephell-pythons = ">=0.1.11"
 dephell-shells = ">=0.1.3"
 dephell-specifier = ">=0.1.7"
 dephell-venvs = ">=0.1.16"
+dephell-versioning = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

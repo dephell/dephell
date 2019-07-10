@@ -1,14 +1,17 @@
+# built-in
 from io import StringIO
 from pathlib import Path
 from typing import Optional
 
-from ..yaml import yaml_dump, yaml_load
+# external
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
 
+# app
 from ..controllers import DependencyMaker
 from ..models import RootDependency
 from ..repositories import CondaRepo
+from ..yaml import yaml_dump, yaml_load
 from .base import BaseConverter
 
 

@@ -11,7 +11,7 @@ import tomlkit
 from cerberus import Validator
 
 # app
-from ..constants import SUFFIXES, NON_PATH_FORMATS
+from ..constants import NON_PATH_FORMATS, SUFFIXES
 from .defaults import DEFAULT
 from .logging_config import LOGGING
 from .scheme import SCHEME
@@ -126,6 +126,9 @@ class Config:
             if len(parsed) == 1:
                 data[name] = value
             else:
+                # if old content isn't a dict, override it
+                if not isinstance(data[parsed[0]], dict):
+                    data[parsed[0]] = dict()
                 data[parsed[0]][parsed[1]] = value
         self.attach(data)
         return dict(data)

@@ -1,8 +1,11 @@
+# built-in
 import re
 from typing import Dict, Union
 
+# external
 from dephell_licenses import License, licenses
 
+# app
 from ..base import Interface
 
 

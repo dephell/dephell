@@ -8,8 +8,8 @@ from ..cache import RequirementsCache
 from ..config import Config
 from ..constants import FILES
 from ..models.release import Release
-from .base import Interface
 from ._warehouse import WarehouseLocalRepo
+from .base import Interface
 
 
 class LocalRepo(Interface):
@@ -19,6 +19,7 @@ class LocalRepo(Interface):
         self.path = path
 
     def get_releases(self, dep) -> Tuple[Release, ...]:
+        releases = []
         dist_path = (self.path / 'dist')
         if dist_path.exists():
             repo = WarehouseLocalRepo(path=dist_path)

@@ -3,24 +3,17 @@ from argparse import ArgumentParser
 from collections import defaultdict
 
 # app
-from ..actions import attach_deps, make_json
+from ..actions import make_json
 from ..config import builders
-from ..controllers import analyze_conflict
-from ..converters import CONVERTERS
 from .base import BaseCommand
 
 
 class DepsLicensesCommand(BaseCommand):
     """Show licenses for all project dependencies.
-
-    https://dephell.readthedocs.io/en/latest/cmd-deps-licenses.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps licenses',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_resolver(parser)
@@ -30,18 +23,9 @@ class DepsLicensesCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        loader = CONVERTERS[self.config['from']['format']]
-        resolver = loader.load_resolver(path=self.config['from']['path'])
-        attach_deps(resolver=resolver, config=self.config, merge=False)
-
-        # resolve (and merge)
-        resolved = resolver.resolve(silent=self.config['silent'])
-        if not resolved:
-            conflict = analyze_conflict(resolver=resolver)
-            self.logger.warning('conflict was found')
-            print(conflict)
+        resolver = self._get_locked()
+        if resolver is None:
             return False
-        self.logger.info('resolved')
 
         # get licenses
         licenses = defaultdict(set)

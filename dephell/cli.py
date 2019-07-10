@@ -65,6 +65,8 @@ def main(argv: List[str]) -> int:
         return ReturnCodes.INVALID_CONFIG.value
     except Exception as e:
         logger.exception('{}: {}'.format(type(e).__name__, e))
+        if '--traceback' in argv:
+            raise
         return ReturnCodes.UNKNOWN_EXCEPTION.value
 
     # validate config

@@ -1,33 +1,30 @@
+# built-in
+import asyncio
 import datetime
 import os
 import re
 import sys
 import time
 from logging import getLogger
-from platform import uname, python_version
+from platform import python_version, uname
 from types import MappingProxyType, SimpleNamespace
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
-import asyncio
+# external
 import attr
 import requests
-from aiohttp import ClientSession
 from dephell_specifier import RangeSpecifier
 from jinja2 import Environment
 
-from ...yaml import yaml_load
+# app
 from ...cache import JSONCache
+from ...cached_property import cached_property
 from ...config import config
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
-from ...cached_property import cached_property
+from ...networking import aiohttp_session
+from ...yaml import yaml_load
 from ._base import CondaBaseRepo
-
-
-try:
-    import yaml as pyyaml
-except ImportError:
-    pyyaml = None
 
 
 # source: conda-build/metadata.py
@@ -188,7 +185,7 @@ class CondaGitRepo(CondaBaseRepo):
     async def _get_meta(self, rev: str, repo: str, path: str, **kwargs) -> Optional[Dict[str, Any]]:
         # download
         url = CONTENT_URL.format(repo=repo, path=path, rev=rev)
-        async with ClientSession() as session:
+        async with aiohttp_session() as session:
             async with session.get(url) as response:
                 if response.status != 200:
                     raise ValueError('invalid response: {} {} ({})'.format(

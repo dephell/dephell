@@ -1,3 +1,4 @@
+# built-in
 from itertools import chain
 from pathlib import Path
 from typing import Optional
@@ -10,8 +11,8 @@ from packaging.requirements import Requirement
 
 # app
 from ..controllers import DependencyMaker, Readme
+from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
-from ..models import RootDependency, Author, EntryPoint
 from .egginfo import EggInfoConverter
 
 

@@ -1,23 +1,20 @@
 # built-in
+import os
 from argparse import ArgumentParser
 from pathlib import Path
 from platform import platform
-import os
 
 # external
-from ..config import get_data_dir
 from dephell_shells import Shells
 
 # app
 from ..actions import make_bash_autocomplete, make_zsh_autocomplete
-from ..config import builders
+from ..config import builders, get_data_dir
 from .base import BaseCommand
 
 
 class AutocompleteCommand(BaseCommand):
     """Enable DepHell commands autocomplete for current shell.
-
-    https://dephell.readthedocs.io/en/latest/cmd-autocomplete.html
     """
 
     @classmethod

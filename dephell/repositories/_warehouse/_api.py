@@ -2,23 +2,24 @@
 import asyncio
 import posixpath
 from logging import getLogger
+from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple, Union
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin, urlparse
 from xmlrpc.client import ServerProxy
 
 # external
 import attr
 import requests
-from aiohttp import ClientSession
 from dephell_licenses import License, licenses
 from packaging.requirements import Requirement
 
 # app
 from ...cache import JSONCache, TextCache
 from ...config import config
-from ...exceptions import PackageNotFoundError, InvalidFieldsError
+from ...exceptions import InvalidFieldsError, PackageNotFoundError
 from ...models.author import Author
 from ...models.release import Release
+from ...networking import aiohttp_session
 from ._base import WarehouseBaseRepo
 
 
@@ -159,6 +160,34 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
             ))
         return results
 
+    async def download(self, name: str, version: str, path: Path) -> bool:
+        # retrieve data
+        cache = JSONCache(
+            'warehouse-api', urlparse(self.url).hostname, 'releases', name,
+            ttl=config['cache']['ttl'],
+        )
+        response = cache.load()
+        if response is None:
+            url = urljoin(self.url, posixpath.join(name, str(version), 'json'))
+            async with aiohttp_session(auth=self.auth) as session:
+                async with session.get(url) as response:
+                    if response.status == 404:
+                        raise PackageNotFoundError(package=name, url=url)
+                    response.raise_for_status()
+                    response = await response.json()
+                    cache.dump(response)
+
+        exts = ('py3-none-any.whl', '-none-any.whl', '.whl', '.tar.gz', '.zip')
+        for ext in exts:
+            for link in response['urls']:
+                if not link['filename'].endswith(ext):
+                    continue
+                if path.is_dir():
+                    path = path / link['filename']
+                await self._download(url=link['url'], path=path)
+                return True
+        return False
+
     # private methods
 
     @classmethod
@@ -229,10 +258,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
     async def _get_from_json(self, *, name, version):
         url = urljoin(self.url, posixpath.join(name, str(version), 'json'))
-        headers = dict()
-        if self.auth:
-            headers['Authorization'] = self.auth.encode()
-        async with ClientSession(headers=headers) as session:
+        async with aiohttp_session(auth=self.auth) as session:
             async with session.get(url) as response:
                 if response.status == 404:
                     raise PackageNotFoundError(package=name, url=url)
@@ -265,9 +291,9 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
         rules = (
             (wheel, lambda info: info['packagetype'] == 'bdist_wheel'),
             (sdist, lambda info: info['packagetype'] == 'sdist'),
-            (wheel, lambda info: info['url'].endswith('.whl')),
-            (sdist, lambda info: info['url'].endswith('.tar.gz')),
-            (sdist, lambda info: info['url'].endswith('.zip')),
+            (wheel, lambda info: info['filename'].endswith('.whl')),
+            (sdist, lambda info: info['filename'].endswith('.tar.gz')),
+            (sdist, lambda info: info['filename'].endswith('.zip')),
         )
 
         for converter, checker in rules:

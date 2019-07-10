@@ -2,26 +2,20 @@
 from argparse import ArgumentParser
 
 # app
-from ..actions import get_packages, get_python_env, make_json
+from ..actions import get_packages, make_json
 from ..config import builders
 from ..controllers import Safety, Snyk
-from ..converters import CONVERTERS, InstalledConverter
 from .base import BaseCommand
 
 
 class DepsAuditCommand(BaseCommand):
     """Show known vulnerabilities for project dependencies.
-
-    https://dephell.readthedocs.io/en/latest/cmd-deps-audit.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps audit',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser('packages')
         builders.build_config(parser)
-        builders.build_to(parser)
+        builders.build_from(parser)
         builders.build_output(parser)
         builders.build_api(parser)
         builders.build_other(parser)
@@ -44,50 +38,35 @@ class DepsAuditCommand(BaseCommand):
 
         # get packages from lockfile
         if packages is None:
-            loader_config = self.config.get('to') or self.config.get('from')
-            if loader_config is not None:
-                loader = CONVERTERS[loader_config['format']]
-                if loader.lock:
-                    self.logger.info('get dependencies from lockfile', extra=dict(
-                        format=loader_config['format'],
-                        path=loader_config['path'],
-                    ))
-                    root = loader.load(path=loader_config['path'])
-                    packages = root.dependencies
-
-        # get installed packages
-        if packages is None:
-            # get executable
-            python = get_python_env(config=self.config)
-            self.logger.debug('choosen python', extra=dict(path=str(python.path)))
-            root = InstalledConverter().load(paths=python.lib_paths)
-            packages = root.dependencies
+            resolver = self._get_locked()
+            if resolver is None:
+                return False
+            packages = resolver.graph
 
         safety = Safety()
         snyk = Snyk()
 
         data = []
         for dep in packages:
-            versions = str(dep.constraint).replace('=', '').split(' || ')
-            for version in versions:
-                vulns = safety.get(name=dep.name, version=version)
-                vulns += snyk.get(name=dep.name, version=version)
-                if not vulns:
-                    continue
-                releases = dep.repo.get_releases(dep)
-                for vuln in vulns:
-                    data.append(dict(
-                        # local info
-                        name=dep.name,
-                        current=version,
-                        # pypi info
-                        latest=str(releases[0].version),
-                        updated=str(releases[0].time.date()),
-                        # vuln info
-                        description=vuln.description,
-                        links=vuln.links,
-                        vulnerable=str(vuln.specifier),
-                    ))
+            release = dep.group.best_release
+            vulns = safety.get(name=dep.name, version=release.version)
+            vulns += snyk.get(name=dep.name, version=release.version)
+            if not vulns:
+                continue
+            releases = dep.repo.get_releases(dep)
+            for vuln in vulns:
+                data.append(dict(
+                    # local info
+                    name=dep.name,
+                    current=str(release.version),
+                    # pypi info
+                    latest=str(releases[0].version),
+                    updated=str(releases[0].time.date()),
+                    # vuln info
+                    description=vuln.description,
+                    links=vuln.links,
+                    vulnerable=str(vuln.specifier),
+                ))
 
         if data:
             print(make_json(data=data, key=self.config.get('filter')))

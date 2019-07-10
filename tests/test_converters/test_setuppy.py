@@ -1,6 +1,7 @@
 # built-in
 from pathlib import Path
 
+# external
 from dephell_links import VCSLink
 
 # project

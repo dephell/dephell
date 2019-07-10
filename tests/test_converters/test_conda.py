@@ -1,9 +1,8 @@
-from dephell.yaml import yaml_load
-
 # project
 from dephell.controllers import DependencyMaker
 from dephell.converters.conda import CondaConverter
 from dephell.models import Requirement, RootDependency
+from dephell.yaml import yaml_load
 
 
 def test_conda_loads():

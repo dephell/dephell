@@ -65,7 +65,7 @@ class BaseConverter:
         return self._get_resolver(root)
 
     def load_resolver(self, path) -> Resolver:
-        root = self.load(path)
+        root = self.load(path=path)
         return self._get_resolver(root)
 
     # helpers
@@ -78,4 +78,4 @@ class BaseConverter:
         extra, marker = text.split(':')
         if not extra:
             extra = 'main'
-        return extra, None
+        return extra, marker

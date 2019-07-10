@@ -11,15 +11,10 @@ from .base import BaseCommand
 
 class JailListCommand(BaseCommand):
     """Show all jails and their entrypoints.
-
-    https://dephell.readthedocs.io/en/latest/cmd-jail-list.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell jail list',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)

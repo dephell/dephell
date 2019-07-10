@@ -23,7 +23,7 @@ def test_deps_install_command(temp_path: Path):
 
     config = Config()
     config.attach({
-        'to': dict(format='pip', path=str(reqs_path)),
+        'from': dict(format='pip', path=str(reqs_path)),
         'project': str(temp_path),
         'venv': str(venv_path),
     })

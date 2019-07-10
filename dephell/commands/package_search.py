@@ -10,15 +10,10 @@ from .base import BaseCommand
 
 class PackageSearchCommand(BaseCommand):
     """Search packages on PyPI.org or Anaconda Cloud.
-
-    https://dephell.readthedocs.io/en/latest/cmd-package-search.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell package search',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_api(parser)

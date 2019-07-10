@@ -8,8 +8,6 @@ from .deps_install import DepsInstallCommand
 
 class DepsSyncCommand(DepsInstallCommand):
     """Install project dependencies with removing all other packages from venv.
-
-    https://dephell.readthedocs.io/en/latest/cmd-deps-sync.html
     """
     # DepsInstallCommand contains all logic for sync.
     # There we just set `sync` flag and change some minor metainfo.
@@ -17,10 +15,7 @@ class DepsSyncCommand(DepsInstallCommand):
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps sync',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_to(parser)
         builders.build_resolver(parser)
