@@ -43,7 +43,8 @@ class BaseConverter:
     def load(self, path: Union[Path, str]) -> RootDependency:
         """read dependencies from file
         """
-        path = Path(str(path))
+        if isinstance(path, str):
+            path = self._make_source_path_absolute(Path(path))
         with path.open('r', encoding='utf8') as stream:
             return self.loads(content=stream.read())
 
@@ -117,3 +118,13 @@ class BaseConverter:
         else:
             root = Path()
         return self._make_path_absolute(root=root, path=path)
+
+    def _make_dependency_path_relative(self, path: Path) -> Path:
+        if self.resolve_path is not None:
+            root = self.resolve_path
+        elif self.project_path is not None:
+            root = self.project_path
+        else:
+            root = Path()
+        root = root.resolve()
+        return path.relative_to(root)

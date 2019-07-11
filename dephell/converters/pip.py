@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from typing import Optional
 
 # external
+from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink
 from pip._internal.download import PipSession
 from pip._internal.index import PackageFinder
@@ -36,12 +37,12 @@ class PIPConverter(BaseConverter):
         else:
             return (path.name == 'requirements.in')
 
-    def __init__(self, lock):
-        self.lock = lock
-
     def load(self, path) -> RootDependency:
-        deps = []
-        root = RootDependency()
+        if isinstance(path, str):
+            path = Path(path)
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or path.parent),
+        )
 
         finder = PackageFinder(
             find_links=[],
@@ -55,6 +56,7 @@ class PIPConverter(BaseConverter):
             finder=finder,
         )
 
+        deps = []
         for req in reqs:
             # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py
             if req.req is None:
