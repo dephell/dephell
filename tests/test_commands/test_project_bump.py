@@ -26,13 +26,9 @@ def test_bump_command(temp_path: Path):
     assert init_path.read_text() == '__version__ = "1.2.4"'
 
 
-def test_bump_pyproject(temp_path):
+def test_bump_pyproject(temp_path: Path):
     from_path = temp_path / 'pyproject.toml'
     from_path.write_text("""
-        [tool.dephell.main]
-        from = {format="poetry", path="pyproject.toml"}
-        versioning = "semver"
-
         [tool.poetry]
         name = "check-me"
         version = "1.2.3"
@@ -46,9 +42,9 @@ def test_bump_pyproject(temp_path):
     """)
     before_toml = tomlkit.loads(from_path.read_text())
     config = Config()
-    config.attach_file(str(from_path), 'main')
     config.attach({
         'project': str(temp_path),
+        'from': {'format': 'poetry', 'path': 'pyproject.toml'},
     })
 
     command = ProjectBumpCommand(argv=['fix'], config=config)
