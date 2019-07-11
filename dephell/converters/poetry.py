@@ -10,7 +10,7 @@ from dephell_specifier import RangeSpecifier
 # app
 from ..controllers import DependencyMaker, Readme, RepositoriesRegistry
 from ..models import Author, Constraint, Dependency, EntryPoint, RootDependency
-from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo, get_repo
+from ..repositories import WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -79,6 +79,13 @@ class PoetryConverter(BaseConverter):
                 root.entrypoints.append(EntryPoint(name=name, path=path, group=group_name))
         root.entrypoints = tuple(root.entrypoints)
 
+        # update repository
+        root.repo = RepositoriesRegistry()
+        if section.get('source'):
+            for source in section['source']:
+                root.repo.add_repo(url=source['url'], name=source['name'])
+        root.repo.attach_config()
+
         # get envs for deps
         envs = defaultdict(set)
         for extra, deps in section.get('extras', {}).items():
@@ -102,17 +109,6 @@ class PoetryConverter(BaseConverter):
                     content=content,
                     envs=envs.get(name),
                 ))
-
-        # update repository
-        if section.get('source'):
-            repo = RepositoriesRegistry()
-            for source in section['source']:
-                repo.add_repo(url=source['url'], name=source['name'])
-            repo.attach_config()
-            root.repo = repo
-            for dep in deps:
-                if isinstance(dep.repo, WarehouseBaseRepo):
-                    dep.repo = repo
 
         root.attach_dependencies(deps)
         return root
@@ -302,7 +298,7 @@ class PoetryConverter(BaseConverter):
             deps = [Dependency(
                 raw_name=name,
                 constraint=Constraint(root, content),
-                repo=get_repo(),
+                repo=root.repo,
                 envs=envs,
             )]
             return deps
@@ -333,6 +329,7 @@ class PoetryConverter(BaseConverter):
             editable=content.get('develop', False),
             envs=envs,
             prereleases=content.get('allows-prereleases', False),
+            default_repo=root.repo,
         )
         return deps
 

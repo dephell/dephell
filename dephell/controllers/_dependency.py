@@ -28,7 +28,7 @@ class DependencyMaker:
 
     @classmethod
     def from_requirement(cls, source, req, *, url=None, envs=None, marker: Union[Markers, str] = None,
-                         editable=False) -> List[Union[Dependency, ExtraDependency]]:
+                         default_repo=None, editable=False) -> List[Union[Dependency, ExtraDependency]]:
         if type(req) is str:
             req = PackagingRequirement(req)
         # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
@@ -57,7 +57,7 @@ class DependencyMaker:
         base_dep = cls.dep_class(
             raw_name=req.name,
             constraint=constraint,
-            repo=get_repo(link),
+            repo=get_repo(link, default=default_repo),
             link=link,
             marker=marker,
             editable=editable,
@@ -74,6 +74,7 @@ class DependencyMaker:
                     url: Optional[str] = None, source: Optional['Dependency'] = None,
                     repo=None, marker: Union[Markers, str] = None,
                     extras: Optional[List[str]] = None, envs=None,
+                    default_repo=None,
                     **kwargs) -> List[Union[Dependency, ExtraDependency]]:
 
         # make link
@@ -89,7 +90,7 @@ class DependencyMaker:
 
         # make repo
         if repo is None:
-            repo = get_repo(link)
+            repo = get_repo(link, default=default_repo)
 
         # make marker
         if isinstance(marker, Markers):

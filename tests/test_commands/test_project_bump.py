@@ -27,7 +27,6 @@ def test_bump_command(temp_path: Path):
 
 
 def test_bump_pyproject(temp_path):
-    (temp_path / 'project').mkdir()
     from_path = temp_path / 'pyproject.toml'
     from_path.write_text("""
         [tool.dephell.main]

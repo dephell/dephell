@@ -18,13 +18,15 @@ _repos = dict(
 )
 
 
-def get_repo(link=None, name: str = None):
+def get_repo(link=None, *, name: str = None, default=None):
+    from ..controllers import RepositoriesRegistry
+
     if name is not None:
         return _repos[name]
 
     if link is None:
-        from ..controllers import RepositoriesRegistry
-
+        if default is not None:
+            return default
         repo = RepositoriesRegistry()
         repo.attach_config()
         return repo
