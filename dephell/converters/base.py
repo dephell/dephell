@@ -44,7 +44,8 @@ class BaseConverter:
         """read dependencies from file
         """
         if isinstance(path, str):
-            path = self._make_source_path_absolute(Path(path))
+            path = Path(path)
+        path = self._make_source_path_absolute(path)
         with path.open('r', encoding='utf8') as stream:
             return self.loads(content=stream.read())
 

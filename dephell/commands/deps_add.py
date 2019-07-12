@@ -1,6 +1,7 @@
 
 # built-in
 from argparse import ArgumentParser
+from pathlib import Path
 
 # app
 from ..actions import get_resolver
@@ -35,6 +36,10 @@ class DepsAddCommand(BaseCommand):
             self.error('`--from` is required for this command')
             return False
         converter = CONVERTERS[self.config['from']['format']]
+        converter = converter.copy(
+            project_path=Path(self.config['project']),
+            resolve_path=Path(self.config['from']['path']).parent,
+        )
         resolver = converter.load_resolver(path=self.config['from']['path'])
 
         # get new deps

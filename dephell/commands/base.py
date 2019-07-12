@@ -119,6 +119,10 @@ class BaseCommand:
             path=loader_config['path'],
         ))
         loader = CONVERTERS[loader_config['format']]
+        loader = loader.copy(
+            project_path=Path(self.config['project']),
+            resolve_path=Path(loader_config['path']).parent,
+        )
         resolver = loader.load_resolver(path=loader_config['path'])
         attach_deps(resolver=resolver, config=self.config, merge=False)
         return self._resolve(resolver=resolver, default_envs=default_envs)

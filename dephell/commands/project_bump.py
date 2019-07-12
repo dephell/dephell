@@ -50,6 +50,10 @@ class ProjectBumpCommand(BaseCommand):
         if 'from' in self.config:
             # get project metainfo
             loader = CONVERTERS[self.config['from']['format']]
+            loader = loader.copy(
+                project_path=Path(self.config['project']),
+                resolve_path=Path(self.config['from']['path']).parent,
+            )
             root = loader.load(path=self.config['from']['path'])
             if root.version != '0.0.0':
                 package = root.package
