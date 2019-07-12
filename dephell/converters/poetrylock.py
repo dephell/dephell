@@ -140,6 +140,7 @@ class PoetryLockConverter(BaseConverter):
             raw_name=content['name'],
             description=content.get('description', ''),
             constraint=Constraint(root, version),
+            source=root,
             marker=marker,
             url=url,
             editable=False,
@@ -163,6 +164,7 @@ class PoetryLockConverter(BaseConverter):
                     raw_name=subname,
                     constraint=Constraint(root, '==' + subcontent),
                     envs=envs,
+                    source=root,
                 ))
                 continue
 
@@ -176,6 +178,7 @@ class PoetryLockConverter(BaseConverter):
             subdeps.extend(DependencyMaker.from_params(
                 raw_name=subname,
                 constraint=Constraint(root, subcontent['version']),
+                source=root,
                 marker=marker,
                 envs=envs,
             ))

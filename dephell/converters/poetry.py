@@ -213,7 +213,7 @@ class PoetryConverter(BaseConverter):
         # drop old console_scripts
         if 'scripts' in section:
             scripts = {e.name for e in entrypoints if e.group == 'console_scripts'}
-            for script_name in section['scripts']:
+            for script_name in list(section['scripts']):
                 if script_name not in scripts:
                     del section['scripts'][script_name]
 
@@ -326,13 +326,13 @@ class PoetryConverter(BaseConverter):
         deps = DependencyMaker.from_params(
             raw_name=name,
             constraint=Constraint(root, content.get('version', '')),
+            source=root,
             extras=set(content.get('extras', [])),
             marker=markers or None,
             url=url,
             editable=content.get('develop', False),
             envs=envs,
             prereleases=content.get('allows-prereleases', False),
-            default_repo=root.repo,
         )
         return deps
 
