@@ -1,5 +1,6 @@
 # built-in
 from pathlib import Path
+from textwrap import dedent
 
 # external
 import pytest
@@ -28,7 +29,7 @@ def test_bump_command(temp_path: Path):
 
 def test_bump_pyproject(temp_path: Path):
     from_path = temp_path / 'pyproject.toml'
-    from_path.write_text("""
+    from_path.write_text(dedent("""
         [tool.poetry]
         name = "check-me"
         version = "1.2.3"
@@ -39,7 +40,7 @@ def test_bump_pyproject(temp_path: Path):
         [[tool.poetry.source]]
         name = "pypi"
         url = "https://pypi.org/pypi"
-    """)
+    """))
     before_toml = tomlkit.loads(from_path.read_text())
     config = Config()
     config.attach({
