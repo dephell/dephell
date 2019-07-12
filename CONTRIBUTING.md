@@ -47,6 +47,14 @@ dephell deps install --env flake8
 dephell venv run --env flake8
 ```
 
+Sort imports before pushing:
+
+```bash
+dephell venv create --env isort
+dephell deps install --env isort
+dephell venv run --env isort
+```
+
 Main things you contribute are ideas and implementation. So, if you struggled with flake8 checks, don't worry, just ask help of maintainers in comments to your Pull Request. If your code passed CI, merging of Pull Request can't be rejected or delayed because of style. No [bikeshedding](https://en.wikipedia.org/wiki/Law_of_triviality) and meaningless discussions.
 
 ## Using an IDE
