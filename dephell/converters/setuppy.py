@@ -88,7 +88,7 @@ class SetupPyConverter(BaseConverter):
             version=self._get(info, 'version') or '0.0.0',
             package=PackageRoot(
                 path=self.project_path or Path(),
-                name=self._get(info, 'name') or None
+                name=self._get(info, 'name') or None,
             ),
 
             description=self._get(info, 'description'),

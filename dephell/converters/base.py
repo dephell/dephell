@@ -128,4 +128,4 @@ class BaseConverter:
         else:
             root = Path()
         root = root.resolve()
-        return path.relative_to(root)
+        return path.relative_to(str(root))
