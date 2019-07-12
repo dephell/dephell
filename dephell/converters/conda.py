@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 # external
+from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
 
@@ -24,12 +25,19 @@ class CondaConverter(BaseConverter):
     # https://github.com/ericmjl/conda-envs/blob/master/deeplearning.yml
     def loads(self, content: str) -> RootDependency:
         doc = yaml_load(content)
-        root = RootDependency()
+
+        # make root
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or Path()),
+        )
         if 'name' in doc:
             root.raw_name = doc['name']
-        repo = CondaRepo(channels=doc.get('channels', []))
+            root.package.name = doc['name']
+        root.repo = CondaRepo(channels=doc.get('channels', []))
+
+        # make dependencies
         for req in doc.get('dependencies', []):
-            parsed = repo.parse_req(req)
+            parsed = root.repo.parse_req(req)
             if parsed['name'] == 'python':
                 if parsed.get('version', '*') not in ('*', ''):
                     spec = '.'.join((parsed['version'].split('.') + ['*', '*'])[:3])
@@ -39,7 +47,7 @@ class CondaConverter(BaseConverter):
                 raw_name=parsed['name'],
                 constraint=parsed.get('version', '*'),
                 source=root,
-                repo=repo,
+                repo=root.repo,
             ))
         return root
 

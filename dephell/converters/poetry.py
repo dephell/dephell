@@ -5,6 +5,7 @@ from typing import List, Optional
 
 # external
 import tomlkit
+from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
 
 # app
@@ -39,7 +40,9 @@ class PoetryConverter(BaseConverter):
         elif 'poetry' not in doc['tool']:
             doc['tool']['poetry'] = tomlkit.table()
         section = doc['tool']['poetry']
-        root = RootDependency()
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or Path()),
+        )
 
         # read metainfo
         if 'name' in section:

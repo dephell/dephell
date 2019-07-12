@@ -1,4 +1,7 @@
+from pathlib import Path
+
 # external
+import pytest
 from dephell_links import VCSLink
 from packaging.requirements import Requirement as PackagingRequirement
 
@@ -50,3 +53,22 @@ def test_git_parsing():
 
     assert dep.name == 'django'
     assert dep.editable is True
+
+
+@pytest.mark.parametrize('path, expected', [
+    ('-e git+https://github.com/django/django.git#egg=django', None),
+    ('./project', None),
+])
+def test_preserve_path(temp_path: Path, path: str, expected: str):
+    (temp_path / 'project').mkdir()
+    (temp_path / 'project' / 'setup.py').touch()
+    req_path = (temp_path / 'requirements.txt')
+    req_path.write_text(path)
+
+    converter = PIPConverter(lock=False).copy(project_path=temp_path)
+    root = converter.load(req_path)
+    req = Requirement(dep=root.dependencies[0], lock=False)
+    dumped = converter.dumps(reqs=[req], project=root)
+    if expected is None:
+        expected = path
+    assert dumped.strip() == expected

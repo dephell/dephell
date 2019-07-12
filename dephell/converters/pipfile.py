@@ -4,6 +4,7 @@ from typing import List, Optional
 
 # external
 import tomlkit
+from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
@@ -41,7 +42,9 @@ class PIPFileConverter(BaseConverter):
     def loads(self, content: str) -> RootDependency:
         doc = tomlkit.parse(content)
         deps = []
-        root = RootDependency()
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or Path()),
+        )
 
         repo = RepositoriesRegistry()
         if 'source' in doc:

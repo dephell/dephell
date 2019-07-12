@@ -60,5 +60,12 @@ matrix:
     - python: "3.7"
       env: ENV=docs
 
-    - python: "3.7"
-      env: ENV=poetry
+    - name: poetry
+      python: "3.7"
+      env: ENV=main
+      before_install:
+        - pip install poetry
+      install:
+        - poetry install -vvv
+      script:
+        - dephell inspect self
