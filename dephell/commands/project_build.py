@@ -35,6 +35,10 @@ class ProjectBuildCommand(BaseCommand):
 
     def __call__(self) -> bool:
         loader = CONVERTERS[self.config['from']['format']]
+        loader = loader.copy(
+            project_path=Path(self.config['project']),
+            resolve_path=Path(self.config['from']['path']).parent,
+        )
         resolver = loader.load_resolver(path=self.config['from']['path'])
         if loader.lock:
             self.logger.warning('do not build project from lockfile!')
@@ -55,6 +59,10 @@ class ProjectBuildCommand(BaseCommand):
                 continue
             self.logger.info('dumping...', extra=dict(format=to_format))
             dumper = CONVERTERS[to_format]
+            dumper = dumper.copy(
+                project_path=Path(self.config['project']),
+                resolve_path=Path(to_path).parent,
+            )
             dumper.dump(
                 path=project_path.joinpath(to_path),
                 reqs=reqs,

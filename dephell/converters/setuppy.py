@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Optional
 
 # external
+from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink, URLLink, VCSLink, parse_link
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
@@ -74,42 +75,45 @@ class SetupPyConverter(BaseConverter):
             return False
         return ('setup(' in content)
 
-    @classmethod
-    def load(cls, path) -> RootDependency:
+    def load(self, path) -> RootDependency:
         path = Path(str(path))
 
-        info = cls._execute(path=path)
+        info = self._execute(path=path)
         if info is None:
             with chdir(path.parent):
                 info = run_setup(path.name)
 
         root = RootDependency(
-            raw_name=cls._get(info, 'name'),
-            version=cls._get(info, 'version') or '0.0.0',
+            raw_name=self._get(info, 'name'),
+            version=self._get(info, 'version') or '0.0.0',
+            package=PackageRoot(
+                path=self.project_path or Path(),
+                name=self._get(info, 'name') or None,
+            ),
 
-            description=cls._get(info, 'description'),
-            license=cls._get(info, 'license'),
+            description=self._get(info, 'description'),
+            license=self._get(info, 'license'),
 
-            keywords=tuple(cls._get_list(info, 'keywords')),
-            classifiers=tuple(cls._get_list(info, 'classifiers')),
-            platforms=tuple(cls._get_list(info, 'platforms')),
+            keywords=tuple(self._get_list(info, 'keywords')),
+            classifiers=tuple(self._get_list(info, 'classifiers')),
+            platforms=tuple(self._get_list(info, 'platforms')),
 
-            python=RangeSpecifier(cls._get(info, 'python_requires')),
+            python=RangeSpecifier(self._get(info, 'python_requires')),
             readme=Readme.from_code(path=path),
         )
 
         # links
         for key, name in (('home', 'url'), ('download', 'download_url')):
-            link = cls._get(info, name)
+            link = self._get(info, name)
             if link:
                 root.links[key] = link
 
         # authors
         for name in ('author', 'maintainer'):
-            author = cls._get(info, name)
+            author = self._get(info, name)
             if author:
                 root.authors += (
-                    Author(name=author, mail=cls._get(info, name + '_email')),
+                    Author(name=author, mail=self._get(info, name + '_email')),
                 )
 
         # entrypoints
@@ -121,13 +125,13 @@ class SetupPyConverter(BaseConverter):
 
         # dependency_links
         urls = dict()
-        for url in cls._get_list(info, 'dependency_links'):
+        for url in self._get_list(info, 'dependency_links'):
             parsed = parse_link(url)
             name = parsed.name.split('-')[0]
             urls[name] = url
 
         # dependencies
-        for req in cls._get_list(info, 'install_requires'):
+        for req in self._get_list(info, 'install_requires'):
             req = Requirement(req)
             root.attach_dependencies(DependencyMaker.from_requirement(
                 source=root,
@@ -137,7 +141,7 @@ class SetupPyConverter(BaseConverter):
 
         # extras
         for extra, reqs in getattr(info, 'extras_require', {}).items():
-            extra, marker = cls._split_extra_and_marker(extra)
+            extra, marker = self._split_extra_and_marker(extra)
             envs = {extra} if extra == 'dev' else {'main', extra}
             for req in reqs:
                 req = Requirement(req)

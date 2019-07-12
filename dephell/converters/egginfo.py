@@ -94,7 +94,10 @@ class _Reader:
 
         # readme and package files
         root.readme = Readme.discover(path=path)
-        root.package = PackageRoot(path=path.parent, name=root.name)
+        root.package = PackageRoot(
+            path=self.project_path or path.parent,
+            name=root.name,
+        )
         return root
 
     def loads(self, content: str) -> RootDependency:
