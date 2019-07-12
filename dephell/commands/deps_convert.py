@@ -1,5 +1,6 @@
 # built-in
 from argparse import ArgumentParser
+from pathlib import Path
 
 # app
 from ..actions import attach_deps
@@ -33,7 +34,15 @@ class DepsConvertCommand(BaseCommand):
             self.error('`--to` is required for this command')
             return False
         loader = CONVERTERS[self.config['from']['format']]
+        loader = loader.copy(
+            project_path=Path(self.config['project']),
+            resolve_path=Path(self.config['from']['path']).parent,
+        )
         dumper = CONVERTERS[self.config['to']['format']]
+        dumper = dumper.copy(
+            project_path=Path(self.config['project']),
+            resolve_path=Path(self.config['to']['path']).parent,
+        )
 
         # load
         self.logger.debug('load dependencies...', extra=dict(

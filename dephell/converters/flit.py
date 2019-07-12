@@ -32,7 +32,10 @@ class FlitConverter(BaseConverter):
             python=RangeSpecifier(section.get('requires-python')),
             classifiers=section.get('classifiers', tuple()),
             license=section.get('license', ''),
-            package=PackageRoot(path=Path('.').resolve(), name=section['module']),
+            package=PackageRoot(
+                path=self.project_path or Path().resolve(),
+                name=section['module'],
+            ),
         )
 
         if 'keywords' in section:

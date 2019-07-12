@@ -5,6 +5,7 @@ from typing import List, Optional
 
 # external
 import tomlkit
+from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink
 from dephell_specifier import RangeSpecifier
 
@@ -33,7 +34,9 @@ class PoetryLockConverter(BaseConverter):
 
     def loads(self, content) -> RootDependency:
         doc = tomlkit.parse(content)
-        root = RootDependency()
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or Path()),
+        )
         root.python = RangeSpecifier(doc.get('metadata', {}).get('python-versions', '*'))
 
         # get repositories

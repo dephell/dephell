@@ -5,12 +5,14 @@ from types import SimpleNamespace
 from typing import Optional
 
 # external
+from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink
 from pip._internal.download import PipSession
 from pip._internal.index import PackageFinder
 from pip._internal.req import parse_requirements
 
 # app
+from ..context_tools import chdir
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
@@ -36,12 +38,13 @@ class PIPConverter(BaseConverter):
         else:
             return (path.name == 'requirements.in')
 
-    def __init__(self, lock):
-        self.lock = lock
-
     def load(self, path) -> RootDependency:
-        deps = []
-        root = RootDependency()
+        if isinstance(path, str):
+            path = Path(path)
+        path = self._make_source_path_absolute(path)
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or path.parent),
+        )
 
         finder = PackageFinder(
             find_links=[],
@@ -49,27 +52,29 @@ class PIPConverter(BaseConverter):
             session=PipSession(),
         )
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py
-        reqs = parse_requirements(
-            filename=str(path),
-            session=PipSession(),
-            finder=finder,
-        )
+        with chdir(self.resolve_path or path.parent):
+            reqs = parse_requirements(
+                filename=str(path),
+                session=PipSession(),
+                finder=finder,
+            )
 
-        for req in reqs:
-            # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py
-            if req.req is None:
-                req.req = SimpleNamespace(
-                    name=req.link.url.split('/')[-1],
-                    specifier='*',
-                    marker=None,
-                    extras=None,
-                )
-            deps.extend(DependencyMaker.from_requirement(
-                source=root,
-                req=req.req,
-                url=req.link and req.link.url,
-                editable=req.editable,
-            ))
+            deps = []
+            for req in reqs:
+                # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/req_install.py
+                if req.req is None:
+                    req.req = SimpleNamespace(
+                        name=req.link.url.split('/')[-1],
+                        specifier='*',
+                        marker=None,
+                        extras=None,
+                    )
+                deps.extend(DependencyMaker.from_requirement(
+                    source=root,
+                    req=req.req,
+                    url=req.link and req.link.url,
+                    editable=req.editable,
+                ))
 
         # update repository
         if finder.index_urls or finder.find_links:
@@ -128,8 +133,14 @@ class PIPConverter(BaseConverter):
         if req.editable:
             line += '-e '
         if req.link is not None:
-            req.link.name = req.name  # patch `#=egg` by right name
-            line += req.link.long
+            link = req.link.long
+            path = Path(link.split('#egg=')[0])
+            if path.exists():
+                link = str(self._make_dependency_path_relative(path))
+                link = link.replace('\\', '/')
+                if '/' not in link:
+                    link = './' + link
+            line += link
         else:
             line += req.raw_name
         if req.extras:
