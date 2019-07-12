@@ -45,13 +45,6 @@ tests = ["tests", "README.md"]
 # run command `pytest`
 command = "python -m pytest tests/"
 
-# Test installation using poetry:
-[tool.dephell.poetry]
-# read dependencies from poetry format
-from = {format = "poetry", path = "pyproject.toml"}
-# run command `poetry install`
-command = "poetry install -vvv"
-
 [tool.dephell.pypy]
 from = {format = "poetry", path = "pyproject.toml"}
 # force python interpreter for env
@@ -135,9 +128,11 @@ python = ">=3.5"
 aiohttp = "*"
 appdirs = "*"
 attrs = "*"
-bowler = {python = ">=3.6",version = "*"}
-bowler-py35 = {version = ">=0.9.1",python = "<3.6"}
+bowler = {version = "*", python = ">=3.6"}
+bowler-py35 = {version = ">=0.9.1", python = "<3.6"}
 cerberus = ">=1.3"
+fissix = {version = "*", python = ">=3.6", allows-prereleases = true}
+fissix-py35 = {version = "*", python = "<3.6"}
 html5lib = "*"
 jinja2 = "*"
 m2r = "*"
