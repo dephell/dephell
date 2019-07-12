@@ -83,6 +83,8 @@ class PoetryLockConverter(BaseConverter):
 
         # add repositories
         sources = tomlkit.aot()
+        if not project.dependencies:
+            project.attach_dependencies([req.dep for req in reqs])
         for repo in project.warehouses:
             if isinstance(repo, WarehouseLocalRepo):
                 continue

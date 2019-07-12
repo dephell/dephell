@@ -205,6 +205,8 @@ class PoetryConverter(BaseConverter):
             # deop all old extras if there are no new extras
             del section['extras']
 
+        if not project.dependencies:
+            project.attach_dependencies([req.dep for req in reqs])
         self._add_repositories(section=section, root=project)
         return tomlkit.dumps(doc).rstrip() + '\n'
 
