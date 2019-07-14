@@ -1,9 +1,10 @@
+# built-in
 from pathlib import Path
 
 # external
+from dephell_discover import Root as PackageRoot
 from packaging.requirements import Requirement
 from tomlkit import document, dumps, parse
-from dephell_discover import Root as PackageRoot
 
 # app
 from ..controllers import DependencyMaker
