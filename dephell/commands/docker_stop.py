@@ -14,8 +14,7 @@ class DockerStopCommand(BaseCommand):
     def get_parser(cls) -> ArgumentParser:
         parser = cls._get_default_parser()
         builders.build_config(parser)
-        builders.build_from(parser)
-        builders.build_venv(parser)
+        builders.build_docker(parser)
         builders.build_output(parser)
         builders.build_other(parser)
         return parser
