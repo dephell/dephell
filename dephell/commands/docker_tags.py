@@ -1,11 +1,9 @@
 # built-in
 from argparse import ArgumentParser
-from pathlib import Path
 
 # app
-from ..actions import make_json
+from ..actions import make_json, get_docker_container
 from ..config import builders
-from ..controllers import DockerContainer
 from .base import BaseCommand
 
 
@@ -23,11 +21,6 @@ class DockerTagsCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        container = DockerContainer(
-            path=Path(self.config['project']),
-            env=self.config.env,
-            repository=self.config['docker']['repo'],
-            tag=self.config['docker']['tag'],
-        )
+        container = get_docker_container(config=self.config)
         print(make_json(data=container.tags, key=self.config.get('filter')))
         return True

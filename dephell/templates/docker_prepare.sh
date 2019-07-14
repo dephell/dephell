@@ -21,4 +21,4 @@ python3 -m pip install -U pip
 wget -O /tmp/install.py https://raw.githubusercontent.com/dephell/dephell/master/install.py
 bash -c "python3 /tmp/install.py"
 rm /tmp/install.py
-dephell autocomplete
+# dephell autocomplete
