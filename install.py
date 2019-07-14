@@ -1,8 +1,16 @@
 # built-in
 import subprocess
+from argparse import ArgumentParser
 from os import environ, pathsep
 from pathlib import Path
 from venv import create
+
+
+# parse CLI arguments
+parser = ArgumentParser()
+parser.add_argument('--branch', help='install dephell from git from given branch')
+parser.add_argument('--version', help='install specified version')
+args = parser.parse_args()
 
 
 # install pip
@@ -48,7 +56,14 @@ if result.returncode != 0:
 
 
 print('install dephell')
-result = subprocess.run([str(python_path), '-m', 'pip', 'install', 'dephell[full]'])
+if args.branch:
+    name = 'git+https://github.com/dephell/dephell.git@{branch}#egg=dephell[full]'
+    name = name.format(branch=args.version or args.branch)
+elif args.version:
+    name = 'dephell[full]=={version}'.format(version=args.version)
+else:
+    name = 'dephell[full]'
+result = subprocess.run([str(python_path), '-m', 'pip', 'install', name])
 if result.returncode != 0:
     exit(result.returncode)
 
