@@ -19,3 +19,7 @@ command = "echo 'Hello, world!'"
 ```
 
 ## See also
+
+1. [dephell docker create](cmd-docker-create) to read how dephell creates a new container.
+1. [dephell docker shell](cmd-docker-shell) to run a shell inside a container.
+1. [dephell docker stop](cmd-docker-stop) to stop command execution inside a container.

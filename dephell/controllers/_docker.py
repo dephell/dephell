@@ -129,7 +129,7 @@ class DockerContainer:
             network=self.network_name,
             tty=True,
             stdin_open=True,
-            working_dir='/opt/project'
+            working_dir='/opt/project',
         )
 
     def stop(self) -> None:

@@ -17,3 +17,6 @@ root@d6ceb924fea6:/opt/project#
 ```
 
 ## See also
+
+1. [dephell docker create](cmd-docker-create) to read how dephell creates a new container.
+1. [dephell docker run](cmd-docker-run) to run a command inside a container.

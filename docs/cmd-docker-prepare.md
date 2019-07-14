@@ -9,3 +9,7 @@ Installs some nice things into container to make work with it more pleasant:
 + dephell
 
 ## See also
+
+1. [dephell docker create](cmd-docker-create) to create a clean container.
+1. [dephell docker shell](cmd-docker-shell) to run a shell inside a container.
+1. [dephell docker run](cmd-docker-run) to run a command inside a container.
