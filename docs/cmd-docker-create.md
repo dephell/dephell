@@ -19,4 +19,6 @@ repo = "python"
 tag = "3.7.4-stretch"
 ```
 
+Also, DepHell mounts your current directory into `/opt/project/` inside the container. However, it won't be mounted if you're running this command from root or home folder because it's too much to mount.
+
 ## See also

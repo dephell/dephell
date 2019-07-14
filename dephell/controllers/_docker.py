@@ -107,17 +107,22 @@ class DockerContainer:
         # create network
         self.client.networks.create(self.network_name, check_duplicate=True)
 
+        # mount the project
+        # (but do not mount if it's obviously not a project)
+        mounts = []
+        if self.path not in (Path.home(), Path('/')):
+            mounts.append(docker.types.Mount(
+                target='/opt/project',
+                source=str(self.path),
+                type='bind',
+            ))
+
         # create container
-        mount = docker.types.Mount(
-            target='/opt/project',
-            source=str(self.path),
-            type='bind',
-        )
         self.client.containers.create(
             image=image,
             command='/bin/sh -c "bash || sh"',
             name=self.container_name,
-            mounts=[mount],
+            mounts=mounts,
             network=self.network_name,
             tty=True,
             stdin_open=True,
