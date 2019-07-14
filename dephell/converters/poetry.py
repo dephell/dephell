@@ -11,7 +11,7 @@ from dephell_specifier import RangeSpecifier
 # app
 from ..controllers import DependencyMaker, Readme, RepositoriesRegistry
 from ..models import Author, Constraint, Dependency, EntryPoint, RootDependency
-from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo, get_repo
+from ..repositories import WarehouseLocalRepo
 from .base import BaseConverter
 
 
@@ -82,6 +82,13 @@ class PoetryConverter(BaseConverter):
                 root.entrypoints.append(EntryPoint(name=name, path=path, group=group_name))
         root.entrypoints = tuple(root.entrypoints)
 
+        # update repository
+        root.repo = RepositoriesRegistry()
+        if section.get('source'):
+            for source in section['source']:
+                root.repo.add_repo(url=source['url'], name=source['name'])
+        root.repo.attach_config()
+
         # get envs for deps
         envs = defaultdict(set)
         for extra, deps in section.get('extras', {}).items():
@@ -105,16 +112,6 @@ class PoetryConverter(BaseConverter):
                     content=content,
                     envs=envs.get(name),
                 ))
-
-        # update repository
-        if section.get('source'):
-            repo = RepositoriesRegistry()
-            for source in section['source']:
-                repo.add_repo(url=source['url'], name=source['name'])
-            repo.attach_config()
-            for dep in deps:
-                if isinstance(dep.repo, WarehouseBaseRepo):
-                    dep.repo = repo
 
         root.attach_dependencies(deps)
         return root
@@ -208,7 +205,9 @@ class PoetryConverter(BaseConverter):
             # deop all old extras if there are no new extras
             del section['extras']
 
-        self._add_repositories(section=section, reqs=reqs)
+        if not project.dependencies:
+            project.attach_dependencies([req.dep for req in reqs])
+        self._add_repositories(section=section, root=project)
         return tomlkit.dumps(doc).rstrip() + '\n'
 
     @staticmethod
@@ -216,7 +215,7 @@ class PoetryConverter(BaseConverter):
         # drop old console_scripts
         if 'scripts' in section:
             scripts = {e.name for e in entrypoints if e.group == 'console_scripts'}
-            for script_name in section['scripts']:
+            for script_name in list(section['scripts']):
                 if script_name not in scripts:
                     del section['scripts'][script_name]
 
@@ -259,34 +258,26 @@ class PoetryConverter(BaseConverter):
             section['plugins'][entrypoint.group][entrypoint.name] = entrypoint.path
 
     @staticmethod
-    def _add_repositories(section, reqs):
+    def _add_repositories(section, root: RootDependency):
         # get repositories
         urls = dict()
-        for req in reqs:
-            if not isinstance(req.dep.repo, WarehouseBaseRepo):
+        for repo in root.warehouses:
+            if isinstance(repo, WarehouseLocalRepo):
                 continue
-            for repo in req.dep.repo.repos:
-                if repo.from_config:
-                    continue
-                if isinstance(repo, WarehouseLocalRepo):
-                    continue
-                urls[repo.name] = repo.pretty_url
+            urls[repo.name] = repo.pretty_url
 
         # remove or update old repositories
         added = []
+        sources = tomlkit.aot()
         if section.get('source'):
             old = list(section['source'])
-            section['source'] = tomlkit.aot()
             added = []
             for source in old:
                 if source['name'] in urls:
                     if source['url'] != urls[source['name']]:
                         source['url'] = urls[source['name']]
-                    section['source'].append(source)
+                    sources.append(source)
                     added.append(source['name'])
-            sources = section['source']
-        else:
-            sources = tomlkit.aot()
 
         # add new repositories
         for name, url in sorted(urls.items()):
@@ -298,6 +289,10 @@ class PoetryConverter(BaseConverter):
 
         section['source'] = sources
 
+        # remove section if empty
+        if not section['source']:
+            del section['source']
+
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
     @staticmethod
     def _make_deps(root, name: str, content, envs: set) -> List[Dependency]:
@@ -305,7 +300,7 @@ class PoetryConverter(BaseConverter):
             deps = [Dependency(
                 raw_name=name,
                 constraint=Constraint(root, content),
-                repo=get_repo(),
+                repo=root.repo,
                 envs=envs,
             )]
             return deps
@@ -330,6 +325,7 @@ class PoetryConverter(BaseConverter):
         deps = DependencyMaker.from_params(
             raw_name=name,
             constraint=Constraint(root, content.get('version', '')),
+            source=root,
             extras=set(content.get('extras', [])),
             marker=markers or None,
             url=url,

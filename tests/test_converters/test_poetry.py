@@ -1,5 +1,6 @@
 # built-in
 from pathlib import Path
+from textwrap import dedent
 
 # external
 import tomlkit
@@ -61,3 +62,25 @@ def test_entrypoints():
     parsed = tomlkit.parse(content)['tool']['poetry']
     assert parsed['scripts']['my-script'] == 'my_package:main'
     assert dict(parsed['plugins']['flake8.extension']) == {'T00': 'flake8-todos.checker:Checker'}
+
+
+def test_preserve_repositories():
+    content = dedent("""
+        [tool.poetry]
+        name = "test"
+        version = "1.2.3"
+
+        [tool.poetry.dependencies]
+        python = "*"
+
+        [[tool.poetry.source]]
+        name = "pypi"
+        url = "https://pypi.org/pypi"
+    """)
+    converter = PoetryConverter()
+    root = converter.loads(content)
+    new_content = converter.dumps(reqs=[], project=root)
+    parsed = tomlkit.parse(content)['tool']['poetry']
+    new_parsed = tomlkit.parse(new_content)['tool']['poetry']
+    assert parsed['source'] == new_parsed['source']
+    assert parsed == new_parsed

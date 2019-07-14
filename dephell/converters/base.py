@@ -54,8 +54,11 @@ class BaseConverter:
         raise NotImplementedError
 
     def dump(self, reqs, *, path, project: RootDependency) -> None:
+        if isinstance(path, str):
+            path = Path(path)
+        path = self._make_source_path_absolute(path)
+
         # read
-        path = Path(str(path))
         if path.exists():
             with path.open('r', encoding='utf8') as stream:
                 content = stream.read()

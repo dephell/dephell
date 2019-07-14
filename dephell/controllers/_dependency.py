@@ -54,10 +54,14 @@ class DependencyMaker:
             envs = {'main'}
         envs.update(marker.extract('extra'))
 
+        default_repo = None
+        if source.repo and source.repo.propagate:
+            default_repo = source.repo
+
         base_dep = cls.dep_class(
             raw_name=req.name,
             constraint=constraint,
-            repo=get_repo(link),
+            repo=get_repo(link, default=default_repo),
             link=link,
             marker=marker,
             editable=editable,
@@ -71,7 +75,7 @@ class DependencyMaker:
 
     @classmethod
     def from_params(cls, *, raw_name: str, constraint,
-                    url: Optional[str] = None, source: Optional['Dependency'] = None,
+                    source: Dependency, url: Optional[str] = None,
                     repo=None, marker: Union[Markers, str] = None,
                     extras: Optional[List[str]] = None, envs=None,
                     **kwargs) -> List[Union[Dependency, ExtraDependency]]:
@@ -82,14 +86,17 @@ class DependencyMaker:
             raw_name = link.name
 
         # make constraint
-        if source:
+        if isinstance(constraint, str):
             constraint = Constraint(source, constraint)
             if isinstance(link, VCSLink) and link.rev:
                 constraint._specs[source.name] = GitSpecifier()
 
         # make repo
         if repo is None:
-            repo = get_repo(link)
+            default_repo = None
+            if source.repo and source.repo.propagate:
+                default_repo = source.repo
+            repo = get_repo(link, default=default_repo)
 
         # make marker
         if isinstance(marker, Markers):

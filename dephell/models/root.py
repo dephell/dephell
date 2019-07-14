@@ -1,5 +1,6 @@
 # built-in
 from contextlib import suppress
+from itertools import chain
 from pathlib import Path
 from typing import Tuple
 
@@ -38,6 +39,7 @@ class RootRelease:
 class RootDependency:
     raw_name = attr.ib(default='root')
     dependencies = attr.ib(factory=list, repr=False)
+    repo = attr.ib(default=None, repr=False)
 
     # additional info strings
     version = attr.ib(default='0.0.0', repr=False)      # Version
@@ -57,7 +59,6 @@ class RootDependency:
     python = attr.ib(default=RangeSpecifier(), repr=False)  # Requires-Python
     readme = attr.ib(default=None, repr=False)              # Description
 
-    repo = None
     applied = False
     locked = False
     compat = True
@@ -94,6 +95,22 @@ class RootDependency:
     @property
     def python_compat(self) -> bool:
         return True
+
+    @property
+    def warehouses(self) -> tuple:
+        from ..repositories import WarehouseBaseRepo
+
+        repos = dict()
+        for dep in chain(self.dependencies, [self]):
+            if dep.repo is None:
+                continue
+            if not isinstance(dep.repo, WarehouseBaseRepo):
+                continue
+            for repo in dep.repo.repos:
+                if repo.from_config:
+                    continue
+                repos[repo.name] = repo
+        return tuple(repos.values())
 
     def attach_dependencies(self, dependencies) -> None:
         self.dependencies.extend(dependencies)
