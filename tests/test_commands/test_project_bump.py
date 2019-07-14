@@ -1,9 +1,10 @@
 # built-in
 from pathlib import Path
+from textwrap import dedent
 
 # external
-# third-party
 import pytest
+import tomlkit
 
 # project
 from dephell.actions._git import _run
@@ -24,6 +25,37 @@ def test_bump_command(temp_path: Path):
     result = command()
     assert result is True
     assert init_path.read_text() == '__version__ = "1.2.4"'
+
+
+def test_bump_pyproject(temp_path: Path):
+    from_path = temp_path / 'pyproject.toml'
+    from_path.write_text(dedent("""
+        [tool.poetry]
+        name = "check-me"
+        version = "1.2.3"
+
+        [tool.poetry.dependencies]
+        python = "*"
+
+        [[tool.poetry.source]]
+        name = "pypi"
+        url = "https://pypi.org/pypi"
+    """))
+    before_toml = tomlkit.loads(from_path.read_text())
+    config = Config()
+    config.attach({
+        'project': str(temp_path),
+        'from': {'format': 'poetry', 'path': 'pyproject.toml'},
+    })
+
+    command = ProjectBumpCommand(argv=['fix'], config=config)
+    result = command()
+
+    assert result is True
+    after_toml = tomlkit.loads(from_path.read_text())
+    assert after_toml['tool']['poetry']['version'] == '1.2.4', 'Version was not bumped properly'
+    after_toml['tool']['poetry']['version'] = '1.2.3'
+    assert after_toml == before_toml, 'Bump command altered attributes other than version'
 
 
 @pytest.mark.parametrize('tag_template, expected_tag', [

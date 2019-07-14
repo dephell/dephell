@@ -40,11 +40,11 @@ class PoetryLockConverter(BaseConverter):
         root.python = RangeSpecifier(doc.get('metadata', {}).get('python-versions', '*'))
 
         # get repositories
-        repo = RepositoriesRegistry()
+        root.repo = RepositoriesRegistry()
         if doc.get('source'):
             for source in doc['source']:
-                repo.add_repo(url=source['url'], name=source['name'])
-        repo.attach_config()
+                root.repo.add_repo(url=source['url'], name=source['name'])
+        root.repo.attach_config()
 
         envs = defaultdict(set)
         for extra, deps in doc.get('extras', {}).items():
@@ -60,7 +60,7 @@ class PoetryLockConverter(BaseConverter):
                 root=root,
                 content=content,
                 envs=envs[content['name']],
-                repo=repo,
+                repo=root.repo,
             ))
         root.attach_dependencies(deps)
         return root
@@ -83,23 +83,15 @@ class PoetryLockConverter(BaseConverter):
 
         # add repositories
         sources = tomlkit.aot()
-        added = set()
-        for req in reqs:
-            if not isinstance(req.dep.repo, RepositoriesRegistry):
+        if not project.dependencies:
+            project.attach_dependencies([req.dep for req in reqs])
+        for repo in project.warehouses:
+            if isinstance(repo, WarehouseLocalRepo):
                 continue
-            for repo in req.dep.repo.repos:
-                if repo.from_config:
-                    continue
-                if repo.name in added:
-                    continue
-                if isinstance(repo, WarehouseLocalRepo):
-                    continue
-                added.add(repo.name)
-
-                source = tomlkit.table()
-                source['name'] = repo.name
-                source['url'] = repo.pretty_url
-                sources.append(source)
+            source = tomlkit.table()
+            source['name'] = repo.name
+            source['url'] = repo.pretty_url
+            sources.append(source)
         if sources:
             doc['source'] = sources
 
@@ -150,6 +142,7 @@ class PoetryLockConverter(BaseConverter):
             raw_name=content['name'],
             description=content.get('description', ''),
             constraint=Constraint(root, version),
+            source=root,
             marker=marker,
             url=url,
             editable=False,
@@ -173,6 +166,7 @@ class PoetryLockConverter(BaseConverter):
                     raw_name=subname,
                     constraint=Constraint(root, '==' + subcontent),
                     envs=envs,
+                    source=root,
                 ))
                 continue
 
@@ -186,6 +180,7 @@ class PoetryLockConverter(BaseConverter):
             subdeps.extend(DependencyMaker.from_params(
                 raw_name=subname,
                 constraint=Constraint(root, subcontent['version']),
+                source=root,
                 marker=marker,
                 envs=envs,
             ))

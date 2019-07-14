@@ -38,6 +38,8 @@ class RepositoriesRegistry(WarehouseBaseRepo):
     _urls = attr.ib(factory=set)
     _names = attr.ib(factory=set)
 
+    propagate = True
+
     def add_repo(self, *, url: str, name: str = None, from_config: bool = False) -> bool:
         # try to interpret URL as local path
         if url in self._urls:

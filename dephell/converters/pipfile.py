@@ -165,6 +165,7 @@ class PIPFileConverter(BaseConverter):
             raw_name=name,
             # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
             constraint=Constraint(root, content.get('version', '')),
+            source=root,
             extras=set(content.get('extras', [])),
             marker=content.get('markers'),
             url=url,
