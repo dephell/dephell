@@ -2,9 +2,14 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
-## Future release
+## v.0.7.6
 
-+ Docker support
++ Docker support ([#220](https://github.com/dephell/dephell/pull/220), [#49](https://github.com/dephell/dephell/issues/49)).
++ Fixed dependencies for DepHell itself ([#218](https://github.com/dephell/dephell/pull/218), [#216](https://github.com/dephell/dephell/issues/216)).
++ Resolve paths to dependency files relatively to the project, and local dependencies relatively to the dependency file ([#217](https://github.com/dephell/dephell/pull/217), [#88](https://github.com/dephell/dephell/issues/88)).
++ Fixed repositories dumping for poetry ([#215](https://github.com/dephell/dephell/pull/215), [#177](https://github.com/dephell/dephell/issues/177)).
++ Simplified "usage" for commands' help ([#212](https://github.com/dephell/dephell/pull/212), [#120](https://github.com/dephell/dephell/issues/120)).
++ Install extras in [dephell project test](cmd-project-test) if needed ([#204](https://github.com/dephell/dephell/pull/204), [#195](https://github.com/dephell/dephell/issues/195)).
 
 ## v.0.7.5
 
