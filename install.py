@@ -2,8 +2,8 @@
 import subprocess
 from os import environ, pathsep
 from pathlib import Path
-from venv import create
 from shutil import rmtree
+from venv import create
 
 
 # install pip
