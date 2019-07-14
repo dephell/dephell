@@ -5,8 +5,6 @@ from typing import Iterator
 
 # external
 from dephell_discover import Root as PackageRoot
-
-# project
 from dephell_versioning import bump_file, bump_version
 
 # app

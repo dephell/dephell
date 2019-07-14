@@ -63,6 +63,12 @@ envs = ["docs"]
 # run this command:
 command = "sphinx-build -W docs docs/build"
 
+# Sort imports in the project:
+[tool.dephell.isort]
+from = {format = "poetry", path = "pyproject.toml"}
+envs = ["main", "dev"]
+command = "isort -y"
+
 [tool.dephell.vendorized]
 from = {format = "poetry", path = "pyproject.toml"}
 to = {format = "wheel", path = "dist-vendored/"}
@@ -172,6 +178,9 @@ sphinx = "*"
 recommonmark = "*"
 sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
+
+flake8-isort = "*"
+isort = {version = "*", extras = ["pyproject"]}
 # pre-commit = "*"
 
 [tool.poetry.extras]

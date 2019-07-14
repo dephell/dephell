@@ -1,4 +1,4 @@
-# project
+# external
 from bowler import LN, Capture, Filename, Query
 from bowler.helpers import dotted_parts, power_parts, quoted_parts
 from fissix.fixer_util import Dot, Name, syms
