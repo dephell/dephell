@@ -268,19 +268,16 @@ class PoetryConverter(BaseConverter):
 
         # remove or update old repositories
         added = []
+        sources = tomlkit.aot()
         if section.get('source'):
             old = list(section['source'])
-            section['source'] = tomlkit.aot()
             added = []
             for source in old:
                 if source['name'] in urls:
                     if source['url'] != urls[source['name']]:
                         source['url'] = urls[source['name']]
-                    section['source'].append(source)
+                    sources.append(source)
                     added.append(source['name'])
-            sources = section['source']
-        else:
-            sources = tomlkit.aot()
 
         # add new repositories
         for name, url in sorted(urls.items()):
