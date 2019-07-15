@@ -14,6 +14,7 @@ from packaging.requirements import Requirement as PackagingRequirement
 from ..models.constraint import Constraint
 from ..models.dependency import Dependency
 from ..models.extra_dependency import ExtraDependency
+from ..models.marker_tracker import MarkerTracker
 from ..repositories import get_repo
 
 
@@ -63,7 +64,7 @@ class DependencyMaker:
             constraint=constraint,
             repo=get_repo(link, default=default_repo),
             link=link,
-            marker=marker,
+            marker=MarkerTracker().apply(source=source, markers=marker),
             editable=editable,
             envs=envs,
         )
@@ -114,7 +115,7 @@ class DependencyMaker:
             repo=repo,
             raw_name=raw_name,
             constraint=constraint,
-            marker=marker,
+            marker=MarkerTracker().apply(source=source, markers=marker),
             envs=envs,
             **kwargs,
         )

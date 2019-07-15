@@ -8,6 +8,7 @@ from .extra_dependency import ExtraDependency
 from .git_release import GitRelease
 from .group import Group
 from .groups import Groups
+from .marker_tracker import MarkerTracker
 from .release import Release
 from .requirement import Requirement
 from .root import RootDependency

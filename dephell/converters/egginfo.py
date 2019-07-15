@@ -13,7 +13,7 @@ from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..controllers import DependencyMaker, Readme
-from ..models import Author, EntryPoint, RootDependency
+from ..models import Author, EntryPoint, RootDependency, MarkerTracker
 from .base import BaseConverter
 from .setuppy import SetupPyConverter
 
@@ -182,7 +182,7 @@ class _Reader:
                 source=root,
                 req=req,
                 envs=envs,
-                marker=marker,
+                marker=MarkerTracker().apply(source=root, markers=marker),
                 url=urls.get(req.name),
             )
             root.attach_dependencies(deps)
