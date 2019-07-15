@@ -39,7 +39,7 @@ matrix:
       language: generic
       env: ENV=pytest
       before_install:
-        - /usr/local/bin/python3 install.py
+        - /usr/local/bin/python3 install.py --branch=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
         - dephell inspect self
       install:
         - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback
