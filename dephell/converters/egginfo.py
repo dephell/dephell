@@ -182,7 +182,7 @@ class _Reader:
                 source=root,
                 req=req,
                 envs=envs,
-                marker=MarkerTracker().apply(source=root, markers=marker),
+                marker=marker,
                 url=urls.get(req.name),
             )
             root.attach_dependencies(deps)

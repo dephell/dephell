@@ -270,7 +270,11 @@ class PoetryConverter(BaseConverter):
         added = []
         sources = tomlkit.aot()
         if section.get('source'):
-            for source in section.item('source'):
+            if hasattr(section, 'item'):
+                old_sources = section.item('source')
+            else:
+                old_sources = section['source']
+            for source in old_sources:
                 if source['name'] in urls:
                     if source['url'] != urls[source['name']]:
                         source['url'] = urls[source['name']]
