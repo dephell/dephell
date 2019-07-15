@@ -11,6 +11,7 @@ from dephell_versioning import bump_file, bump_version
 from ..actions import git_commit, git_tag
 from ..config import builders
 from ..converters import CONVERTERS
+from ..controllers import Graph
 from ..models import Requirement
 from .base import BaseCommand
 
@@ -122,7 +123,7 @@ class ProjectBumpCommand(BaseCommand):
             loader.dump(
                 project=root,
                 path=self.config['from']['path'],
-                reqs=[Requirement(dep=dep, lock=loader.lock) for dep in root.dependencies],
+                reqs=Requirement.from_graph(graph=Graph(root), lock=loader.lock),
             )
             return True
 
