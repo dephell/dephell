@@ -10,8 +10,8 @@ from dephell_versioning import bump_file, bump_version
 # app
 from ..actions import git_commit, git_tag
 from ..config import builders
-from ..converters import CONVERTERS
 from ..controllers import Graph
+from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
 
