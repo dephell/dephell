@@ -3,9 +3,6 @@ from argparse import ArgumentParser
 from types import SimpleNamespace
 from typing import Tuple
 
-# external
-from packaging.version import parse as parse_version
-
 # app
 from ..actions import get_python_env
 from ..config import builders
