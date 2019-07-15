@@ -125,7 +125,6 @@ class Dependency:
         if not self.marker:
             return True
         needed = self.marker.markers.python_version
-        print(needed)
         if needed is None:
             return True
 

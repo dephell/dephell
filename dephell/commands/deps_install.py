@@ -3,6 +3,9 @@ from argparse import ArgumentParser
 from types import SimpleNamespace
 from typing import Tuple
 
+# external
+from packaging.version import parse as parse_version
+
 # app
 from ..actions import get_python_env
 from ..config import builders
@@ -69,7 +72,9 @@ class DepsInstallCommand(BaseCommand):
     def _get_install_remove(self, graph, python) -> Tuple[list, list]:
         # get installed packages
         installed_root = InstalledConverter().load(paths=python.lib_paths)
-        installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
+        installed = dict()
+        for dep in installed_root.dependencies:
+            installed[dep.name] = [c.strip('=') for c in str(dep.constraint).split(' || ')]
 
         # plan what we will install and what we will remove
         install = []
@@ -82,7 +87,7 @@ class DepsInstallCommand(BaseCommand):
                 continue
             # installed the same version, skip
             version = req.version.strip('=')
-            if version == installed[req.name]:
+            if version in installed[req.name]:
                 continue
             # installed old version, remove it and install new
             self.logger.debug('dependency will be updated', extra=dict(
