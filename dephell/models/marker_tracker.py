@@ -28,7 +28,7 @@ class MarkerTracker:
         return self
 
     def merge(self, other: 'MarkerTracker') -> None:
-        for source, marker in other._markers:
+        for source, marker in other._markers.items():
             self._markers[source] = marker
 
     def unapply(self, source) -> None:
