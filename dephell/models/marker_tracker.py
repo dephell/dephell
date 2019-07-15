@@ -7,6 +7,8 @@ class MarkerTracker:
 
     @property
     def markers(self) -> Markers:
+        if len(self._markers) == 1:
+            return next(iter(self._markers.values()))
         container = Markers()
         markers = [m._marker for m in self._markers.values() if m._marker]
         container._marker = OrMarker(*markers)
@@ -36,7 +38,7 @@ class MarkerTracker:
 
     def __getattr__(self, name):
         if name not in dir(Markers):
-            raise AttributeError
+            raise AttributeError(name)
         return getattr(self.markers, name)
 
     def __bool__(self) -> bool:

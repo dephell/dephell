@@ -34,6 +34,8 @@ def test_python_compat(pdep: str, prel: str, ok: bool):
             markers=RangeSpecifier(pdep).to_marker('python_version'),
         ),
     )
+    assert 'python_version' in str(dep.marker)
+    assert bool(dep.marker) is True
     release = Release(
         raw_name='pathlib2',
         version='2.3.3',
