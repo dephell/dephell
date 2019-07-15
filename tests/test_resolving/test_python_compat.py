@@ -3,7 +3,7 @@ import pytest
 from dephell_specifier import RangeSpecifier
 
 # project
-from dephell.models import Dependency, Group, Release, MarkerTracker
+from dephell.models import Dependency, Group, MarkerTracker, Release
 
 
 @pytest.mark.parametrize('pdep, prel, ok', [

@@ -10,9 +10,9 @@ from packaging.utils import canonicalize_name
 # app
 from ..cached_property import cached_property
 from .constraint import Constraint
-from .marker_tracker import MarkerTracker
 from .group import Group
 from .groups import Groups
+from .marker_tracker import MarkerTracker
 
 
 @attr.s(cmp=False)

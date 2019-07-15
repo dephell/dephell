@@ -25,6 +25,7 @@ __all__ = [
     'GitRelease',
     'Group',
     'Groups',
+    'MarkerTracker',
     'Release',
     'Requirement',
     'RootDependency',

@@ -13,7 +13,7 @@ from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..controllers import DependencyMaker, Readme
-from ..models import Author, EntryPoint, RootDependency, MarkerTracker
+from ..models import Author, EntryPoint, MarkerTracker, RootDependency
 from .base import BaseConverter
 from .setuppy import SetupPyConverter
 
