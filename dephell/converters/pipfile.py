@@ -126,10 +126,9 @@ class PIPFileConverter(BaseConverter):
                 continue
 
             # clean packages from old packages
-            names = {req.name for req in reqs if is_dev is req.is_dev}
-            for name in doc[section]:
-                if name not in names:
-                    del doc[section][name]
+            req_names = {req.name for req in reqs if is_dev is req.is_dev}
+            for old_req in {name for name in doc[section] if name not in req_names}:
+                del doc[section][old_req]
 
         # write new packages
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
