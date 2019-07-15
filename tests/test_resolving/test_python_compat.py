@@ -1,10 +1,9 @@
 # external
 import pytest
-from dephell_markers import Markers
 from dephell_specifier import RangeSpecifier
 
 # project
-from dephell.models import Dependency, Group, Release
+from dephell.models import Dependency, Group, MarkerTracker, Release
 
 
 @pytest.mark.parametrize('pdep, prel, ok', [
@@ -30,8 +29,13 @@ def test_python_compat(pdep: str, prel: str, ok: bool):
         raw_name='pathlib2',
         constraint=None,
         repo=None,
-        marker=Markers(RangeSpecifier(pdep).to_marker('python_version')),
+        marker=MarkerTracker().apply(
+            source='root',
+            markers=RangeSpecifier(pdep).to_marker('python_version'),
+        ),
     )
+    assert 'python_version' in str(dep.marker)
+    assert bool(dep.marker) is True
     release = Release(
         raw_name='pathlib2',
         version='2.3.3',
