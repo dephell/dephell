@@ -12,6 +12,7 @@ from ..cached_property import cached_property
 from .constraint import Constraint
 from .group import Group
 from .groups import Groups
+from .marker_tracker import MarkerTracker
 
 
 @attr.s(cmp=False)
@@ -35,7 +36,7 @@ class Dependency:
     editable = attr.ib(type=bool, default=False, repr=False)
     prereleases = attr.ib(type=bool, default=False, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
-    marker = attr.ib(type=Markers, factory=Markers, repr=False)
+    marker = attr.ib(type=MarkerTracker, factory=MarkerTracker, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
     inherited_envs = attr.ib(type=set, factory=set, repr=False)  # envs of parents
     locations = attr.ib(type=set, factory=set, repr=False)  # package places on disk
@@ -123,7 +124,8 @@ class Dependency:
     def python_compat(self) -> bool:
         if not self.marker:
             return True
-        needed = self.marker.python_version
+        needed = self.marker.markers.python_version
+        print(needed)
         if needed is None:
             return True
 
@@ -169,6 +171,7 @@ class Dependency:
 
     def unapply(self, name: str) -> None:
         self.constraint.unapply(name)
+        self.marker.unapply(name)
         if self.locked:
             self.unlock()
 
@@ -188,7 +191,7 @@ class Dependency:
         if self.constraint:
             result += str(self.constraint)
 
-        marker = deepcopy(self.marker)
+        marker = Markers(str(self.marker))
         if self.envs - {'main'}:
             extra_markers = {'extra == "{}"'.format(env) for env in self.envs - {'main'}}
             marker &= Markers(' or '.join(extra_markers))
@@ -227,11 +230,7 @@ class Dependency:
             self.link = dep.link
             self.repo = dep.repo
 
-        if dep.marker is not None and self.marker is not None:
-            self.marker |= dep.marker
-        else:
-            self.marker = None
-
+        self.marker.merge(dep.marker)
         self.envs.update(dep.envs)
         if 'main' in self.envs and 'dev' in self.envs:
             self.envs.remove('dev')
