@@ -33,7 +33,7 @@ class MarkerTracker:
     def unapply(self, source) -> None:
         if type(source) is not str:
             source = source.name
-        if source.name in self._markers:
+        if source in self._markers:
             del self._markers[source]
 
     def __getattr__(self, name):

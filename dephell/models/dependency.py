@@ -171,6 +171,7 @@ class Dependency:
 
     def unapply(self, name: str) -> None:
         self.constraint.unapply(name)
+        self.marker.unapply(name)
         if self.locked:
             self.unlock()
 
