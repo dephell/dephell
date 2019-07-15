@@ -3,6 +3,7 @@ import subprocess
 from argparse import ArgumentParser
 from os import environ, pathsep
 from pathlib import Path
+from shutil import rmtree
 from venv import create
 
 
@@ -45,14 +46,20 @@ def get_data_dir() -> Path:
 
 print('make venv')
 path = get_data_dir() / 'venvs' / 'dephell'
+if path.exists():
+    rmtree(str(path))
 create(str(path), with_pip=True)
 
 
 print('update pip')
 python_path = list(path.glob('*/python3'))[0]
-result = subprocess.run([str(python_path), '-m', 'pip', 'install', '-U', 'pip'])
+command = [str(python_path), '-m', 'pip', 'install', '-U', 'pip']
+result = subprocess.run(command)
 if result.returncode != 0:
-    exit(result.returncode)
+    # try again, pip is nightly
+    result = subprocess.run(command)
+    if result.returncode != 0:
+        exit(result.returncode)
 
 
 print('install dephell')

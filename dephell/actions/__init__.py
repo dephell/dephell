@@ -4,6 +4,7 @@
 # app
 from ._autocomplete import make_bash_autocomplete, make_zsh_autocomplete
 from ._converting import attach_deps
+from ._docker import get_docker_container
 from ._dotenv import read_dotenv
 from ._downloads import get_downloads_by_category, get_total_downloads
 from ._editorconfig import make_editorconfig
@@ -21,6 +22,7 @@ from ._venv import get_venv
 __all__ = [
     'attach_deps',
     'format_size',
+    'get_docker_container',
     'get_downloads_by_category',
     'get_entrypoints',
     'get_package',

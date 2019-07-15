@@ -50,7 +50,7 @@ setup(
         'dephell.repositories', 'dephell.repositories._conda',
         'dephell.repositories._git', 'dephell.repositories._warehouse'
     ],
-    package_data={'dephell': ['templates/*.j2']},
+    package_data={'dephell': ['templates/*.j2', 'templates/*.sh']},
     install_requires=[
         'aiohttp', 'appdirs', 'attrs', 'bowler; python_version >= "3.6"',
         'bowler-py35>=0.9.1; python_version < "3.6"', 'cerberus>=1.3',
@@ -58,17 +58,20 @@ setup(
         'dephell-licenses>=0.1.6', 'dephell-links>=0.1.4',
         'dephell-markers>=1.0.0', 'dephell-pythons>=0.1.11',
         'dephell-shells>=0.1.3', 'dephell-specifier>=0.1.7',
-        'dephell-venvs>=0.1.16', 'dephell-versioning', 'html5lib', 'jinja2',
-        'm2r', 'packaging', 'pip>=18.0', 'pyyaml', 'requests', 'setuptools',
-        'tomlkit', 'yaspin'
+        'dephell-venvs>=0.1.16', 'dephell-versioning', 'docker', 'dockerpty',
+        'fissix; python_version >= "3.6"',
+        'fissix-py35; python_version < "3.6"', 'html5lib', 'jinja2', 'm2r',
+        'packaging', 'pip>=18.0', 'pyyaml', 'requests', 'setuptools', 'tomlkit',
+        'yaspin'
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
-        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'dev': [
-            'aioresponses', 'pygments-github-lexers', 'pytest', 'recommonmark',
-            'requests-mock', 'sphinx', 'sphinx-rtd-theme'
+            'aioresponses', 'flake8-isort', 'isort[pyproject]',
+            'pygments-github-lexers', 'pytest', 'recommonmark', 'requests-mock',
+            'sphinx', 'sphinx-rtd-theme'
         ],
+        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'docs': [
             'pygments-github-lexers', 'recommonmark', 'sphinx',
             'sphinx-rtd-theme'

@@ -14,7 +14,7 @@ before_install:
   # install DepHell
   # - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.6/bin/python
   # https://github.com/travis-ci/travis-ci/issues/8589
-  - /opt/python/3.7/bin/python install.py --branch=$TRAVIS_PULL_REQUEST_BRANCH
+  - /opt/python/3.7/bin/python install.py --branch=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
   - dephell inspect self
 install:
   - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python" --level=DEBUG --traceback
@@ -39,7 +39,7 @@ matrix:
       language: generic
       env: ENV=pytest
       before_install:
-        - /usr/local/bin/python3 install.py
+        - /usr/local/bin/python3 install.py --branch=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
         - dephell inspect self
       install:
         - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback

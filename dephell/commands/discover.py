@@ -2,9 +2,11 @@
 from importlib import import_module
 
 
+# keep sorted
 _NAMES = (
     'auth',
     'autocomplete',
+
     'deps add',
     'deps audit',
     'deps check',
@@ -14,20 +16,32 @@ _NAMES = (
     'deps outdated',
     'deps sync',
     'deps tree',
+
+    'docker create',
+    'docker destroy',
+    'docker prepare',
+    'docker run',
+    'docker shell',
+    'docker stop',
+    'docker tags',
+
     'generate authors',
     'generate config',
     'generate editorconfig',
     'generate license',
     'generate travis',
+
     'inspect auth',
     'inspect config',
     'inspect gadget',
     'inspect self',
     'inspect venv',
+
     'jail install',
     'jail list',
     'jail remove',
     'jail try',
+
     'package downloads',
     'package install',
     'package list',
@@ -36,11 +50,14 @@ _NAMES = (
     'package remove',
     'package search',
     'package show',
+
     'project build',
     'project bump',
     'project test',
+
     'vendor download',
     'vendor import',
+
     'venv create',
     'venv destroy',
     'venv run',

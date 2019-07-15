@@ -34,6 +34,12 @@ DEFAULT = dict(
     venv=str(get_data_dir() / 'venvs' / '{project}-{digest}' / '{env}'),
     dotenv=str(Path('.').resolve()),
 
+    # docker
+    docker=dict(
+        repo='python',
+        tag='latest',
+    ),
+
     # other
     cache=dict(
         path=str(get_cache_dir()),

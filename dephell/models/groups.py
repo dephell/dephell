@@ -14,8 +14,9 @@ from .group import Group
 loop = asyncio.get_event_loop()
 
 
-def get_key(release):
-    return '|'.join(sorted(map(str, release.dependencies)))
+def get_key(release) -> str:
+    deps = '|'.join(sorted(map(str, release.dependencies)))
+    return '{}||{}'.format(deps, release.python)
 
 
 @attr.s()
@@ -147,7 +148,7 @@ class Groups:
         gathered = asyncio.gather(coroutine)
         release.dependencies = loop.run_until_complete(gathered)[0]
 
-    def _make_group(self, releases):
+    def _make_group(self, releases) -> Group:
         group = Group(
             releases=releases,
             number=len(self._loaded_groups),
