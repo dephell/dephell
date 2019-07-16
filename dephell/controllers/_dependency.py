@@ -5,7 +5,7 @@ from logging import getLogger
 from typing import List, Optional, Union
 
 # external
-from dephell_links import VCSLink, parse_link
+from dephell_links import VCSLink, parse_link, UnknownLink
 from dephell_markers import Markers
 from dephell_specifier import GitSpecifier
 from packaging.requirements import Requirement as PackagingRequirement
@@ -82,9 +82,13 @@ class DependencyMaker:
                     **kwargs) -> List[Union[Dependency, ExtraDependency]]:
 
         # make link
-        link = parse_link(url)
-        if link and link.name and rex_hash.fullmatch(raw_name):
-            raw_name = link.name
+        if not url or isinstance(url, str):
+            link = parse_link(url)
+        else:
+            link = url
+        if link and not isinstance(link, UnknownLink):
+            if link.name and rex_hash.fullmatch(raw_name):
+                raw_name = link.name
 
         # make constraint
         if isinstance(constraint, str):
