@@ -100,12 +100,12 @@ class RequirementsCache(BaseCache):
         return root.dependencies
 
     def dump(self, root):
+        from .controllers import Graph
         from .models import Requirement
 
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        reqs = [Requirement(dep=dep, lock=False) for dep in root.dependencies]
         self.converter.dump(
             path=self.path,
             project=root,
-            reqs=reqs,
+            reqs=Requirement.from_graph(graph=Graph(root), lock=False),
         )

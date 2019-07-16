@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 # app
 from ..actions import get_python_env
 from ..config import builders
+from ..controllers import Graph
 from ..converters import InstalledConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
@@ -40,7 +41,7 @@ class PackageRemoveCommand(BaseCommand):
             packages=len(root.dependencies),
             python=python.path,
         ))
-        reqs = [Requirement(dep=dep, lock=True) for dep in root.dependencies]
+        reqs = Requirement.from_graph(graph=Graph(root), lock=True)
         code = manager.remove(reqs=reqs)
         if code != 0:
             return False
