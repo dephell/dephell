@@ -11,6 +11,8 @@ from venv import create
 parser = ArgumentParser()
 parser.add_argument('--branch', help='install dephell from git from given branch')
 parser.add_argument('--version', help='install specified version')
+parser.add_argument('--slug', default='dephell/dephell',
+                    help='repository slug to use when installing from Github')
 args = parser.parse_args()
 
 
@@ -64,8 +66,8 @@ if result.returncode != 0:
 
 print('install dephell')
 if args.branch:
-    name = 'git+https://github.com/dephell/dephell.git@{branch}#egg=dephell[full]'
-    name = name.format(branch=args.version or args.branch)
+    name = 'git+https://github.com/{slug}.git@{branch}#egg=dephell[full]'
+    name = name.format(slug=args.slug, branch=args.version or args.branch)
 elif args.version:
     name = 'dephell[full]=={version}'.format(version=args.version)
 else:
