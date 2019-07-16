@@ -139,8 +139,7 @@ class PIPFileConverter(BaseConverter):
         return tomlkit.dumps(doc).rstrip() + '\n'
 
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
-    @staticmethod
-    def _make_deps(root, name: str, content) -> List[Dependency]:
+    def _make_deps(self, root, name: str, content) -> List[Dependency]:
         if isinstance(content, str):
             return [Dependency(
                 raw_name=name,
@@ -149,7 +148,11 @@ class PIPFileConverter(BaseConverter):
             )]
 
         # get link
-        url = content.get('file') or content.get('path') or content.get('vcs')
+        url = content.get('file') or content.get('path')
+        if url:
+            url = str(self._make_dependency_path_absolute(Path(url)))
+        if not url:
+            url = content.get('vcs')
         if not url:
             for vcs in VCS_LIST:
                 if vcs in content:
