@@ -346,7 +346,7 @@ class PoetryConverter(BaseConverter):
                 result[name] = value
         if req.prereleases:
             result['allows-prereleases'] = True
-        if 'version' not in result:
+        if 'version' not in result and 'git' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table
         if tuple(result.value) == ('version', ):
