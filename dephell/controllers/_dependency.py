@@ -5,7 +5,7 @@ from logging import getLogger
 from typing import List, Optional, Union
 
 # external
-from dephell_links import VCSLink, parse_link, UnknownLink
+from dephell_links import UnknownLink, VCSLink, parse_link
 from dephell_markers import Markers
 from dephell_specifier import GitSpecifier
 from packaging.requirements import Requirement as PackagingRequirement
