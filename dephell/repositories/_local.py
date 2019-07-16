@@ -22,7 +22,7 @@ class LocalRepo(Interface):
         releases = []
         dist_path = (self.path / 'dist')
         if dist_path.exists():
-            repo = WarehouseLocalRepo(path=dist_path)
+            repo = WarehouseLocalRepo(name='tmp', path=dist_path)
             releases = list(repo.get_releases(dep=dep))
 
         root = self.get_root(name=dep.name, version='0.0.0')

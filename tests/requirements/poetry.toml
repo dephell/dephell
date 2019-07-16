@@ -34,6 +34,10 @@ pendulum = { version = "^1.4", optional = true }
 psycopg2 = { version = "^2.7", optional = true }
 mysqlclient = { version = "^1.3", optional = true }
 
+# local dependency
+egg-info = { path = "./egg-info/" }
+setup = { path = "./setup.py" }
+
 [tool.poetry.extras]
 mysql = ["mysqlclient"]
 pgsql = ["psycopg2"]
