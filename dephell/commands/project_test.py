@@ -36,10 +36,7 @@ class ProjectTestCommand(BaseCommand):
     def __call__(self) -> bool:
         # load project
         loader = CONVERTERS[self.config['from']['format']]
-        loader = loader.copy(
-            project_path=Path(self.config['project']),
-            resolve_path=Path(self.config['from']['path']).parent,
-        )
+        loader = loader.copy(project_path=Path(self.config['project']))
         resolver = loader.load_resolver(path=self.config['from']['path'])
         if loader.lock:
             self.logger.warning('do not build project from lockfile!')
