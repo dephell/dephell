@@ -94,7 +94,7 @@ def temp_cache(temp_path):
 
 
 @pytest.fixture
-def requirements_dir() -> Path:
+def requirements_path() -> Path:
     """ Return the absolute Path to 'tests/requirements' """
     return Path(__file__).parent / Path('requirements')
 

@@ -129,7 +129,7 @@ def test_get_deps_auth(requests_mock, temp_cache, fixtures_path):
 
 
 def test_download(requests_mock, asyncio_mock, temp_cache, fixtures_path: Path,
-                  temp_path: Path, requirements_dir: Path):
+                  temp_path: Path, requirements_path: Path):
     pypi_url = 'https://custom.pypi.org/pypi/'
     text_response = (fixtures_path / 'warehouse-simple.html').read_text()
     file_url = re.findall(
@@ -137,7 +137,7 @@ def test_download(requests_mock, asyncio_mock, temp_cache, fixtures_path: Path,
         text_response,
     )[0]
     file_name = urlparse(file_url).path.split('/')[-1]
-    file_content = (requirements_dir / 'wheel.whl').read_bytes()
+    file_content = (requirements_path / 'wheel.whl').read_bytes()
 
     requests_mock.get(pypi_url + 'dephell-shells/', text=text_response)
     asyncio_mock.get(file_url, body=file_content)

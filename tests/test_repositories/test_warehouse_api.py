@@ -111,13 +111,13 @@ def test_get_deps_auth(asyncio_mock, temp_cache, fixtures_path: Path):
 
 
 def test_download(asyncio_mock, temp_cache, fixtures_path: Path, temp_path: Path,
-                  requirements_dir: Path):
+                  requirements_path: Path):
     pypi_url = 'https://custom.pypi.org/pypi/'
     json_response = (fixtures_path / 'warehouse-api-release.json').read_text()
     json_content = json.loads(json_response)
     file_url = json_content['urls'][0]['url']
     file_name = json_content['urls'][0]['filename']
-    file_content = (requirements_dir / 'wheel.whl').read_bytes()
+    file_content = (requirements_path / 'wheel.whl').read_bytes()
 
     asyncio_mock.get(pypi_url + 'dephell-shells/0.1.2/json', body=json_response)
     asyncio_mock.get(file_url, body=file_content)
