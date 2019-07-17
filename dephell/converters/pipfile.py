@@ -149,7 +149,7 @@ class PIPFileConverter(BaseConverter):
 
         # get link
         url = content.get('file') or content.get('path')
-        if url:
+        if url and not url.startswith('http'):
             url = str(self._make_dependency_path_absolute(Path(url)))
         if not url:
             url = content.get('vcs')
