@@ -76,7 +76,10 @@ class SetupPyConverter(BaseConverter):
         return ('setup(' in content)
 
     def load(self, path) -> RootDependency:
-        path = Path(str(path))
+        if isinstance(path, str):
+            path = Path(path)
+        path = self._make_source_path_absolute(path)
+        self._resolve_path = path.parent
 
         info = self._execute(path=path)
         if info is None:

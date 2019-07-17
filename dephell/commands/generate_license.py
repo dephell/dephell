@@ -45,10 +45,7 @@ class GenerateLicenseCommand(BaseCommand):
         # get author from `from`
         if not author and 'from' in self.config:
             loader = CONVERTERS[self.config['from']['format']]
-            loader = loader.copy(
-                project_path=Path(self.config['project']),
-                resolve_path=Path(self.config['from']['path']).parent,
-            )
+            loader = loader.copy(project_path=Path(self.config['project']))
             root = loader.load(self.config['from']['path'])
             if root.authors:
                 author = root.authors[0]

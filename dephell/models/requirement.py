@@ -2,6 +2,9 @@
 from collections import OrderedDict, defaultdict
 from typing import Iterable, Optional, Set, Tuple
 
+# external
+from dephell_links import DirLink, FileLink
+
 # app
 from ..cached_property import cached_property
 
@@ -9,7 +12,7 @@ from ..cached_property import cached_property
 class Requirement:
     _properties = (
         'name', 'release', 'version', 'extras', 'markers',
-        'hashes', 'sources', 'editable', 'git', 'rev',
+        'hashes', 'sources', 'editable', 'git', 'rev', 'path',
         'description', 'optional', 'platform', 'python',
     )
 
@@ -81,6 +84,12 @@ class Requirement:
     @property
     def git(self) -> Optional[str]:
         if getattr(self.dep.link, 'vcs', '') == 'git':
+            return self.dep.link.short
+        return None  # mypy wants it
+
+    @property
+    def path(self) -> Optional[str]:
+        if isinstance(self.dep.link, (DirLink, FileLink)):
             return self.dep.link.short
         return None  # mypy wants it
 

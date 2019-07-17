@@ -42,6 +42,8 @@ class PIPConverter(BaseConverter):
         if isinstance(path, str):
             path = Path(path)
         path = self._make_source_path_absolute(path)
+        self._resolve_path = path.parent
+
         root = RootDependency(
             package=PackageRoot(path=self.project_path or path.parent),
         )

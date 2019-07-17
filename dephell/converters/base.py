@@ -19,6 +19,8 @@ class BaseConverter:
     resolve_path = attr.ib(type=Optional[Path], default=None)
     default_filename = attr.ib(type=Optional[str], default=None)
 
+    _resolve_path = None
+
     # inspection
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
@@ -47,8 +49,11 @@ class BaseConverter:
         if isinstance(path, str):
             path = Path(path)
         path = self._make_source_path_absolute(path)
+        self._resolve_path = path.parent
         with path.open('r', encoding='utf8') as stream:
-            return self.loads(content=stream.read())
+            root = self.loads(content=stream.read())
+        self._resolve_path = None
+        return root
 
     def dumps(self, reqs, *, project: RootDependency, content: str = None) -> str:
         raise NotImplementedError
@@ -109,27 +114,14 @@ class BaseConverter:
         return (root / path).resolve()
 
     def _make_source_path_absolute(self, path: Path) -> Path:
-        if self.project_path is not None:
-            root = self.project_path
-        else:
-            root = Path()
+        root = self.project_path or Path()
         return self._make_path_absolute(root=root, path=path)
 
     def _make_dependency_path_absolute(self, path: Path) -> Path:
-        if self.resolve_path is not None:
-            root = self.resolve_path
-        elif self.project_path is not None:
-            root = self.project_path
-        else:
-            root = Path()
+        root = self.resolve_path or self._resolve_path or self.project_path or Path()
         return self._make_path_absolute(root=root, path=path)
 
     def _make_dependency_path_relative(self, path: Path) -> Path:
-        if self.resolve_path is not None:
-            root = self.resolve_path
-        elif self.project_path is not None:
-            root = self.project_path
-        else:
-            root = Path()
+        root = self.resolve_path or self._resolve_path or self.project_path or Path()
         root = root.resolve()
         return path.relative_to(str(root))

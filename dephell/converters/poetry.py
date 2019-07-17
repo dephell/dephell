@@ -296,8 +296,7 @@ class PoetryConverter(BaseConverter):
             del section['source']
 
     # https://github.com/sdispater/tomlkit/blob/master/pyproject.toml
-    @staticmethod
-    def _make_deps(root, name: str, content, envs: set) -> List[Dependency]:
+    def _make_deps(self, root, name: str, content, envs: set) -> List[Dependency]:
         if isinstance(content, str):
             deps = [Dependency(
                 raw_name=name,
@@ -309,6 +308,8 @@ class PoetryConverter(BaseConverter):
 
         # get link
         url = content.get('file') or content.get('path')
+        if url and not url.startswith('http'):
+            url = str(self._make_dependency_path_absolute(Path(url)))
         if not url and 'git' in content:
             url = 'git+' + content['git']
         rev = content.get('rev') or content.get('branch') or content.get('tag')
@@ -346,7 +347,7 @@ class PoetryConverter(BaseConverter):
                 result[name] = value
         if req.prereleases:
             result['allows-prereleases'] = True
-        if 'version' not in result:
+        if 'version' not in result and 'git' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table
         if tuple(result.value) == ('version', ):
