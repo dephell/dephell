@@ -3,6 +3,7 @@ from pathlib import Path
 from textwrap import dedent
 
 # external
+import pytest
 import tomlkit
 
 # project
@@ -84,3 +85,33 @@ def test_preserve_repositories():
     new_parsed = tomlkit.parse(new_content)['tool']['poetry']
     assert parsed['source'] == new_parsed['source']
     assert parsed == new_parsed
+
+
+@pytest.mark.parametrize('req', [
+    'a = "*"',
+    'a = "^9.5"',
+    'strangE_nAm.e = ">=9.5"',
+    'reponame = { git = "ssh://git@our-git-server:port/group/reponame.git", branch = "v3_2" }',
+    'a = {version = "*", extras = ["nani"] }',
+    'a = "*"  # god bless comments',
+])
+def test_preserve_reqs_format(req, temp_path: Path):
+    content = dedent("""
+        [tool.poetry]
+        name = "test"
+        version = "1.2.3"
+
+        [tool.poetry.dependencies]
+        python = "*"
+        {req}
+    """).format(req=req)
+
+    converter = PoetryConverter(project_path=temp_path)
+    resolver = converter.loads_resolver(content)
+    reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
+    new_content = converter.dumps(
+        reqs=reqs,
+        project=resolver.graph.metainfo,
+        content=content,
+    )
+    assert content == new_content
