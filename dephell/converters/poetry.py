@@ -160,13 +160,13 @@ class PoetryConverter(BaseConverter):
         self._add_entrypoints(section=section, entrypoints=project.entrypoints)
 
         # dependencies
+        names_mapping = dict()
         for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
             if section_name not in section:
                 section[section_name] = tomlkit.table()
                 continue
             # clean dependencies from old dependencies
             names = {req.name for req in reqs if is_dev is req.is_dev} | {'python'}
-            names_mapping = dict()
             for name in dict(section[section_name]):
                 normalized_name = canonicalize_name(name)
                 names_mapping[normalized_name] = name
@@ -174,7 +174,8 @@ class PoetryConverter(BaseConverter):
                     del section[section_name][name]
 
         # python version
-        section['dependencies']['python'] = str(project.python) or '*'
+        if section['dependencies'].get('python', '') != (project.python or '*'):
+            section['dependencies']['python'] = str(project.python) or '*'
 
         # write dependencies
         for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
@@ -182,7 +183,23 @@ class PoetryConverter(BaseConverter):
                 if is_dev is not req.is_dev:
                     continue
                 raw_name = names_mapping.get(req.name, req.raw_name)
+                old_spec = section[section_name].get(raw_name)
+
+                # do not overwrite dep if nothing is changed
+                if old_spec:
+                    old_dep = self._make_deps(
+                        root=RootDependency(),
+                        name=raw_name,
+                        content=old_spec,
+                        envs={'main'},
+                    )[0]
+                    if old_dep == req.dep:
+                        continue
+
+                # overwrite
                 section[section_name][raw_name] = self._format_req(req=req)
+
+            # remove empty section
             if not section[section_name].value:
                 del section[section_name]
 
