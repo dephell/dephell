@@ -148,3 +148,12 @@ def test_download(requests_mock, asyncio_mock, temp_cache, fixtures_path: Path,
     assert result is True
     assert (temp_path / file_name).exists()
     assert (temp_path / file_name).read_bytes() == file_content
+
+
+@pytest.mark.parametrize('user_input, expected', [
+    ('https://pypi.python.org', 'https://pypi.org/simple/'),
+    ('http://pypi.example.com:8000/simple/', 'http://pypi.example.com:8000/simple/'),
+])
+def test_get_url(user_input, expected):
+    repo = WarehouseSimpleRepo(name='pypi', url=user_input)
+    assert repo.url == expected

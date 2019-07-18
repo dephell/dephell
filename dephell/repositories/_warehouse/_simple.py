@@ -19,7 +19,7 @@ from packaging.utils import canonicalize_name
 # app
 from ...cache import JSONCache, TextCache
 from ...config import config
-from ...constants import ARCHIVE_EXTENSIONS
+from ...constants import ARCHIVE_EXTENSIONS, WAREHOUSE_DOMAINS
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
 from ._base import WarehouseBaseRepo
@@ -43,17 +43,19 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'
 
+        self.url = self._get_url(self.url)
+
+    @staticmethod
+    def _get_url(url: str) -> str:
+        parsed = urlparse(url)
+        hostname = parsed.hostname
+        if hostname not in WAREHOUSE_DOMAINS:
+            return url
+
         # replace link on pypi api by link on simple index
-        parsed = urlparse(self.url)
-        if parsed.hostname == 'pypi.python.org':
+        if hostname == 'pypi.python.org':
             hostname = 'pypi.org'
-        else:
-            hostname = parsed.hostname
-        if hostname in ('pypi.org', 'test.pypi.org'):
-            path = '/simple/'
-        else:
-            path = parsed.path
-        self.url = parsed.scheme + '://' + hostname + path
+        return 'https://{hostname}/simple/'.format(hostname=hostname)
 
     @property
     def pretty_url(self) -> str:
