@@ -36,6 +36,9 @@ def test_bump_pyproject(temp_path: Path):
 
         [tool.poetry.dependencies]
         python = "*"
+        sentry_sdk = ">=0.9.0"
+        # sentry_sdk = "^0.9.0"
+        # reponame = { git = "ssh://git@our-git-server:port/group/reponame.git", branch = "v3_2" }
 
         [[tool.poetry.source]]
         name = "pypi"

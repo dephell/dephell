@@ -7,6 +7,7 @@ from typing import List, Optional
 import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
+from packaging.utils import canonicalize_name
 
 # app
 from ..controllers import DependencyMaker, Readme, RepositoriesRegistry
@@ -165,8 +166,11 @@ class PoetryConverter(BaseConverter):
                 continue
             # clean dependencies from old dependencies
             names = {req.name for req in reqs if is_dev is req.is_dev} | {'python'}
+            names_mapping = dict()
             for name in dict(section[section_name]):
-                if name not in names:
+                normalized_name = canonicalize_name(name)
+                names_mapping[normalized_name] = name
+                if normalized_name not in names:
                     del section[section_name][name]
 
         # python version
@@ -175,8 +179,10 @@ class PoetryConverter(BaseConverter):
         # write dependencies
         for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
             for req in reqs:
-                if is_dev is req.is_dev:
-                    section[section_name][req.raw_name] = self._format_req(req=req)
+                if is_dev is not req.is_dev:
+                    continue
+                raw_name = names_mapping.get(req.name, req.raw_name)
+                section[section_name][raw_name] = self._format_req(req=req)
             if not section[section_name].value:
                 del section[section_name]
 
