@@ -4,6 +4,7 @@ from typing import Tuple
 
 # external
 import attr
+from dephell_links import VCSLink
 from dephell_markers import Markers
 from packaging.utils import canonicalize_name
 
@@ -43,7 +44,7 @@ class Dependency:
 
     extra = None
 
-    # properties
+    # prlicenseoperties
 
     @cached_property
     def name(self) -> str:
@@ -261,3 +262,18 @@ class Dependency:
 
     def __lt__(self, other: 'Dependency') -> bool:
         return self.name < other.name
+
+    @staticmethod
+    def _get_comparable_dict(dep) -> dict:
+        excluded = {'constraint', 'repo', 'link', 'marker', 'license', 'inherited_envs', 'locations'}
+        result = attr.asdict(dep, recurse=True, filter=lambda x, _: x.name not in excluded)
+        result['constraint'] = str(dep.constraint)
+        if dep.marker:
+            result['marker'] = str(dep.marker)
+        if isinstance(dep.link, VCSLink):
+            result['link'] = attr.asdict(dep.link, recurse=True)
+        result['license'] = str(dep.license)
+        return result
+
+    def __eq__(self, other) -> bool:
+        return self._get_comparable_dict(self) == self._get_comparable_dict(other)
