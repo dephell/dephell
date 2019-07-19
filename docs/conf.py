@@ -6,13 +6,14 @@ from datetime import date
 from pathlib import Path
 
 # external
-import sphinx_rtd_theme
+import alabaster
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 
 
 sys.path.append(os.path.abspath('../'))
 extensions = [
+    'alabaster',
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
@@ -40,16 +41,29 @@ exclude_patterns = []
 todo_include_todos = True
 
 pygments_style = 'sphinx'
-html_theme = 'sphinx_rtd_theme'
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_logo = str(Path(__file__).parent.parent / 'assets' / 'logo.png')
+html_theme = 'alabaster'
+html_theme_path = [alabaster.get_path()]
+html_static_path = [str(Path(__file__).parent.parent / 'assets')]
 html_theme_options = {
-    'logo_only': True,
-    'display_version': False,
-    'style_external_links': True,
-    'style_nav_header_background': '#2c3e50',
-}
+    'logo': 'logo.png',
+    'logo_name': 'false',
+    'description': 'Python project management',
 
+    'sidebar_width': '240px',
+    'show_powered_by': 'false',
+    'caption_font_size': '20px',
+
+    # 'color': '#2c3e50',
+    'github_banner': 'true',
+    'github_user': 'dephell',
+    'github_repo': 'dephell',
+    'github_type': 'star',
+
+    'extra_nav_links': {
+        'GitHub repository': 'https://github.com/dephell/dephell',
+        'Create an issue': 'https://github.com/dephell/dephell/issues/new',
+    },
+}
 
 # -- Options for HTMLHelp output ------------------------------------------
 
