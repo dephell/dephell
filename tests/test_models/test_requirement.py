@@ -3,6 +3,7 @@ import pytest
 
 # project
 from dephell.converters import PIPConverter
+from dephell.models import Requirement
 
 
 @pytest.mark.parametrize('left, right, ok', [
@@ -30,9 +31,10 @@ def test_equal(left, right, ok):
     dep_left = converter.loads(left).dependencies[0]
     dep_right = converter.loads(right).dependencies[0]
 
-    dict_left = dep_left._get_comparable_dict(dep_left)
-    dict_right = dep_right._get_comparable_dict(dep_right)
+    dict_left = Requirement._get_comparable_dict(dep_left)
+    dict_right = Requirement._get_comparable_dict(dep_right)
     assert (dict_left == dict_right) is ok
 
-    equal = dep_left == dep_right
+    req_left = Requirement(dep=dep_left, lock=False)
+    equal = req_left.same_dep(dep_right)
     assert equal is ok

@@ -193,7 +193,7 @@ class PoetryConverter(BaseConverter):
                         content=old_spec,
                         envs={'main'},
                     )[0]
-                    if old_dep == req.dep:
+                    if req.same_dep(old_dep):
                         continue
 
                 # overwrite
