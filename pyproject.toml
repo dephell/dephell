@@ -176,9 +176,9 @@ pytest = "*"
 requests-mock = "*"
 aioresponses = "*"
 
+alabaster = "*"
 sphinx = "*"
 recommonmark = "*"
-sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
 
 flake8-isort = "*"
@@ -188,4 +188,4 @@ isort = {extras = ["pyproject"],version = "*"}
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
 tests = ["aioresponses", "pytest", "requests-mock"]
-docs = ["pygments-github-lexers", "recommonmark", "sphinx", "sphinx-rtd-theme"]
+docs = ["pygments-github-lexers", "recommonmark", "sphinx", "alabaster"]
