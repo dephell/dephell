@@ -165,7 +165,8 @@ class PoetryConverter(BaseConverter):
             if section_name not in section:
                 section[section_name] = tomlkit.table()
                 continue
-            # clean dependencies from old dependencies
+
+            # clean file from outdated dependencies
             names = {req.name for req in reqs if is_dev is req.is_dev} | {'python'}
             for name in dict(section[section_name]):
                 normalized_name = canonicalize_name(name)
