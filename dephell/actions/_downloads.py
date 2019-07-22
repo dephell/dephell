@@ -8,12 +8,16 @@ from typing import Dict, Iterable, Iterator, List
 import attr
 import requests
 
+# app
+from ..constants import USER_AGENT
+
 
 RECENT_URL = 'https://pypistats.org/api/packages/{}/recent'
 CATEGORIES_URLS = dict(
     pythons='https://pypistats.org/api/packages/{}/python_minor',
     systems='https://pypistats.org/api/packages/{}/system',
 )
+HEADERS = {'User-Agent': USER_AGENT}
 
 
 @attr.s()
@@ -49,7 +53,7 @@ def make_chart(values: Iterable[int], group: int = None, ticks: str = '_▁▂�
 
 def get_total_downloads(name: str) -> Dict[str, int]:
     url = RECENT_URL.format(name)
-    response = requests.get(url)
+    response = requests.get(url, headers=HEADERS)
     response.raise_for_status()
     body = response.json()['data']
     return dict(
@@ -61,7 +65,7 @@ def get_total_downloads(name: str) -> Dict[str, int]:
 
 def get_downloads_by_category(*, category: str, name: str) -> List[Dict[str, int]]:
     url = CATEGORIES_URLS[category].format(name)
-    response = requests.get(url)
+    response = requests.get(url, headers=HEADERS)
     response.raise_for_status()
     body = response.json()['data']
 
