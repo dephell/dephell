@@ -21,15 +21,15 @@ Why it is better than all other tools:
 
 Features:
 
-+ Manage dependencies: [convert between formats](https://dephell.readthedocs.io/cmd-deps-convert.html), [instаll](https://dephell.readthedocs.io/cmd-deps-install.html), lock, [add new](https://dephell.readthedocs.io/cmd-deps-add.html), resolve conflicts.
-+ Manage virtual environments: [create](https://dephell.readthedocs.io/cmd-venv-create.html), [remove](https://dephell.readthedocs.io/cmd-venv-destroy.html), [inspect](https://dephell.readthedocs.io/cmd-inspect-venv.html), [run shell](https://dephell.readthedocs.io/cmd-venv-shell.html), [run commands inside](https://dephell.readthedocs.io/cmd-venv-run.html).
-+ [Install CLI tools](https://dephell.readthedocs.io/cmd-jail-install.html) into isolated environments.
-+ Manage packages: [install](https://dephell.readthedocs.io/cmd-package-install.html), [list](https://dephell.readthedocs.io/cmd-package-list.html), [search](https://dephell.readthedocs.io/cmd-package-search.html) on PyPI.
-+ [Build](https://dephell.readthedocs.io/cmd-project-build.html) packages (to upload on PyPI), [test](https://dephell.readthedocs.io/cmd-project-test.html), [bump project version](https://dephell.readthedocs.io/cmd-project-bump.html).
-+ [Discover licenses](https://dephell.readthedocs.io/cmd-deps-licenses.html) of all project dependencies, show [outdated](https://dephell.readthedocs.io/cmd-deps-outdated.html) packages, [find security issues](https://dephell.readthedocs.io/cmd-deps-audit.html).
-+ Generate [.editorconfig](https://dephell.readthedocs.io/cmd-generate-editorconfig.html), [LICENSE](https://dephell.readthedocs.io/cmd-generate-license.html), [AUTHORS](https://dephell.readthedocs.io/cmd-generate-authors.html), [.travis.yml](https://dephell.readthedocs.io/cmd-generate-travis.html).
++ Manage dependencies: [convert between formats](https://dephell.org/docs/cmd-deps-convert.html), [instаll](https://dephell.org/docs/cmd-deps-install.html), lock, [add new](https://dephell.org/docs/cmd-deps-add.html), resolve conflicts.
++ Manage virtual environments: [create](https://dephell.org/docs/cmd-venv-create.html), [remove](https://dephell.org/docs/cmd-venv-destroy.html), [inspect](https://dephell.org/docs/cmd-inspect-venv.html), [run shell](https://dephell.org/docs/cmd-venv-shell.html), [run commands inside](https://dephell.org/docs/cmd-venv-run.html).
++ [Install CLI tools](https://dephell.org/docs/cmd-jail-install.html) into isolated environments.
++ Manage packages: [install](https://dephell.org/docs/cmd-package-install.html), [list](https://dephell.org/docs/cmd-package-list.html), [search](https://dephell.org/docs/cmd-package-search.html) on PyPI.
++ [Build](https://dephell.org/docs/cmd-project-build.html) packages (to upload on PyPI), [test](https://dephell.org/docs/cmd-project-test.html), [bump project version](https://dephell.org/docs/cmd-project-bump.html).
++ [Discover licenses](https://dephell.org/docs/cmd-deps-licenses.html) of all project dependencies, show [outdated](https://dephell.org/docs/cmd-deps-outdated.html) packages, [find security issues](https://dephell.org/docs/cmd-deps-audit.html).
++ Generate [.editorconfig](https://dephell.org/docs/cmd-generate-editorconfig.html), [LICENSE](https://dephell.org/docs/cmd-generate-license.html), [AUTHORS](https://dephell.org/docs/cmd-generate-authors.html), [.travis.yml](https://dephell.org/docs/cmd-generate-travis.html).
 
-See [documentation](https://dephell.readthedocs.io/) for more details.
+See [documentation](https://dephell.org/docs/) for more details.
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
@@ -247,7 +247,7 @@ INFO builded
 
 Now, we can upload these packages to [PyPI](https://pypi.org/) with [twine](https://github.com/pypa/twine/).
 
-These are some of the most useful commands. See [documentation](https://dephell.readthedocs.io/) for more details.
+These are some of the most useful commands. See [documentation](https://dephell.org/docs/) for more details.
 
 ## Compatibility
 

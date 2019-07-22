@@ -69,7 +69,7 @@ class BaseCommand:
             prog='dephell ' + name,
             usage='dephell {} [OPTIONS] {}'.format(name, usage.upper()),
             description=cls.__doc__,
-            epilog='https://dephell.readthedocs.io/cmd-{}.html'.format(name.replace(' ', '-')),
+            epilog='https://dephell.org/docs/cmd-{}.html'.format(name.replace(' ', '-')),
         )
 
     @classmethod
