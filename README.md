@@ -35,13 +35,11 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 
 ## Installation
 
-The simplest way:
-
 ```bash
-python3 -m pip install --user dephell[full]
+curl -L dephell.org/install | python3
 ```
 
-See [installation documentation](https://dephell.readthedocs.io/installation.html) for better ways.
+See [installation documentation](https://dephell.org/docs/installation.html) for alternatives.
 
 ## Supported formats
 
