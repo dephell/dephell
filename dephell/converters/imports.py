@@ -10,6 +10,7 @@ from dephell_discover import Root as PackageRoot
 # app
 from ..cache import TextCache
 from ..cached_property import cached_property
+from ..constants import USER_AGENT
 from ..controllers import DependencyMaker
 from ..models import RootDependency
 from .base import BaseConverter
@@ -97,7 +98,7 @@ class ImportsConverter(BaseConverter):
         cache = TextCache('imports', 'aliases', ttl=CACHE_TTL)
         lines = cache.load()
         if not lines:
-            response = requests.get(MAPPING_URLS[0])
+            response = requests.get(MAPPING_URLS[0], headers=USER_AGENT)
             lines = response.text.splitlines()
             cache.dump(lines)
 
@@ -116,7 +117,7 @@ class ImportsConverter(BaseConverter):
         if lines:
             return lines
 
-        response = requests.get(STDLIB_URL)
+        response = requests.get(STDLIB_URL, headers=USER_AGENT)
         lines = response.text.splitlines()
         cache.dump(lines)
         return lines

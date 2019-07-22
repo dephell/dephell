@@ -12,6 +12,7 @@ from dephell_venvs import VEnvs
 
 # app
 from ..cached_property import cached_property
+from ..constants import USER_AGENT
 
 
 DOCKER_PREFIX = 'dephell-'
@@ -66,7 +67,7 @@ class DockerContainer:
         url = 'https://hub.docker.com/v2/repositories/{}/tags/'.format(repository)
         tags = dict()
         while url is not None:
-            response = requests.get(url)
+            response = requests.get(url, headers=USER_AGENT)
             response.raise_for_status()
             content = response.json()
             url = content['next']

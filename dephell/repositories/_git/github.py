@@ -5,6 +5,7 @@ import re
 import requests
 
 # app
+from ...constants import USER_AGENT
 from ..cached_property import cached_property
 from .base import BaseRepo
 
@@ -27,7 +28,7 @@ class GitHubRepo(BaseRepo):
             author=self.author,
             name=self.name,
         )
-        response = requests.get(url)
+        response = requests.get(url, headers=USER_AGENT)
 
         tags = []
         for release in response.json():

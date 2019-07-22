@@ -15,7 +15,7 @@ import requests
 from packaging.requirements import Requirement
 
 # project
-from dephell.constants import DEFAULT_WAREHOUSE
+from dephell.constants import DEFAULT_WAREHOUSE, USER_AGENT
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
 from dephell.repositories import WarehouseAPIRepo
@@ -27,7 +27,7 @@ URL = 'https://hugovk.github.io/top-pypi-packages/top-pypi-packages-30-days.min.
 
 def get_deps():
     root = RootDependency()
-    response = requests.get(URL)
+    response = requests.get(URL, headers=USER_AGENT)
     for info in response.json()['rows']:
         yield from DependencyMaker.from_requirement(
             source=root,

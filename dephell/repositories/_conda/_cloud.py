@@ -19,6 +19,7 @@ from packaging.version import parse
 from ...cache import JSONCache
 from ...cached_property import cached_property
 from ...config import config
+from ...constants import USER_AGENT
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
 from ._base import CondaBaseRepo
@@ -129,7 +130,7 @@ class CondaCloudRepo(CondaBaseRepo):
                     allowed=', '.join(self._allowed_values[field]),
                 ))
 
-        response = requests.get(self._search_url, params=fields)
+        response = requests.get(self._search_url, headers=USER_AGENT, params=fields)
         response.raise_for_status()
 
         results = []
@@ -203,7 +204,7 @@ class CondaCloudRepo(CondaBaseRepo):
                 continue
 
             url = self._get_chan_url(channel=channel)
-            response = requests.get(url)
+            response = requests.get(url, headers=USER_AGENT)
             response.raise_for_status()
             channel_packages = dict()
             for name, info in response.json()['packages'].items():
@@ -246,7 +247,7 @@ class CondaCloudRepo(CondaBaseRepo):
 
             channel_deps = defaultdict(dict)
             for url in self._get_urls(channel=channel):
-                response = requests.get(url)
+                response = requests.get(url, headers=USER_AGENT)
                 response.raise_for_status()
                 content = BZ2Decompressor().decompress(response.content).decode('utf-8')
                 base_url = url.rsplit('/', 1)[0]

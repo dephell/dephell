@@ -12,6 +12,7 @@ from packaging.version import VERSION_PATTERN, Version
 
 # app
 from ..cached_property import cached_property
+from ..constants import USER_AGENT
 
 
 RSS_URL = 'https://snyk.io/vuln/feed.xml?type=pip'
@@ -42,7 +43,7 @@ class Snyk:
 
     @cached_property
     def vulns(self) -> Dict[str, List[SnykVulnInfo]]:
-        response = requests.get(self.url)
+        response = requests.get(self.url, headers=USER_AGENT)
         response.raise_for_status()
         root = ElementTree.fromstring(response.content)
 

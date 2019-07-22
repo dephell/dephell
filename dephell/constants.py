@@ -113,4 +113,4 @@ DEPHELL_ECOSYSTEM = (
     'dephell_versioning',
 )
 
-USER_AGENT = 'DepHell/{version}'.format(version=__version__)
+USER_AGENT = {'User-Agent': 'DepHell/{version}'.format(version=__version__)}

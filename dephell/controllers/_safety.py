@@ -11,6 +11,7 @@ from packaging.version import Version
 # app
 from ..cache import JSONCache
 from ..cached_property import cached_property
+from ..constants import USER_AGENT
 
 
 DUMP_URL = 'https://github.com/pyupio/safety-db/raw/master/data/insecure_full.json'
@@ -38,7 +39,7 @@ class Safety:
         cache = JSONCache('pyup.io', ttl=3600 * 24)
         records = cache.load()
         if records is None:
-            response = requests.get(self.url)
+            response = requests.get(self.url, headers=USER_AGENT)
             response.raise_for_status()
             records = response.json()
             cache.dump(records)

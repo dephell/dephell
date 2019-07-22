@@ -20,6 +20,7 @@ from jinja2 import Environment
 from ...cache import JSONCache
 from ...cached_property import cached_property
 from ...config import config
+from ...constants import USER_AGENT
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
 from ...networking import aiohttp_session
@@ -170,7 +171,7 @@ class CondaGitRepo(CondaBaseRepo):
         revs = []
         for cookbook in cookbooks:
             url = HISTORY_URL.format(**cookbook)
-            response = requests.get(url)
+            response = requests.get(url, headers=USER_AGENT)
             if response.status_code != 200:
                 continue
             for commit in response.json():

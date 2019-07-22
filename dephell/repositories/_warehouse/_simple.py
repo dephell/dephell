@@ -19,7 +19,7 @@ from packaging.utils import canonicalize_name
 # app
 from ...cache import JSONCache, TextCache
 from ...config import config
-from ...constants import ARCHIVE_EXTENSIONS
+from ...constants import ARCHIVE_EXTENSIONS, USER_AGENT
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
 from ._base import WarehouseBaseRepo
@@ -157,7 +157,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             return links
 
         dep_url = posixpath.join(self.url, quote(name)) + '/'
-        response = requests.get(dep_url, auth=self.auth)
+        response = requests.get(dep_url, auth=self.auth, headers=USER_AGENT)
         if response.status_code == 404:
             raise PackageNotFoundError(package=name, url=dep_url)
         response.raise_for_status()

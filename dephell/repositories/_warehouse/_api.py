@@ -16,6 +16,7 @@ from packaging.requirements import Requirement
 # app
 from ...cache import JSONCache, TextCache
 from ...config import config
+from ...constants import USER_AGENT
 from ...exceptions import InvalidFieldsError, PackageNotFoundError
 from ...models.author import Author
 from ...models.release import Release
@@ -86,7 +87,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
         data = cache.load()
         if data is None:
             url = '{url}{name}/json'.format(url=self.url, name=dep.base_name)
-            response = requests.get(url, auth=self.auth)
+            response = requests.get(url, auth=self.auth, headers=USER_AGENT)
             if response.status_code == 404:
                 raise PackageNotFoundError(package=dep.base_name, url=url)
             data = response.json()

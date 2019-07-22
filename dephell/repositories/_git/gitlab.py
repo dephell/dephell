@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 import requests
 
 # app
+from ...constants import USER_AGENT
 from ..cached_property import cached_property
 from .base import BaseRepo
 
@@ -28,7 +29,7 @@ class GitLabRepo(BaseRepo):
         url = 'https://gitlab.com/api/v4/projects/{id}/repository/tags'.format(
             id=urlencode(self.author + '/' + self.name),
         )
-        response = requests.get(url)
+        response = requests.get(url, headers=USER_AGENT)
 
         tags = []
         for tag in response.json():
