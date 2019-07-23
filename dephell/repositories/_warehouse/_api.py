@@ -9,7 +9,6 @@ from xmlrpc.client import ServerProxy
 
 # external
 import attr
-import requests
 from dephell_licenses import License, licenses
 from packaging.requirements import Requirement
 
@@ -19,7 +18,7 @@ from ...config import config
 from ...exceptions import InvalidFieldsError, PackageNotFoundError
 from ...models.author import Author
 from ...models.release import Release
-from ...networking import aiohttp_session
+from ...networking import aiohttp_session, requests_session
 from ._base import WarehouseBaseRepo
 
 
@@ -86,7 +85,8 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
         data = cache.load()
         if data is None:
             url = '{url}{name}/json'.format(url=self.url, name=dep.base_name)
-            response = requests.get(url, auth=self.auth)
+            with requests_session() as session:
+                response = session.get(url, auth=self.auth)
             if response.status_code == 404:
                 raise PackageNotFoundError(package=dep.base_name, url=url)
             data = response.json()
