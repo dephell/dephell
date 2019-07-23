@@ -5,6 +5,7 @@ import pytest
 from dephell.controllers import Snyk
 
 
+@pytest.mark.skipif(True, reason='RSS feed was removed from snyk')
 @pytest.mark.allow_hosts()
 def test_safety():
     snyk = Snyk()
