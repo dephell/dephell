@@ -2,6 +2,10 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.7.8 (WIP)
+
++ Fuzzy command name search ([#247](https://github.com/dephell/dephell/pull/247), [#122](https://github.com/dephell/dephell/issues/122)).
+
 ## v.0.7.7
 
 + Meet [dephell.org](https://dephell.org/) ([#244](https://github.com/dephell/dephell/pull/244)).
