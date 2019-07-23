@@ -39,6 +39,7 @@ class PatchedParser(ArgumentParser):
 
 parser = PatchedParser(
     description='Manage dependencies, projects, virtual environments.',
+    usage='dephell COMMAND [OPTIONS]',
 )
 parser.add_argument('command', choices=COMMANDS.keys(), nargs='?', help='command to execute')
 
@@ -80,16 +81,16 @@ def get_command_name_and_size(argv: List[str], commands=COMMANDS) -> Optional[Tu
 
 
 def main(argv: List[str]) -> int:
+    if not argv or argv[0] in ('--help', 'help', 'commands'):
+        parser.parse_args(['--help'])
+
     name_and_size = get_command_name_and_size(argv=argv)
     if name_and_size:
         command_name = name_and_size[0]
         command_args = argv[name_and_size[1]:]
     else:
-        args = parser.parse_args(argv[:1])
-        if args.command is None:
-            parser.parse_args(['--help'])
-        command_name = args.command
-        command_args = argv[1:]
+        logger.error('ERROR: Unknown command')
+        parser.parse_args(['--help'])
 
     # get and init command object
     command = COMMANDS[command_name]
