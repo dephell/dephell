@@ -7,6 +7,7 @@ from typing import List, Optional
 import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
+from packaging.utils import canonicalize_name
 
 # app
 from ..controllers import DependencyMaker, Readme, RepositoriesRegistry
@@ -159,24 +160,47 @@ class PoetryConverter(BaseConverter):
         self._add_entrypoints(section=section, entrypoints=project.entrypoints)
 
         # dependencies
+        names_mapping = dict()
         for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
             if section_name not in section:
                 section[section_name] = tomlkit.table()
                 continue
-            # clean dependencies from old dependencies
+
+            # clean file from outdated dependencies
             names = {req.name for req in reqs if is_dev is req.is_dev} | {'python'}
             for name in dict(section[section_name]):
-                if name not in names:
+                normalized_name = canonicalize_name(name)
+                names_mapping[normalized_name] = name
+                if normalized_name not in names:
                     del section[section_name][name]
 
         # python version
-        section['dependencies']['python'] = str(project.python) or '*'
+        if section['dependencies'].get('python', '') != (project.python or '*'):
+            section['dependencies']['python'] = str(project.python) or '*'
 
         # write dependencies
         for section_name, is_dev in [('dependencies', False), ('dev-dependencies', True)]:
             for req in reqs:
-                if is_dev is req.is_dev:
-                    section[section_name][req.raw_name] = self._format_req(req=req)
+                if is_dev is not req.is_dev:
+                    continue
+                raw_name = names_mapping.get(req.name, req.raw_name)
+                old_spec = section[section_name].get(raw_name)
+
+                # do not overwrite dep if nothing is changed
+                if old_spec:
+                    old_dep = self._make_deps(
+                        root=RootDependency(),
+                        name=raw_name,
+                        content=old_spec,
+                        envs={'main'},
+                    )[0]
+                    if req.same_dep(old_dep):
+                        continue
+
+                # overwrite
+                section[section_name][raw_name] = self._format_req(req=req)
+
+            # remove empty section
             if not section[section_name].value:
                 del section[section_name]
 

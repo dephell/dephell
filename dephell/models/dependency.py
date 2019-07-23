@@ -21,6 +21,7 @@ class Dependency:
     constraint = attr.ib(type=Constraint)
     repo = attr.ib(repr=False)
     link = attr.ib(default=None, repr=False)
+    marker = None
 
     # flags
     applied = attr.ib(type=bool, default=False, repr=False)
@@ -43,7 +44,7 @@ class Dependency:
 
     extra = None
 
-    # properties
+    # prlicenseoperties
 
     @cached_property
     def name(self) -> str:
