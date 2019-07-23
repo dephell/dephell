@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 # app
 from ..actions import get_packages, make_json
 from ..config import builders
-from ..controllers import Safety, Snyk
+from ..controllers import Safety
 from .base import BaseCommand
 
 
@@ -44,13 +44,10 @@ class DepsAuditCommand(BaseCommand):
             packages = resolver.graph
 
         safety = Safety()
-        snyk = Snyk()
-
         data = []
         for dep in packages:
             release = dep.group.best_release
             vulns = safety.get(name=dep.name, version=release.version)
-            vulns += snyk.get(name=dep.name, version=release.version)
             if not vulns:
                 continue
             releases = dep.repo.get_releases(dep)
