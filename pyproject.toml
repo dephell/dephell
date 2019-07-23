@@ -107,8 +107,9 @@ authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
 license = "MIT"
+homepage = "https://dephell.org/"
 repository = "https://github.com/dephell/dephell"
-documentation = "https://dephell.readthedocs.io/ "
+documentation = "https://dephell.org/docs/"
 keywords = [
     "dephell", "packaging", "dependency", "dependencies", "venv", "licenses",
     "pip", "poetry", "pipfile", "pipenv", "setuptools",
