@@ -23,7 +23,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.7.6',
+    version='0.7.7',
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
@@ -66,12 +66,12 @@ setup(
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
+        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'dev': [
             'aioresponses', 'alabaster', 'flake8-isort', 'isort[pyproject]',
             'pygments-github-lexers', 'pytest', 'recommonmark', 'requests-mock',
             'sphinx'
         ],
-        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'docs':
         ['alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx']
     },
