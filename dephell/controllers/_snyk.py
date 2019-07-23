@@ -37,6 +37,8 @@ class SnykVulnInfo:
 class Snyk:
     """
     https://snyk.io/vuln?type=pip
+
+    RSS was broken!
     """
     url = attr.ib(type=str, default=RSS_URL)
 
