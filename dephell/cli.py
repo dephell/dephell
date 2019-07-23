@@ -65,7 +65,7 @@ def get_command_name_and_size(argv: List[str], commands=COMMANDS) -> Optional[Tu
     for command_name in commands:
         for part in command_name.split():
             commands_by_parts[part].append(command_name)
-    command_names = commands_by_parts.get(argv[0])
+    command_names = commands_by_parts[argv[0]]
     if len(command_names) == 1:
         return command_names[0], 1
 
@@ -81,7 +81,6 @@ def get_command_name_and_size(argv: List[str], commands=COMMANDS) -> Optional[Tu
 
 def main(argv: List[str]) -> int:
     name_and_size = get_command_name_and_size(argv=argv)
-    return
     if name_and_size:
         command_name = name_and_size[0]
         command_args = argv[name_and_size[1]:]
