@@ -1,9 +1,11 @@
+# built-in
 from pathlib import Path
 
+# external
 import pytest
 
 # project
-from dephell.cli import main, get_command_name_and_size
+from dephell.cli import get_command_name_and_size, main
 
 
 @pytest.mark.parametrize('given, expected', [
