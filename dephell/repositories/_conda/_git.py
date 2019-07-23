@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional
 
 # external
 import attr
-import requests
 from dephell_specifier import RangeSpecifier
 from jinja2 import Environment
 
@@ -20,10 +19,9 @@ from jinja2 import Environment
 from ...cache import JSONCache
 from ...cached_property import cached_property
 from ...config import config
-from ...constants import USER_AGENT
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
-from ...networking import aiohttp_session
+from ...networking import aiohttp_session, requests_session
 from ...yaml import yaml_load
 from ._base import CondaBaseRepo
 
@@ -171,7 +169,8 @@ class CondaGitRepo(CondaBaseRepo):
         revs = []
         for cookbook in cookbooks:
             url = HISTORY_URL.format(**cookbook)
-            response = requests.get(url, headers=USER_AGENT)
+            with requests_session() as session:
+                response = session.get(url)
             if response.status_code != 200:
                 continue
             for commit in response.json():

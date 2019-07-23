@@ -5,9 +5,6 @@ from collections import OrderedDict
 from enum import Enum, unique
 from types import MappingProxyType
 
-# app
-from . import __version__
-
 
 @unique
 class ReturnCodes(Enum):
@@ -112,5 +109,3 @@ DEPHELL_ECOSYSTEM = (
     'dephell_venvs',
     'dephell_versioning',
 )
-
-USER_AGENT = {'User-Agent': 'DepHell/{version}'.format(version=__version__)}

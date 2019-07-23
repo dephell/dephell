@@ -11,13 +11,13 @@ import asyncio
 from itertools import islice
 
 # external
-import requests
 from packaging.requirements import Requirement
 
 # project
-from dephell.constants import DEFAULT_WAREHOUSE, USER_AGENT
+from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
+from dephell.networking import requests_session
 from dephell.repositories import WarehouseAPIRepo
 
 
@@ -27,7 +27,8 @@ URL = 'https://hugovk.github.io/top-pypi-packages/top-pypi-packages-30-days.min.
 
 def get_deps():
     root = RootDependency()
-    response = requests.get(URL, headers=USER_AGENT)
+    with requests_session() as session:
+        response = session.get(URL)
     for info in response.json()['rows']:
         yield from DependencyMaker.from_requirement(
             source=root,

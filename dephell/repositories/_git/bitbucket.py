@@ -1,13 +1,10 @@
 # built-in
 import re
 
-# external
-import requests
-
 # app
 from ...cached_property import cached_property
 from ...config import config
-from ...constants import USER_AGENT
+from ...networking import requests_session
 from .base import BaseRepo
 
 
@@ -31,7 +28,8 @@ class BitbucketRepo(BaseRepo):
             author=self.author,
             name=self.name,
         )
-        response = requests.get(url, headers=USER_AGENT)
+        with requests_session() as session:
+            response = session.get(url)
 
         tags = []
         for tag in response.json()['values']:

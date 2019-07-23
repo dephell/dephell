@@ -1,11 +1,8 @@
 # built-in
 import re
 
-# external
-import requests
-
 # app
-from ...constants import USER_AGENT
+from ...networking import requests_session
 from ..cached_property import cached_property
 from .base import BaseRepo
 
@@ -28,7 +25,8 @@ class GitHubRepo(BaseRepo):
             author=self.author,
             name=self.name,
         )
-        response = requests.get(url, headers=USER_AGENT)
+        with requests_session() as session:
+            response = session.get(url)
 
         tags = []
         for release in response.json():

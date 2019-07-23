@@ -11,7 +11,6 @@ from urllib.parse import parse_qs, quote, urljoin, urlparse
 # external
 import attr
 import html5lib
-import requests
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
@@ -19,9 +18,10 @@ from packaging.utils import canonicalize_name
 # app
 from ...cache import JSONCache, TextCache
 from ...config import config
-from ...constants import ARCHIVE_EXTENSIONS, USER_AGENT
+from ...constants import ARCHIVE_EXTENSIONS
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
+from ...networking import requests_session
 from ._base import WarehouseBaseRepo
 
 
@@ -157,7 +157,8 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             return links
 
         dep_url = posixpath.join(self.url, quote(name)) + '/'
-        response = requests.get(dep_url, auth=self.auth, headers=USER_AGENT)
+        with requests_session() as session:
+            response = session.get(dep_url, auth=self.auth)
         if response.status_code == 404:
             raise PackageNotFoundError(package=name, url=dep_url)
         response.raise_for_status()
