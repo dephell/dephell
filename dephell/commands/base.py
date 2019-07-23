@@ -1,6 +1,7 @@
 # built-in
 import os.path
 import re
+from os import environ
 from argparse import ArgumentParser
 from logging import getLogger
 from pathlib import Path
@@ -12,7 +13,7 @@ import tomlkit
 # app
 from ..actions import attach_deps, get_python_env
 from ..config import Config, config, get_data_dir
-from ..constants import CONFIG_NAMES, GLOBAL_CONFIG_NAME
+from ..constants import CONFIG_NAMES, GLOBAL_CONFIG_NAME, ENV_VAR_TEMPLATE
 from ..controllers import analyze_conflict
 from ..converters import CONVERTERS, InstalledConverter
 
@@ -84,10 +85,18 @@ class BaseCommand:
 
     @classmethod
     def _attach_config_file(cls, path, env) -> bool:
+        # get params from env vars if are not specified
+        if path is None:
+            path = environ.get(ENV_VAR_TEMPLATE.format('CONFIG'))
+        if env is None:
+            env = environ.get(ENV_VAR_TEMPLATE.format('ENV'), 'main')
+
+        # if path to config specified explicitly, just use it
         if path:
             config.attach_file(path=path, env=env)
             return True
 
+        # if path isn't specified, carefully try default names
         for path in CONFIG_NAMES:
             if not os.path.exists(path):
                 continue
