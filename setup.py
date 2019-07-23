@@ -27,6 +27,7 @@ setup(
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
+        'homepage': 'https://dephell.org/',
         'repository': 'https://github.com/dephell/dephell',
         'documentation': 'https://dephell.org/docs/'
     },
@@ -65,15 +66,13 @@ setup(
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
-        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'dev': [
-            'aioresponses', 'flake8-isort', 'isort[pyproject]',
+            'aioresponses', 'alabaster', 'flake8-isort', 'isort[pyproject]',
             'pygments-github-lexers', 'pytest', 'recommonmark', 'requests-mock',
-            'sphinx', 'sphinx-rtd-theme'
+            'sphinx'
         ],
-        'docs': [
-            'pygments-github-lexers', 'recommonmark', 'sphinx',
-            'sphinx-rtd-theme'
-        ]
+        'tests': ['aioresponses', 'pytest', 'requests-mock'],
+        'docs':
+        ['alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx']
     },
 )
