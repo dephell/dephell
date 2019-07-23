@@ -60,6 +60,7 @@ html_theme_options = {
     'github_type': 'star',
 
     'extra_nav_links': {
+        'Home': 'https://dephell.org/',
         'GitHub repository': 'https://github.com/dephell/dephell',
         'Create an issue': 'https://github.com/dephell/dephell/issues/new',
     },
