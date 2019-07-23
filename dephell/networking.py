@@ -9,6 +9,7 @@ from aiohttp import ClientSession, TCPConnector
 # app
 from . import __version__
 
+
 USER_AGENT = 'DepHell/{version}'.format(version=__version__)
 
 
