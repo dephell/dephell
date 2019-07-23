@@ -1,9 +1,10 @@
 # built-in
 from argparse import Action, ArgumentParser
+from collections import Counter, defaultdict
 from logging import getLogger
 from pdb import post_mortem
 from sys import argv
-from typing import List
+from typing import List, Optional, Tuple
 
 # app
 from .commands import COMMANDS
@@ -38,23 +39,58 @@ class PatchedParser(ArgumentParser):
 
 parser = PatchedParser(
     description='Manage dependencies, projects, virtual environments.',
+    usage='dephell COMMAND [OPTIONS]',
 )
 parser.add_argument('command', choices=COMMANDS.keys(), nargs='?', help='command to execute')
 
 
-def main(argv: List[str]) -> int:
-    # get command name
+def commands_are_similar(command1: str, command2: str) -> bool:
+    given = Counter(command1)
+    guess = Counter(command2)
+    counter_diff = (given - guess) + (guess - given)
+    diff = sum(counter_diff.values())
+    return diff <= 1
+
+
+def get_command_name_and_size(argv: List[str], commands=COMMANDS) -> Optional[Tuple[str, int]]:
+    if not argv:
+        return None
+
     for size, direction in ((1, 1), (2, 1), (2, -1)):
         command_name = ' '.join(argv[:size][::direction])
-        command_args = argv[size:]
-        if command_name in COMMANDS:
-            break
+        if command_name in commands:
+            return command_name, size
+
+    # specified the only one word from command
+    commands_by_parts = defaultdict(list)
+    for command_name in commands:
+        for part in command_name.split():
+            commands_by_parts[part].append(command_name)
+    command_names = commands_by_parts[argv[0]]
+    if len(command_names) == 1:
+        return command_names[0], 1
+
+    # typo in command name
+    for size in 1, 2:
+        command_specified = ' '.join(argv[:size])
+        for command_guess in commands:
+            if commands_are_similar(command_specified, command_guess):
+                return command_guess, size
+
+    return None
+
+
+def main(argv: List[str]) -> int:
+    if not argv or argv[0] in ('--help', 'help', 'commands'):
+        parser.parse_args(['--help'])
+
+    name_and_size = get_command_name_and_size(argv=argv)
+    if name_and_size:
+        command_name = name_and_size[0]
+        command_args = argv[name_and_size[1]:]
     else:
-        args = parser.parse_args(argv[:1])
-        if args.command is None:
-            parser.parse_args(['--help'])
-        command_name = args.command
-        command_args = argv[1:]
+        logger.error('ERROR: Unknown command')
+        parser.parse_args(['--help'])
 
     # get and init command object
     command = COMMANDS[command_name]
