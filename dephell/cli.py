@@ -44,10 +44,10 @@ parser.add_argument('command', choices=COMMANDS.keys(), nargs='?', help='command
 
 
 def commands_are_similar(command1: str, command2: str) -> bool:
-    c1 = Counter(command1)
-    c2 = Counter(command2)
-    c = (c1 - c2) + (c2 - c1)
-    diff = sum(c.values())
+    given = Counter(command1)
+    guess = Counter(command2)
+    counter_diff = (given - guess) + (guess - given)
+    diff = sum(counter_diff.values())
     return diff <= 1
 
 
