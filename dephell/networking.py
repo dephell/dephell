@@ -25,7 +25,13 @@ def aiohttp_session(*, auth=None, **kwargs):
 
 
 def requests_session(*, auth=None, headers=None, **kwargs):
+    session = requests.Session()
+    if auth:
+        session.auth = auth
     if headers is None:
         headers = dict()
     headers.setdefault('User-Agent', USER_AGENT)
-    return requests.Session(auth=auth, headers=headers, **kwargs)
+    session.headers = headers
+    if kwargs:
+        session.__dict__.update(kwargs)
+    return session
