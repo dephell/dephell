@@ -2,6 +2,7 @@
 import json
 import re
 from collections import defaultdict
+from copy import deepcopy
 from logging import captureWarnings
 from logging.config import dictConfig
 from os import environ
@@ -32,7 +33,7 @@ class Config:
     )
 
     def __init__(self, data: Optional[dict] = None):
-        self._data = data or DEFAULT.copy()
+        self._data = data or deepcopy(DEFAULT)
 
     def setup_logging(self, data: Optional[dict] = None) -> None:
         captureWarnings(True)
