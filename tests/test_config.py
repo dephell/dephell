@@ -22,6 +22,11 @@ def test_load():
     ({'DEPHELL_CACHE_TTL': '10'}, {'cache': {'ttl': 10}}),
     ({'DEPHELL_CACHE_TTL': '"10"'}, {'cache': {'ttl': '10'}}),
     ({'DEPHELL_TRACEBACK': 'true'}, {'traceback': True}),
+    ({'DEPHELL_ENVS': '["main", "dev"]'}, {'envs': ['main', 'dev']}),
+    (
+        {'DEPHELL_FROM': '{format="pip", path="req.txt"}'},
+        {'from': {'format': 'pip', 'path': 'req.txt'}},
+    ),
 ])
 def test_attach_env_vars(given, expected):
     config = Config()
