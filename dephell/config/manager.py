@@ -147,6 +147,8 @@ class Config:
             if not match:
                 continue
             name = match.groups()[0].lower()
+            if name in ('env', 'config'):
+                continue
 
             # convert value to the correct type
             try:
