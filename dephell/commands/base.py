@@ -1,9 +1,9 @@
 # built-in
 import os.path
 import re
-from os import environ
 from argparse import ArgumentParser
 from logging import getLogger
+from os import environ
 from pathlib import Path
 from typing import Dict, Set
 
@@ -13,7 +13,7 @@ import tomlkit
 # app
 from ..actions import attach_deps, get_python_env
 from ..config import Config, config, get_data_dir
-from ..constants import CONFIG_NAMES, GLOBAL_CONFIG_NAME, ENV_VAR_TEMPLATE
+from ..constants import CONFIG_NAMES, ENV_VAR_TEMPLATE, GLOBAL_CONFIG_NAME
 from ..controllers import analyze_conflict
 from ..converters import CONVERTERS, InstalledConverter
 
@@ -40,6 +40,7 @@ class BaseCommand:
         config.setup_logging()
         cls._attach_global_config_file()
         cls._attach_config_file(path=args.config, env=args.env)
+        config.attach_env_vars()
         config.attach_cli(args)
         config.setup_logging()
         return config
@@ -145,7 +146,7 @@ class BaseCommand:
                 return None
 
         # apply envs if needed
-        if 'envs' in self.config:
+        if self.config.get('envs'):
             resolver.apply_envs(set(self.config['envs']))
         elif default_envs:
             resolver.apply_envs(default_envs)
