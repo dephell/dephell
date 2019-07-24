@@ -5,6 +5,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 ## v.0.7.8 (WIP)
 
 + Fuzzy command name search ([#247](https://github.com/dephell/dephell/pull/247), [#122](https://github.com/dephell/dephell/issues/122)).
++ [Configure](config) DepHell with environment variables ([#248](https://github.com/dephell/dephell/pull/248)).
 
 ## v.0.7.7
 

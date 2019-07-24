@@ -80,7 +80,7 @@ class VenvRunCommand(BaseCommand):
         )
 
         # run
-        self.logger.info('running...')
+        self.logger.info('running...', extra=dict(command=command))
         with override_env_vars(env_vars):
             result = subprocess.run([str(executable)] + command[1:])
         if result.returncode != 0:
