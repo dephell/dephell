@@ -24,6 +24,8 @@ def test_load_metadata():
     assert root.name == 'dephell'
     assert root.version == '0.2.0'
     assert root.authors[0].name == 'orsinium'
+    assert len(root.classifiers) == 4
+    assert len(root.keywords) == 3
     assert not root.license
 
 
