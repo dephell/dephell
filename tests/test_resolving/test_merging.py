@@ -22,7 +22,7 @@ def merge(*roots, merged=True, deps=None):
     if deps:
         for dep in deps:
             assert dep in resolver.graph
-        names = set(resolver.graph.names) - set(root.name for root in roots)
+        names = set(resolver.graph.names) - {root.name for root in roots}
         assert names == set(deps)
 
     return resolver

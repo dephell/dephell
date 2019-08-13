@@ -44,7 +44,7 @@ def test_deps():
     coroutine = repo.get_dependencies('dephell', '0.1.0')
     deps = loop.run_until_complete(asyncio.gather(coroutine))[0]
     assert len(deps) == 4
-    assert set(dep.name for dep in deps) == {'attrs', 'cached-property', 'packaging', 'requests'}
+    assert {dep.name for dep in deps} == {'attrs', 'cached-property', 'packaging', 'requests'}
 
 
 @pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
