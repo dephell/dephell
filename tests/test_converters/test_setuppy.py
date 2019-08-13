@@ -14,7 +14,7 @@ def test_load_deps():
     root = SetupPyConverter().load(path)
 
     needed = {'attrs', 'cached-property', 'packaging', 'requests', 'colorama', 'libtest'}
-    assert set(dep.name for dep in root.dependencies) == needed
+    assert {dep.name for dep in root.dependencies} == needed
 
 
 def test_load_metadata():
@@ -40,7 +40,7 @@ def test_dumps_deps():
     print(content)
     root = SetupPyConverter().loads(content)
     needed = {'attrs', 'cached-property', 'packaging', 'requests', 'colorama', 'libtest'}
-    assert set(dep.name for dep in root.dependencies) == needed
+    assert {dep.name for dep in root.dependencies} == needed
 
 
 def test_dependency_links_load():
