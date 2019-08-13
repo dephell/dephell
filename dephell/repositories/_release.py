@@ -10,6 +10,7 @@ from .base import Interface
 class ReleaseRepo(Interface):
     """Repository with one dummy release
     """
+
     def __init__(self, *releases, link=None, deps=None):
         self._link = link
         self.releases = tuple(releases)
