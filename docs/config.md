@@ -1,6 +1,6 @@
 # Configuration and parameters
 
-Dephell makes config from 3 layers:
+Dephell makes config from 4 layers:
 
 1. Default parameters.
 1. Section from config file.
