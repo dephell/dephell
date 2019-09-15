@@ -27,6 +27,7 @@ _NAMES = (
 
     'generate authors',
     'generate config',
+    'generate contributing',
     'generate editorconfig',
     'generate license',
     'generate travis',

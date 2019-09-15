@@ -3,6 +3,7 @@
 
 # app
 from ._autocomplete import make_bash_autocomplete, make_zsh_autocomplete
+from ._contributing import make_contributing
 from ._converting import attach_deps
 from ._docker import get_docker_container
 from ._dotenv import read_dotenv
@@ -36,6 +37,7 @@ __all__ = [
     'git_commit',
     'git_tag',
     'make_bash_autocomplete',
+    'make_contributing',
     'make_editorconfig',
     'make_json',
     'make_travis',
