@@ -28,4 +28,6 @@ def test_make_contributing_pytest(temp_path):
     assert (temp_path / command.COMMAND_TITLE).exists()
     content = (temp_path / command.COMMAND_TITLE).read_text()
     assert 'isort' in content
-    assert 'python -m pytest tests/' in content
+    assert 'pytest' in content
+    assert 'flake8' in content
+
