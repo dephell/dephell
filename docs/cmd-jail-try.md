@@ -9,7 +9,7 @@ $ dephell jail try textdistance
 INFO creating venv... (python=/usr/local/bin/python3.7, venv=/tmp/tmpgixqt4_q)
 INFO build dependencies graph...
 INFO installation... (executable=/tmp/tmpgixqt4_q/bin/python3.7, packages=1)
-Collecting textdistance==4.1.3 (from -r /tmp/tmpduyecsir/requiements.txt (line 2))
+Collecting textdistance==4.1.3 (from -r /tmp/tmpduyecsir/requirements.txt (line 2))
 Installing collected packages: textdistance
 Successfully installed textdistance-4.1.3
 INFO installed
