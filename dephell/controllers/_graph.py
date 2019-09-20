@@ -26,7 +26,7 @@ class Layer:
             self._mapping[dep.name] = dep
             return
 
-        # if it is the first layer (requiements.txt) try to merge these deps
+        # if it is the first layer (requirements.txt) try to merge these deps
         if self.level == 1:
             self._mapping[dep.name] += dep
             if not self._mapping[dep.name].compat:
