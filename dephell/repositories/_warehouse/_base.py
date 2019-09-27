@@ -4,7 +4,7 @@ from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Tuple
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 # external
 from dephell_markers import Markers
@@ -12,6 +12,7 @@ from packaging.requirements import InvalidRequirement, Requirement
 
 # app
 from ...cached_property import cached_property
+from ...constants import WAREHOUSE_DOMAINS
 from ...networking import aiohttp_session
 from ..base import Interface
 
@@ -42,6 +43,38 @@ class WarehouseBaseRepo(Interface):
 
     async def download(self, name: str, version: str, path: Path) -> bool:
         raise NotImplementedError
+
+    @staticmethod
+    def _get_url(url: str, default_path: str) -> str:
+        # replace link on pypi api by link on simple index
+        parsed = urlparse(url)
+        if not parsed.hostname:
+            parsed = urlparse('http://' + url)
+
+        if parsed.hostname == 'pypi.python.org':
+            hostname = 'pypi.org'
+        else:
+            hostname = parsed.netloc
+
+        if hostname in WAREHOUSE_DOMAINS:
+            path = default_path
+        else:
+            path = parsed.path
+
+        scheme = parsed.scheme
+        if hostname in WAREHOUSE_DOMAINS:
+            scheme = 'https'
+        if not scheme:
+            scheme = 'http'
+
+        return urlunparse((
+            scheme,
+            hostname,
+            path,
+            parsed.params,
+            parsed.query,
+            parsed.fragment,
+        ))
 
     @staticmethod
     def _convert_deps(*, deps, name, version, extra):
