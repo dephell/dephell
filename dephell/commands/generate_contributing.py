@@ -13,17 +13,12 @@ from .base import BaseCommand
 
 class GenerateContributingCommand(BaseCommand):
     """Create CONTRIBUTING.md for DepHell-based project.
-
-    https://dephell.readthedocs.io/en/latest/cmd-generate-contributing.html
     """
-    COMMAND_TITLE = 'CONTRIBUTING.md'
+    file_name = 'CONTRIBUTING.md'
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell generate contributing',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)
@@ -35,7 +30,7 @@ class GenerateContributingCommand(BaseCommand):
         else:
             path = Path(self.config['project']) / 'pyproject.toml'
             if not path.exists():
-                self.logger.error('cannot generate {} without config'.format(self.COMMAND_TITLE))
+                self.logger.error('cannot generate file without config')
                 return False
 
         with path.open('r', encoding='utf8') as stream:
@@ -43,6 +38,6 @@ class GenerateContributingCommand(BaseCommand):
         config = dict(config['tool']['dephell'])
         project_path = Path(self.config['project'])
         text = make_contributing(config=config)
-        (project_path / self.COMMAND_TITLE).write_text(text)
-        self.logger.info('{} generated'.format(self.COMMAND_TITLE))
+        (project_path / self.file_name).write_text(text)
+        self.logger.info('generated', extra=dict(file=self.file_name))
         return True
