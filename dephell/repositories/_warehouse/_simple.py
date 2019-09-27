@@ -6,7 +6,7 @@ from datetime import datetime
 from logging import getLogger
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
-from urllib.parse import parse_qs, quote, urljoin, urlparse
+from urllib.parse import parse_qs, quote, urljoin, urlparse, urlunparse
 
 # external
 import attr
@@ -47,15 +47,36 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
     @staticmethod
     def _get_url(url: str) -> str:
-        parsed = urlparse(url)
-        hostname = parsed.hostname
-        if hostname not in WAREHOUSE_DOMAINS:
-            return url
-
         # replace link on pypi api by link on simple index
-        if hostname == 'pypi.python.org':
+        parsed = urlparse(url)
+        if not parsed.hostname:
+            parsed = urlparse('http://' + url)
+
+        if parsed.hostname == 'pypi.python.org':
             hostname = 'pypi.org'
-        return 'https://{hostname}/simple/'.format(hostname=hostname)
+        else:
+            hostname = parsed.netloc
+
+        if hostname in WAREHOUSE_DOMAINS:
+            path = '/simple/'
+        else:
+            path = parsed.path
+
+        scheme = parsed.scheme
+        if hostname in WAREHOUSE_DOMAINS:
+            scheme = 'https'
+        if not scheme:
+            scheme = 'http'
+
+        print(locals())
+        return urlunparse((
+            scheme,
+            hostname,
+            path,
+            parsed.params,
+            parsed.query,
+            parsed.fragment,
+        ))
 
     @property
     def pretty_url(self) -> str:
