@@ -6,7 +6,7 @@ from datetime import datetime
 from logging import getLogger
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
-from urllib.parse import parse_qs, quote, urljoin, urlparse, urlunparse
+from urllib.parse import parse_qs, quote, urljoin, urlparse
 
 # external
 import attr
@@ -18,7 +18,7 @@ from packaging.utils import canonicalize_name
 # app
 from ...cache import JSONCache, TextCache
 from ...config import config
-from ...constants import ARCHIVE_EXTENSIONS, WAREHOUSE_DOMAINS
+from ...constants import ARCHIVE_EXTENSIONS
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
 from ...networking import requests_session
@@ -42,41 +42,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         # make name canonical
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'
-
         self.url = self._get_url(self.url)
-
-    @staticmethod
-    def _get_url(url: str) -> str:
-        # replace link on pypi api by link on simple index
-        parsed = urlparse(url)
-        if not parsed.hostname:
-            parsed = urlparse('http://' + url)
-
-        if parsed.hostname == 'pypi.python.org':
-            hostname = 'pypi.org'
-        else:
-            hostname = parsed.netloc
-
-        if hostname in WAREHOUSE_DOMAINS:
-            path = '/simple/'
-        else:
-            path = parsed.path
-
-        scheme = parsed.scheme
-        if hostname in WAREHOUSE_DOMAINS:
-            scheme = 'https'
-        if not scheme:
-            scheme = 'http'
-
-        print(locals())
-        return urlunparse((
-            scheme,
-            hostname,
-            path,
-            parsed.params,
-            parsed.query,
-            parsed.fragment,
-        ))
 
     @property
     def pretty_url(self) -> str:

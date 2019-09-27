@@ -57,18 +57,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
         # make name canonical
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'
-
-        # replace link on simple index by link on pypi api
-        parsed = urlparse(self.url)
-        if parsed.path in ('', '/', '/simple', '/simple/'):
-            path = '/pypi/'
-        else:
-            path = parsed.path
-        if parsed.hostname == 'pypi.python.org':
-            hostname = 'pypi.org'
-        else:
-            hostname = parsed.hostname
-        self.url = parsed.scheme + '://' + hostname + path
+        self.url = self._get_url(self.url)
 
     @property
     def pretty_url(self):
