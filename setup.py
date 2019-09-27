@@ -23,18 +23,18 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.7.5',
+    version='0.7.7',
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
+        'homepage': 'https://dephell.org/',
         'repository': 'https://github.com/dephell/dephell',
-        'documentation': 'https://dephell.readthedocs.io/ '
+        'documentation': 'https://dephell.org/docs/'
     },
     author='Gram',
     author_email='master_fess@mail.ru',
     license='MIT',
-    keywords=
-    'dephell packaging dependency dependencies venv licenses pip poetry pipfile pipenv setuptools',
+    keywords='dephell packaging dependency dependencies venv licenses pip poetry pipfile pipenv setuptools',
     classifiers=[
         'Development Status :: 4 - Beta', 'Environment :: Console',
         'Framework :: Setuptools Plugin', 'Intended Audience :: Developers',
@@ -66,15 +66,13 @@ setup(
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
-        'dev': [
-            'aioresponses', 'flake8-isort', 'isort[pyproject]',
-            'pygments-github-lexers', 'pytest', 'recommonmark', 'requests-mock',
-            'sphinx', 'sphinx-rtd-theme'
-        ],
         'tests': ['aioresponses', 'pytest', 'requests-mock'],
-        'docs': [
-            'pygments-github-lexers', 'recommonmark', 'sphinx',
-            'sphinx-rtd-theme'
-        ]
+        'dev': [
+            'aioresponses', 'alabaster', 'flake8-isort', 'isort[pyproject]',
+            'pygments-github-lexers', 'pytest', 'recommonmark', 'requests-mock',
+            'sphinx'
+        ],
+        'docs':
+        ['alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx']
     },
 )

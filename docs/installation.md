@@ -1,12 +1,14 @@
 # Installation
 
-Recommend way:
+Stable version
 
 ```bash
-curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | python3
+curl -L dephell.org/install | python3
 ```
 
-It will install DepHell into DepHell's jail ([WE NEED TO GO DEEPER](https://knowyourmeme.com/memes/we-need-to-go-deeper)). This link looks too long, so in the project's README represented another way:
+It will install DepHell into DepHell's jail ([WE NEED TO GO DEEPER](https://knowyourmeme.com/memes/we-need-to-go-deeper)).
+
+If installation script doesn't work:
 
 ```bash
 python3 -m pip install --user dephell[full]
@@ -23,7 +25,7 @@ python3 -m pip install --user dephell
 Install dev version inside of site-packages:
 
 ```bash
-wget https://raw.githubusercontent.com/dephell/dephell/master/install.py
+curl -L dephell.org/install > install.py
 python3 install.py --branch=master
 ```
 

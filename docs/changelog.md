@@ -2,6 +2,20 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.7.8 (WIP)
+
++ Fuzzy command name search ([#247](https://github.com/dephell/dephell/pull/247), [#122](https://github.com/dephell/dephell/issues/122)).
++ [Configure](config) DepHell with environment variables ([#248](https://github.com/dephell/dephell/pull/248)).
+
+## v.0.7.7
+
++ Meet [dephell.org](https://dephell.org/) ([#244](https://github.com/dephell/dephell/pull/244)).
++ Lazy dependencies overwriting ([#232](https://github.com/dephell/dephell/pull/232), [#229](https://github.com/dephell/dephell/issues/229)).
++ Removed Snyk support ([#245](https://github.com/dephell/dephell/pull/245)).
++ Added custom User-Agent to all requests ([#242](https://github.com/dephell/dephell/pull/242), [#243](https://github.com/dephell/dephell/pull/243), [#231](https://github.com/dephell/dephell/issues/231))
++ Updated documentation interface ([#241](https://github.com/dephell/dephell/pull/241)).
++ `path` support for `pip`, `pipenv`, `poetry` ([#230](https://github.com/dephell/dephell/pull/230), [#227](https://github.com/dephell/dephell/issues/227)).
+
 ## v.0.7.6
 
 + Docker support ([#220](https://github.com/dephell/dephell/pull/220), [#49](https://github.com/dephell/dephell/issues/49)).

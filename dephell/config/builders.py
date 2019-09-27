@@ -17,7 +17,7 @@ env_help = (
 def build_config(parser):
     config_group = parser.add_argument_group('Configuration file')
     config_group.add_argument('-c', '--config', help='path to config file.')
-    config_group.add_argument('-e', '--env', default='main', help='environment in config.')
+    config_group.add_argument('-e', '--env', help='environment in config.')
 
 
 def build_from(parser):

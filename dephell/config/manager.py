@@ -1,20 +1,27 @@
 # built-in
 import json
+import re
 from collections import defaultdict
+from copy import deepcopy
 from logging import captureWarnings
 from logging.config import dictConfig
+from os import environ
 from pathlib import Path
 from typing import Dict, Optional
 
 # external
 import tomlkit
 from cerberus import Validator
+from tomlkit.exceptions import TOMLKitError
 
 # app
-from ..constants import NON_PATH_FORMATS, SUFFIXES
+from ..constants import ENV_VAR_TEMPLATE, NON_PATH_FORMATS, SUFFIXES
 from .defaults import DEFAULT
 from .logging_config import LOGGING
 from .scheme import SCHEME
+
+
+ENV_VAR_REX = re.compile(ENV_VAR_TEMPLATE.format('(.+)'))
 
 
 class Config:
@@ -26,7 +33,7 @@ class Config:
     )
 
     def __init__(self, data: Optional[dict] = None):
-        self._data = data or DEFAULT.copy()
+        self._data = data or deepcopy(DEFAULT)
 
     def setup_logging(self, data: Optional[dict] = None) -> None:
         captureWarnings(True)
@@ -122,6 +129,35 @@ class Config:
         for name, value in args._get_kwargs():
             if value is None or value is False:
                 continue
+            parsed = name.split(sep, maxsplit=1)
+            if len(parsed) == 1:
+                data[name] = value
+            else:
+                # if old content isn't a dict, override it
+                if not isinstance(data[parsed[0]], dict):
+                    data[parsed[0]] = dict()
+                data[parsed[0]][parsed[1]] = value
+        self.attach(data)
+        return dict(data)
+
+    def attach_env_vars(self, *, env_vars: Dict[str, str] = environ, sep: str = '_') -> dict:
+        data = defaultdict(dict)
+        for name, value in env_vars.items():
+            # drop templated part from name
+            match = ENV_VAR_REX.fullmatch(name)
+            if not match:
+                continue
+            name = match.groups()[0].lower()
+            if name in ('env', 'config'):
+                continue
+
+            # convert value to the correct type
+            try:
+                value = tomlkit.parse('key={}'.format(value))['key']
+            except TOMLKitError:
+                pass
+
+            # do the same as in `attach_cli`
             parsed = name.split(sep, maxsplit=1)
             if len(parsed) == 1:
                 data[name] = value

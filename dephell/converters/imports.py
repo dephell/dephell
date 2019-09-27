@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Dict, List, Set
 
 # external
-import requests
 from dephell_discover import Root as PackageRoot
 
 # app
@@ -12,6 +11,7 @@ from ..cache import TextCache
 from ..cached_property import cached_property
 from ..controllers import DependencyMaker
 from ..models import RootDependency
+from ..networking import requests_session
 from .base import BaseConverter
 
 
@@ -97,7 +97,8 @@ class ImportsConverter(BaseConverter):
         cache = TextCache('imports', 'aliases', ttl=CACHE_TTL)
         lines = cache.load()
         if not lines:
-            response = requests.get(MAPPING_URLS[0])
+            with requests_session() as session:
+                response = session.get(MAPPING_URLS[0])
             lines = response.text.splitlines()
             cache.dump(lines)
 
@@ -116,7 +117,8 @@ class ImportsConverter(BaseConverter):
         if lines:
             return lines
 
-        response = requests.get(STDLIB_URL)
+        with requests_session() as session:
+            response = session.get(STDLIB_URL)
         lines = response.text.splitlines()
         cache.dump(lines)
         return lines

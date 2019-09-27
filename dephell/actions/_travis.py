@@ -17,7 +17,7 @@ before_install:
   - tree
   # install DepHell
   # https://github.com/travis-ci/travis-ci/issues/8589
-  - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.7/bin/python
+  - curl -L dephell.org/install | /opt/python/3.7/bin/python
   - dephell inspect self
 install:
   - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python"

@@ -3,6 +3,7 @@ import os.path
 import re
 from argparse import ArgumentParser
 from logging import getLogger
+from os import environ
 from pathlib import Path
 from typing import Dict, Set
 
@@ -12,7 +13,7 @@ import tomlkit
 # app
 from ..actions import attach_deps, get_python_env
 from ..config import Config, config, get_data_dir
-from ..constants import CONFIG_NAMES, GLOBAL_CONFIG_NAME
+from ..constants import CONFIG_NAMES, ENV_VAR_TEMPLATE, GLOBAL_CONFIG_NAME
 from ..controllers import analyze_conflict
 from ..converters import CONVERTERS, InstalledConverter
 
@@ -39,6 +40,7 @@ class BaseCommand:
         config.setup_logging()
         cls._attach_global_config_file()
         cls._attach_config_file(path=args.config, env=args.env)
+        config.attach_env_vars()
         config.attach_cli(args)
         config.setup_logging()
         return config
@@ -69,7 +71,7 @@ class BaseCommand:
             prog='dephell ' + name,
             usage='dephell {} [OPTIONS] {}'.format(name, usage.upper()),
             description=cls.__doc__,
-            epilog='https://dephell.readthedocs.io/cmd-{}.html'.format(name.replace(' ', '-')),
+            epilog='https://dephell.org/docs/cmd-{}.html'.format(name.replace(' ', '-')),
         )
 
     @classmethod
@@ -84,10 +86,18 @@ class BaseCommand:
 
     @classmethod
     def _attach_config_file(cls, path, env) -> bool:
+        # get params from env vars if are not specified
+        if path is None:
+            path = environ.get(ENV_VAR_TEMPLATE.format('CONFIG'))
+        if env is None:
+            env = environ.get(ENV_VAR_TEMPLATE.format('ENV'), 'main')
+
+        # if path to config specified explicitly, just use it
         if path:
             config.attach_file(path=path, env=env)
             return True
 
+        # if path isn't specified, carefully try default names
         for path in CONFIG_NAMES:
             if not os.path.exists(path):
                 continue
@@ -136,7 +146,7 @@ class BaseCommand:
                 return None
 
         # apply envs if needed
-        if 'envs' in self.config:
+        if self.config.get('envs'):
             resolver.apply_envs(set(self.config['envs']))
         elif default_envs:
             resolver.apply_envs(default_envs)

@@ -3,7 +3,8 @@ from collections import OrderedDict, defaultdict
 from typing import Iterable, Optional, Set, Tuple
 
 # external
-from dephell_links import DirLink, FileLink
+import attr
+from dephell_links import DirLink, FileLink, VCSLink
 
 # app
 from ..cached_property import cached_property
@@ -216,6 +217,30 @@ class Requirement:
         if 'dev' in self.dep.envs:
             return False
         return bool(self.dep.envs - {'dev', 'main'})
+
+    # methods
+
+    @staticmethod
+    def _get_comparable_dict(dep) -> dict:
+        excluded = {'constraint', 'repo', 'link', 'marker', 'license', 'inherited_envs', 'locations'}
+        result = attr.asdict(dep, recurse=True, filter=lambda x, _: x.name not in excluded)
+        result['constraint'] = str(dep.constraint)
+        if dep.marker:
+            result['marker'] = str(dep.marker)
+        if isinstance(dep.link, VCSLink):
+            result['link'] = attr.asdict(dep.link, recurse=True)
+        result['license'] = str(dep.license)
+        return result
+
+    def same_dep(self, other_dep) -> bool:
+        """Is given dependency the same as dependency inside of this Requirement?
+
+        It's used in converters to not overwrite unchanged requirements.
+        It looks in this way to make comparation as easy as possible:
+        converters produce dependencies, but get requirements.
+        So, it's easier to compare requirement with dependency.
+        """
+        return self._get_comparable_dict(self.dep) == self._get_comparable_dict(other_dep)
 
     # magic methods
 

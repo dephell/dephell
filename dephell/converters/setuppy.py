@@ -292,7 +292,16 @@ class SetupPyConverter(BaseConverter):
 
     @staticmethod
     def _get_list(msg, name: str) -> tuple:
-        values = getattr(msg, name, None)
+        if name == 'keywords':
+            return ' '.join(msg.get_keywords()).split()
+
+        getter = getattr(msg, 'get_' + name, None)
+        if getter:
+            values = getter()
+        else:
+            values = getattr(msg, name, None)
+        if type(values) is str:
+            values = values.split()
         if not values:
             return ()
         return tuple(value for value in values if value != 'UNKNOWN' and value.strip())

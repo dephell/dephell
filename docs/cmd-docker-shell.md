@@ -9,7 +9,7 @@ Run a shell inside of the Docker container for a current project and environment
 The command is also useful for quick experiments with project in the isolated environment:
 
 ```bash
-sudo dephell docker shell --docker-container=tmp
+$ sudo dephell docker shell --docker-container=tmp
 WARNING creating container... (container=tmp)
 INFO openning shell... (container=tmp)
 sh: 1: zsh: not found

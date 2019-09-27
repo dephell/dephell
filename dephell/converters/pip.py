@@ -48,11 +48,8 @@ class PIPConverter(BaseConverter):
             package=PackageRoot(path=self.project_path or path.parent),
         )
 
-        finder = PackageFinder(
-            find_links=[],
-            index_urls=[],
-            session=PipSession(),
-        )
+        finder = self._get_finder()
+
         # https://github.com/pypa/pip/blob/master/src/pip/_internal/req/constructors.py
         with chdir(self.resolve_path or path.parent):
             reqs = parse_requirements(
@@ -127,6 +124,22 @@ class PIPConverter(BaseConverter):
         for req in reqs:
             lines.append(self._format_req(req=req, with_hashes=with_hashes))
         return '\n'.join(lines) + '\n'
+
+    @staticmethod
+    def _get_finder():
+        try:
+            return PackageFinder(find_links=[], index_urls=[], session=PipSession())
+        except TypeError:
+            pass
+
+        from pip._internal.models.search_scope import SearchScope
+        from pip._internal.models.selection_prefs import SelectionPreferences
+
+        return PackageFinder.create(
+            search_scope=SearchScope(find_links=[], index_urls=[]),
+            selection_prefs=SelectionPreferences(allow_yanked=False),
+            session=PipSession(),
+        )
 
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
     # https://github.com/jazzband/pip-tools/blob/master/piptools/utils.py

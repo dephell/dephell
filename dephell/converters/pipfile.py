@@ -7,6 +7,7 @@ import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
+from packaging.utils import canonicalize_name
 
 # app
 from ..controllers import DependencyMaker, RepositoriesRegistry
@@ -119,22 +120,41 @@ class PIPFileConverter(BaseConverter):
             doc['requires']['python_version'] = str(python.get_short_version())
 
         # dependencies
+        names_mapping = dict()
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             # create section if doesn't exist
             if section not in doc:
                 doc[section] = tomlkit.table()
                 continue
 
-            # clean packages from old packages
-            req_names = {req.name for req in reqs if is_dev is req.is_dev}
-            for old_req in {name for name in doc[section] if name not in req_names}:
-                del doc[section][old_req]
+            # clean file from outdated dependencies
+            names = {req.name for req in reqs if is_dev is req.is_dev}
+            for name in dict(doc[section]):
+                normalized_name = canonicalize_name(name)
+                names_mapping[normalized_name] = name
+                if normalized_name not in names:
+                    del doc[section][name]
 
         # write new packages
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             for req in reqs:
-                if is_dev is req.is_dev:
-                    doc[section][req.raw_name] = self._format_req(req=req)
+                if is_dev is not req.is_dev:
+                    continue
+                raw_name = names_mapping.get(req.name, req.raw_name)
+                old_spec = doc[section].get(raw_name)
+
+                # do not overwrite dep if nothing is changed
+                if old_spec:
+                    old_dep = self._make_deps(
+                        root=RootDependency(),
+                        name=raw_name,
+                        content=old_spec,
+                    )[0]
+                    if req.same_dep(old_dep):
+                        continue
+
+                # overwrite
+                doc[section][raw_name] = self._format_req(req=req)
 
         return tomlkit.dumps(doc).rstrip() + '\n'
 

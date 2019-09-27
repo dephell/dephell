@@ -36,6 +36,9 @@ def test_bump_pyproject(temp_path: Path):
 
         [tool.poetry.dependencies]
         python = "*"
+        sentry_sdk = ">=0.9.0"
+        npm = "^0.9.0"
+        reponame = { git = "ssh://git@our-git-server:port/group/reponame.git", branch = "v3_2" }
 
         [[tool.poetry.source]]
         name = "pypi"
@@ -76,6 +79,8 @@ def test_bump_command_with_placeholder_tag(temp_path: Path, tag_template, expect
     })
     # init local repo and add `__init__.py` to git index
     _run(['git', 'init'], project=project_path)
+    _run(['git', 'config', '--local', 'user.name', 'dephell testsuite'], project=project_path)
+    _run(['git', 'config', '--local', 'user.email', 'test@dephell.invalid.'], project=project_path)
 
     # it's needed because bump command with tag generates not only tag, but also commit with --update flag
     # --update add to commit only modified files, not created (__init__.py in this case is created)

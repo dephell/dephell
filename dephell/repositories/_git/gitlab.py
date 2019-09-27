@@ -2,10 +2,8 @@
 import re
 from urllib.parse import urlencode
 
-# external
-import requests
-
 # app
+from ...networking import requests_session
 from ..cached_property import cached_property
 from .base import BaseRepo
 
@@ -28,7 +26,8 @@ class GitLabRepo(BaseRepo):
         url = 'https://gitlab.com/api/v4/projects/{id}/repository/tags'.format(
             id=urlencode(self.author + '/' + self.name),
         )
-        response = requests.get(url)
+        with requests_session() as session:
+            response = session.get(url)
 
         tags = []
         for tag in response.json():

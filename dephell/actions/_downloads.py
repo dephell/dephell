@@ -6,7 +6,9 @@ from typing import Dict, Iterable, Iterator, List
 
 # external
 import attr
-import requests
+
+# app
+from ..networking import requests_session
 
 
 RECENT_URL = 'https://pypistats.org/api/packages/{}/recent'
@@ -49,7 +51,8 @@ def make_chart(values: Iterable[int], group: int = None, ticks: str = '_▁▂�
 
 def get_total_downloads(name: str) -> Dict[str, int]:
     url = RECENT_URL.format(name)
-    response = requests.get(url)
+    with requests_session() as session:
+        response = session.get(url)
     response.raise_for_status()
     body = response.json()['data']
     return dict(
@@ -61,7 +64,8 @@ def get_total_downloads(name: str) -> Dict[str, int]:
 
 def get_downloads_by_category(*, category: str, name: str) -> List[Dict[str, int]]:
     url = CATEGORIES_URLS[category].format(name)
-    response = requests.get(url)
+    with requests_session() as session:
+        response = session.get(url)
     response.raise_for_status()
     body = response.json()['data']
 
