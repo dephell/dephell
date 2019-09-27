@@ -42,7 +42,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         # make name canonical
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'
-        self.url = self._get_url(self.url)
+        self.url = self._get_url(self.url, default_path='/simple/')
 
     @property
     def pretty_url(self) -> str:

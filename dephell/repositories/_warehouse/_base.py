@@ -45,7 +45,7 @@ class WarehouseBaseRepo(Interface):
         raise NotImplementedError
 
     @staticmethod
-    def _get_url(url: str) -> str:
+    def _get_url(url: str, default_path: str) -> str:
         # replace link on pypi api by link on simple index
         parsed = urlparse(url)
         if not parsed.hostname:
@@ -57,7 +57,7 @@ class WarehouseBaseRepo(Interface):
             hostname = parsed.netloc
 
         if hostname in WAREHOUSE_DOMAINS:
-            path = '/simple/'
+            path = default_path
         else:
             path = parsed.path
 
@@ -67,7 +67,6 @@ class WarehouseBaseRepo(Interface):
         if not scheme:
             scheme = 'http'
 
-        print(locals())
         return urlunparse((
             scheme,
             hostname,
