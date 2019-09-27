@@ -11,8 +11,8 @@ from dephell_markers import Markers
 from packaging.requirements import InvalidRequirement, Requirement
 
 # app
-from ...constants import WAREHOUSE_DOMAINS
 from ...cached_property import cached_property
+from ...constants import WAREHOUSE_DOMAINS
 from ...networking import aiohttp_session
 from ..base import Interface
 
