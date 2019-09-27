@@ -32,6 +32,7 @@ logger = getLogger('dephell.repositories.warehouse.simple')
 class WarehouseSimpleRepo(WarehouseBaseRepo):
     name = attr.ib(type=str)
     url = attr.ib(type=str)
+    pretty_url = attr.ib(type=str, default='')
     auth = attr.ib(default=None)
 
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
@@ -42,11 +43,9 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         # make name canonical
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'
+        if not self.pretty_url:
+            self.pretty_url = self.url
         self.url = self._get_url(self.url, default_path='/simple/')
-
-    @property
-    def pretty_url(self) -> str:
-        return self.url
 
     def get_releases(self, dep) -> tuple:
         links = self._get_links(name=dep.base_name)

@@ -44,6 +44,7 @@ _fields = {
 class WarehouseAPIRepo(WarehouseBaseRepo):
     name = attr.ib(type=str)
     url = attr.ib(type=str)
+    pretty_url = attr.ib(type=str, default='')
     auth = attr.ib(default=None)
 
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
@@ -57,13 +58,9 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
         # make name canonical
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'
+        if not self.pretty_url:
+            self.pretty_url = self.url
         self.url = self._get_url(self.url, default_path='/pypi/')
-
-    @property
-    def pretty_url(self):
-        parsed = urlparse(self.url)
-        path = '/simple/' if parsed.path == '/pypi/' else parsed.path
-        return parsed.scheme + '://' + parsed.hostname + path
 
     def get_releases(self, dep) -> tuple:
         # retrieve data
