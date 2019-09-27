@@ -20,7 +20,11 @@ class Interface(metaclass=abc.ABCMeta):
 
     @property
     def pretty_url(self):
-        return self.url
+        return self.__dict__.get('pretty_url', self.url)
+
+    @pretty_url.setter
+    def pretty_url(self, url):
+        self.__dict__['pretty_url'] = url
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
         raise NotImplementedError('search is unsupported by this repo')

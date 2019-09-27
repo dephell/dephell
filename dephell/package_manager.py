@@ -38,7 +38,7 @@ class PackageManager:
             args.append('--user')
         converter = PIPConverter(lock=True)
         with TemporaryDirectory() as path:
-            path = Path(path) / 'requiements.txt'
+            path = Path(path) / 'requirements.txt'
             if path.exists():
                 path.unlink()
             converter.dump(reqs=reqs, path=path, project=None)
