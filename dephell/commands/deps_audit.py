@@ -66,7 +66,7 @@ class DepsAuditCommand(BaseCommand):
                 ))
 
         if data:
-            print(make_json(data=data, key=self.config.get('filter')))
+            print(make_json(data=data, key=self.config.get('filter'), nocolors=self.config.get('nocolors')))
             return False
 
         self.logger.info('dependencies has no known vulnerabilities (yet)')

@@ -47,5 +47,6 @@ class PackageListCommand(BaseCommand):
                 authors=[str(author) for author in dep.authors],
                 updated=str(releases[0].time.date()),
             ))
-        print(make_json(data=data, key=self.config.get('filter')))
+        print(make_json(data=data, key=self.config.get('filter'),
+                        nocolors=self.config.get('nocolors')))
         return True

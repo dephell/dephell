@@ -41,7 +41,7 @@ class DepsOutdatedCommand(BaseCommand):
             ))
 
         if data:
-            print(make_json(data=data, key=self.config.get('filter')))
+            print(make_json(data=data, key=self.config.get('filter'), nocolors=self.config.get('nocolors')))
             return False
 
         self.logger.info('all dependencies is up-to-date')
