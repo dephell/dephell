@@ -3,6 +3,7 @@ import json
 from collections import defaultdict
 from functools import reduce
 from typing import Optional
+from pygments import highlight, lexers, formatters
 
 
 def _each(value):
@@ -82,20 +83,26 @@ def getitem(value, key):
     return value[key]
 
 
-def make_json(data, key: str = None, sep: Optional[str] = '-') -> str:
+def colorful_json(formatted_json, nocolors: bool = False):
+    if not nocolors:
+        return highlight(formatted_json, lexers.JsonLexer(), formatters.TerminalFormatter())
+    return formatted_json
+
+
+def make_json(data, key: str = None, sep: Optional[str] = '-', nocolors: Optional[bool] = False) -> str:
     json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
     # print all config
     if not key:
-        return json.dumps(data, **json_params)  # type: ignore
+        return colorful_json(json.dumps(data, **json_params), nocolors)  # type: ignore
 
     if sep is None:
-        return json.dumps(data[key], **json_params)  # type: ignore
+        return colorful_json(json.dumps(data[key], **json_params), nocolors)  # type: ignore
 
     keys = key.replace('.', sep).split(sep)
     value = reduce(getitem, keys, data)
     # print config section
     if isinstance(value, (dict, list)):
-        return json.dumps(value, **json_params)  # type: ignore
+        return colorful_json(json.dumps(value, **json_params), nocolors)  # type: ignore)
 
     # print one value
     return str(value)
