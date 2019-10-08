@@ -37,5 +37,5 @@ class DepsLicensesCommand(BaseCommand):
                 licenses['Unknown'].add(dep.name)
         licenses = {name: sorted(deps) for name, deps in licenses.items()}
         print(make_json(data=licenses, key=self.config.get('filter'),
-                        nocolors=self.config.get('nocolors'), sep=None))
+                        nocolors=not self.config['nocolors'], sep=None))
         return True

@@ -27,5 +27,5 @@ class InspectConfigCommand(BaseCommand):
         config = self.config._data.copy()
         del config['auth']  # do not show credentials
         print(make_json(data=config, key=self.config.get('filter'),
-                        nocolors=self.config.get('nocolors')))
+                        nocolors=not self.config['nocolors']))
         return True

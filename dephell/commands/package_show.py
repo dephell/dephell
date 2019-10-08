@@ -55,5 +55,5 @@ class PackageShowCommand(BaseCommand):
             ))
 
         print(make_json(data=data, key=self.config.get('filter'),
-                        nocolors=self.config.get('nocolors')))
+                        nocolors=not self.config['nocolors']))
         return True
