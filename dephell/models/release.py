@@ -12,17 +12,17 @@ from packaging.version import parse
 from ..cached_property import cached_property
 
 
-@attr.s(hash=False, cmp=True)
+@attr.s(hash=False, eq=True, order=True)
 class Release:
     dependencies = None  # type: tuple
 
-    raw_name = attr.ib(type=str, cmp=False)
-    version = attr.ib(converter=parse, cmp=True)  # typing: ignore
-    time = attr.ib(repr=False, hash=False)                      # upload_time
-    python = attr.ib(default=None, repr=False, cmp=False)       # requires_python
-    hashes = attr.ib(factory=tuple, repr=False, cmp=False)      # digests/sha256
+    raw_name = attr.ib(type=str, eq=False, order=False)
+    version = attr.ib(converter=parse, eq=True, order=True)             # type: ignore
+    time = attr.ib(repr=False, hash=False, eq=True, order=True)         # upload_time
+    python = attr.ib(default=None, repr=False, eq=False, order=False)   # requires_python
+    hashes = attr.ib(factory=tuple, repr=False, eq=False, order=False)  # digests/sha256
 
-    extra = attr.ib(type=Optional[str], default=None)
+    extra = attr.ib(type=Optional[str], default=None, eq=False, order=False)
 
     def __attrs_post_init__(self):
         assert '[' not in self.raw_name, self.raw_name
