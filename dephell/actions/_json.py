@@ -83,26 +83,27 @@ def getitem(value, key):
     return value[key]
 
 
-def colorful_json(formatted_json, nocolors: bool = False):
-    if not nocolors:
-        return highlight(formatted_json, lexers.JsonLexer(), formatters.TerminalFormatter())
-    return formatted_json
-
-
-def make_json(data, key: str = None, sep: Optional[str] = '-', nocolors: Optional[bool] = False) -> str:
+def _jsonify(data, colors: bool = False) -> str:
     json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
+    dumped = json.dumps(data, **json_params)
+    if not colors:
+        return dumped
+    return highlight(dumped, lexers.JsonLexer(), formatters.TerminalFormatter())
+
+
+def make_json(data, key: str = None, sep: Optional[str] = '-', colors: bool = True) -> str:
     # print all config
     if not key:
-        return colorful_json(json.dumps(data, **json_params), nocolors)  # type: ignore
+        return _jsonify(data=data, colors=colors)
 
     if sep is None:
-        return colorful_json(json.dumps(data[key], **json_params), nocolors)  # type: ignore
+        return _jsonify(data=data[key], colors=colors)
 
     keys = key.replace('.', sep).split(sep)
     value = reduce(getitem, keys, data)
     # print config section
     if isinstance(value, (dict, list)):
-        return colorful_json(json.dumps(value, **json_params), nocolors)  # type: ignore)
+        return _jsonify(data=value, colors=colors)
 
     # print one value
     return str(value)
