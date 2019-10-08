@@ -20,6 +20,7 @@ def test_deps_licenses_command(temp_path: Path, capsys):
         'from': dict(format='pip', path=str(reqs_path)),
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = DepsLicensesCommand(argv=[], config=config)

@@ -22,6 +22,7 @@ def test_deps_outdated_command_file(temp_path: Path, capsys):
         'from': dict(format='piplock', path=str(reqs_path)),
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = DepsOutdatedCommand(argv=[], config=config)
@@ -49,6 +50,7 @@ def test_deps_outdated_command_venv(temp_path: Path, capsys):
         'venv': str(venv_path),
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = DepsOutdatedCommand(argv=[], config=config)

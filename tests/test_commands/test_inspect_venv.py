@@ -19,6 +19,7 @@ def test_inspect_venv_command(temp_path: Path, capsys):
     config.attach({
         'project': str(temp_path),
         'venv': str(temp_path),
+        'nocolors': True,
     })
 
     command = InspectVenvCommand(argv=[], config=config)
