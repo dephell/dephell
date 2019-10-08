@@ -54,6 +54,9 @@ class PackageShowCommand(BaseCommand):
                 size=format_size(sum(get_path_size(place) for place in local_places)),
             ))
 
-        print(make_json(data=data, key=self.config.get('filter'),
-                        colors=not self.config['nocolors']))
+        print(make_json(
+            data=data,
+            key=self.config.get('filter'),
+            colors=not self.config['nocolors'],
+        ))
         return True
