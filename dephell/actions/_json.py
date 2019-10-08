@@ -3,7 +3,9 @@ import json
 from collections import defaultdict
 from functools import reduce
 from typing import Optional
-from pygments import highlight, lexers, formatters
+
+# external
+from pygments import formatters, highlight, lexers
 
 
 def _each(value):
