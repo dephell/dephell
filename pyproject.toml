@@ -134,7 +134,7 @@ dephell = "dephell.cli:entrypoint"
 python = ">=3.5"
 aiohttp = "*"
 appdirs = "*"
-attrs = "*"
+attrs = ">=19.1.0"
 bowler = {python = ">=3.6",version = "*"}
 bowler-py35 = {version = ">=0.9.1",python = "<3.6"}
 cerberus = ">=1.3"
