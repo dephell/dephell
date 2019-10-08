@@ -33,5 +33,5 @@ class JailListCommand(BaseCommand):
                 entrypoints[venv_path.name].append(entrypoint.name)
 
         print(make_json(data=dict(entrypoints), key=self.config.get('filter'),
-                        nocolors=not self.config['nocolors'], sep=None))
+                        colors=not self.config['nocolors'], sep=None))
         return True

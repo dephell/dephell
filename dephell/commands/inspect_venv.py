@@ -41,5 +41,5 @@ class InspectVenvCommand(BaseCommand):
                 python=str(venv.python_path),
             ))
         print(make_json(data=data, key=self.config.get('filter'),
-                        nocolors=not self.config['nocolors']))
+                        colors=not self.config['nocolors']))
         return True

@@ -19,5 +19,5 @@ class InspectAuthCommand(BaseCommand):
 
     def __call__(self) -> bool:
         print(make_json(data=self.config['auth'], key=self.config.get('filter'),
-                        nocolors=not self.config['nocolors']))
+                        colors=not self.config['nocolors']))
         return True

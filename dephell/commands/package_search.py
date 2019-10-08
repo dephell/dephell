@@ -28,5 +28,5 @@ class PackageSearchCommand(BaseCommand):
             self.logger.error('no results')
             return False
         print(make_json(data=results, key=self.config.get('filter'),
-                        nocolors=not self.config['nocolors']))
+                        colors=not self.config['nocolors']))
         return True

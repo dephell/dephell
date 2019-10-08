@@ -25,7 +25,7 @@ DEFAULT = dict(
     # output
     format='short',
     level='INFO',
-    nocolors=False,
+    colors=False,
     silent=False,
     traceback=False,
     pdb=False,
