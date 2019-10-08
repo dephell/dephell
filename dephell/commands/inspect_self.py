@@ -36,5 +36,9 @@ class InspectSelfCommand(BaseCommand):
             versions=versions,
             cache=format_size(get_path_size(Path(self.config['cache']['path']))),
         )
-        print(make_json(data=data, key=self.config.get('filter')))
+        print(make_json(
+            data=data,
+            key=self.config.get('filter'),
+            colors=not self.config['nocolors'],
+        ))
         return True

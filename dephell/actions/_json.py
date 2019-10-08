@@ -4,6 +4,9 @@ from collections import defaultdict
 from functools import reduce
 from typing import Optional
 
+# external
+from pygments import formatters, highlight, lexers
+
 
 def _each(value):
     if isinstance(value, list):
@@ -82,20 +85,27 @@ def getitem(value, key):
     return value[key]
 
 
-def make_json(data, key: str = None, sep: Optional[str] = '-') -> str:
+def _jsonify(data, colors: bool = False) -> str:
     json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
+    dumped = json.dumps(data, **json_params)
+    if not colors:
+        return dumped
+    return highlight(dumped, lexers.JsonLexer(), formatters.TerminalFormatter())
+
+
+def make_json(data, key: str = None, sep: Optional[str] = '-', colors: bool = True) -> str:
     # print all config
     if not key:
-        return json.dumps(data, **json_params)  # type: ignore
+        return _jsonify(data=data, colors=colors)
 
     if sep is None:
-        return json.dumps(data[key], **json_params)  # type: ignore
+        return _jsonify(data=data[key], colors=colors)
 
     keys = key.replace('.', sep).split(sep)
     value = reduce(getitem, keys, data)
     # print config section
     if isinstance(value, (dict, list)):
-        return json.dumps(value, **json_params)  # type: ignore
+        return _jsonify(data=value, colors=colors)
 
     # print one value
     return str(value)

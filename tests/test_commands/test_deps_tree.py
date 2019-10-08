@@ -16,6 +16,7 @@ def test_deps_tree_command(temp_path: Path, capsys):
     config.attach({
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = DepsTreeCommand(argv=['--type=json', 'autopep8==1.4.3'], config=config)

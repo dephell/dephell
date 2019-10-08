@@ -62,7 +62,7 @@ setup(
         'fissix; python_version >= "3.6"',
         'fissix-py35; python_version < "3.6"', 'html5lib', 'jinja2', 'm2r',
         'packaging', 'pip>=18.0', 'pyyaml', 'requests', 'setuptools', 'tomlkit',
-        'yaspin'
+        'yaspin','Pygments'
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
