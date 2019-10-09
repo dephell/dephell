@@ -117,7 +117,7 @@ class Config:
 
         # get env
         if env not in data:
-            raise KeyError('env `{}` not found'.format(env))
+            raise KeyError('env `{}` not found in config'.format(env))
         data = data[env]
 
         self.attach(data)
