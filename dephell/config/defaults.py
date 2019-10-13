@@ -27,8 +27,9 @@ DEFAULT = dict(
     level='INFO',
     nocolors=False,
     silent=False,
-    traceback=False,
+    traceback=True,
     pdb=False,
+    table=False,
 
     # venv
     venv=str(get_data_dir() / 'venvs' / '{project}-{digest}' / '{env}'),

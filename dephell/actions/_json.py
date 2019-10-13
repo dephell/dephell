@@ -1,11 +1,16 @@
 # built-in
 import json
 from collections import defaultdict
-from functools import reduce
+from functools import reduce, wraps
 from typing import Optional
 
 # external
 from pygments import formatters, highlight, lexers
+import flatdict
+from tabulate import tabulate
+
+# app
+from ..config import config
 
 
 def _each(value):
@@ -93,6 +98,34 @@ def _jsonify(data, colors: bool = False) -> str:
     return highlight(dumped, lexers.JsonLexer(), formatters.TerminalFormatter())
 
 
+def _make_table(json_table: str) -> str:
+
+    # Load the created json as dict
+    to_table = json.loads(json_table)
+
+    # Transform it into a flat dictionary
+    to_table = flatdict.FlatDict(to_table)
+
+    # Create an array where the first row are the keys
+    # the other rows are the value
+    to_table = [to_table.keys(), to_table.values()]
+
+    return tabulate(to_table, headers='firstrow', tablefmt='fancy_grid')
+
+
+def _tabelize(func):
+
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        if not config['table']:
+            return func(*args, **kwargs)
+        else:
+            return _make_table(func(*args, **kwargs))
+
+    return func_wrapper
+
+
+@_tabelize
 def make_json(data, key: str = None, sep: Optional[str] = '-', colors: bool = True) -> str:
     # print all config
     if not key:
