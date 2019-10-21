@@ -6,7 +6,7 @@ from typing import Optional
 
 # external
 from pygments import formatters, highlight, lexers
-import flatdict
+from flatdict import FlatDict
 from tabulate import tabulate
 
 
@@ -94,12 +94,19 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
     1. Returns plain JSON otherwise.
     """
     if table:
-        # Transform it into a flat dictionary
-        to_table = flatdict.FlatDict(data, delimiter='.')
-        # Create an array where the first row are the keys
-        # the other rows are the value
-        to_table = [to_table.keys(), to_table.values()]
-        return tabulate(to_table, headers='firstrow', tablefmt='fancy_grid')
+        # one dict
+        if isinstance(data, dict):
+            data = FlatDict(data, delimiter='.').items()
+            return tabulate(data, headers=('key', 'value'), tablefmt='fancy_grid')
+        # list of dicts
+        if isinstance(data, list) and data and isinstance(data[0], dict):
+            table = []
+            for row in data:
+                row = FlatDict(row, delimiter='.')
+                keys = tuple(row)
+                row = [v for _, v in sorted(row.items())]
+                table.append(row)
+            return tabulate(table, headers=keys, tablefmt='fancy_grid')
 
     json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
     dumped = json.dumps(data, **json_params)
