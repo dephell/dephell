@@ -33,7 +33,7 @@ class DepsAddCommand(BaseCommand):
     def __call__(self) -> bool:
         # get current deps
         if 'from' not in self.config:
-            self.error('`--from` is required for this command')
+            self.logger.error('`--from` is required for this command')
             return False
         converter = CONVERTERS[self.config['from']['format']]
         converter = converter.copy(project_path=Path(self.config['project']))

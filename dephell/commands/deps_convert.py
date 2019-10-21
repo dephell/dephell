@@ -28,10 +28,10 @@ class DepsConvertCommand(BaseCommand):
 
     def __call__(self) -> bool:
         if 'from' not in self.config:
-            self.error('`--from` is required for this command')
+            self.logger.error('`--from` is required for this command')
             return False
         if 'to' not in self.config:
-            self.error('`--to` is required for this command')
+            self.logger.error('`--to` is required for this command')
             return False
         loader = CONVERTERS[self.config['from']['format']]
         loader = loader.copy(project_path=Path(self.config['project']))
