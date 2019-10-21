@@ -27,7 +27,7 @@ DEFAULT = dict(
     level='INFO',
     nocolors=False,
     silent=False,
-    traceback=True,
+    traceback=False,
     pdb=False,
     table=False,
 
