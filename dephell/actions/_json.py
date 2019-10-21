@@ -5,8 +5,8 @@ from functools import reduce
 from typing import Optional
 
 # external
-from pygments import formatters, highlight, lexers
 from flatdict import FlatDict
+from pygments import formatters, highlight, lexers
 from tabulate import tabulate
 
 
