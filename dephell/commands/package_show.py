@@ -58,5 +58,6 @@ class PackageShowCommand(BaseCommand):
             data=data,
             key=self.config.get('filter'),
             colors=not self.config['nocolors'],
+            table=self.config['table'],
         ))
         return True
