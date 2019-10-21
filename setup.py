@@ -9,9 +9,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-# built-in
 import os.path
-
 
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
@@ -52,7 +50,8 @@ setup(
     ],
     package_data={'dephell': ['templates/*.j2', 'templates/*.sh']},
     install_requires=[
-        'aiohttp', 'appdirs', 'attrs', 'bowler; python_version >= "3.6"',
+        'aiohttp', 'appdirs', 'attrs>=19.1.0',
+        'bowler; python_version >= "3.6"',
         'bowler-py35>=0.9.1; python_version < "3.6"', 'cerberus>=1.3',
         'dephell-archive>=0.1.5', 'dephell-discover>=0.2.6',
         'dephell-licenses>=0.1.6', 'dephell-links>=0.1.4',
@@ -61,18 +60,19 @@ setup(
         'dephell-venvs>=0.1.16', 'dephell-versioning', 'docker', 'dockerpty',
         'fissix; python_version >= "3.6"',
         'fissix-py35; python_version < "3.6"', 'html5lib', 'jinja2', 'm2r',
-        'packaging', 'pip>=18.0', 'pyyaml', 'requests', 'setuptools', 'tomlkit',
-        'yaspin','Pygments'
+        'packaging', 'pip>=18.0', 'pygments', 'requests', 'ruamel.yaml',
+        'setuptools', 'tomlkit', 'yaspin'
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
-        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'dev': [
             'aioresponses', 'alabaster', 'flake8-isort', 'isort[pyproject]',
             'pygments-github-lexers', 'pytest', 'recommonmark', 'requests-mock',
             'sphinx'
         ],
-        'docs':
-        ['alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx']
+        'tests': ['aioresponses', 'pytest', 'requests-mock'],
+        'docs': [
+            'alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx'
+        ]
     },
 )
