@@ -170,7 +170,6 @@ class PIPConverter(BaseConverter):
             allow_yanked=False,
         )
 
-
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
     # https://github.com/jazzband/pip-tools/blob/master/piptools/utils.py
     def _format_req(self, req, *, with_hashes: bool = True) -> str:
