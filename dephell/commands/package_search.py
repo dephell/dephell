@@ -31,5 +31,6 @@ class PackageSearchCommand(BaseCommand):
             data=results,
             key=self.config.get('filter'),
             colors=not self.config['nocolors'],
+            table=self.config['table'],
         ))
         return True

@@ -53,6 +53,7 @@ class DepsTreeCommand(BaseCommand):
                 data=result,
                 key=self.config.get('filter'),
                 colors=not self.config['nocolors'],
+                table=self.config['table'],
             ))
             return True
 
