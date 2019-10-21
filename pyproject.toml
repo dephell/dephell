@@ -142,6 +142,7 @@ docker = "*"
 dockerpty = "*"
 fissix = {python = ">=3.6",allows-prereleases = true,version = "*"}
 fissix-py35 = {python = "<3.6",version = "*"}
+flatdict = "*"
 html5lib = "*"
 jinja2 = "*"
 m2r = "*"
@@ -151,6 +152,7 @@ pygments = "*"
 pyyaml = "*"  # TODO: replace by ruamel.yaml when migrate from poetry format to flit
 requests = "*"
 setuptools = "*"
+tabulate = "*"
 tomlkit = "*"
 yaspin = "*"
 
