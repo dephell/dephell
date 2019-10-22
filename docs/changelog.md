@@ -2,10 +2,16 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
-## v.0.7.8 (WIP)
+## v.0.7.8
 
 + Fuzzy command name search ([#247](https://github.com/dephell/dephell/pull/247), [#122](https://github.com/dephell/dephell/issues/122)).
 + [Configure](config) DepHell with environment variables ([#248](https://github.com/dephell/dephell/pull/248)).
++ Colored JSON output ([#262](https://github.com/dephell/dephell/pull/262), [#260](https://github.com/dephell/dephell/pull/260), [#205](https://github.com/dephell/dephell/issues/205)).
++ Table output with `--table` ([#277](https://github.com/dephell/dephell/pull/277), [#267](https://github.com/dephell/dephell/pull/267), [#206](https://github.com/dephell/dephell/issues/206)).
++ New [attrs](https://www.attrs.org) ([#261](https://github.com/dephell/dephell/pull/261)).
++ ruamel.yaml instead of pyyaml ([#275](https://github.com/dephell/dephell/pull/275))
++ pip 19.3.1 support ([#276](https://github.com/dephell/dephell/pull/276)).
++ [a little bit more](https://github.com/dephell/dephell/pulls?q=is%3Apr+is%3Aclosed+milestone%3Av.0.7.8)
 
 ## v.0.7.7
 
