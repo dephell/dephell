@@ -7,18 +7,18 @@ Thank you for deciding to contribute to DepHell!  This guide is to assist you wi
 So you want to contribute some code?  Great! Here are the basic steps:
 
 1. Find an [issue][issues] that you want to work on. Good places to start are [good first issues] or [help wanted]. You could also [open an issue][open issue] if there is something specific you want to contribute. Wait for a response before you start coding though, as the thing you want might already exist somewhere!
-2. Fork DepHell.
-3. Clone your fork.
-4. Create a branch to work against.
-5. Run tests to make sure they work for your system.
-6. Write some tests.
-7. Write some code.
-8. Run tests to make sure it works.
-9. Run flake8 checks.
-10. Write some docs.
-11. Push your branch (to your fork).
-12. Create a pull request to dephell/master
-13. Wait for checks to run and fix anything that was wrong
+1. Fork DepHell.
+1. Clone your fork.
+1. Create a branch to work against.
+1. Run tests to make sure they work for your system.
+1. Write some tests.
+1. Write some code.
+1. Run tests to make sure it works.
+1. Run flake8 checks.
+1. Write some docs.
+1. Push your branch (to your fork).
+1. Create a pull request to dephell/master
+1. Wait for checks to run and fix anything that was wrong
 
 ## Testing
 
