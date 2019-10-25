@@ -40,5 +40,10 @@ class InspectVenvCommand(BaseCommand):
                 lib_size=format_size(get_path_size(venv.lib_path)),
                 python=str(venv.python_path),
             ))
-        print(make_json(data=data, key=self.config.get('filter')))
+        print(make_json(
+            data=data,
+            key=self.config.get('filter'),
+            colors=not self.config['nocolors'],
+            table=self.config['table'],
+        ))
         return True

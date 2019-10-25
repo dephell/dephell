@@ -286,6 +286,7 @@ class SetupPyConverter(BaseConverter):
             value = getattr(msg, name, None)
         if not value:
             return ''
+        value = str(value)
         if value == 'UNKNOWN':
             return ''
         return value.strip()

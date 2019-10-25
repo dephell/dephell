@@ -32,5 +32,10 @@ class PackageDownloadsCommand(BaseCommand):
             systems=get_downloads_by_category(category='systems', name=name),
         )
 
-        print(make_json(data=data, key=self.config.get('filter')))
+        print(make_json(
+            data=data,
+            key=self.config.get('filter'),
+            colors=not self.config['nocolors'],
+            table=self.config['table'],
+        ))
         return True

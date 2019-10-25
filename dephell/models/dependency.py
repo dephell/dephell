@@ -15,7 +15,7 @@ from .groups import Groups
 from .marker_tracker import MarkerTracker
 
 
-@attr.s(cmp=False)
+@attr.s(eq=False, order=False)
 class Dependency:
     raw_name = attr.ib(type=str)
     constraint = attr.ib(type=Constraint)

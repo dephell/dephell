@@ -9,9 +9,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-# built-in
 import os.path
-
 
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
@@ -23,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.7.7',
+    version='0.7.8',
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
@@ -52,7 +50,8 @@ setup(
     ],
     package_data={'dephell': ['templates/*.j2', 'templates/*.sh']},
     install_requires=[
-        'aiohttp', 'appdirs', 'attrs', 'bowler; python_version >= "3.6"',
+        'aiohttp', 'appdirs', 'attrs>=19.1.0',
+        'bowler; python_version >= "3.6"',
         'bowler-py35>=0.9.1; python_version < "3.6"', 'cerberus>=1.3',
         'dephell-archive>=0.1.5', 'dephell-discover>=0.2.6',
         'dephell-licenses>=0.1.6', 'dephell-links>=0.1.4',
@@ -60,9 +59,9 @@ setup(
         'dephell-shells>=0.1.3', 'dephell-specifier>=0.1.7',
         'dephell-venvs>=0.1.16', 'dephell-versioning', 'docker', 'dockerpty',
         'fissix; python_version >= "3.6"',
-        'fissix-py35; python_version < "3.6"', 'html5lib', 'jinja2', 'm2r',
-        'packaging', 'pip>=18.0', 'pyyaml', 'requests', 'setuptools', 'tomlkit',
-        'yaspin'
+        'fissix-py35; python_version < "3.6"', 'flatdict', 'html5lib', 'jinja2',
+        'm2r', 'packaging', 'pip>=18.0', 'pygments', 'requests', 'ruamel.yaml',
+        'setuptools', 'tabulate', 'tomlkit', 'yaspin'
     ],
     extras_require={
         'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
@@ -72,7 +71,8 @@ setup(
             'pygments-github-lexers', 'pytest', 'recommonmark', 'requests-mock',
             'sphinx'
         ],
-        'docs':
-        ['alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx']
+        'docs': [
+            'alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx'
+        ]
     },
 )

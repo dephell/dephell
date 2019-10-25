@@ -8,7 +8,7 @@ from .dependency import Dependency
 from .groups import Groups
 
 
-@attr.s(cmp=False)
+@attr.s(eq=False, order=False)
 class ExtraDependency(Dependency):
     extra = attr.ib(type=str, default='')
 

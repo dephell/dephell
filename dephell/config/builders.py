@@ -58,6 +58,7 @@ def build_output(parser):
     output_group.add_argument('--level', choices=LOG_LEVELS, help='minimal level for log messages.')
 
     output_group.add_argument('--nocolors', action='store_true', help='do not color output.')
+    output_group.add_argument('--table', action='store_true', help='use table for output.')
     output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
     output_group.add_argument('--filter', help='filter for JSON output.')
 

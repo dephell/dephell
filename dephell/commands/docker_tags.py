@@ -21,5 +21,10 @@ class DockerTagsCommand(BaseCommand):
 
     def __call__(self) -> bool:
         container = get_docker_container(config=self.config)
-        print(make_json(data=container.tags, key=self.config.get('filter')))
+        print(make_json(
+            data=container.tags,
+            key=self.config.get('filter'),
+            colors=not self.config['nocolors'],
+            table=self.config['table'],
+        ))
         return True

@@ -13,6 +13,7 @@ def test_inspect_config_command(temp_path: Path, capsys):
         'level': 'WARNING',
         'silent': True,
         'project': 'nani',
+        'nocolors': True,
     })
     command = InspectConfigCommand(argv=[], config=config)
     result = command()
