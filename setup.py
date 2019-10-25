@@ -25,9 +25,9 @@ setup(
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
+        'documentation': 'https://dephell.org/docs/',
         'homepage': 'https://dephell.org/',
-        'repository': 'https://github.com/dephell/dephell',
-        'documentation': 'https://dephell.org/docs/'
+        'repository': 'https://github.com/dephell/dephell'
     },
     author='Gram',
     author_email='master_fess@mail.ru',
@@ -50,7 +50,7 @@ setup(
     ],
     package_data={'dephell': ['templates/*.j2', 'templates/*.sh']},
     install_requires=[
-        'aiohttp', 'appdirs', 'attrs>=19.1.0',
+        'aiohttp', 'appdirs', 'attrs>=19.2.0',
         'bowler; python_version >= "3.6"',
         'bowler-py35>=0.9.1; python_version < "3.6"', 'cerberus>=1.3',
         'dephell-archive>=0.1.5', 'dephell-discover>=0.2.6',
@@ -64,15 +64,14 @@ setup(
         'setuptools', 'tabulate', 'tomlkit', 'yaspin'
     ],
     extras_require={
-        'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
-        'tests': ['aioresponses', 'pytest', 'requests-mock'],
         'dev': [
             'aioresponses', 'alabaster', 'flake8-isort', 'isort[pyproject]',
             'pygments-github-lexers', 'pytest', 'recommonmark', 'requests-mock',
             'sphinx'
         ],
-        'docs': [
-            'alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx'
-        ]
+        'docs':
+        ['alabaster', 'pygments-github-lexers', 'recommonmark', 'sphinx'],
+        'full': ['aiofiles', 'autopep8', 'colorama', 'graphviz', 'yapf'],
+        'tests': ['aioresponses', 'pytest', 'requests-mock']
     },
 )
