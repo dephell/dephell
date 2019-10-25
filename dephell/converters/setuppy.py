@@ -208,6 +208,8 @@ class SetupPyConverter(BaseConverter):
 
         # packages, package_data
         content.append(('packages', sorted(str(p) for p in project.package.packages)))
+        if project.package.package_dir:
+            content.append(('package_dir', project.package.package_dir))
         data = defaultdict(list)
         for rule in project.package.data:
             data[rule.module].append(rule.relative)
