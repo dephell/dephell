@@ -1,6 +1,5 @@
 # built-in
 import json
-import sys
 from pathlib import Path
 
 # project
@@ -25,4 +24,4 @@ def test_inspect_project_command(temp_path: Path, requirements_path: Path, capsy
     captured = capsys.readouterr()
     print(captured.out)
     output = json.loads(captured.out)
-    assert output['project_name']=='my-package' 
+    assert output['project_name'] == 'my-package'

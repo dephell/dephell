@@ -1,13 +1,15 @@
 # built-in
 from argparse import ArgumentParser
-import attr
 from pathlib import Path
 
+import attr
+
+from ..actions import make_json
+from ..config import builders
 # app
 from ..converters import CONVERTERS
-from ..config import builders
 from .base import BaseCommand
-from ..actions import make_json
+
 
 class InspectProjectCommand(BaseCommand):
     """Inspect the current project.
