@@ -65,6 +65,18 @@ class DepsConvertCommand(BaseCommand):
                 return False
             self.logger.debug('resolved')
 
+        # filter out deps by `--envs`
+        if self.config.get('envs'):
+            if len(resolver.graph._layers) == 1:
+                for root in resolver.graph._roots:
+                    for dep in root.dependencies:
+                        dep.applied = True
+                        resolver.graph.add(dep)
+                for root in resolver.graph._roots:
+                    root.applied = True
+            resolver.apply_envs(set(self.config['envs']))
+            resolver.graph._layers = resolver.graph._layers[:1]
+
         # dump
         self.logger.debug('dump dependencies...', extra=dict(
             format=self.config['to']['format'],
