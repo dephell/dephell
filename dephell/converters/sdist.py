@@ -184,14 +184,16 @@ class SDistConverter(BaseConverter):
                     name=str(tests_path),
                     arcname=subdir + tests_path.name,
                     filter=self._set_uid_gid,
-                    recursive=False)
+                    recursive=False
+                )
                 for path in subpaths:
-                    if '__pycache__' not in str(path):
+                    if '__pycache__' not in str(path):  # exclude cache files
                         tar.add(
                             name=str(path),
-                            arcname=subdir + path.name,
+                            arcname=subdir + str(path),
                             filter=self._set_uid_gid,
-                            recursive=False)
+                            recursive=False
+                        )
 
     def _write_content(self, tar, path: str, content) -> None:
         content = content.encode('utf-8')
