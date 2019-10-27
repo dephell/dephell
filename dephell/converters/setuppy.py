@@ -277,7 +277,7 @@ class SetupPyConverter(BaseConverter):
             try:
                 exec(compile(new_source, path.name, 'exec'), globe)
             except Exception as e:
-                logger.error('{}: {}'.format(type(e).__name__, str(e)))
+                logger.exception('_execute {}: {}'.format(type(e).__name__, str(e)))
 
         dist = globe.get('_dist')
         if dist is None:
