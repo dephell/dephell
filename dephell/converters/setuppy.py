@@ -1,4 +1,5 @@
 # built-in
+import sys
 from collections import defaultdict
 from distutils.core import run_setup
 from json import dumps as json_dumps
@@ -76,10 +77,15 @@ class SetupPyConverter(BaseConverter):
         path = self._make_source_path_absolute(path)
         self._resolve_path = path.parent
 
+        old_sys_path = sys.path
+        sys.path.append(str(path.parent))
+
         info = self._execute(path=path)
         if info is None:
             with chdir(path.parent):
                 info = run_setup(path.name)
+
+        sys.path = old_sys_path
 
         root = RootDependency(
             raw_name=self._get(info, 'name'),

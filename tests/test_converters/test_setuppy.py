@@ -77,6 +77,25 @@ def test_run_setup_function(temp_path: Path):
     assert dist.get_name() == 'foo'
 
 
+def test_import(temp_path: Path):
+    with open(str(temp_path / 'local_module.py'), 'w') as f:
+        f.write(dedent("""
+        name = 'imported'
+        """))
+    path = temp_path / 'setup.py'
+    with open(str(path), 'w') as f:
+        f.write(dedent("""
+        import sys
+        print(sys.path)
+        import local_module
+        setup(name=local_module.name)
+        """))
+
+    root = SetupPyConverter().load(path)
+
+    assert root.name == 'imported'
+
+
 def test_dumps_deps():
     path = Path('tests') / 'requirements' / 'setup.py'
     converter = SetupPyConverter()
