@@ -5,6 +5,7 @@ from io import BytesIO, StringIO
 from json import dumps as json_dumps
 from logging import getLogger
 from pathlib import Path
+from re import sub
 from typing import Optional
 
 # external
@@ -263,7 +264,14 @@ class SetupPyConverter(BaseConverter):
     @staticmethod
     def _execute(path: Path):
         source = path.read_text('utf-8')
-        new_source = source.replace('setup(', '_dist = dict(')
+        # Remove any dotted module names
+        new_source = sub(r'[a-z][a-z0-9.]*\.setup\(', 'setup(', source)
+        # Remove return
+        new_source = new_source.replace('return setup(', 'setup(')
+        # Rename functions that end with setup
+        new_source = sub(r'([_a-z][a-z0-9._]*)setup\(', r'setup\1(', new_source)
+        # Ensure _dist is global
+        new_source = new_source.replace('setup(', 'global _dist; _dist = dict(')
         if new_source == source:
             logger.error('cannot modify source')
             return None
