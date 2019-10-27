@@ -1,7 +1,6 @@
 # built-in
 from collections import defaultdict
 from distutils.core import run_setup
-from io import BytesIO, StringIO
 from json import dumps as json_dumps
 from logging import getLogger
 from pathlib import Path
@@ -54,12 +53,6 @@ setup(
     {kwargs},
 )
 """
-
-
-def _patched_open(fname, mode='r', *args, **kwargs):
-    if 'b' in mode:
-        return BytesIO(fname.encode('utf8'))
-    return StringIO(fname)
 
 
 class SetupPyConverter(BaseConverter):
@@ -271,7 +264,6 @@ class SetupPyConverter(BaseConverter):
         globe = {
             '__file__': str(path),
             '__name__': '__main__',
-            'open': _patched_open,
         }
         with chdir(path.parent):
             try:
