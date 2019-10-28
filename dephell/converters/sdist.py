@@ -175,7 +175,6 @@ class SDistConverter(BaseConverter):
         if self.ratio is None:
             self.ratio = config['sdist']['ratio']
         tests_path = Path('tests')
-        subpaths = tests_path.glob('**/*')
         if tests_path.exists():
             package_size = get_path_size(path=project.package.packages[0].path)
             tests_size = get_path_size(path=tests_path)
@@ -184,16 +183,7 @@ class SDistConverter(BaseConverter):
                     name=str(tests_path),
                     arcname=subdir + tests_path.name,
                     filter=self._set_uid_gid,
-                    recursive=False,
                 )
-                for path in subpaths:
-                    if '__pycache__' not in str(path):  # exclude cache files
-                        tar.add(
-                            name=str(path),
-                            arcname=subdir + str(path),
-                            filter=self._set_uid_gid,
-                            recursive=False,
-                        )
 
     def _write_content(self, tar, path: str, content) -> None:
         content = content.encode('utf-8')
@@ -204,7 +194,9 @@ class SDistConverter(BaseConverter):
 
     # poetry/masonry/builders/sdist.py:clean_tarinfo
     @staticmethod
-    def _set_uid_gid(tarinfo: TarInfo) -> TarInfo:
+    def _set_uid_gid(tarinfo: TarInfo) -> TarInfo or None:
+        if '__pycache__' in tarinfo.name:
+            return None
         tarinfo.uid = tarinfo.gid = 0
         tarinfo.uname = tarinfo.gname = ''
 
