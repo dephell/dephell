@@ -122,7 +122,7 @@ class SDistConverter(BaseConverter):
                         subdir=subdir,
                         module='/'.join(full_path.relative_to(project.package.path).parts),
                     )
-                    tar.add(name=str(full_path), arcname=fpath, filter=self._set_uid_gid)
+                    tar.add(name=str(full_path), arcname=fpath, filter=self._sanitize_tar)
 
             self._write_additional_files(tar=tar, project=project, subdir=subdir)
 
@@ -132,20 +132,20 @@ class SDistConverter(BaseConverter):
             tar.add(
                 name=str(project.readme.path),
                 arcname=subdir + project.readme.path.name,
-                filter=self._set_uid_gid,
+                filter=self._sanitize_tar,
             )
             if project.readme.markup != 'rst':
                 rst = project.readme.to_rst()
                 tar.add(
                     name=str(rst.path),
                     arcname=subdir + rst.path.name,
-                    filter=self._set_uid_gid,
+                    filter=self._sanitize_tar,
                 )
             elif (project.package.path / 'README.md').exists():
                 tar.add(
                     name=str(project.package.path / 'README.md'),
                     arcname=subdir + 'README.md',
-                    filter=self._set_uid_gid,
+                    filter=self._sanitize_tar,
                 )
 
         # write setup files
@@ -155,7 +155,7 @@ class SDistConverter(BaseConverter):
                 tar.add(
                     name=str(path / fname),
                     arcname=subdir + fname,
-                    filter=self._set_uid_gid,
+                    filter=self._sanitize_tar,
                 )
 
         # write license files
@@ -167,7 +167,7 @@ class SDistConverter(BaseConverter):
                 tar.add(
                     name=str(file_path),
                     arcname=subdir + file_path.name,
-                    filter=self._set_uid_gid,
+                    filter=self._sanitize_tar,
                 )
 
         # write tests
@@ -182,19 +182,19 @@ class SDistConverter(BaseConverter):
                 tar.add(
                     name=str(tests_path),
                     arcname=subdir + tests_path.name,
-                    filter=self._set_uid_gid,
+                    filter=self._sanitize_tar,
                 )
 
     def _write_content(self, tar, path: str, content) -> None:
         content = content.encode('utf-8')
         tar_info = TarInfo(path)
         tar_info.size = len(content)
-        tar_info = self._set_uid_gid(tar_info)
+        tar_info = self._sanitize_tar(tar_info)
         tar.addfile(tar_info, BytesIO(content))
 
     # poetry/masonry/builders/sdist.py:clean_tarinfo
     @staticmethod
-    def _set_uid_gid(tarinfo: TarInfo) -> TarInfo or None:
+    def _sanitize_tar(tarinfo: TarInfo) -> TarInfo or None:
         if '__pycache__' in tarinfo.name:
             return None
         tarinfo.uid = tarinfo.gid = 0
