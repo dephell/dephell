@@ -63,7 +63,7 @@ class Requirement:
 
     @cached_property
     def dependencies(self) -> tuple:
-        extra_deps = sum([dep.dependencies for dep in self.extra_deps], tuple())
+        extra_deps = sum((dep.dependencies for dep in self.extra_deps), tuple())
         return self.dep.dependencies + extra_deps
 
     @property
