@@ -2,6 +2,7 @@
 from collections import defaultdict
 from distutils.core import run_setup
 from io import BytesIO, StringIO
+from json import dumps as json_dumps
 from logging import getLogger
 from pathlib import Path
 from typing import Optional
@@ -204,10 +205,12 @@ class SetupPyConverter(BaseConverter):
             entrypoints = defaultdict(list)
             for entrypoint in project.entrypoints:
                 entrypoints[entrypoint.group].append(str(entrypoint))
-            content.append(('entry_points', dict(entrypoints)))
+            content.append(('entry_points', entrypoints))
 
         # packages, package_data
         content.append(('packages', sorted(str(p) for p in project.package.packages)))
+        if project.package.package_dir:
+            content.append(('package_dir', project.package.package_dir))
         data = defaultdict(list)
         for rule in project.package.data:
             data[rule.module].append(rule.relative)
@@ -234,14 +237,17 @@ class SetupPyConverter(BaseConverter):
                 for env in req.main_envs:
                     extras[env].append(formatted)
         if extras:
-            content.append(('extras_require', dict(extras)))
+            content.append(('extras_require', extras))
 
         if project.readme is not None:
             readme = project.readme.to_rst().as_code()
         else:
             readme = "readme = ''"
 
-        content = ',\n    '.join('{}={!r}'.format(name, value) for name, value in content)
+        content = ',\n    '.join(
+            '{}={!s}'.format(name, json_dumps(value, sort_keys=True))
+            if isinstance(value, dict) else '{}={!r}'.format(name, value)
+            for name, value in content)
         content = TEMPLATE.format(kwargs=content, readme=readme)
 
         # beautify
@@ -286,6 +292,7 @@ class SetupPyConverter(BaseConverter):
             value = getattr(msg, name, None)
         if not value:
             return ''
+        value = str(value)
         if value == 'UNKNOWN':
             return ''
         return value.strip()
