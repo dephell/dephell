@@ -2,11 +2,12 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+# external
 import attr
 
+# app
 from ..actions import make_json
 from ..config import builders
-# app
 from ..converters import CONVERTERS
 from .base import BaseCommand
 
