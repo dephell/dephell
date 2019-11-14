@@ -8,14 +8,15 @@ from typing import Optional
 # external
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink, URLLink, VCSLink, parse_link
-from dephell_specifier import RangeSpecifier
 from dephell_setuptools import read_setup
+from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 
 # app
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
+
 
 try:
     from yapf.yapflib.style import CreateGoogleStyle
