@@ -73,7 +73,6 @@ class SetupPyConverter(BaseConverter):
         self._resolve_path = path.parent
 
         data = read_setup(path=path, error_handler=logger.debug)
-
         root = RootDependency(
             raw_name=data['name'],
             version=data.get('version', '0.0.0'),
