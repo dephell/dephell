@@ -32,7 +32,7 @@ class ProjectValidateCommand(BaseCommand):
         # errors
         ok = True
         if root.raw_name == 'root':
-            self.logger.error('package name is unspecified')
+            self.logger.error('field is unspecified', extra=dict(field='name'))
             ok = False
         if root.raw_name != root.name:
             self.logger.error('bad name', extra=dict(
@@ -41,7 +41,7 @@ class ProjectValidateCommand(BaseCommand):
             ))
             ok = False
         if root.version == '0.0.0':
-            self.logger.error('version is unspecified')
+            self.logger.error('field is unspecified', extra=dict(field='version'))
             ok = False
         if root.description and len(root.description) > 140:
             self.logger.error('short description is too long', extra=dict(
@@ -55,6 +55,20 @@ class ProjectValidateCommand(BaseCommand):
             ok = False
         if not root.package.packages:
             self.logger.error('cannot find Python files for package')
+            ok = False
+
+        # classifier checks
+        for classifier in root.classifiers:
+            if classifier.startswith('License :: '):
+                break
+        else:
+            self.logger.error('no license specified in classifier')
+            ok = False
+        for classifier in root.classifiers:
+            if classifier.startswith('Development Status :: '):
+                break
+        else:
+            self.logger.error('no development status specified in classifier')
             ok = False
 
         # warnings
