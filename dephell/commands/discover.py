@@ -54,6 +54,7 @@ _NAMES = (
     'project build',
     'project bump',
     'project test',
+    'project validate',
 
     'vendor download',
     'vendor import',
