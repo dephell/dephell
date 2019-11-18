@@ -1,5 +1,6 @@
 # built-in
 from pathlib import Path
+from textwrap import dedent
 
 # external
 from dephell_links import VCSLink
@@ -27,6 +28,72 @@ def test_load_metadata():
     assert len(root.classifiers) == 4
     assert len(root.keywords) == 3
     assert not root.license
+
+
+def test_dotted_setup_call(temp_path: Path):
+    path = temp_path / 'setup.py'
+    with open(str(path), 'w') as f:
+        f.write(dedent("""
+        import setuptools
+        setuptools.setup(name='foo')
+        """))
+
+    dist = SetupPyConverter()._execute(path)
+
+    assert dist.get_name() == 'foo'
+
+
+def test_return_setup_call(temp_path: Path):
+    path = temp_path / 'setup.py'
+    with open(str(path), 'w') as f:
+        f.write(dedent("""
+        from setuptools import setup
+        def main():
+            return setup(name='foo')
+
+        if __name__ == '__main__':
+            main()
+        """))
+
+    dist = SetupPyConverter()._execute(path)
+
+    assert dist.get_name() == 'foo'
+
+
+def test_run_setup_function(temp_path: Path):
+    path = temp_path / 'setup.py'
+    with open(str(path), 'w') as f:
+        f.write(dedent("""
+        from setuptools import setup
+        def run_setup():
+            return setup(name='foo')
+
+        if __name__ == '__main__':
+            run_setup()
+        """))
+
+    dist = SetupPyConverter()._execute(path)
+
+    assert dist.get_name() == 'foo'
+
+
+def test_import(temp_path: Path):
+    with open(str(temp_path / 'local_module.py'), 'w') as f:
+        f.write(dedent("""
+        name = 'imported'
+        """))
+    path = temp_path / 'setup.py'
+    with open(str(path), 'w') as f:
+        f.write(dedent("""
+        import sys
+        print(sys.path)
+        import local_module
+        setup(name=local_module.name)
+        """))
+
+    root = SetupPyConverter().load(path)
+
+    assert root.name == 'imported'
 
 
 def test_dumps_deps():
