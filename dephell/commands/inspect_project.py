@@ -2,9 +2,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-# external
-import attr
-
 # app
 from ..actions import make_json
 from ..config import builders
@@ -26,23 +23,28 @@ class InspectProjectCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        if 'from' in self.config:
-            # get project metainfo
-            loader = CONVERTERS[self.config['from']['format']]
-            loader = loader.copy(project_path=Path(self.config['project']))
-            root = loader.load(path=self.config['from']['path'])
-            data = attr.asdict(root)
+        if 'from' not in self.config:
+            self.logger.error('`--from` is required for this command')
+            return False
 
-            result = dict(
-                project_name=data['raw_name'],
-                version=data['version'],
-                description=data['description'],
-            )
+        loader = CONVERTERS[self.config['from']['format']]
+        loader = loader.copy(project_path=Path(self.config['project']))
+        root = loader.load(path=self.config['from']['path'])
 
-            print(make_json(
-                data=result,
-                key=self.config.get('filter'),
-                colors=not self.config['nocolors'],
-                table=self.config['table'],
-            ))
+        result = dict(
+            name=root.raw_name,
+            version=root.version,
+            description=root.description,
+        )
+        if root.python:
+            result['python'] = str(root.python)
+        if root.links:
+            result['links'] = root.links
+
+        print(make_json(
+            data=result,
+            key=self.config.get('filter'),
+            colors=not self.config['nocolors'],
+            table=self.config['table'],
+        ))
         return True
