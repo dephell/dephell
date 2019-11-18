@@ -1,4 +1,4 @@
-# dephell project validates
+# dephell project validate
 
 Validate project metadata that required to build good and compatible distribution package.
 
@@ -12,10 +12,15 @@ Validate project metadata that required to build good and compatible distributio
     + classifiers
     + description
 + "bad name". Project name should be normalized.
++ "version should be str"
 + "cannot find Python files for package"
 + "short description is too long". Short description should be shorter than 140 chars.
++ "short description is too short". Short description should be longer than 10 chars.
++ "no authors specified"
++ "no links specified"
 + "no license specified in classifier"
 + "no development status specified in classifier"
++ "no python version specified in classifier"
 
 ## Warnings
 

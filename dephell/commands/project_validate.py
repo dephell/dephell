@@ -40,8 +40,16 @@ class ProjectValidateCommand(BaseCommand):
                 expected=root.name,
             ))
             ok = False
+        if not isinstance(root.version, str):
+            self.logger.error('version should be str')
+            ok = False
         if root.version == '0.0.0':
             self.logger.error('field is unspecified', extra=dict(field='version'))
+            ok = False
+        if root.description and len(root.description) <= 10:
+            self.logger.error('short description is too short', extra=dict(
+                length=len(root.description),
+            ))
             ok = False
         if root.description and len(root.description) > 140:
             self.logger.error('short description is too long', extra=dict(
@@ -56,6 +64,12 @@ class ProjectValidateCommand(BaseCommand):
         if not root.package.packages:
             self.logger.error('cannot find Python files for package')
             ok = False
+        if not root.authors:
+            self.logger.error('no authors specified')
+            ok = False
+        if not root.links:
+            self.logger.error('no links specified')
+            ok = False
 
         # classifier checks
         for classifier in root.classifiers:
@@ -69,6 +83,12 @@ class ProjectValidateCommand(BaseCommand):
                 break
         else:
             self.logger.error('no development status specified in classifier')
+            ok = False
+        for classifier in root.classifiers:
+            if classifier.startswith('Programming Language :: Python ::'):
+                break
+        else:
+            self.logger.error('no python version specified in classifier')
             ok = False
 
         # warnings
