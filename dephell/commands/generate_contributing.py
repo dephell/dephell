@@ -37,7 +37,7 @@ class GenerateContributingCommand(BaseCommand):
             config = tomlkit.parse(stream.read())
         config = dict(config['tool']['dephell'])
         project_path = Path(self.config['project'])
-        text = make_contributing(config=config)
+        text = make_contributing(config=config, project_path=project_path)
         (project_path / self.file_name).write_text(text)
         self.logger.info('generated', extra=dict(file=self.file_name))
         return True
