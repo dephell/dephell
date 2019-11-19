@@ -152,7 +152,7 @@ class Resolver:
 
         # Some child deps can be unapplied from other child deps, but we need them.
         # For example, if we need A, but don't need B, and A and B depends on C,
-        # then C will be unapplied from B. Let's retun B in the graph by apllying A.
+        # then C will be unapplied from B. Let's return B in the graph by re-applying A.
         for dep in self.graph:
             if not dep.applied:
                 continue
