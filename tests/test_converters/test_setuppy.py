@@ -32,21 +32,17 @@ def test_load_metadata():
 
 def test_dotted_setup_call(temp_path: Path):
     path = temp_path / 'setup.py'
-    with open(str(path), 'w') as f:
-        f.write(dedent("""
+    path.write_text(dedent("""
         import setuptools
         setuptools.setup(name='foo')
         """))
-
-    dist = SetupPyConverter()._execute(path)
-
-    assert dist.get_name() == 'foo'
+    root = SetupPyConverter().load(path)
+    assert root.name == 'foo'
 
 
 def test_return_setup_call(temp_path: Path):
     path = temp_path / 'setup.py'
-    with open(str(path), 'w') as f:
-        f.write(dedent("""
+    path.write_text(dedent("""
         from setuptools import setup
         def main():
             return setup(name='foo')
@@ -54,16 +50,13 @@ def test_return_setup_call(temp_path: Path):
         if __name__ == '__main__':
             main()
         """))
-
-    dist = SetupPyConverter()._execute(path)
-
-    assert dist.get_name() == 'foo'
+    root = SetupPyConverter().load(path)
+    assert root.name == 'foo'
 
 
 def test_run_setup_function(temp_path: Path):
     path = temp_path / 'setup.py'
-    with open(str(path), 'w') as f:
-        f.write(dedent("""
+    path.write_text(dedent("""
         from setuptools import setup
         def run_setup():
             return setup(name='foo')
@@ -71,28 +64,20 @@ def test_run_setup_function(temp_path: Path):
         if __name__ == '__main__':
             run_setup()
         """))
-
-    dist = SetupPyConverter()._execute(path)
-
-    assert dist.get_name() == 'foo'
+    root = SetupPyConverter().load(path)
+    assert root.name == 'foo'
 
 
 def test_import(temp_path: Path):
-    with open(str(temp_path / 'local_module.py'), 'w') as f:
-        f.write(dedent("""
-        name = 'imported'
-        """))
+    path = temp_path / 'local_module.py'
+    path.write_text(dedent('name = "imported"'))
     path = temp_path / 'setup.py'
-    with open(str(path), 'w') as f:
-        f.write(dedent("""
-        import sys
-        print(sys.path)
+    path.write_text(dedent("""
+        from setuptools import setup
         import local_module
         setup(name=local_module.name)
         """))
-
     root = SetupPyConverter().load(path)
-
     assert root.name == 'imported'
 
 
