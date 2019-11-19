@@ -12,6 +12,7 @@ from dephell.repositories import GitRepo
 
 
 loop = asyncio.get_event_loop()
+git_path = Path('.git')
 
 
 class PatchedVCSLink(VCSLink):
@@ -23,6 +24,7 @@ class Dep:
 
 
 @pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
+@pytest.mark.skipif(not git_path.exists(), reason='.git folder does not exist')
 def test_releases():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
     repo = GitRepo(link)
@@ -37,6 +39,7 @@ def test_releases():
 
 
 @pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
+@pytest.mark.skipif(not git_path.exists(), reason='.git folder does not exist')
 def test_deps():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
     repo = GitRepo(link)
@@ -48,6 +51,7 @@ def test_deps():
 
 
 @pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI has broken git repo')
+@pytest.mark.skipif(not git_path.exists(), reason='.git folder does not exist')
 def test_metaversion():
     link = PatchedVCSLink(server=None, author=None, project=None, name='dephell')
     repo = GitRepo(link)

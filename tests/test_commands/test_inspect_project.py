@@ -14,6 +14,7 @@ def test_inspect_project_command(temp_path: Path, requirements_path: Path, capsy
         'from': {'format': 'poetry', 'path': from_path},
         'project': str(temp_path),
         'nocolors': True,
+        'silent': True,
     })
 
     command = InspectProjectCommand(argv=[], config=config)
