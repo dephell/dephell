@@ -31,7 +31,7 @@ matrix:
 PYTEST = """
     - python: "3.5"
       env: ENV={env}
-    - python: "3.6"
+    - python: "3.6.7"
       env: ENV={env}
     - python: "3.7"
       env: ENV={env}

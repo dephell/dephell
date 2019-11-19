@@ -1,0 +1,73 @@
+# Contributing to {{ project_name }}
+
+Thank you for deciding to contribute to {{ project_name }}!  This guide is to assist you with contributing code. If you have a question that isn't answered here, please [open an issue][open issue].
+
+## The basics
+
+So you want to contribute some code?  Great! Here are the basic steps:
+
+1. Find an [issue][issues] that you want to work on. Good places to start are [good first issues] or [help wanted]. You could also [open an issue][open issue] if there is something specific you want to contribute. Wait for a response before you start coding though, as the thing you want might already exist somewhere!
+1. Fork {{ project_name }}.
+1. Clone your fork.
+1. Create a branch to work against.
+1. Run tests to make sure they work for your system.
+{% if 'tests' in envs %}
+1. Write some tests.
+{% endif %}
+1. Write some code.
+1. Run tests to make sure it works.
+{% if 'lint' in envs %}
+1. Run linters.
+{% endif %}
+1. Document changes.
+1. Push your branch (to your fork).
+1. Create a pull request to {{ project_name }}/master.
+1. Wait for checks to run and fix anything that was wrong.
+
+{% if 'tests' in envs %}
+## Testing
+
+Any new code that you contribute will be ideally covered under an automated test. To run existing tests:
+
+dephell venv create --env {{ envs['tests'] }}
+dephell deps install --env {{ envs['tests'] }}
+dephell venv run --env {{ envs['tests'] }}
+
+To write new tests using [pytest], place them in the `tests` directory.  This directory should roughly follow the same file structure as the source directory.
+{% endif %}
+
+{% if 'lint' in envs %}
+## Style
+
+Follow [PEP8]. Run linter to see how you're doing:
+
+```bash
+dephell venv create --env {{ envs['lint'] }}
+dephell deps install --env {{ envs['lint'] }}
+dephell venv run --env {{ envs['lint'] }}
+```
+
+{% if 'isort' in envs %}
+Sort imports before pushing:
+
+```bash
+dephell venv create --env {{ envs['isort'] }}
+dephell deps install --env {{ envs['isort'] }}
+dephell venv run --env {{ envs['isort'] }}
+```
+{% endif %}
+
+Main things you contribute are ideas and implementation. So, if you struggled with flake8 checks, don't worry, just ask help of maintainers in comments to your Pull Request. If your code passed CI, merging of Pull Request can't be rejected or delayed because of style. No [bikeshedding](https://en.wikipedia.org/wiki/Law_of_triviality) and meaningless discussions.
+{% endif %}
+
+## Using an IDE
+
+If you want to use an IDE to edit / test {{ project_name }} code, you'll have to point that IDE to the virtual environment. You can either get this path using `dephell inspect venv` or create the venv in a directory your IDE will find (e.g. `dephell venv create --venv .venv`).
+
+[issues]: {{ url }}/issues?utf8=✓&q=is%3Aissue+is%3Aopen+
+[open issue]: {{ url }}/issues/new
+[help wanted]: {{ url }}/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
+[good first issues]: {{ url }}/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
+
+[pytest]: https://docs.pytest.org/en/latest/
+[PEP8]: https://www.python.org/dev/peps/pep-0008/

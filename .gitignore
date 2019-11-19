@@ -21,6 +21,8 @@ pip-wheel-metadata/
 
 /README.rst
 .idea
-.venv/
+.venv
+
+venv/
 
 \.python-version
