@@ -37,8 +37,10 @@ class SelfUpgradeCommand(BaseCommand):
 
     def _upgrade_package(self) -> bool:
         manager = PackageManager(executable=sys.executable)
-        args = ['-U', '--upgrade-strategy=eager']
+        args = ['-U']
         if manager.is_global:
             args.append('--user')
+        else:
+            args.append('--upgrade-strategy=eager')
         code = manager.run('install', *args, 'dephell')
         return (code == 0)
