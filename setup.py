@@ -21,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.7.8',
+    version='0.7.9',
     description='Dependency resolution for Python',
     python_requires='>=3.5',
     project_urls={
@@ -37,7 +37,11 @@ setup(
         'Development Status :: 4 - Beta', 'Environment :: Console',
         'Framework :: Setuptools Plugin', 'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python', 'Topic :: Security',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8', 'Topic :: Security',
         'Topic :: Software Development :: Build Tools',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],

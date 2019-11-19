@@ -102,7 +102,7 @@ import_heading_localfolder = "app"
 
 [tool.poetry]
 name = "dephell"
-version = "0.7.8"
+version = "0.7.9"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
