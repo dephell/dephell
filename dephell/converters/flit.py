@@ -127,12 +127,16 @@ class FlitConverter(BaseConverter):
         section = doc['tool']['flit']['metadata']
 
         # project and module names
-        module = project.package.packages[0].module
-        section['module'] = module
-        if project.raw_name != module:
-            section['dist-name'] = project.raw_name
-        elif 'dist-name' in section:
-            del section['dist-name']
+        packages = project.package.packages
+        if packages:
+            module = packages[0].module
+            section['module'] = module
+            if project.raw_name != module:
+                section['dist-name'] = project.raw_name
+            elif 'dist-name' in section:
+                del section['dist-name']
+        else:
+            section['module'] = project.raw_name
 
         # author and maintainer
         for field, author in zip(('author', 'maintainer'), project.authors):

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 # external
 import pytest
 
@@ -21,6 +23,7 @@ def test_imports_parser(lines, expected):
     assert modules == expected
 
 
+@pytest.mark.skipif(not Path('dephell').exists(), reason='dephell source dir does not exist')
 @pytest.mark.allow_hosts()
 def test_imports_load():
     converter = ImportsConverter()
