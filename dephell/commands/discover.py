@@ -36,6 +36,7 @@ _NAMES = (
     'inspect gadget',
     'inspect self',
     'inspect venv',
+    'inspect project',
 
     'jail install',
     'jail list',
