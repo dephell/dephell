@@ -11,14 +11,18 @@ So you want to contribute some code?  Great! Here are the basic steps:
 1. Clone your fork.
 1. Create a branch to work against.
 1. Run tests to make sure they work for your system.
+{% if 'tests' in envs %}
 1. Write some tests.
+{% endif %}
 1. Write some code.
 1. Run tests to make sure it works.
-1. Run flake8 checks.
-1. Write some docs.
+{% if 'lint' in envs %}
+1. Run linters.
+{% endif %}
+1. Document changes.
 1. Push your branch (to your fork).
-1. Create a pull request to {{ project_name }}/master
-1. Wait for checks to run and fix anything that was wrong
+1. Create a pull request to {{ project_name }}/master.
+1. Wait for checks to run and fix anything that was wrong.
 
 {% if 'tests' in envs %}
 ## Testing

@@ -25,9 +25,8 @@ def test_make_contributing_pytest(temp_path):
     result = command()
 
     assert result is True
-    assert (temp_path / command.COMMAND_TITLE).exists()
-    content = (temp_path / command.COMMAND_TITLE).read_text()
-    assert 'isort' in content
-    assert 'pytest' in content
-    assert 'flake8' in content
-
+    assert (temp_path / 'CONTRIBUTING.md').exists()
+    content = (temp_path / 'CONTRIBUTING.md').read_text()
+    assert '## Testing' in content
+    assert '## Style' in content
+    assert 'Sort imports' in content
