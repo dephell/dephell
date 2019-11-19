@@ -12,7 +12,6 @@ def test_inspect_project_command(temp_path: Path, requirements_path: Path, capsy
     config = Config()
     config.attach({
         'from': {'format': 'poetry', 'path': from_path},
-        'to': {'format': 'setuppy', 'path': 'stdout'},
         'project': str(temp_path),
         'nocolors': True,
     })
@@ -24,4 +23,6 @@ def test_inspect_project_command(temp_path: Path, requirements_path: Path, capsy
     captured = capsys.readouterr()
     print(captured.out)
     output = json.loads(captured.out)
-    assert output['project_name'] == 'my-package'
+    assert set(output) == {'name', 'version', 'description', 'links', 'python'}
+    assert output['name'] == 'my-package'
+    assert output['version'] == '0.1.0'
