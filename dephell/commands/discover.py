@@ -56,6 +56,8 @@ _NAMES = (
     'project test',
     'project validate',
 
+    'self upgrade',
+
     'vendor download',
     'vendor import',
 
