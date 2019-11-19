@@ -132,6 +132,9 @@ class Resolver:
                 dep.group = group
 
     def apply_envs(self, envs: set) -> None:
+        if not any(root.dependencies for root in self.graph.get_layer(0)):
+            logger.debug('no dependencies, nothing to filter')
+            return
         layer = self.graph.get_layer(1)
 
         # Unapply deps that we don't need
