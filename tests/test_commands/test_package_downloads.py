@@ -1,6 +1,7 @@
 # built-in
 import json
 
+# external
 import pytest
 
 # project
@@ -8,12 +9,14 @@ from dephell.commands import PackageDownloadsCommand
 from dephell.config import Config
 
 
+@pytest.mark.skipif(True, reason='disable while pypistat is down')
 @pytest.mark.allow_hosts()
 def test_package_downloads_command(capsys):
     config = Config()
     config.attach({
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = PackageDownloadsCommand(argv=['DJANGO'], config=config)

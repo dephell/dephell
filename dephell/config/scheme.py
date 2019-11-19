@@ -1,3 +1,7 @@
+# project
+# external
+from dephell_versioning import get_schemes
+
 # app
 from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES
 
@@ -38,7 +42,7 @@ SCHEME = {
         valuesrules=dict(
             type='dict',
             schema={
-                'hostname': dict(type='string', regex=r'[a-z0-9\.\-\_]'),
+                'hostname': dict(type='string', regex=r'[a-z0-9\.\-\_]+'),
                 'username': dict(type='string', required=True),
                 'password': dict(type='string', required=True),
             },
@@ -46,7 +50,7 @@ SCHEME = {
     ),
 
     # api
-    'warehouse':    dict(type='list', required=False, empty=True),
+    'warehouse':    dict(type='list', schema=dict(type='string'), required=False, empty=True),
     'bitbucket':    dict(type='string', required=True),
     'repo':         dict(type='string', required=False, allowed=REPOSITORIES),
 
@@ -63,6 +67,7 @@ SCHEME = {
     'filter':       dict(type='string', required=False),
     'traceback':    dict(type='boolean', required=True),
     'pdb':          dict(type='boolean', required=True),
+    'table':        dict(type='boolean', required=True),
 
     # venv
     'venv':     dict(type='string', required=True),
@@ -75,9 +80,21 @@ SCHEME = {
         required=False,
     ),
 
+    # docker
+    'docker': dict(
+        type='dict',
+        required=True,
+        schema={
+            'repo': dict(type='string', regex=r'[a-zA-Z0-9\.\-\_\/]+', required=True),
+            'tag': dict(type='string', required=True),
+            'container': dict(type='string', required=False),
+        },
+    ),
+
+
     # other
     'owner':    dict(type='string', required=False),
-    'tag':      dict(type='boolean', required=False),
+    'tag':      dict(type='string', required=False),
     'cache':    dict(
         type='dict',
         required=True,
@@ -88,8 +105,16 @@ SCHEME = {
     ),
     'project':      dict(type='string', required=True),
     'bin':          dict(type='string', required=True),
-    'envs':         dict(type='list', required=False, empty=False),
-    'tests':        dict(type='list', required=True),
-    'versioning':   dict(type='string', required=True),
+    'envs':         dict(type='list', schema=dict(type='string'), required=False, empty=False),
+    'tests':        dict(type='list', schema=dict(type='string'), required=True),
+    'versioning':   dict(type='string', required=True, allowed=get_schemes()),
     'command':      dict(type='string', required=False),
+    'vendor':       dict(
+        type='dict',
+        required=True,
+        schema={
+            'exclude': dict(type='list', schema=dict(type='string'), required=True, empty=True),
+            'path':  dict(type='string', required=True),
+        },
+    ),
 }

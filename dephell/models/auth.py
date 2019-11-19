@@ -1,11 +1,13 @@
+# built-in
 from base64 import b64encode
 from urllib.parse import urlparse
 
+# external
 import attr
 from requests.auth import HTTPBasicAuth
 
 
-@attr.s(cmp=True, frozen=True)
+@attr.s(eq=True, order=True, frozen=True)
 class Auth(HTTPBasicAuth):
     hostname = attr.ib(type=str)
     username = attr.ib(type=str)

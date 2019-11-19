@@ -21,15 +21,10 @@ DUMPERS = (
 
 class ProjectBuildCommand(BaseCommand):
     """Create dist archives for project.
-
-    https://dephell.readthedocs.io/en/latest/cmd-project-build.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell project build',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_resolver(parser)
@@ -40,6 +35,7 @@ class ProjectBuildCommand(BaseCommand):
 
     def __call__(self) -> bool:
         loader = CONVERTERS[self.config['from']['format']]
+        loader = loader.copy(project_path=Path(self.config['project']))
         resolver = loader.load_resolver(path=self.config['from']['path'])
         if loader.lock:
             self.logger.warning('do not build project from lockfile!')
@@ -60,6 +56,7 @@ class ProjectBuildCommand(BaseCommand):
                 continue
             self.logger.info('dumping...', extra=dict(format=to_format))
             dumper = CONVERTERS[to_format]
+            dumper = dumper.copy(project_path=Path(self.config['project']))
             dumper.dump(
                 path=project_path.joinpath(to_path),
                 reqs=reqs,

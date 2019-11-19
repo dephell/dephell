@@ -4,13 +4,15 @@ from typing import List, Optional
 
 # external
 import tomlkit
+from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
+from packaging.utils import canonicalize_name
 
 # app
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
-from ..repositories import get_repo, WarehouseBaseRepo, WarehouseLocalRepo
+from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo, get_repo
 from .base import BaseConverter
 
 
@@ -41,7 +43,9 @@ class PIPFileConverter(BaseConverter):
     def loads(self, content: str) -> RootDependency:
         doc = tomlkit.parse(content)
         deps = []
-        root = RootDependency()
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or Path()),
+        )
 
         repo = RepositoriesRegistry()
         if 'source' in doc:
@@ -116,29 +120,46 @@ class PIPFileConverter(BaseConverter):
             doc['requires']['python_version'] = str(python.get_short_version())
 
         # dependencies
+        names_mapping = dict()
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             # create section if doesn't exist
             if section not in doc:
                 doc[section] = tomlkit.table()
                 continue
 
-            # clean packages from old packages
+            # clean file from outdated dependencies
             names = {req.name for req in reqs if is_dev is req.is_dev}
-            for name in doc[section]:
-                if name not in names:
+            for name in dict(doc[section]):
+                normalized_name = canonicalize_name(name)
+                names_mapping[normalized_name] = name
+                if normalized_name not in names:
                     del doc[section][name]
 
         # write new packages
         for section, is_dev in [('packages', False), ('dev-packages', True)]:
             for req in reqs:
-                if is_dev is req.is_dev:
-                    doc[section][req.raw_name] = self._format_req(req=req)
+                if is_dev is not req.is_dev:
+                    continue
+                raw_name = names_mapping.get(req.name, req.raw_name)
+                old_spec = doc[section].get(raw_name)
+
+                # do not overwrite dep if nothing is changed
+                if old_spec:
+                    old_dep = self._make_deps(
+                        root=RootDependency(),
+                        name=raw_name,
+                        content=old_spec,
+                    )[0]
+                    if req.same_dep(old_dep):
+                        continue
+
+                # overwrite
+                doc[section][raw_name] = self._format_req(req=req)
 
         return tomlkit.dumps(doc).rstrip() + '\n'
 
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile
-    @staticmethod
-    def _make_deps(root, name: str, content) -> List[Dependency]:
+    def _make_deps(self, root, name: str, content) -> List[Dependency]:
         if isinstance(content, str):
             return [Dependency(
                 raw_name=name,
@@ -147,7 +168,11 @@ class PIPFileConverter(BaseConverter):
             )]
 
         # get link
-        url = content.get('file') or content.get('path') or content.get('vcs')
+        url = content.get('file') or content.get('path')
+        if url and not url.startswith('http'):
+            url = str(self._make_dependency_path_absolute(Path(url)))
+        if not url:
+            url = content.get('vcs')
         if not url:
             for vcs in VCS_LIST:
                 if vcs in content:
@@ -162,6 +187,7 @@ class PIPFileConverter(BaseConverter):
             raw_name=name,
             # https://github.com/sarugaku/requirementslib/blob/master/src/requirementslib/models/utils.py
             constraint=Constraint(root, content.get('version', '')),
+            source=root,
             extras=set(content.get('extras', [])),
             marker=content.get('markers'),
             url=url,

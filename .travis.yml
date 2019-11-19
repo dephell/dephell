@@ -1,6 +1,11 @@
 language: python
 dist: xenial
 
+# do not run Travis for PR's twice (as for push and as for PR)
+branches:
+  only:
+    - master
+
 before_install:
   # show a little bit more information about environment
   - sudo apt-get install -y tree
@@ -9,7 +14,10 @@ before_install:
   # install DepHell
   # - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.6/bin/python
   # https://github.com/travis-ci/travis-ci/issues/8589
-  - /opt/python/3.7/bin/python install.py
+  - >
+    /opt/python/3.7/bin/python install.py
+    --branch=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+    --slug=${TRAVIS_PULL_REQUEST_SLUG:-dephell/dephell}
   - dephell inspect self
 install:
   - dephell venv create --env=$ENV --python="/opt/python/$TRAVIS_PYTHON_VERSION/bin/python" --level=DEBUG --traceback
@@ -34,7 +42,10 @@ matrix:
       language: generic
       env: ENV=pytest
       before_install:
-        - /usr/local/bin/python3 install.py
+        - >
+          /usr/local/bin/python3 install.py
+          --branch=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+          --slug=${TRAVIS_PULL_REQUEST_SLUG:-dephell/dephell}
         - dephell inspect self
       install:
         - dephell venv create --env=$ENV --python=/usr/local/bin/python3 --level=DEBUG --traceback
@@ -58,4 +69,19 @@ matrix:
       env: ENV=flake8
 
     - python: "3.7"
-      env: ENV=poetry
+      env: ENV=isort
+      script:
+        - dephell venv run --env=$ENV flake8
+
+    - python: "3.7"
+      env: ENV=docs
+
+    - name: poetry
+      python: "3.7"
+      env: ENV=main
+      before_install:
+        - pip install poetry
+      install:
+        - poetry install -vvv
+      script:
+        - dephell inspect self

@@ -1,8 +1,9 @@
 # built-in
 from pathlib import Path
 
-from .app_dirs import get_cache_dir, get_data_dir
+# app
 from ..constants import DEFAULT_WAREHOUSE
+from .app_dirs import get_cache_dir, get_data_dir
 
 
 DEFAULT = dict(
@@ -28,19 +29,28 @@ DEFAULT = dict(
     silent=False,
     traceback=False,
     pdb=False,
+    table=False,
 
     # venv
     venv=str(get_data_dir() / 'venvs' / '{project}-{digest}' / '{env}'),
     dotenv=str(Path('.').resolve()),
 
-    # cache
+    # docker
+    docker=dict(
+        repo='python',
+        tag='latest',
+    ),
+
+    # other
     cache=dict(
         path=str(get_cache_dir()),
         ttl=3600,
     ),
-
-    # other
     bin=str(Path.home() / '.local' / 'bin'),
     project=str(Path('.').resolve()),
     versioning='semver',
+    vendor=dict(
+        path='_vendor',
+        exclude=[],
+    ),
 )

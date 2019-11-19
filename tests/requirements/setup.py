@@ -20,7 +20,7 @@ setup(
     description='Dependency resolution for Python',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/orsinium/dephell',
+    url='https://dephell.org/',
     author='orsinium',
 
     packages=[],
@@ -38,6 +38,17 @@ setup(
     extras_require=dict(
         windows=['colorama'],
     ),
+
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools',
+        'License :: OSI Approved :: MIT License',
+    ],
+    keywords='sample setuptools development',
+    project_urls={  # Optional
+        'Source': 'https://github.com/dephell/dephell/',
+    },
     entry_points={
         'console_scripts': ['dephell = dephell.cli:entrypoint'],
     },

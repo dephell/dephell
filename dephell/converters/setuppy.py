@@ -1,19 +1,18 @@
 # built-in
 from collections import defaultdict
-from distutils.core import run_setup
-from io import StringIO, BytesIO
+from json import dumps as json_dumps
 from logging import getLogger
 from pathlib import Path
 from typing import Optional
 
 # external
+from dephell_discover import Root as PackageRoot
+from dephell_links import DirLink, FileLink, URLLink, VCSLink, parse_link
+from dephell_setuptools import read_setup
 from dephell_specifier import RangeSpecifier
-from dephell_links import DirLink, FileLink, VCSLink, URLLink, parse_link
 from packaging.requirements import Requirement
-from setuptools.dist import Distribution
 
 # app
-from ..context_tools import chdir
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
@@ -54,12 +53,6 @@ setup(
 """
 
 
-def _patched_open(fname, mode='r', *args, **kwargs):
-    if 'b' in mode:
-        return BytesIO(fname.encode('utf8'))
-    return StringIO(fname)
-
-
 class SetupPyConverter(BaseConverter):
     lock = False
 
@@ -74,60 +67,62 @@ class SetupPyConverter(BaseConverter):
             return False
         return ('setup(' in content)
 
-    @classmethod
-    def load(cls, path) -> RootDependency:
-        path = Path(str(path))
+    def load(self, path) -> RootDependency:
+        if isinstance(path, str):
+            path = Path(path)
+        path = self._make_source_path_absolute(path)
+        self._resolve_path = path.parent
 
-        info = cls._execute(path=path)
-        if info is None:
-            with chdir(path.parent):
-                info = run_setup(path.name)
-
+        data = read_setup(path=path, error_handler=logger.debug)
         root = RootDependency(
-            raw_name=cls._get(info, 'name'),
-            version=cls._get(info, 'version') or '0.0.0',
+            raw_name=data['name'],
+            version=data.get('version', '0.0.0'),
+            package=PackageRoot(
+                path=self.project_path or Path(),
+                name=data['name'],
+            ),
 
-            description=cls._get(info, 'description'),
-            license=cls._get(info, 'license'),
+            description=data.get('description'),
+            license=data.get('license'),
 
-            keywords=tuple(cls._get_list(info, 'keywords')),
-            classifiers=tuple(cls._get_list(info, 'classifiers')),
-            platforms=tuple(cls._get_list(info, 'platforms')),
+            keywords=tuple(data.get('keywords', ())),
+            classifiers=tuple(data.get('classifiers', ())),
+            platforms=tuple(data.get('platforms', ())),
 
-            python=RangeSpecifier(cls._get(info, 'python_requires')),
+            python=RangeSpecifier(data.get('python_requires')),
             readme=Readme.from_code(path=path),
         )
 
         # links
         for key, name in (('home', 'url'), ('download', 'download_url')):
-            link = cls._get(info, name)
+            link = data.get(name)
             if link:
                 root.links[key] = link
 
         # authors
         for name in ('author', 'maintainer'):
-            author = cls._get(info, name)
+            author = data.get(name)
             if author:
                 root.authors += (
-                    Author(name=author, mail=cls._get(info, name + '_email')),
+                    Author(name=author, mail=data.get(name + '_email')),
                 )
 
         # entrypoints
         entrypoints = []
-        for group, content in (getattr(info, 'entry_points', {}) or {}).items():
+        for group, content in data.get('entry_points', {}).items():
             for entrypoint in content:
                 entrypoints.append(EntryPoint.parse(text=entrypoint, group=group))
         root.entrypoints = tuple(entrypoints)
 
         # dependency_links
         urls = dict()
-        for url in cls._get_list(info, 'dependency_links'):
+        for url in data.get('dependency_links', ()):
             parsed = parse_link(url)
             name = parsed.name.split('-')[0]
             urls[name] = url
 
         # dependencies
-        for req in cls._get_list(info, 'install_requires'):
+        for req in data.get('install_requires', ()):
             req = Requirement(req)
             root.attach_dependencies(DependencyMaker.from_requirement(
                 source=root,
@@ -136,8 +131,8 @@ class SetupPyConverter(BaseConverter):
             ))
 
         # extras
-        for extra, reqs in getattr(info, 'extras_require', {}).items():
-            extra, marker = cls._split_extra_and_marker(extra)
+        for extra, reqs in data.get('extras_require', {}).items():
+            extra, marker = self._split_extra_and_marker(extra)
             envs = {extra} if extra == 'dev' else {'main', extra}
             for req in reqs:
                 req = Requirement(req)
@@ -197,10 +192,12 @@ class SetupPyConverter(BaseConverter):
             entrypoints = defaultdict(list)
             for entrypoint in project.entrypoints:
                 entrypoints[entrypoint.group].append(str(entrypoint))
-            content.append(('entry_points', dict(entrypoints)))
+            content.append(('entry_points', entrypoints))
 
         # packages, package_data
         content.append(('packages', sorted(str(p) for p in project.package.packages)))
+        if project.package.package_dir:
+            content.append(('package_dir', project.package.package_dir))
         data = defaultdict(list)
         for rule in project.package.data:
             data[rule.module].append(rule.relative)
@@ -227,14 +224,17 @@ class SetupPyConverter(BaseConverter):
                 for env in req.main_envs:
                     extras[env].append(formatted)
         if extras:
-            content.append(('extras_require', dict(extras)))
+            content.append(('extras_require', extras))
 
         if project.readme is not None:
             readme = project.readme.to_rst().as_code()
         else:
             readme = "readme = ''"
 
-        content = ',\n    '.join('{}={!r}'.format(name, value) for name, value in content)
+        content = ',\n    '.join(
+            '{}={!s}'.format(name, json_dumps(value, sort_keys=True))
+            if isinstance(value, dict) else '{}={!r}'.format(name, value)
+            for name, value in content)
         content = TEMPLATE.format(kwargs=content, readme=readme)
 
         # beautify
@@ -246,49 +246,6 @@ class SetupPyConverter(BaseConverter):
         return content
 
     # private methods
-
-    @staticmethod
-    def _execute(path: Path):
-        source = path.read_text('utf-8')
-        new_source = source.replace('setup(', '_dist = dict(')
-        if new_source == source:
-            logger.error('cannot modify source')
-            return None
-
-        globe = {
-            '__file__': str(path),
-            '__name__': '__main__',
-            'open': _patched_open,
-        }
-        with chdir(path.parent):
-            try:
-                exec(compile(new_source, path.name, 'exec'), globe)
-            except Exception as e:
-                logger.error('{}: {}'.format(type(e).__name__, str(e)))
-
-        dist = globe.get('_dist')
-        if dist is None:
-            logger.error('distribution was not called')
-            return None
-        return Distribution(dist)
-
-    @staticmethod
-    def _get(msg, name: str) -> str:
-        value = getattr(msg.metadata, name, None)
-        if not value:
-            value = getattr(msg, name, None)
-        if not value:
-            return ''
-        if value == 'UNKNOWN':
-            return ''
-        return value.strip()
-
-    @staticmethod
-    def _get_list(msg, name: str) -> tuple:
-        values = getattr(msg, name, None)
-        if not values:
-            return ()
-        return tuple(value for value in values if value != 'UNKNOWN' and value.strip())
 
     @staticmethod
     def _format_req(req) -> str:

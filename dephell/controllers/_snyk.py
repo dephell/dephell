@@ -6,12 +6,12 @@ from xml.etree import ElementTree
 
 # external
 import attr
-import requests
 from dephell_specifier import RangeSpecifier
 from packaging.version import VERSION_PATTERN, Version
 
 # app
 from ..cached_property import cached_property
+from ..networking import requests_session
 
 
 RSS_URL = 'https://snyk.io/vuln/feed.xml?type=pip'
@@ -37,12 +37,15 @@ class SnykVulnInfo:
 class Snyk:
     """
     https://snyk.io/vuln?type=pip
+
+    RSS was broken!
     """
     url = attr.ib(type=str, default=RSS_URL)
 
     @cached_property
     def vulns(self) -> Dict[str, List[SnykVulnInfo]]:
-        response = requests.get(self.url)
+        with requests_session() as session:
+            response = session.get(self.url)
         response.raise_for_status()
         root = ElementTree.fromstring(response.content)
 

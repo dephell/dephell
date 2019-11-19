@@ -23,10 +23,11 @@ Command steps:
 1. Write new version in source code. DepHell looks for `__version__` variable in project source and writes new version in it.
 1. Write new version in `from` file.
 
-Also, the command adds git tag if `--tag` option (or `tag = True` in the config) is specified:
+Also, the command adds git tag if `--tag` option (or `tag = <your_template>` in the config) is specified as template.
+Template can be string with `{version}` placeholder (e.g. `v.{version}`) or just prefix string (e.g. `v.`)
 
 ```bash
-$ dephell project bump --tag minor
+$ dephell project bump --tag=v. minor
 INFO generated new version (old=0.8.0, new=0.9.0)
 INFO file bumped (path=/home/gram/Documents/dephell/dephell/__init__.py)
 INFO commit and tag
@@ -40,6 +41,10 @@ INFO tag created, do not forget to push it: git push --tags
 1. `minor` or `feature` -- increment second number of version. In `pep`, and `semver` it means non-breaking new features. Example: `1.2.3` → `1.2.0`.
 1. `patch`, `fix` or `micro` -- increment third number of version. In `pep`, and `semver` it means bugfixes that don't add new features or break anything. For `calver` it usually means hotfixes that must be delivered ASAP. Example: `1.2.3` → `1.2.4`.
 1. `pre`, `rc` or `alpha` -- increment pre-release number. Semantic depends on versioning scheme. A pre-release version indicates that the version is unstable and anything can be changed until release.
+1. `premajor` -- applies both `pre` and `major`.  Example: `1.2.3` → `2.0.0-rc.1`
+1. `preminor` -- applies both `pre` and `minor`.  Example: `1.2.3` → `1.3.0-rc.1`
+1. `prepatch` -- applies both `pre` and `patch`.  Example: `1.2.3` → `1.2.4-rc.1`
+1. `release` -- removes any pre-release number.  Example: `1.2.3-rc.1` → `1.2.3`
 1. `post` -- increment post-release number. This is supported only by `pep`. Post-release number increment means some changes that do not affect the distributed software at all. For example, correcting an error in the release notes, metainfo, including license in the package etc.
 1. `dev` -- increment `dev` number. Kind of pre-release that must not be used for any purposes except the project development. So, dev-releases should not be uploaded on public index servers. This version number also supported only by `pep`.
 1. `local` -- increment local version number. This number separated from main version by `+`. See more details in the next section.

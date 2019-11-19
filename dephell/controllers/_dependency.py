@@ -5,7 +5,7 @@ from logging import getLogger
 from typing import List, Optional, Union
 
 # external
-from dephell_links import VCSLink, parse_link
+from dephell_links import UnknownLink, VCSLink, parse_link
 from dephell_markers import Markers
 from dephell_specifier import GitSpecifier
 from packaging.requirements import Requirement as PackagingRequirement
@@ -14,6 +14,7 @@ from packaging.requirements import Requirement as PackagingRequirement
 from ..models.constraint import Constraint
 from ..models.dependency import Dependency
 from ..models.extra_dependency import ExtraDependency
+from ..models.marker_tracker import MarkerTracker
 from ..repositories import get_repo
 
 
@@ -54,12 +55,16 @@ class DependencyMaker:
             envs = {'main'}
         envs.update(marker.extract('extra'))
 
+        default_repo = None
+        if source.repo and source.repo.propagate:
+            default_repo = source.repo
+
         base_dep = cls.dep_class(
             raw_name=req.name,
             constraint=constraint,
-            repo=get_repo(link),
+            repo=get_repo(link, default=default_repo),
             link=link,
-            marker=marker,
+            marker=MarkerTracker().apply(source=source, markers=marker),
             editable=editable,
             envs=envs,
         )
@@ -71,25 +76,33 @@ class DependencyMaker:
 
     @classmethod
     def from_params(cls, *, raw_name: str, constraint,
-                    url: Optional[str] = None, source: Optional['Dependency'] = None,
+                    source: Dependency, url: Optional[str] = None,
                     repo=None, marker: Union[Markers, str] = None,
                     extras: Optional[List[str]] = None, envs=None,
                     **kwargs) -> List[Union[Dependency, ExtraDependency]]:
 
         # make link
-        link = parse_link(url)
-        if link and link.name and rex_hash.fullmatch(raw_name):
-            raw_name = link.name
+        if not url or isinstance(url, str):
+            link = parse_link(url)
+        else:
+            link = url
+        if link and not isinstance(link, UnknownLink):
+            if link.name and rex_hash.fullmatch(raw_name):
+                if not link.name.startswith(raw_name):
+                    raw_name = link.name
 
         # make constraint
-        if source:
+        if isinstance(constraint, str):
             constraint = Constraint(source, constraint)
             if isinstance(link, VCSLink) and link.rev:
                 constraint._specs[source.name] = GitSpecifier()
 
         # make repo
         if repo is None:
-            repo = get_repo(link)
+            default_repo = None
+            if source.repo and source.repo.propagate:
+                default_repo = source.repo
+            repo = get_repo(link, default=default_repo)
 
         # make marker
         if isinstance(marker, Markers):
@@ -107,7 +120,7 @@ class DependencyMaker:
             repo=repo,
             raw_name=raw_name,
             constraint=constraint,
-            marker=marker,
+            marker=MarkerTracker().apply(source=source, markers=marker),
             envs=envs,
             **kwargs,
         )

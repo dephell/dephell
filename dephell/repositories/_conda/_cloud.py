@@ -1,25 +1,27 @@
+# built-in
 import json
 import sys
 from bz2 import BZ2Decompressor
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 from datetime import datetime
 from logging import getLogger
 from platform import uname
-from typing import Any, Dict, List, Iterator, Iterable
+from typing import Any, Dict, Iterable, Iterator, List
 
+# external
 import attr
-import requests
 from dephell_specifier import RangeSpecifier
-from packaging.version import parse
 from packaging.utils import canonicalize_name
+from packaging.version import parse
 
-
-from ._base import CondaBaseRepo
+# app
 from ...cache import JSONCache
+from ...cached_property import cached_property
 from ...config import config
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
-from ...cached_property import cached_property
+from ...networking import requests_session
+from ._base import CondaBaseRepo
 
 
 # https://conda.anaconda.org/conda-forge/linux-64
@@ -127,7 +129,8 @@ class CondaCloudRepo(CondaBaseRepo):
                     allowed=', '.join(self._allowed_values[field]),
                 ))
 
-        response = requests.get(self._search_url, params=fields)
+        with requests_session() as session:
+            response = session.get(self._search_url, params=fields)
         response.raise_for_status()
 
         results = []
@@ -201,7 +204,8 @@ class CondaCloudRepo(CondaBaseRepo):
                 continue
 
             url = self._get_chan_url(channel=channel)
-            response = requests.get(url)
+            with requests_session() as session:
+                response = session.get(url)
             response.raise_for_status()
             channel_packages = dict()
             for name, info in response.json()['packages'].items():
@@ -244,7 +248,8 @@ class CondaCloudRepo(CondaBaseRepo):
 
             channel_deps = defaultdict(dict)
             for url in self._get_urls(channel=channel):
-                response = requests.get(url)
+                with requests_session() as session:
+                    response = session.get(url)
                 response.raise_for_status()
                 content = BZ2Decompressor().decompress(response.content).decode('utf-8')
                 base_url = url.rsplit('/', 1)[0]

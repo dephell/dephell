@@ -1,7 +1,13 @@
+# built-in
 import asyncio
+import re
+from pathlib import Path
+from urllib.parse import urlparse
 
+# external
 import pytest
 
+# project
 from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.controllers import DependencyMaker
 from dephell.models import Auth, RootDependency
@@ -120,3 +126,46 @@ def test_get_deps_auth(requests_mock, temp_cache, fixtures_path):
     assert set(deps) == {'attrs', 'pexpect', 'shellingham'}
     assert requests_mock.call_count == 1
     assert requests_mock.last_request.headers['Authorization'] == 'Basic Z3JhbTp0ZXN0'
+
+
+def test_download(requests_mock, asyncio_mock, temp_cache, fixtures_path: Path,
+                  temp_path: Path, requirements_path: Path):
+    pypi_url = 'https://custom.pypi.org/pypi/'
+    text_response = (fixtures_path / 'warehouse-simple.html').read_text()
+    file_url = re.findall(
+        r'https://files.pythonhosted.org/packages/[^\"]+0\.1\.2[^\"]+',
+        text_response,
+    )[0]
+    file_name = urlparse(file_url).path.split('/')[-1]
+    file_content = (requirements_path / 'wheel.whl').read_bytes()
+
+    requests_mock.get(pypi_url + 'dephell-shells/', text=text_response)
+    asyncio_mock.get(file_url, body=file_content)
+
+    repo = WarehouseSimpleRepo(name='pypi', url=pypi_url)
+    coroutine = repo.download(name='dephell-shells', version='0.1.2', path=temp_path)
+    result = loop.run_until_complete(asyncio.gather(coroutine))[0]
+    assert result is True
+    assert (temp_path / file_name).exists()
+    assert (temp_path / file_name).read_bytes() == file_content
+
+
+@pytest.mark.parametrize('user_input, expected', [
+    # test pypi
+    ('pypi.org', 'https://pypi.org/simple/'),
+    ('pypi.python.org', 'https://pypi.org/simple/'),
+    ('https://pypi.org', 'https://pypi.org/simple/'),
+    ('https://pypi.python.org', 'https://pypi.org/simple/'),
+    ('https://pypi.org/simple/', 'https://pypi.org/simple/'),
+
+    # test custom
+    ('https://not-pypi.org/not/simple/', 'https://not-pypi.org/not/simple/'),
+    ('not-pypi.org/not/simple/', 'http://not-pypi.org/not/simple/'),
+    ('not-pypi.org', 'http://not-pypi.org'),
+    ('http://pypi.example.com:8000/simple/', 'http://pypi.example.com:8000/simple/'),
+    ('pypi.example.com:8000/simple/', 'http://pypi.example.com:8000/simple/'),
+    ('localhost:8001', 'http://localhost:8001'),
+])
+def test_get_url(user_input, expected):
+    repo = WarehouseSimpleRepo(name='pypi', url=user_input)
+    assert repo.url == expected

@@ -21,15 +21,10 @@ from .base import BaseCommand
 
 class ProjectTestCommand(BaseCommand):
     """Test project build in temporary venvs.
-
-    https://dephell.readthedocs.io/en/latest/cmd-project-test.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell project test',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_venv(parser)
@@ -41,6 +36,7 @@ class ProjectTestCommand(BaseCommand):
     def __call__(self) -> bool:
         # load project
         loader = CONVERTERS[self.config['from']['format']]
+        loader = loader.copy(project_path=Path(self.config['project']))
         resolver = loader.load_resolver(path=self.config['from']['path'])
         if loader.lock:
             self.logger.warning('do not build project from lockfile!')
@@ -126,8 +122,13 @@ class ProjectTestCommand(BaseCommand):
 
                 # install project
                 self.logger.info('install project', extra=dict(path=str(wheel_path)))
+                dep_spec = str(wheel_path)
+                extras = set(self.config.get('envs', [])) - {'main'}
+                if extras:
+                    dep_spec += '[{}]'.format(','.join(extras))
+                # we are using pip here to make it closer to the real installation
                 result = subprocess.run(
-                    [str(venv.bin_path / 'pip'), 'install', str(wheel_path)],
+                    [str(venv.bin_path / 'pip'), 'install', dep_spec],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 )

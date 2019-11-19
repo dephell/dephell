@@ -38,11 +38,13 @@ And that's it! Now you can use any tools with any Python project. Every other co
     :caption: Commands
 
     index-deps
+    index-docker
     index-generate
     index-inspect
     index-jail
     index-package
     index-project
+    index-vendor
     index-venv
     index-other
 

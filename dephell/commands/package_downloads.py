@@ -12,16 +12,11 @@ from .base import BaseCommand
 
 class PackageDownloadsCommand(BaseCommand):
     """Show downloads statistic for package from PyPI.org.
-
-    https://dephell.readthedocs.io/en/latest/cmd-package-downloads.html
     """
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell package downloads',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_api(parser)
@@ -37,5 +32,10 @@ class PackageDownloadsCommand(BaseCommand):
             systems=get_downloads_by_category(category='systems', name=name),
         )
 
-        print(make_json(data=data, key=self.config.get('filter')))
+        print(make_json(
+            data=data,
+            key=self.config.get('filter'),
+            colors=not self.config['nocolors'],
+            table=self.config['table'],
+        ))
         return True

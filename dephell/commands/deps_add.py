@@ -1,6 +1,7 @@
 
 # built-in
 from argparse import ArgumentParser
+from pathlib import Path
 
 # app
 from ..actions import get_resolver
@@ -13,8 +14,6 @@ from .base import BaseCommand
 
 class DepsAddCommand(BaseCommand):
     """Add new packages into project dependencies.
-
-    https://dephell.readthedocs.io/en/latest/cmd-deps-add.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
@@ -33,7 +32,11 @@ class DepsAddCommand(BaseCommand):
 
     def __call__(self) -> bool:
         # get current deps
+        if 'from' not in self.config:
+            self.logger.error('`--from` is required for this command')
+            return False
         converter = CONVERTERS[self.config['from']['format']]
+        converter = converter.copy(project_path=Path(self.config['project']))
         resolver = converter.load_resolver(path=self.config['from']['path'])
 
         # get new deps

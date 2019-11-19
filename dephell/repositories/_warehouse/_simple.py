@@ -1,16 +1,16 @@
 # built-in
 import asyncio
+import html
 import posixpath
 from datetime import datetime
 from logging import getLogger
-from typing import Dict, Iterable, List, Optional, Tuple, Iterator
-from urllib.parse import urlparse, urljoin, parse_qs, quote
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional, Tuple
+from urllib.parse import parse_qs, quote, urljoin, urlparse
 
 # external
 import attr
-import html
 import html5lib
-import requests
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
@@ -21,6 +21,7 @@ from ...config import config
 from ...constants import ARCHIVE_EXTENSIONS
 from ...exceptions import PackageNotFoundError
 from ...models.release import Release
+from ...networking import requests_session
 from ._base import WarehouseBaseRepo
 
 
@@ -31,6 +32,7 @@ logger = getLogger('dephell.repositories.warehouse.simple')
 class WarehouseSimpleRepo(WarehouseBaseRepo):
     name = attr.ib(type=str)
     url = attr.ib(type=str)
+    pretty_url = attr.ib(type=str, default='')
     auth = attr.ib(default=None)
 
     prereleases = attr.ib(type=bool, factory=lambda: config['prereleases'])  # allow prereleases
@@ -41,34 +43,12 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         # make name canonical
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'
-
-        # replace link on pypi api by link on simple index
-        parsed = urlparse(self.url)
-        if parsed.hostname == 'pypi.python.org':
-            hostname = 'pypi.org'
-        else:
-            hostname = parsed.hostname
-        if hostname in ('pypi.org', 'test.pypi.org'):
-            path = '/simple/'
-        else:
-            path = parsed.path
-        self.url = parsed.scheme + '://' + hostname + path
-
-    @property
-    def pretty_url(self) -> str:
-        return self.url
+        if not self.pretty_url:
+            self.pretty_url = self.url
+        self.url = self._get_url(self.url, default_path='/simple/')
 
     def get_releases(self, dep) -> tuple:
-        # retrieve data
-        cache = JSONCache(
-            'warehouse-simple', urlparse(self.url).hostname, 'links', dep.base_name,
-            ttl=config['cache']['ttl'],
-        )
-        links = cache.load()
-        if links is None:
-            links = list(self._get_links(name=dep.base_name))
-            cache.dump(links)
-
+        links = self._get_links(name=dep.base_name)
         releases_info = dict()
         for link in links:
             name, version = self._parse_name(link['name'])
@@ -130,14 +110,49 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
         raise NotImplementedError
 
-    def _get_links(self, name: str) -> Iterator[Dict[str, str]]:
+    async def download(self, name: str, version: str, path: Path) -> bool:
+        links = self._get_links(name=name)
+        good_links = []
+        for link in links:
+            link_name, link_version = self._parse_name(link['name'])
+            if canonicalize_name(link_name) != name:
+                continue
+            if link_version != version:
+                continue
+            good_links.append(link)
+
+        exts = ('py3-none-any.whl', '-none-any.whl', '.whl', '.tar.gz', '.zip')
+        for ext in exts:
+            for link in good_links:
+                if not link['name'].endswith(ext):
+                    continue
+                if path.is_dir():
+                    fname = urlparse(link['url']).path.strip('/').rsplit('/', maxsplit=1)[-1]
+                    path = path / fname
+                await self._download(url=link['url'], path=path)
+                return True
+        return False
+
+    # private methods
+
+    def _get_links(self, name: str) -> List[Dict[str, str]]:
+        cache = JSONCache(
+            'warehouse-simple', urlparse(self.url).hostname, 'links', name,
+            ttl=config['cache']['ttl'],
+        )
+        links = cache.load()
+        if links:
+            return links
+
         dep_url = posixpath.join(self.url, quote(name)) + '/'
-        response = requests.get(dep_url, auth=self.auth)
+        with requests_session() as session:
+            response = session.get(dep_url, auth=self.auth)
         if response.status_code == 404:
             raise PackageNotFoundError(package=name, url=dep_url)
         response.raise_for_status()
         document = html5lib.parse(response.text, namespaceHTMLElements=False)
 
+        links = []
         for tag in document.findall('.//a'):
             link = tag.get('href')
             if not link:
@@ -155,19 +170,13 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
                 digest=fragment['sha256'][0] if 'sha256' in fragment else None,
             )
 
+        cache.dump(links)
+        return links
+
     async def _get_deps_from_links(self, name, version):
         from ...converters import SDistConverter, WheelConverter
 
-        # retrieve data
-        cache = JSONCache(
-            'warehouse-simple', urlparse(self.url).hostname, 'links', name,
-            ttl=config['cache']['ttl'],
-        )
-        links = cache.load()
-        if links is None:
-            links = list(self._get_links(name=name))
-            cache.dump(links)
-
+        links = self._get_links(name=name)
         good_links = []
         for link in links:
             link_name, link_version = self._parse_name(link['name'])

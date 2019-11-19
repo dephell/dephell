@@ -20,15 +20,10 @@ from .base import BaseCommand
 
 class VenvRunCommand(BaseCommand):
     """Run command in the project virtual environment
-
-    https://dephell.readthedocs.io/en/latest/cmd-venv-run.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell venv run',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_api(parser)
         builders.build_venv(parser)
@@ -85,7 +80,7 @@ class VenvRunCommand(BaseCommand):
         )
 
         # run
-        self.logger.info('running...')
+        self.logger.info('running...', extra=dict(command=command))
         with override_env_vars(env_vars):
             result = subprocess.run([str(executable)] + command[1:])
         if result.returncode != 0:

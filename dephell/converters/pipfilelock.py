@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 # external
+from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
@@ -35,7 +36,9 @@ class PIPFileLockConverter(PIPFileConverter):
     def loads(self, content) -> RootDependency:
         doc = json.loads(content, object_pairs_hook=OrderedDict)
         deps = []
-        root = RootDependency()
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or Path()),
+        )
 
         repo = RepositoriesRegistry()
         for repo_info in doc.get('_meta', {}).get('sources', []):

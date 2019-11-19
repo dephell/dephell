@@ -16,9 +16,13 @@ pip-wheel-metadata/
 
 .dephell_cache/
 .dephell_report/
+/dephell/_vendor/
+/dephell_vendor/
 
 /README.rst
 .idea
-.venv/
+.venv
+
+venv/
 
 \.python-version

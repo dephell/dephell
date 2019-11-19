@@ -22,9 +22,7 @@ $ dephell deps outdated
 [
   {
     "description": "More routines for operating on iterables, beyond itertools",
-    "installed": [
-      "6.0.0"
-    ],
+    "locked": "6.0.0",
     "latest": "7.0.0",
     "name": "more-itertools",
     "updated": "2019-03-28"

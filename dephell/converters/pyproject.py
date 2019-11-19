@@ -1,4 +1,8 @@
+# built-in
+from pathlib import Path
+
 # external
+from dephell_discover import Root as PackageRoot
 from packaging.requirements import Requirement
 from tomlkit import document, dumps, parse
 
@@ -14,7 +18,9 @@ class PyProjectConverter(BaseConverter):
     def loads(self, content: str) -> RootDependency:
         doc = parse(content)
         deps = []
-        root = RootDependency()
+        root = RootDependency(
+            package=PackageRoot(path=self.project_path or Path()),
+        )
         for req in doc['build-system']['requires']:
             req = Requirement(req)
             deps.extend(DependencyMaker.from_requirement(source=root, req=req))

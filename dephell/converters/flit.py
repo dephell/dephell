@@ -1,3 +1,4 @@
+# built-in
 from itertools import chain
 from pathlib import Path
 from typing import Optional
@@ -10,8 +11,8 @@ from packaging.requirements import Requirement
 
 # app
 from ..controllers import DependencyMaker, Readme
+from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
-from ..models import RootDependency, Author, EntryPoint
 from .egginfo import EggInfoConverter
 
 
@@ -31,7 +32,10 @@ class FlitConverter(BaseConverter):
             python=RangeSpecifier(section.get('requires-python')),
             classifiers=section.get('classifiers', tuple()),
             license=section.get('license', ''),
-            package=PackageRoot(path=Path('.').resolve(), name=section['module']),
+            package=PackageRoot(
+                path=self.project_path or Path().resolve(),
+                name=section['module'],
+            ),
         )
 
         if 'keywords' in section:

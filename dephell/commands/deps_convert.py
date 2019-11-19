@@ -1,5 +1,6 @@
 # built-in
 from argparse import ArgumentParser
+from pathlib import Path
 
 # app
 from ..actions import attach_deps
@@ -12,15 +13,10 @@ from .base import BaseCommand
 
 class DepsConvertCommand(BaseCommand):
     """Convert dependencies between formats.
-
-    https://dephell.readthedocs.io/en/latest/cmd-deps-convert.html
     """
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps convert',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_to(parser)
@@ -31,8 +27,16 @@ class DepsConvertCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        if 'from' not in self.config:
+            self.logger.error('`--from` is required for this command')
+            return False
+        if 'to' not in self.config:
+            self.logger.error('`--to` is required for this command')
+            return False
         loader = CONVERTERS[self.config['from']['format']]
+        loader = loader.copy(project_path=Path(self.config['project']))
         dumper = CONVERTERS[self.config['to']['format']]
+        dumper = dumper.copy(project_path=Path(self.config['project']))
 
         # load
         self.logger.debug('load dependencies...', extra=dict(
@@ -61,17 +65,17 @@ class DepsConvertCommand(BaseCommand):
                 return False
             self.logger.debug('resolved')
 
-        # apply envs if needed
-        if 'envs' in self.config:
-            if len(resolver.graph._layers) <= 1:
-                self.logger.debug('resolving...')
-                resolved = resolver.resolve(level=1, silent=self.config['silent'])
-                if not resolved:
-                    conflict = analyze_conflict(resolver=resolver)
-                    self.logger.warning('conflict was found')
-                    print(conflict)
-                    return False
+        # filter out deps by `--envs`
+        if self.config.get('envs'):
+            if len(resolver.graph._layers) == 1:
+                for root in resolver.graph._roots:
+                    for dep in root.dependencies:
+                        dep.applied = True
+                        resolver.graph.add(dep)
+                for root in resolver.graph._roots:
+                    root.applied = True
             resolver.apply_envs(set(self.config['envs']))
+            resolver.graph._layers = resolver.graph._layers[:1]
 
         # dump
         self.logger.debug('dump dependencies...', extra=dict(

@@ -5,7 +5,7 @@ from dephell_links import DirLink, FileLink
 from ..constants import DEFAULT_WAREHOUSE
 from ._conda import CondaCloudRepo, CondaGitRepo, CondaRepo
 from ._git.git import GitRepo
-from ._local_single import LocalRepo
+from ._local import LocalRepo
 from ._release import ReleaseRepo
 from ._warehouse import WarehouseAPIRepo
 
@@ -18,13 +18,15 @@ _repos = dict(
 )
 
 
-def get_repo(link=None, name: str = None):
+def get_repo(link=None, *, name: str = None, default=None):
+    from ..controllers import RepositoriesRegistry
+
     if name is not None:
         return _repos[name]
 
     if link is None:
-        from ..controllers import RepositoriesRegistry
-
+        if default is not None:
+            return default
         repo = RepositoriesRegistry()
         repo.attach_config()
         return repo

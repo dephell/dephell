@@ -4,13 +4,13 @@ from typing import Dict, List, Tuple, Union
 
 # external
 import attr
-import requests
 from dephell_specifier import RangeSpecifier
 from packaging.version import Version
 
 # app
 from ..cache import JSONCache
 from ..cached_property import cached_property
+from ..networking import requests_session
 
 
 DUMP_URL = 'https://github.com/pyupio/safety-db/raw/master/data/insecure_full.json'
@@ -38,7 +38,8 @@ class Safety:
         cache = JSONCache('pyup.io', ttl=3600 * 24)
         records = cache.load()
         if records is None:
-            response = requests.get(self.url)
+            with requests_session() as session:
+                response = session.get(self.url)
             response.raise_for_status()
             records = response.json()
             cache.dump(records)

@@ -12,14 +12,16 @@ from ..cached_property import cached_property
 from .constraint import Constraint
 from .group import Group
 from .groups import Groups
+from .marker_tracker import MarkerTracker
 
 
-@attr.s(cmp=False)
+@attr.s(eq=False, order=False)
 class Dependency:
     raw_name = attr.ib(type=str)
     constraint = attr.ib(type=Constraint)
     repo = attr.ib(repr=False)
     link = attr.ib(default=None, repr=False)
+    marker = None
 
     # flags
     applied = attr.ib(type=bool, default=False, repr=False)
@@ -35,14 +37,14 @@ class Dependency:
     editable = attr.ib(type=bool, default=False, repr=False)
     prereleases = attr.ib(type=bool, default=False, repr=False)
     # https://github.com/pypa/packaging/blob/master/packaging/markers.py
-    marker = attr.ib(type=Markers, factory=Markers, repr=False)
+    marker = attr.ib(type=MarkerTracker, factory=MarkerTracker, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
     inherited_envs = attr.ib(type=set, factory=set, repr=False)  # envs of parents
     locations = attr.ib(type=set, factory=set, repr=False)  # package places on disk
 
     extra = None
 
-    # properties
+    # prlicenseoperties
 
     @cached_property
     def name(self) -> str:
@@ -109,6 +111,10 @@ class Dependency:
         constraint = str(self.constraint)
         if not constraint.startswith('==') or ',' in constraint or '||' in constraint:
             raise ValueError('cannot set deps for non-locked dependency', self.name, str(self.constraint))
+        # propagate envs to deps of this dep
+        for dep in dependencies:
+            dep.inherited_envs.update(self.envs)
+            dep.inherited_envs.update(self.inherited_envs)
         self.__dict__['dependencies'] = dependencies
 
     @property
@@ -119,7 +125,7 @@ class Dependency:
     def python_compat(self) -> bool:
         if not self.marker:
             return True
-        needed = self.marker.python_version
+        needed = self.marker.markers.python_version
         if needed is None:
             return True
 
@@ -165,6 +171,7 @@ class Dependency:
 
     def unapply(self, name: str) -> None:
         self.constraint.unapply(name)
+        self.marker.unapply(name)
         if self.locked:
             self.unlock()
 
@@ -184,7 +191,7 @@ class Dependency:
         if self.constraint:
             result += str(self.constraint)
 
-        marker = deepcopy(self.marker)
+        marker = Markers(str(self.marker))
         if self.envs - {'main'}:
             extra_markers = {'extra == "{}"'.format(env) for env in self.envs - {'main'}}
             marker &= Markers(' or '.join(extra_markers))
@@ -223,14 +230,11 @@ class Dependency:
             self.link = dep.link
             self.repo = dep.repo
 
-        if dep.marker is not None and self.marker is not None:
-            self.marker |= dep.marker
-        else:
-            self.marker = None
-
+        self.marker.merge(dep.marker)
         self.envs.update(dep.envs)
         if 'main' in self.envs and 'dev' in self.envs:
             self.envs.remove('dev')
+        self.inherited_envs.update(dep.inherited_envs)
 
         self.constraint &= dep.constraint
         self.locations |= dep.locations

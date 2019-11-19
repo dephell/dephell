@@ -1,5 +1,4 @@
 # built-in
-import shutil
 from pathlib import Path
 
 # project
@@ -7,9 +6,11 @@ from dephell.commands import ProjectBuildCommand
 from dephell.config import Config
 
 
-def test_build_command(temp_path: Path):
-    metainfo_path = str(temp_path / 'pyproject.toml')
-    shutil.copy(str(Path('tests') / 'requirements' / 'poetry.toml'), metainfo_path)
+def test_build_command(requirements_path, temp_path: Path):
+    (temp_path / 'project').mkdir()
+    (temp_path / 'project' / '__init__.py').touch()
+
+    metainfo_path = str(requirements_path / 'poetry.toml')
     config = Config()
     config.attach({
         'from': dict(format='poetry', path=metainfo_path),

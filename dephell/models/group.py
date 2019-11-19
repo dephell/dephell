@@ -3,8 +3,8 @@ from operator import attrgetter
 from typing import Optional
 
 # app
-from ..config import config
 from ..cached_property import cached_property
+from ..config import config
 
 
 class Group:

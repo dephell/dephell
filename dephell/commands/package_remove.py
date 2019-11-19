@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 # app
 from ..actions import get_python_env
 from ..config import builders
+from ..controllers import Graph
 from ..converters import InstalledConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
@@ -12,16 +13,11 @@ from .base import BaseCommand
 
 class PackageRemoveCommand(BaseCommand):
     """Remove installed packages.
-
-    https://dephell.readthedocs.io/en/latest/cmd-package-remove.html
     """
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell package remove',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)
@@ -45,7 +41,7 @@ class PackageRemoveCommand(BaseCommand):
             packages=len(root.dependencies),
             python=python.path,
         ))
-        reqs = [Requirement(dep=dep, lock=True) for dep in root.dependencies]
+        reqs = Requirement.from_graph(graph=Graph(root), lock=True)
         code = manager.remove(reqs=reqs)
         if code != 0:
             return False

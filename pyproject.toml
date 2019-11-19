@@ -45,13 +45,6 @@ tests = ["tests", "README.md"]
 # run command `pytest`
 command = "python -m pytest tests/"
 
-# Test installation using poetry:
-[tool.dephell.poetry]
-# read dependencies from poetry format
-from = {format = "poetry", path = "pyproject.toml"}
-# run command `poetry install`
-command = "poetry install -vvv"
-
 [tool.dephell.pypy]
 from = {format = "poetry", path = "pyproject.toml"}
 # force python interpreter for env
@@ -68,7 +61,26 @@ from = {format = "poetry", path = "pyproject.toml"}
 # install only `docs` extra dependencies
 envs = ["docs"]
 # run this command:
-command = "sphinx-build -M html docs docs/build"
+command = "sphinx-build -W docs docs/build"
+
+# Sort imports in the project:
+[tool.dephell.isort]
+from = {format = "poetry", path = "pyproject.toml"}
+envs = ["main", "dev"]
+command = "isort -y"
+
+[tool.dephell.vendorized]
+from = {format = "poetry", path = "pyproject.toml"}
+to = {format = "wheel", path = "dist-vendored/"}
+envs = ["main"]
+
+# Make vendorized version of the project:
+# dephell vendor download --env=vendorized
+# dephell vendor import --env=vendorized
+[tool.dephell.vendorized.vendor]
+path = "dephell_vendor"
+exclude = ["jinja2", "test", "setuptools", "pip"]
+
 
 # -- ISORT -- #
 
@@ -90,13 +102,14 @@ import_heading_localfolder = "app"
 
 [tool.poetry]
 name = "dephell"
-version = "0.7.4"
+version = "0.7.8"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
 license = "MIT"
+homepage = "https://dephell.org/"
 repository = "https://github.com/dephell/dephell"
-documentation = "https://dephell.readthedocs.io/en/latest/"
+documentation = "https://dephell.org/docs/"
 keywords = [
     "dephell", "packaging", "dependency", "dependencies", "venv", "licenses",
     "pip", "poetry", "pipfile", "pipenv", "setuptools",
@@ -109,6 +122,10 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
     "Topic :: Security",  # because we lock dependencies with hashes :)
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -121,49 +138,63 @@ dephell = "dephell.cli:entrypoint"
 python = ">=3.5"
 aiohttp = "*"
 appdirs = "*"
-attrs = "*"
+attrs = ">=19.2.0"
+bowler = {python = ">=3.6",version = "*"}
+bowler-py35 = {version = ">=0.9.1",python = "<3.6"}
 cerberus = ">=1.3"
+docker = "*"
+dockerpty = "*"
+fissix = {python = ">=3.6",allows-prereleases = true,version = "*"}
+fissix-py35 = {python = "<3.6",version = "*"}
+flatdict = "*"
 html5lib = "*"
 jinja2 = "*"
 m2r = "*"
 packaging = "*"
 pip = ">=18.0"
-pyyaml = "*"  # TODO: replace by ruamel.yaml when migrate from poetry format to flit
+pygments = "*"
 requests = "*"
+"ruamel.yaml" = "*"
 setuptools = "*"
+tabulate = "*"
 tomlkit = "*"
 yaspin = "*"
 
 # optional
-aiofiles = {optional = true,version = "*"}
-autopep8 = {optional = true,version = "*"}
-colorama = {optional = true,version = "*"}
-graphviz = {optional = true,version = "*"}
-yapf = {optional = true,version = "*"}
+aiofiles = {optional = true, version = "*"}
+autopep8 = {optional = true, version = "*"}
+colorama = {optional = true, version = "*"}
+graphviz = {optional = true, version = "*"}
+yapf = {optional = true, version = "*"}
 
 # dephell ecosystem
 dephell-archive = ">=0.1.5"
 dephell-discover = ">=0.2.6"
 dephell-licenses = ">=0.1.6"
 dephell-links = ">=0.1.4"
-dephell-markers = ">=0.2.6"
+dephell-markers = ">=1.0.0"
 dephell-pythons = ">=0.1.11"
+dephell-setuptools = ">=0.2.1"
 dephell-shells = ">=0.1.3"
 dephell-specifier = ">=0.1.7"
 dephell-venvs = ">=0.1.16"
+dephell-versioning = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
 requests-mock = "*"
 aioresponses = "*"
 
+alabaster = "*"
 sphinx = "*"
 recommonmark = "*"
-sphinx-rtd-theme = "*"
 pygments-github-lexers = "*"
+
+flake8-isort = "*"
+isort = {extras = ["pyproject"], version = "*"}
 # pre-commit = "*"
 
 [tool.poetry.extras]
 full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
-tests = ["pytest", "requests-mock", "aioresponses"]
-docs = ["sphinx", "recommonmark", "sphinx-rtd-theme", "pygments-github-lexers"]
+tests = ["aioresponses", "pytest", "requests-mock"]
+docs = ["alabaster", "pygments-github-lexers", "recommonmark", "sphinx"]

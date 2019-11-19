@@ -4,10 +4,9 @@ from types import SimpleNamespace
 from typing import Tuple
 
 # app
-from ..actions import attach_deps, get_python_env
+from ..actions import get_python_env
 from ..config import builders
-from ..controllers import analyze_conflict
-from ..converters import CONVERTERS, InstalledConverter
+from ..converters import InstalledConverter
 from ..models import Requirement
 from ..package_manager import PackageManager
 from .base import BaseCommand
@@ -15,19 +14,14 @@ from .base import BaseCommand
 
 class DepsInstallCommand(BaseCommand):
     """Install project dependencies.
-
-    https://dephell.readthedocs.io/en/latest/cmd-deps-install.html
     """
     sync = False
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps install',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
-        builders.build_to(parser)
+        builders.build_from(parser)
         builders.build_resolver(parser)
         builders.build_api(parser)
         builders.build_venv(parser)
@@ -36,32 +30,13 @@ class DepsInstallCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        loader_config = self.config.get('to') or self.config['from']
-        self.logger.info('get dependencies', extra=dict(
-            format=loader_config['format'],
-            path=loader_config['path'],
-        ))
-        loader = CONVERTERS[loader_config['format']]
-        resolver = loader.load_resolver(path=loader_config['path'])
-        attach_deps(resolver=resolver, config=self.config, merge=False)
-
-        # resolve
-        self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve(silent=self.config['silent'])
-        if not resolved:
-            conflict = analyze_conflict(resolver=resolver)
-            self.logger.warning('conflict was found')
-            print(conflict)
+        resolver = self._get_locked(default_envs={'main'})
+        if resolver is None:
             return False
 
-        # get executable
         python = get_python_env(config=self.config)
         self.logger.debug('choosen python', extra=dict(path=str(python.path)))
-
-        # filter deps by envs and markers
-        resolver.apply_envs(set(self.config.get('envs', {'main'})))
         resolver.apply_markers(python=python)
-
         install, remove = self._get_install_remove(graph=resolver.graph, python=python)
 
         # remove
@@ -88,13 +63,15 @@ class DepsInstallCommand(BaseCommand):
         if not install and not remove:
             self.logger.info('everything is up-to-date')
         else:
-            self.logger.info('installed')
+            self.logger.info('synced' if self.sync else 'installed')
         return True
 
     def _get_install_remove(self, graph, python) -> Tuple[list, list]:
         # get installed packages
         installed_root = InstalledConverter().load(paths=python.lib_paths)
-        installed = {dep.name: str(dep.constraint).strip('=') for dep in installed_root.dependencies}
+        installed = dict()
+        for dep in installed_root.dependencies:
+            installed[dep.name] = [c.strip('=') for c in str(dep.constraint).split(' || ')]
 
         # plan what we will install and what we will remove
         install = []
@@ -107,7 +84,7 @@ class DepsInstallCommand(BaseCommand):
                 continue
             # installed the same version, skip
             version = req.version.strip('=')
-            if version == installed[req.name]:
+            if version in installed[req.name]:
                 continue
             # installed old version, remove it and install new
             self.logger.debug('dependency will be updated', extra=dict(

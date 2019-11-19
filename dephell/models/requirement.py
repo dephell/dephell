@@ -2,6 +2,10 @@
 from collections import OrderedDict, defaultdict
 from typing import Iterable, Optional, Set, Tuple
 
+# external
+import attr
+from dephell_links import DirLink, FileLink, VCSLink
+
 # app
 from ..cached_property import cached_property
 
@@ -9,7 +13,7 @@ from ..cached_property import cached_property
 class Requirement:
     _properties = (
         'name', 'release', 'version', 'extras', 'markers',
-        'hashes', 'sources', 'editable', 'git', 'rev',
+        'hashes', 'sources', 'editable', 'git', 'rev', 'path',
         'description', 'optional', 'platform', 'python',
     )
 
@@ -59,7 +63,7 @@ class Requirement:
 
     @cached_property
     def dependencies(self) -> tuple:
-        extra_deps = sum([dep.dependencies for dep in self.extra_deps], tuple())
+        extra_deps = sum((dep.dependencies for dep in self.extra_deps), tuple())
         return self.dep.dependencies + extra_deps
 
     @property
@@ -81,6 +85,12 @@ class Requirement:
     @property
     def git(self) -> Optional[str]:
         if getattr(self.dep.link, 'vcs', '') == 'git':
+            return self.dep.link.short
+        return None  # mypy wants it
+
+    @property
+    def path(self) -> Optional[str]:
+        if isinstance(self.dep.link, (DirLink, FileLink)):
             return self.dep.link.short
         return None  # mypy wants it
 
@@ -207,6 +217,30 @@ class Requirement:
         if 'dev' in self.dep.envs:
             return False
         return bool(self.dep.envs - {'dev', 'main'})
+
+    # methods
+
+    @staticmethod
+    def _get_comparable_dict(dep) -> dict:
+        excluded = {'constraint', 'repo', 'link', 'marker', 'license', 'inherited_envs', 'locations'}
+        result = attr.asdict(dep, recurse=True, filter=lambda x, _: x.name not in excluded)
+        result['constraint'] = str(dep.constraint)
+        if dep.marker:
+            result['marker'] = str(dep.marker)
+        if isinstance(dep.link, VCSLink):
+            result['link'] = attr.asdict(dep.link, recurse=True)
+        result['license'] = str(dep.license)
+        return result
+
+    def same_dep(self, other_dep) -> bool:
+        """Is given dependency the same as dependency inside of this Requirement?
+
+        It's used in converters to not overwrite unchanged requirements.
+        It looks in this way to make comparation as easy as possible:
+        converters produce dependencies, but get requirements.
+        So, it's easier to compare requirement with dependency.
+        """
+        return self._get_comparable_dict(self.dep) == self._get_comparable_dict(other_dep)
 
     # magic methods
 

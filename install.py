@@ -1,8 +1,19 @@
 # built-in
 import subprocess
+from argparse import ArgumentParser
 from os import environ, pathsep
 from pathlib import Path
+from shutil import rmtree
 from venv import create
+
+
+# parse CLI arguments
+parser = ArgumentParser()
+parser.add_argument('--branch', help='install dephell from git from given branch')
+parser.add_argument('--version', help='install specified version')
+parser.add_argument('--slug', default='dephell/dephell',
+                    help='repository slug to use when installing from Github')
+args = parser.parse_args()
 
 
 # install pip
@@ -37,18 +48,31 @@ def get_data_dir() -> Path:
 
 print('make venv')
 path = get_data_dir() / 'venvs' / 'dephell'
+if path.exists():
+    rmtree(str(path))
 create(str(path), with_pip=True)
 
 
 print('update pip')
 python_path = list(path.glob('*/python3'))[0]
-result = subprocess.run([str(python_path), '-m', 'pip', 'install', '-U', 'pip'])
+command = [str(python_path), '-m', 'pip', 'install', '-U', 'pip']
+result = subprocess.run(command)
 if result.returncode != 0:
-    exit(result.returncode)
+    # try again, pip is nightly
+    result = subprocess.run(command)
+    if result.returncode != 0:
+        exit(result.returncode)
 
 
 print('install dephell')
-result = subprocess.run([str(python_path), '-m', 'pip', 'install', 'dephell[full]'])
+if args.branch:
+    name = 'git+https://github.com/{slug}.git@{branch}#egg=dephell[full]'
+    name = name.format(slug=args.slug, branch=args.version or args.branch)
+elif args.version:
+    name = 'dephell[full]=={version}'.format(version=args.version)
+else:
+    name = 'dephell[full]'
+result = subprocess.run([str(python_path), '-m', 'pip', 'install', name])
 if result.returncode != 0:
     exit(result.returncode)
 

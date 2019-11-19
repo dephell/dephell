@@ -2,6 +2,44 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.7.8
+
++ Fuzzy command name search ([#247](https://github.com/dephell/dephell/pull/247), [#122](https://github.com/dephell/dephell/issues/122)).
++ [Configure](config) DepHell with environment variables ([#248](https://github.com/dephell/dephell/pull/248)).
++ Colored JSON output ([#262](https://github.com/dephell/dephell/pull/262), [#260](https://github.com/dephell/dephell/pull/260), [#205](https://github.com/dephell/dephell/issues/205)).
++ Table output with `--table` ([#277](https://github.com/dephell/dephell/pull/277), [#267](https://github.com/dephell/dephell/pull/267), [#206](https://github.com/dephell/dephell/issues/206)).
++ New [attrs](https://www.attrs.org) ([#261](https://github.com/dephell/dephell/pull/261)).
++ ruamel.yaml instead of pyyaml ([#275](https://github.com/dephell/dephell/pull/275))
++ pip 19.3.1 support ([#276](https://github.com/dephell/dephell/pull/276)).
++ [a little bit more](https://github.com/dephell/dephell/pulls?q=is%3Apr+is%3Aclosed+milestone%3Av.0.7.8)
+
+## v.0.7.7
+
++ Meet [dephell.org](https://dephell.org/) ([#244](https://github.com/dephell/dephell/pull/244)).
++ Lazy dependencies overwriting ([#232](https://github.com/dephell/dephell/pull/232), [#229](https://github.com/dephell/dephell/issues/229)).
++ Removed Snyk support ([#245](https://github.com/dephell/dephell/pull/245)).
++ Added custom User-Agent to all requests ([#242](https://github.com/dephell/dephell/pull/242), [#243](https://github.com/dephell/dephell/pull/243), [#231](https://github.com/dephell/dephell/issues/231))
++ Updated documentation interface ([#241](https://github.com/dephell/dephell/pull/241)).
++ `path` support for `pip`, `pipenv`, `poetry` ([#230](https://github.com/dephell/dephell/pull/230), [#227](https://github.com/dephell/dephell/issues/227)).
+
+## v.0.7.6
+
++ Docker support ([#220](https://github.com/dephell/dephell/pull/220), [#49](https://github.com/dephell/dephell/issues/49)).
++ Fixed dependencies for DepHell itself ([#218](https://github.com/dephell/dephell/pull/218), [#216](https://github.com/dephell/dephell/issues/216)).
++ Resolve paths to dependency files relatively to the project, and local dependencies relatively to the dependency file ([#217](https://github.com/dephell/dephell/pull/217), [#88](https://github.com/dephell/dephell/issues/88)).
++ Fixed repositories dumping for poetry ([#215](https://github.com/dephell/dephell/pull/215), [#177](https://github.com/dephell/dephell/issues/177)).
++ Simplified "usage" for commands' help ([#212](https://github.com/dephell/dephell/pull/212), [#120](https://github.com/dephell/dephell/issues/120)).
++ Install extras in [dephell project test](cmd-project-test) if needed ([#204](https://github.com/dephell/dephell/pull/204), [#195](https://github.com/dephell/dephell/issues/195)).
+
+## v.0.7.5
+
++ Vendorization ([dephell vendor download](cmd-vendor-download) and [dephell vendor import](cmd-vendor-import)) ([#194](https://github.com/dephell/dephell/pull/194), [#109](https://github.com/dephell/dephell/issues/109))
++ Now CLI for some commands accepts `--from` instead of `--to`, because it makes much more sense ([#194](https://github.com/dephell/dephell/pull/194), [#138](https://github.com/dephell/dephell/issues/138))
++ Always PEP-compatible name for names of wheel and sdist ([#203](https://github.com/dephell/dephell/pull/203), [#192](https://github.com/dephell/dephell/issues/192))
++ Now `--tag` option for [dephell project bump](cmd-project-bump) allows to specify tag prefix or template ([#199](https://github.com/dephell/dephell/pull/199), [#197](https://github.com/dephell/dephell/issues/197))
++ Meet [dephell_versioning](https://github.com/dephell/dephell_versioning), our new friend to handle packages versioning ([#191](https://github.com/dephell/dephell/pull/191), [#147](https://github.com/dephell/dephell/issues/147))
++ Shorter links in documentation ([#183](https://github.com/dephell/dephell/pull/183), [#182](https://github.com/dephell/dephell/issues/182))
+
 ## v.0.7.4
 
 + Custom warehouse and simple index support ([#53](https://github.com/dephell/dephell/issues/53), [#128](https://github.com/dephell/dephell/pull/128)).

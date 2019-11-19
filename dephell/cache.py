@@ -6,8 +6,8 @@ from time import time
 from typing import List
 
 # app
-from .config import config
 from .cached_property import cached_property
+from .config import config
 
 
 class BaseCache:
@@ -100,12 +100,12 @@ class RequirementsCache(BaseCache):
         return root.dependencies
 
     def dump(self, root):
+        from .controllers import Graph
         from .models import Requirement
 
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        reqs = [Requirement(dep=dep, lock=False) for dep in root.dependencies]
         self.converter.dump(
             path=self.path,
             project=root,
-            reqs=reqs,
+            reqs=Requirement.from_graph(graph=Graph(root), lock=False),
         )

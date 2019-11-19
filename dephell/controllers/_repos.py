@@ -1,12 +1,15 @@
+# built-in
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional, Iterable, List, Dict
+from typing import Dict, Iterable, List, Optional
 from urllib.parse import urljoin, urlparse
 
+# external
 import attr
 import requests
-from requests.exceptions import SSLError, ConnectionError
+from requests.exceptions import ConnectionError, SSLError
 
+# app
 from ..config import config as global_config
 from ..constants import WAREHOUSE_DOMAINS
 from ..exceptions import PackageNotFoundError
@@ -34,6 +37,8 @@ class RepositoriesRegistry(WarehouseBaseRepo):
 
     _urls = attr.ib(factory=set)
     _names = attr.ib(factory=set)
+
+    propagate = True
 
     def add_repo(self, *, url: str, name: str = None, from_config: bool = False) -> bool:
         # try to interpret URL as local path
@@ -149,6 +154,12 @@ class RepositoriesRegistry(WarehouseBaseRepo):
             if isinstance(repo, WarehouseAPIRepo):
                 return repo.search(query=query)
         return self.repos[0].search(query=query)
+
+    async def download(self, name: str, version: str, path: Path) -> bool:
+        for repo in self.repos:
+            if not isinstance(repo, WarehouseLocalRepo):
+                return await repo.download(name=name, version=version, path=path)
+        return await self.repos[0].download(name=name, version=version, path=path)
 
     # properties
 

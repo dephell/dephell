@@ -6,8 +6,9 @@ This command returns non-zero code if some vulnerabilities was found, so you can
 
 ## Sources
 
-+ [pyup.io](https://pyup.io/) provides public repository [safety-db](https://github.com/pyupio/safety-db) with all vulnerabilities in their database. DepHell uses it. This repository automatically updates every month. So, if you want to get actual reports you have to use their official solutions. They provide Safety CI that [free for Open Source](https://pyup.io/pricing/) and $30 for personal usage. If you have "Business" plan you also can get API key and use their [official CLI](https://github.com/pyupio/safety).
-+ [snyk.io](https://snyk.io/) provides cool [public database](https://snyk.io/vuln?type=pip) of vulnerabilities in Python packages. DepHell uses their RSS feed to get information about vulnerabilities. This feed contains last 50 records from database, that about half-year report. So, this is more than enough to cover missed month from pyup. However, DepHell doesn't try to replace their API and detects vulnerable versions of package quite approximately. So, false-positives can happened. If you want better detection you can use their [official soultions](https://snyk.io/features/). It's [free for Open Source](https://snyk.io/plans/).
+[pyup.io](https://pyup.io/) provides public repository [safety-db](https://github.com/pyupio/safety-db) with all vulnerabilities in their database. DepHell uses it. This repository automatically updates every month. So, if you want to get actual reports you have to use their official solutions. They provide Safety CI that [free for Open Source](https://pyup.io/pricing/) and $30 for personal usage. If you have "Business" plan you also can get API key and use their [official CLI](https://github.com/pyupio/safety).
+
+We used [snyk.io](https://snyk.io/) before, but now they have removed RSS feed.
 
 ## Dependencies lookup
 

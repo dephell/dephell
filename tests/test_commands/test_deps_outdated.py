@@ -12,16 +12,17 @@ from dephell.commands import DepsOutdatedCommand
 from dephell.config import Config
 
 
-@pytest.mark.allow_hosts(['pypi.org'])
+@pytest.mark.allow_hosts()
 def test_deps_outdated_command_file(temp_path: Path, capsys):
     reqs_path = temp_path / 'requirements.txt'
     reqs_path.write_text('six==1.11.0')
 
     config = Config()
     config.attach({
-        'to': dict(format='piplock', path=str(reqs_path)),
+        'from': dict(format='piplock', path=str(reqs_path)),
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = DepsOutdatedCommand(argv=[], config=config)
@@ -32,7 +33,7 @@ def test_deps_outdated_command_file(temp_path: Path, capsys):
     assert result is False
     assert len(output) == 1
     assert output[0]['name'] == 'six'
-    assert output[0]['installed'] == ['1.11.0']
+    assert output[0]['locked'] == '1.11.0'
     assert output[0]['latest'] != '1.11.0'
 
 
@@ -49,6 +50,7 @@ def test_deps_outdated_command_venv(temp_path: Path, capsys):
         'venv': str(venv_path),
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = DepsOutdatedCommand(argv=[], config=config)

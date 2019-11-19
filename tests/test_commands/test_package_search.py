@@ -1,6 +1,7 @@
 # built-in
 import json
 
+# external
 import pytest
 
 # project
@@ -14,6 +15,7 @@ def test_package_search_command(capsys):
     config.attach({
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = PackageSearchCommand(argv=['textdistance'], config=config)

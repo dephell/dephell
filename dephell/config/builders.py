@@ -1,5 +1,9 @@
+# project
+# external
+from dephell_versioning import get_schemes
+
 # app
-from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES, VERSION_SCHEMES
+from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES
 
 
 env_help = (
@@ -13,7 +17,7 @@ env_help = (
 def build_config(parser):
     config_group = parser.add_argument_group('Configuration file')
     config_group.add_argument('-c', '--config', help='path to config file.')
-    config_group.add_argument('-e', '--env', default='main', help='environment in config.')
+    config_group.add_argument('-e', '--env', help='environment in config.')
 
 
 def build_from(parser):
@@ -54,6 +58,7 @@ def build_output(parser):
     output_group.add_argument('--level', choices=LOG_LEVELS, help='minimal level for log messages.')
 
     output_group.add_argument('--nocolors', action='store_true', help='do not color output.')
+    output_group.add_argument('--table', action='store_true', help='use table for output.')
     output_group.add_argument('--silent', action='store_true', help='suppress any output except errors.')
     output_group.add_argument('--filter', help='filter for JSON output.')
 
@@ -68,6 +73,13 @@ def build_venv(parser):
     venv_group.add_argument('--dotenv', help='path to .env file')
 
 
+def build_docker(parser):
+    venv_group = parser.add_argument_group('Docker container')
+    venv_group.add_argument('--docker-repo', help='image name without tag')
+    venv_group.add_argument('--docker-tag', help='image tag')
+    venv_group.add_argument('--docker-container', help='container name')
+
+
 def build_other(parser):
     other_group = parser.add_argument_group('Other')
 
@@ -79,4 +91,5 @@ def build_other(parser):
 
     other_group.add_argument('--envs', nargs='*', help='environments (main, dev) or extras to install')
     other_group.add_argument('--tests', nargs='*', help='paths to test files')
-    other_group.add_argument('--versioning', choices=sorted(VERSION_SCHEMES), help='versioning scheme for project')
+    other_group.add_argument('--versioning', choices=sorted(get_schemes()),
+                             help='versioning scheme for project')

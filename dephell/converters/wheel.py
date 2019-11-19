@@ -114,7 +114,7 @@ class _Writer:
         self._records = []
         base_path = '{name}-{version}.dist-info/'.format(
             name=project.raw_name.replace('-', '_'),
-            version=str(project.version),
+            version=project.pep_version,
         )
         with path.open('w+b') as stream:
             with ZipFile(stream, mode='w', compression=ZIP_DEFLATED) as archive:
@@ -154,13 +154,13 @@ class _Writer:
         return EggInfoConverter().dumps(reqs=reqs, project=project, content=content)
 
     @staticmethod
-    def _get_path(path, project):
+    def _get_path(path, project) -> Path:
         if isinstance(path, str):
             path = Path(path)
         if path.suffix not in ('.whl', '.zip'):
             path /= '{name}-{version}-py3-none-any.whl'.format(
                 name=project.raw_name.replace('-', '_'),
-                version=str(project.version),
+                version=project.pep_version,
             )
         return path
 

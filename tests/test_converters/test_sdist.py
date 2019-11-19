@@ -10,7 +10,7 @@ def test_load_deps():
     root = SDistConverter().load(path)
 
     needed = {'attrs', 'cached-property', 'packaging', 'requests'}
-    assert set(dep.name for dep in root.dependencies) == needed
+    assert {dep.name for dep in root.dependencies} == needed
 
 
 def test_load_metadata():
