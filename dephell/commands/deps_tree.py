@@ -49,7 +49,12 @@ class DepsTreeCommand(BaseCommand):
                     latest=str(dep.groups.releases[0].version),
                     dependencies=[subdep.name for subdep in dep.dependencies],
                 ))
-            print(make_json(result, key=self.config.get('filter')))
+            print(make_json(
+                data=result,
+                key=self.config.get('filter'),
+                colors=not self.config['nocolors'],
+                table=self.config['table'],
+            ))
             return True
 
         if self.args.type == 'graph':

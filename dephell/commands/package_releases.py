@@ -35,5 +35,10 @@ class PackageReleasesCommand(BaseCommand):
         if not data:
             self.logger.error('no releases')
             return False
-        print(make_json(data=data, key=self.config.get('filter')))
+        print(make_json(
+            data=data,
+            key=self.config.get('filter'),
+            colors=not self.config['nocolors'],
+            table=self.config['table'],
+        ))
         return True

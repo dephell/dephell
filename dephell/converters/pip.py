@@ -132,13 +132,42 @@ class PIPConverter(BaseConverter):
         except TypeError:
             pass
 
+        # pip 19.3
         from pip._internal.models.search_scope import SearchScope
         from pip._internal.models.selection_prefs import SelectionPreferences
+        try:
+            return PackageFinder.create(
+                search_scope=SearchScope(find_links=[], index_urls=[]),
+                selection_prefs=SelectionPreferences(allow_yanked=False),
+                session=PipSession(),
+            )
+        except TypeError:
+            pass
 
+        # pip 19.3.1
+        from pip._internal.models.target_python import TargetPython
+        try:
+            from pip._internal.collector import LinkCollector
+            return PackageFinder.create(
+                link_collector=LinkCollector(
+                    search_scope=SearchScope(find_links=[], index_urls=[]),
+                    session=PipSession(),
+                ),
+                selection_prefs=SelectionPreferences(allow_yanked=False),
+                target_python=TargetPython(),
+            )
+        except ImportError:
+            pass
+
+        # pip 19.3.2?
+        from pip._internal.index.collector import LinkCollector
         return PackageFinder.create(
-            search_scope=SearchScope(find_links=[], index_urls=[]),
-            selection_prefs=SelectionPreferences(allow_yanked=False),
-            session=PipSession(),
+            link_collector=LinkCollector(
+                search_scope=SearchScope(find_links=[], index_urls=[]),
+                session=PipSession(),
+            ),
+            target_python=TargetPython(),
+            allow_yanked=False,
         )
 
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py

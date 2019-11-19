@@ -37,6 +37,7 @@ _NAMES = (
     'inspect gadget',
     'inspect self',
     'inspect venv',
+    'inspect project',
 
     'jail install',
     'jail list',
@@ -55,6 +56,9 @@ _NAMES = (
     'project build',
     'project bump',
     'project test',
+    'project validate',
+
+    'self upgrade',
 
     'vendor download',
     'vendor import',

@@ -16,6 +16,7 @@ def test_package_downloads_command(capsys):
     config.attach({
         'level': 'WARNING',
         'silent': True,
+        'nocolors': True,
     })
 
     command = PackageDownloadsCommand(argv=['DJANGO'], config=config)

@@ -88,7 +88,8 @@ class DependencyMaker:
             link = url
         if link and not isinstance(link, UnknownLink):
             if link.name and rex_hash.fullmatch(raw_name):
-                raw_name = link.name
+                if not link.name.startswith(raw_name):
+                    raw_name = link.name
 
         # make constraint
         if isinstance(constraint, str):

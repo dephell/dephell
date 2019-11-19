@@ -67,6 +67,7 @@ SCHEME = {
     'filter':       dict(type='string', required=False),
     'traceback':    dict(type='boolean', required=True),
     'pdb':          dict(type='boolean', required=True),
+    'table':        dict(type='boolean', required=True),
 
     # venv
     'venv':     dict(type='string', required=True),

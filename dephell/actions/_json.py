@@ -4,6 +4,11 @@ from collections import defaultdict
 from functools import reduce
 from typing import Optional
 
+# external
+from flatdict import FlatDict
+from pygments import formatters, highlight, lexers
+from tabulate import tabulate
+
 
 def _each(value):
     if isinstance(value, list):
@@ -82,20 +87,48 @@ def getitem(value, key):
     return value[key]
 
 
-def make_json(data, key: str = None, sep: Optional[str] = '-') -> str:
+def _beautify(data, *, colors: bool, table: bool) -> str:
+    """
+    1. Returns table if `table=True`
+    1. Returns colored JSON if `json=True`
+    1. Returns plain JSON otherwise.
+    """
+    if table:
+        # one dict
+        if isinstance(data, dict):
+            data = FlatDict(data, delimiter='.').items()
+            return tabulate(data, headers=('key', 'value'), tablefmt='fancy_grid')
+        # list of dicts
+        if isinstance(data, list) and data and isinstance(data[0], dict):
+            table = []
+            for row in data:
+                row = FlatDict(row, delimiter='.')
+                keys = tuple(row)
+                row = [v for _, v in sorted(row.items())]
+                table.append(row)
+            return tabulate(table, headers=keys, tablefmt='fancy_grid')
+
     json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
+    dumped = json.dumps(data, **json_params)
+    if not colors:
+        return dumped
+    return highlight(dumped, lexers.JsonLexer(), formatters.TerminalFormatter())
+
+
+def make_json(data, key: str = None, sep: Optional[str] = '-',
+              colors: bool = True, table: bool = False) -> str:
     # print all config
     if not key:
-        return json.dumps(data, **json_params)  # type: ignore
+        return _beautify(data=data, colors=colors, table=table)
 
     if sep is None:
-        return json.dumps(data[key], **json_params)  # type: ignore
+        return _beautify(data=data[key], colors=colors, table=table)
 
     keys = key.replace('.', sep).split(sep)
     value = reduce(getitem, keys, data)
     # print config section
     if isinstance(value, (dict, list)):
-        return json.dumps(value, **json_params)  # type: ignore
+        return _beautify(data=value, colors=colors, table=table)
 
     # print one value
     return str(value)

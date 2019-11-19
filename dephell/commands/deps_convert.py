@@ -28,10 +28,10 @@ class DepsConvertCommand(BaseCommand):
 
     def __call__(self) -> bool:
         if 'from' not in self.config:
-            self.error('`--from` is required for this command')
+            self.logger.error('`--from` is required for this command')
             return False
         if 'to' not in self.config:
-            self.error('`--to` is required for this command')
+            self.logger.error('`--to` is required for this command')
             return False
         loader = CONVERTERS[self.config['from']['format']]
         loader = loader.copy(project_path=Path(self.config['project']))
@@ -64,6 +64,18 @@ class DepsConvertCommand(BaseCommand):
                 print(conflict)
                 return False
             self.logger.debug('resolved')
+
+        # filter out deps by `--envs`
+        if self.config.get('envs'):
+            if len(resolver.graph._layers) == 1:
+                for root in resolver.graph._roots:
+                    for dep in root.dependencies:
+                        dep.applied = True
+                        resolver.graph.add(dep)
+                for root in resolver.graph._roots:
+                    root.applied = True
+            resolver.apply_envs(set(self.config['envs']))
+            resolver.graph._layers = resolver.graph._layers[:1]
 
         # dump
         self.logger.debug('dump dependencies...', extra=dict(

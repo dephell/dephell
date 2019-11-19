@@ -121,7 +121,7 @@ class BaseCommand:
 
         loader_config = self._get_loader_config_for_lockfile()
         if not Path(loader_config['path']).exists():
-            self.error('cannot find dependency file', extra=dict(path=loader_config['path']))
+            self.logger.error('cannot find dependency file', extra=dict(path=loader_config['path']))
             return None
 
         self.logger.info('get dependencies', extra=dict(

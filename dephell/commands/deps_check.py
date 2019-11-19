@@ -74,7 +74,12 @@ class DepsCheckCommand(BaseCommand):
             ))
 
         if data:
-            print(make_json(data=data, key=self.config.get('filter')))
+            print(make_json(
+                data=data,
+                key=self.config.get('filter'),
+                colors=not self.config['nocolors'],
+                table=self.config['table'],
+            ))
             return False
 
         self.logger.info('all packages is up-to-date')
