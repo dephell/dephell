@@ -2,6 +2,18 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.7.9
+
++ [dephell self uncache](cmd-self-uncache) ([#312](https://github.com/dephell/dephell/pull/312)).
++ [dephell self upgrade](cmd-self-upgrade) ([#311](https://github.com/dephell/dephell/pull/311)).
++ [dephell generate contributing](cmd-generate-contributing) ([#255](https://github.com/dephell/dephell/pull/255)).
++ [dephell inspect project](cmd-inspect-project) ([#296](https://github.com/dephell/dephell/pull/296)).
++ [dephell project validate](cmd-project-validate) ([#310](https://github.com/dephell/dephell/pull/310)).
++ Smart `setup.py` parsing. Meet [dephell_setuptools](https://github.com/dephell/dephell_setuptools) ([#308](https://github.com/dephell/dephell/pull/308)).
++ Stable `setup.py` generation ([#292](https://github.com/dephell/dephell/pull/292)).
++ Cleaner sdist ([#297](https://github.com/dephell/dephell/pull/297)).
++ [a little bit more](https://github.com/dephell/dephell/milestone/2?closed=1)
+
 ## v.0.7.8
 
 + Fuzzy command name search ([#247](https://github.com/dephell/dephell/pull/247), [#122](https://github.com/dephell/dephell/issues/122)).
@@ -11,7 +23,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + New [attrs](https://www.attrs.org) ([#261](https://github.com/dephell/dephell/pull/261)).
 + ruamel.yaml instead of pyyaml ([#275](https://github.com/dephell/dephell/pull/275))
 + pip 19.3.1 support ([#276](https://github.com/dephell/dephell/pull/276)).
-+ [a little bit more](https://github.com/dephell/dephell/pulls?q=is%3Apr+is%3Aclosed+milestone%3Av.0.7.8)
++ [a little bit more](https://github.com/dephell/dephell/milestone/1?closed=1)
 
 ## v.0.7.7
 
