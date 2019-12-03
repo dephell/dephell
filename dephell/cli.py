@@ -68,18 +68,35 @@ class PatchedParser(ArgumentParser):
         formatter.end_section()
 
     def format_guesses(self, argv: List[str], commands=COMMANDS):
-        given = argv[0]
         guesses = set()
+
+        # typed only one word from two words
+        given = argv[0]
         for command_name in commands:
-            group_name = command_name.split()[0]
-            if group_name == given:
+            if given in command_name.split():
                 guesses.add(command_name)
+
+        # typed fully but with too many mistakes
+        if not guesses:
+            given = ' '.join(argv[:2])
+            for command_name in commands:
+                if commands_are_similar(given, command_name, threshold=3):
+                    guesses.add(command_name)
+
+        # typed only one word from two, and it contains typos
+        if not guesses:
+            given = ' '.join(argv[:2])
+            for command_name in commands:
+                for part in command_name.split():
+                    if commands_are_similar(part, given):
+                        guesses.add(command_name)
 
         formatter = self._get_formatter()
         formatter.add_text(Fore.RED + 'ERROR:' + Fore.RESET + ' unknown command')
+        section_name = 'possible commands' if guesses else 'all commands'
         self._format_commands(
             formatter=formatter,
-            section_name='possible commands',
+            section_name=section_name,
             guesses=guesses,
         )
         return formatter.format_help()
@@ -92,12 +109,12 @@ parser = PatchedParser(
 parser.add_argument('command', choices=COMMANDS.keys(), nargs='?', help='command to execute')
 
 
-def commands_are_similar(command1: str, command2: str) -> bool:
+def commands_are_similar(command1: str, command2: str, threshold: int = 3) -> bool:
     given = Counter(command1)
     guess = Counter(command2)
     counter_diff = (given - guess) + (guess - given)
     diff = sum(counter_diff.values())
-    return diff <= 1
+    return diff <= threshold
 
 
 def get_command_name_and_size(argv: List[str], commands=COMMANDS) -> Optional[Tuple[str, int]]:
@@ -139,7 +156,7 @@ def main(argv: List[str]) -> int:
     else:
         text = parser.format_guesses(argv=argv)
         print(text)
-        return 1
+        return ReturnCodes.UNKNOWN_COMMAND.value
 
     # get and init command object
     command = COMMANDS[command_name]
