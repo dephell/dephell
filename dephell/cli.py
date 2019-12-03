@@ -4,12 +4,13 @@ from collections import Counter, defaultdict
 from logging import getLogger
 from pdb import post_mortem
 from sys import argv
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 # app
 from .commands import COMMANDS
 from .constants import ReturnCodes
 from .exceptions import ExtraException
+from .logging_helpers import Fore
 
 
 logger = getLogger('dephell.cli')
@@ -22,18 +23,65 @@ class PatchedParser(ArgumentParser):
         formatter.add_text(self.description)
 
         for action_group in self._action_groups:
-            formatter.start_section(action_group.title)
+            formatter.start_section(Fore.YELLOW + action_group.title + Fore.RESET)
             formatter.add_text(action_group.description)
+
+            # do not show all commands in a row, just say that command goes here
+            if action_group.title == 'positional arguments':
+                action_group._group_actions[0].choices = {'command_name'}
+
             formatter.add_arguments(action_group._group_actions)
             formatter.end_section()
         formatter.add_text(self.epilog)
+        self._format_commands(formatter=formatter)
+        return formatter.format_help()
 
-        formatter.start_section('commands')
+    def _get_formatter(self):
+        formatter = super()._get_formatter()
+        formatter._action_max_length = 36
+        formatter._max_help_position = 36
+        formatter._width = 120
+        return formatter
+
+    def _format_commands(self, formatter, section_name: str = 'commands',
+                         guesses: Set[str] = None) -> None:
+        formatter.start_section(Fore.YELLOW + section_name + Fore.RESET)
+        prev_group = ''
+        colors = {True: Fore.GREEN, False: Fore.BLUE}
+        color = True
         for name, command in sorted(COMMANDS.items()):
+            if guesses and name not in guesses:
+                continue
+
+            # switch colors for every group
+            group, _, subname = name.rpartition(' ')
+            if group != prev_group:
+                prev_group = group
+                color = not color
+
             descr = command.get_parser().description.split('\n')[0]
-            formatter.add_argument(Action([name], '', help=descr))
+            formatter.add_argument(Action(
+                option_strings=[colors[color] + name + Fore.RESET],
+                dest='',
+                help=descr,
+            ))
         formatter.end_section()
 
+    def format_guesses(self, argv: List[str], commands=COMMANDS):
+        given = argv[0]
+        guesses = set()
+        for command_name in commands:
+            group_name = command_name.split()[0]
+            if group_name == given:
+                guesses.add(command_name)
+
+        formatter = self._get_formatter()
+        formatter.add_text(Fore.RED + 'ERROR:' + Fore.RESET + ' unknown command')
+        self._format_commands(
+            formatter=formatter,
+            section_name='possible commands',
+            guesses=guesses,
+        )
         return formatter.format_help()
 
 
@@ -89,8 +137,9 @@ def main(argv: List[str]) -> int:
         command_name = name_and_size[0]
         command_args = argv[name_and_size[1]:]
     else:
-        logger.error('ERROR: Unknown command')
-        parser.parse_args(['--help'])
+        text = parser.format_guesses(argv=argv)
+        print(text)
+        return 1
 
     # get and init command object
     command = COMMANDS[command_name]
