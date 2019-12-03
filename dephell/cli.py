@@ -19,17 +19,20 @@ logger = getLogger('dephell.cli')
 class PatchedParser(ArgumentParser):
     def format_help(self):
         formatter = self._get_formatter()
-        formatter.add_usage(self.usage, self._actions, self._mutually_exclusive_groups)
+        formatter.add_usage(
+            usage=self.usage,
+            actions=self._actions,
+            groups=self._mutually_exclusive_groups,
+            prefix=Fore.YELLOW + 'usage: ' + Fore.RESET,
+        )
         formatter.add_text(self.description)
 
         for action_group in self._action_groups:
+            # do not show comma-separated commands list
+            if action_group.title == 'positional arguments':
+                continue
             formatter.start_section(Fore.YELLOW + action_group.title + Fore.RESET)
             formatter.add_text(action_group.description)
-
-            # do not show all commands in a row, just say that command goes here
-            if action_group.title == 'positional arguments':
-                action_group._group_actions[0].choices = {'command_name'}
-
             formatter.add_arguments(action_group._group_actions)
             formatter.end_section()
         formatter.add_text(self.epilog)
@@ -69,14 +72,15 @@ class PatchedParser(ArgumentParser):
 
     def format_guesses(self, argv: List[str], commands=COMMANDS):
         guesses = set()
-        is_group_name = False
+        group = None
 
         # typed only one word from two words
         given = argv[0]
         for command_name in commands:
-            if given in command_name.split():
-                if given == command_name.rpartition(' ')[0]:
-                    is_group_name = True
+            group_name, _, subcommand_name = command_name.rpartition(' ')
+            if given in (group_name, subcommand_name):
+                if given == group_name:
+                    group = group_name
                 guesses.add(command_name)
 
         # typed fully but with too many mistakes
@@ -95,7 +99,13 @@ class PatchedParser(ArgumentParser):
                         guesses.add(command_name)
 
         formatter = self._get_formatter()
-        if is_group_name:
+        if group:
+            formatter.add_usage(
+                usage='dephell {} COMMAND [OPTIONS]'.format(group),
+                actions=self._actions,
+                groups=self._mutually_exclusive_groups,
+                prefix=Fore.YELLOW + 'usage: ' + Fore.RESET,
+            )
             section_name = 'commands in the group'
         else:
             formatter.add_text(Fore.RED + 'ERROR:' + Fore.RESET + ' unknown command')
