@@ -4,6 +4,9 @@ from argparse import ArgumentParser
 from typing import Optional
 from urllib.parse import urlparse
 
+# external
+import requests
+
 # app
 from ..actions import get_package
 from ..config import builders
@@ -29,21 +32,40 @@ class PackageBugCommand(BaseCommand):
         dep.repo.get_releases(dep)  # fetch metainfo
         url = self._get_url(dep=dep)
         if not url:
-            self.logger.error('cannot find Github URL')
+            self.logger.error('cannot find bug tracker URL')
             return False
         webbrowser.open_new_tab(url=url)
         return True
 
     @staticmethod
     def _get_url(dep) -> Optional[str]:
+        # try to find githab or gitlub url and use it as a bug tracker
         for url in dep.links.values():
             if not url.startswith('http'):
                 url = 'https://' + url
             parsed = urlparse(url)
-            if parsed.hostname != 'github.com':
+            if parsed.hostname not in ('github.com', 'gitlab.com'):
                 continue
+
+            # build URL
             parts = parsed.path.strip('/').split('/')
             if len(parts) < 2:
                 continue
-            return 'https://github.com/{}/{}/issues/new'.format(*parts)
+            url = 'https://{}/{}/{}/issues/new'.format(parsed.hostname, *parts)
+
+            # check that issues aren't disabled for the project
+            response = requests.head(url)
+            if response.status_code == 404:
+                continue
+
+            return url
+
+        # try to find custom bug tracker by name
+        for name, url in dep.links.items():
+            if 'tracker' not in name.lower():
+                continue
+            if not url.startswith('http'):
+                url = 'https://' + url
+            return url
+
         return None
