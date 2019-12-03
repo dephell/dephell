@@ -69,11 +69,14 @@ class PatchedParser(ArgumentParser):
 
     def format_guesses(self, argv: List[str], commands=COMMANDS):
         guesses = set()
+        is_group_name = False
 
         # typed only one word from two words
         given = argv[0]
         for command_name in commands:
             if given in command_name.split():
+                if given == command_name.rpartition(' ')[0]:
+                    is_group_name = True
                 guesses.add(command_name)
 
         # typed fully but with too many mistakes
@@ -92,8 +95,12 @@ class PatchedParser(ArgumentParser):
                         guesses.add(command_name)
 
         formatter = self._get_formatter()
-        formatter.add_text(Fore.RED + 'ERROR:' + Fore.RESET + ' unknown command')
-        section_name = 'possible commands' if guesses else 'all commands'
+        if is_group_name:
+            section_name = 'commands in the group'
+        else:
+            formatter.add_text(Fore.RED + 'ERROR:' + Fore.RESET + ' unknown command')
+            section_name = 'possible commands' if guesses else 'all commands'
+
         self._format_commands(
             formatter=formatter,
             section_name=section_name,
