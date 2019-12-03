@@ -126,7 +126,7 @@ parser = PatchedParser(
 parser.add_argument('command', choices=COMMANDS.keys(), nargs='?', help='command to execute')
 
 
-def commands_are_similar(command1: str, command2: str, threshold: int = 3) -> bool:
+def commands_are_similar(command1: str, command2: str, threshold: int = 1) -> bool:
     given = Counter(command1)
     guess = Counter(command2)
     counter_diff = (given - guess) + (guess - given)
