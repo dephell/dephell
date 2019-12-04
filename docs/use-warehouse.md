@@ -54,7 +54,7 @@ $ dephell inspect config --warehouse --filter="warehouse"
 
 ## Authentication
 
-Use [dephell auth](cmd-auth) to add credentials for host in global config:
+Use [dephell auth](cmd-self-auth) to add credentials for host in global config:
 
 ```bash
 $ dephell auth example.com gram "p@ssword"

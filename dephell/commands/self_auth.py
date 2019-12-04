@@ -10,7 +10,7 @@ from ..constants import GLOBAL_CONFIG_NAME
 from .base import BaseCommand
 
 
-class AuthCommand(BaseCommand):
+class SelfAuthCommand(BaseCommand):
     """Insert, update or delete credentials.
     """
     _global_config_path = get_data_dir() / GLOBAL_CONFIG_NAME

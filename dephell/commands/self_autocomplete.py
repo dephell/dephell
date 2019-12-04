@@ -13,7 +13,7 @@ from ..config import builders, get_data_dir
 from .base import BaseCommand
 
 
-class AutocompleteCommand(BaseCommand):
+class SelfAutocompleteCommand(BaseCommand):
     """Enable DepHell commands autocomplete for current shell.
     """
 

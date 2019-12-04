@@ -1,6 +1,6 @@
 # dephell inspect auth
 
-Shows all [added credentials](cmd-auth).
+Shows all [added credentials](cmd-self-auth).
 
 ```bash
 $ dephell auth example.com gram "p@ssword"
@@ -30,6 +30,6 @@ $ dephell inspect auth --filter="#.hostname+username.each()"
 
 ## See also
 
-1. [dephell auth](cmd-auth) to add new credentials.
+1. [dephell auth](cmd-self-auth) to add new credentials.
 1. [dephell inspect config](cmd-inspect-config) to show all other params in the config.
 1. [Private PyPI repository](use-warehouse) usage details and examples.
