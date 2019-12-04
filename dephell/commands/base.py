@@ -67,11 +67,13 @@ class BaseCommand:
     @classmethod
     def _get_default_parser(cls, usage=''):
         name = cls._get_name()
+        url = 'https://dephell.org/docs/cmd-{}.html'.format(name.replace(' ', '-'))
+        usage = 'dephell {} [OPTIONS] {}'.format(name, usage.upper())
         return ArgumentParser(
             prog='dephell ' + name,
-            usage='dephell {} [OPTIONS] {}'.format(name, usage.upper()),
+            usage=usage + '\n\n\ndocs: ' + url,
             description=cls.__doc__,
-            epilog='https://dephell.org/docs/cmd-{}.html'.format(name.replace(' ', '-')),
+            epilog=url,
         )
 
     @classmethod
