@@ -71,7 +71,7 @@ First of all, install DepHell and activate autocomplete:
 
 ```bash
 python3 -m pip install --user dephell[full]
-dephell autocomplete
+dephell self autocomplete
 ```
 
 Let's get [sampleproject](https://github.com/pypa/sampleproject) and make it better.
