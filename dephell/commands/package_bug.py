@@ -1,7 +1,7 @@
 # built-in
 import webbrowser
 from argparse import ArgumentParser
-from typing import Optional
+from typing import Dict, Optional
 from urllib.parse import urlparse
 
 # external
@@ -30,7 +30,7 @@ class PackageBugCommand(BaseCommand):
     def __call__(self) -> bool:
         dep = get_package(self.args.name, repo=self.config.get('repo'))
         dep.repo.get_releases(dep)  # fetch metainfo
-        url = self._get_url(dep=dep)
+        url = self._get_url(links=dep.links)
         if not url:
             self.logger.error('cannot find bug tracker URL')
             return False
@@ -38,13 +38,13 @@ class PackageBugCommand(BaseCommand):
         return True
 
     @staticmethod
-    def _get_url(dep) -> Optional[str]:
+    def _get_url(links: Dict[str, str]) -> Optional[str]:
         # try to find githab or gitlub url and use it as a bug tracker
-        for url in dep.links.values():
+        for url in links.values():
             if not url.startswith('http'):
                 url = 'https://' + url
             parsed = urlparse(url)
-            if parsed.hostname not in ('github.com', 'gitlab.com'):
+            if parsed.hostname not in ('github.com', 'gitlab.com', 'bitbucket.org'):
                 continue
 
             # build URL
@@ -61,7 +61,7 @@ class PackageBugCommand(BaseCommand):
             return url
 
         # try to find custom bug tracker by name
-        for name, url in dep.links.items():
+        for name, url in links.items():
             if 'tracker' not in name.lower():
                 continue
             if not url.startswith('http'):
