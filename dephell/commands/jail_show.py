@@ -1,13 +1,15 @@
 # built-in
 from argparse import ArgumentParser
+from pathlib import Path
 
 # external
 from dephell_venvs import VEnvs
 from packaging.utils import canonicalize_name
 
 # app
-from ..actions import format_size, get_entrypoints, get_path_size, make_json
+from ..actions import format_size, get_path_size, make_json
 from ..config import builders
+from ..converters import InstalledConverter
 from .base import BaseCommand
 
 
@@ -32,19 +34,28 @@ class JailShowCommand(BaseCommand):
             self.logger.error('jail does not exist', extra=dict(package=name))
             return False
 
-        entrypoints = get_entrypoints(venv=venv, name=name)
+        # get list of exposed entrypoints
         entrypoints_names = []
-        for entrypoint in entrypoints:
-            if entrypoint.group != 'console_scripts':
+        for entrypoint in venv.bin_path.iterdir():
+            global_entrypoint = Path(self.config['bin']) / entrypoint.name
+            if not global_entrypoint.exists():
                 continue
-            if not (venv.bin_path / entrypoint.name).exists():
+            if not global_entrypoint.resolve().samefile(entrypoint):
                 continue
             entrypoints_names.append(entrypoint.name)
+
+        root = InstalledConverter().load(paths=[venv.lib_path], names={name})
+        version = None
+        for subdep in root.dependencies:
+            if subdep.name != name:
+                continue
+            version = str(subdep.constraint).replace('=', '')
 
         data = dict(
             name=name,
             path=str(venv.path),
             entrypoints=entrypoints_names,
+            version=version,
             size=dict(
                 lib=format_size(get_path_size(venv.lib_path)),
                 total=format_size(get_path_size(venv.path)),
