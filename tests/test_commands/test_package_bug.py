@@ -1,4 +1,5 @@
 import pytest
+
 from dephell.commands import PackageBugCommand
 
 
