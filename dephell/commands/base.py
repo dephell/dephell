@@ -1,17 +1,18 @@
 # built-in
 import os.path
 import re
-from argparse import ArgumentParser
 from logging import getLogger
 from os import environ
 from pathlib import Path
 from typing import Dict, Set
 
 # external
+from dephell_argparse import CommandHandler
 import tomlkit
 
 # app
 from ..actions import attach_deps, get_python_env
+from ..cached_property import cached_property
 from ..config import Config, config, get_data_dir
 from ..constants import CONFIG_NAMES, ENV_VAR_TEMPLATE, GLOBAL_CONFIG_NAME
 from ..controllers import analyze_conflict
@@ -21,27 +22,17 @@ from ..converters import CONVERTERS, InstalledConverter
 REX_WORD = re.compile(r'([a-z\d])([A-Z])')
 
 
-class BaseCommand:
+class BaseCommand(CommandHandler):
     logger = getLogger('dephell.commands')
+    prog = 'dephell'
 
-    def __init__(self, argv, config: Config = None):
-        parser = self.get_parser()
-        self.args = parser.parse_args(argv)
-        self.config = self.get_config(self.args) if config is None else config
-
-    # builders
-
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        raise NotImplementedError
-
-    @classmethod
-    def get_config(cls, args) -> Config:
+    @cached_property
+    def config(self) -> Config:
         config.setup_logging()
-        cls._attach_global_config_file()
-        cls._attach_config_file(path=args.config, env=args.env)
+        self._attach_global_config_file()
+        self._attach_config_file(path=self.args.config, env=self.args.env)
         config.attach_env_vars()
-        config.attach_cli(args)
+        config.attach_cli(self.args)
         config.setup_logging()
         return config
 
@@ -52,29 +43,18 @@ class BaseCommand:
             print(self.config.format_errors())
         return is_valid
 
-    # interface
+    # properties
 
-    def __call__(self) -> bool:
-        raise NotImplementedError
+    @cached_property
+    def url(self) -> str:
+        tmpl = 'https://dephell.org/docs/cmd-{}.html'
+        return tmpl.format(self.name.replace(' ', '-'))
+
+    @cached_property
+    def usage(self) -> str:
+        return 'dephell {} [OPTIONS]'.format(self.name)
 
     # helpers
-
-    @classmethod
-    def _get_name(cls):
-        worded = REX_WORD.sub(r'\1 \2', cls.__name__)
-        return worded.rsplit(' ', maxsplit=1)[0].lower()
-
-    @classmethod
-    def _get_default_parser(cls, usage=''):
-        name = cls._get_name()
-        url = 'https://dephell.org/docs/cmd-{}.html'.format(name.replace(' ', '-'))
-        usage = 'dephell {} [OPTIONS] {}'.format(name, usage.upper())
-        return ArgumentParser(
-            prog='dephell ' + name,
-            usage=usage + '\n\n\ndocs: ' + url,
-            description=cls.__doc__,
-            epilog=url,
-        )
 
     @classmethod
     def _attach_global_config_file(cls) -> bool:
