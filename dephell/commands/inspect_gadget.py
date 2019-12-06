@@ -47,9 +47,8 @@ class InspectGadgetCommand(BaseCommand):
 
     This command shouldn't be documented.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         return parser
 

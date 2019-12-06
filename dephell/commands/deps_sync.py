@@ -13,9 +13,8 @@ class DepsSyncCommand(DepsInstallCommand):
     # There we just set `sync` flag and change some minor metainfo.
     sync = True
 
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_to(parser)
         builders.build_resolver(parser)

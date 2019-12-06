@@ -10,9 +10,8 @@ from .base import BaseCommand
 class DockerCreateCommand(BaseCommand):
     """Create docker container for current project.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_docker(parser)
         builders.build_output(parser)

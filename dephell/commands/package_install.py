@@ -13,10 +13,8 @@ from .base import BaseCommand
 class PackageInstallCommand(BaseCommand):
     """Download and install package into project environment.
     """
-
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_resolver(parser)
         builders.build_venv(parser)

@@ -11,9 +11,8 @@ from .base import BaseCommand
 class DepsAuditCommand(BaseCommand):
     """Show known vulnerabilities for project dependencies.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser('packages')
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_output(parser)

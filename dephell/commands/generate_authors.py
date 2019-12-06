@@ -11,9 +11,8 @@ from .base import BaseCommand
 class GenerateAuthorsCommand(BaseCommand):
     """Create AUTHORS file for project by git log.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)

@@ -10,9 +10,8 @@ from .base import BaseCommand
 class PackageReleasesCommand(BaseCommand):
     """Show package releases.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_api(parser)

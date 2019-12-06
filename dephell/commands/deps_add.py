@@ -15,12 +15,8 @@ from .base import BaseCommand
 class DepsAddCommand(BaseCommand):
     """Add new packages into project dependencies.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell deps add',
-            description=cls.__doc__,
-        )
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_resolver(parser)

@@ -12,9 +12,8 @@ from .base import BaseCommand
 class JailListCommand(BaseCommand):
     """Show all jails and their entrypoints.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)

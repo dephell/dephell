@@ -15,12 +15,8 @@ class AuthCommand(BaseCommand):
     """
     _global_config_path = get_data_dir() / GLOBAL_CONFIG_NAME
 
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell auth',
-            description=cls.__doc__,
-        )
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_output(parser)
         parser.add_argument('hostname', help='server hostname')
