@@ -45,7 +45,7 @@ def test_dump():
     assert '>=2.13' in parsed['dependencies']['requests']['version']
     assert {'security'} == set(parsed['dependencies']['requests']['extras'])
 
-    assert parsed['dependencies']['pathlib2']['allow-prereleases'] is True
+    assert parsed['dependencies']['pathlib2']['allows-prereleases'] is True
     assert parsed['dependencies']['pathlib2']['python'] == '==2.7.*,>=2.7.0'
 
     assert parsed['dependencies']['django']['git'] == 'https://github.com/django/django.git'

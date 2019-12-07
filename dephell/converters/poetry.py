@@ -349,6 +349,8 @@ class PoetryConverter(BaseConverter):
             markers.append(RangeSpecifier(content['python']).to_marker('python_version'))
         markers = ' and '.join(markers)
 
+        # poetry plans to remove the allows-prereleases key,
+        # and will only use the allow-prereleases key instead.
         is_prereleases = content.get('allows-prereleases', False) or content.get('allow-prereleases', False)
 
         deps = DependencyMaker.from_params(
@@ -372,7 +374,7 @@ class PoetryConverter(BaseConverter):
                     value = list(value)
                 result[name] = value
         if req.prereleases:
-            result['allow-prereleases'] = True
+            result['allows-prereleases'] = True
         if 'version' not in result and 'git' not in result:
             result['version'] = '*'
         # if we have only version, return string instead of table
