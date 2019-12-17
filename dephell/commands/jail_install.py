@@ -94,6 +94,5 @@ class JailInstallCommand(BaseCommand):
         if IS_WINDOWS:
             shutil.copy(str(src), str(dst))
         else:
-            # Python 3.5 cannot resove non-existing paths.
             dst = dst.parent.resolve() / dst.name
             dst.symlink_to(src)

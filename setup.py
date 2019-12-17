@@ -23,7 +23,7 @@ setup(
     name='dephell',
     version='0.7.9',
     description='Dependency resolution for Python',
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     project_urls={
         "documentation": "https://dephell.org/docs/",
         "homepage": "https://dephell.org/",
@@ -38,7 +38,6 @@ setup(
         'Framework :: Setuptools Plugin', 'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8', 'Topic :: Security',
@@ -55,19 +54,15 @@ setup(
     package_dir={"": "."},
     package_data={"dephell": ["templates/*.j2", "templates/*.sh"]},
     install_requires=[
-        'aiohttp', 'appdirs', 'attrs>=19.2.0',
-        'bowler; python_version >= "3.6"',
-        'bowler-py35>=0.9.1; python_version < "3.6"', 'cerberus>=1.3',
+        'aiohttp', 'appdirs', 'attrs>=19.2.0', 'bowler', 'cerberus>=1.3',
         'dephell-archive>=0.1.5', 'dephell-discover>=0.2.6',
         'dephell-licenses>=0.1.6', 'dephell-links>=0.1.4',
         'dephell-markers>=1.0.0', 'dephell-pythons>=0.1.11',
         'dephell-setuptools>=0.2.1', 'dephell-shells>=0.1.3',
         'dephell-specifier>=0.1.7', 'dephell-venvs>=0.1.16',
-        'dephell-versioning', 'docker', 'dockerpty',
-        'fissix; python_version >= "3.6"',
-        'fissix-py35; python_version < "3.6"', 'flatdict', 'html5lib', 'jinja2',
-        'm2r', 'packaging', 'pip>=18.0', 'pygments', 'requests', 'ruamel.yaml',
-        'setuptools', 'tabulate', 'tomlkit', 'yaspin'
+        'dephell-versioning', 'docker', 'dockerpty', 'fissix', 'flatdict',
+        'html5lib', 'jinja2', 'm2r', 'packaging', 'pip>=18.0', 'pygments',
+        'requests', 'ruamel.yaml', 'setuptools', 'tabulate', 'tomlkit', 'yaspin'
     ],
     extras_require={
         "dev": [
