@@ -26,5 +26,6 @@ $ dephell jail list --filter=httpie
 ## See also
 
 1. [How to filter commands JSON output](filters).
+1. [dephell jail show](cmd-jail-show) to show more info about a particular jail.
 1. [dephell jail install](cmd-jail-install) to create a new jail.
 1. [dephell jail remove](cmd-jail-remove) to remove jail.
