@@ -11,4 +11,5 @@ There are some real-world examples, recipes and hacks how to use DepHell for dif
     use-tree-git
     use-poetry-lock
     use-licenses
+    use-projects
 ```
