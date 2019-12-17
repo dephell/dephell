@@ -4,12 +4,13 @@ Commands to work with single packages.
 
 Get information: [download statistics](cmd-package-downloads), [installed packages](cmd-package-list), [available releases](cmd-package-releases), [package metainfo](cmd-package-show), [search packages](cmd-package-search).
 
-Manage: [install](cmd-package-install), [remove](cmd-package-remove), [remove with dependencies](cmd-package-purge).
+Manage: [install](cmd-package-install), [remove](cmd-package-remove), [remove with dependencies](cmd-package-purge), [report bug](cmd-package-bug).
 
 ```eval_rst
 .. toctree::
     :maxdepth: 1
 
+    cmd-package-bug
     cmd-package-downloads
     cmd-package-install
     cmd-package-list
