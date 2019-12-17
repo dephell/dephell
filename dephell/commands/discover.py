@@ -4,9 +4,6 @@ from importlib import import_module
 
 # keep sorted
 _NAMES = (
-    'auth',
-    'autocomplete',
-
     'deps add',
     'deps audit',
     'deps check',
@@ -61,6 +58,8 @@ _NAMES = (
     'project test',
     'project validate',
 
+    'self auth',
+    'self autocomplete',
     'self uncache',
     'self upgrade',
 

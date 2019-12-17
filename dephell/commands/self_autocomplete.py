@@ -13,16 +13,13 @@ from ..config import builders, get_data_dir
 from .base import BaseCommand
 
 
-class AutocompleteCommand(BaseCommand):
+class SelfAutocompleteCommand(BaseCommand):
     """Enable DepHell commands autocomplete for current shell.
     """
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell autocomplete',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_output(parser)
         return parser

@@ -15,5 +15,5 @@ $ dephell inspect self
 
 1. [dephell self uncache](cmd-self-uncache) to remove dephell cache.
 1. [dephell self upgrade](cmd-self-upgrade) to upgrade dephell and dependencies to the latest version.
-1. [dephell autocomplete](cmd-venv-create) to enable params autocomplete for commands in your shell.
+1. [dephell self autocomplete](cmd-venv-create) to enable params autocomplete for commands in your shell.
 1. [dephell inspect config](cmd-inspect-config) to get information about config parameters.

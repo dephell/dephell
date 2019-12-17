@@ -10,17 +10,14 @@ from ..constants import GLOBAL_CONFIG_NAME
 from .base import BaseCommand
 
 
-class AuthCommand(BaseCommand):
+class SelfAuthCommand(BaseCommand):
     """Insert, update or delete credentials.
     """
     _global_config_path = get_data_dir() / GLOBAL_CONFIG_NAME
 
     @classmethod
     def get_parser(cls) -> ArgumentParser:
-        parser = ArgumentParser(
-            prog='dephell auth',
-            description=cls.__doc__,
-        )
+        parser = cls._get_default_parser()
         builders.build_config(parser)
         builders.build_output(parser)
         parser.add_argument('hostname', help='server hostname')
