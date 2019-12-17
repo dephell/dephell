@@ -349,6 +349,10 @@ class PoetryConverter(BaseConverter):
             markers.append(RangeSpecifier(content['python']).to_marker('python_version'))
         markers = ' and '.join(markers)
 
+        # poetry plans to remove the allows-prereleases key,
+        # and will only use the allow-prereleases key instead.
+        is_prereleases = content.get('allows-prereleases', False) or content.get('allow-prereleases', False)
+
         deps = DependencyMaker.from_params(
             raw_name=name,
             constraint=Constraint(root, content.get('version', '')),
@@ -358,7 +362,7 @@ class PoetryConverter(BaseConverter):
             url=url,
             editable=content.get('develop', False),
             envs=envs,
-            prereleases=content.get('allows-prereleases', False),
+            prereleases=is_prereleases,
         )
         return deps
 
