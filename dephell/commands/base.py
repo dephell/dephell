@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Dict, Set
 
 # external
-from dephell_argparse import CommandHandler
 import tomlkit
+from dephell_argparse import CommandHandler
 
 # app
 from ..actions import attach_deps, get_python_env

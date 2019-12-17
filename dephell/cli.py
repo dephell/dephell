@@ -1,9 +1,8 @@
 # built-in
-from collections import Counter, defaultdict
 from logging import getLogger
 from pdb import post_mortem
 from sys import argv
-from typing import List, Optional, Set, Tuple
+from typing import List
 
 # external
 from dephell_argparse import Command, Parser
