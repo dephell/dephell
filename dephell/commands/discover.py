@@ -32,13 +32,15 @@ _NAMES = (
     'inspect auth',
     'inspect config',
     'inspect gadget',
+    'inspect project',
     'inspect self',
     'inspect venv',
-    'inspect project',
+    'inspect versioning',
 
     'jail install',
     'jail list',
     'jail remove',
+    'jail show',
     'jail try',
 
     'package bug',

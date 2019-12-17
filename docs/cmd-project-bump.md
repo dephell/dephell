@@ -192,3 +192,7 @@ Custom version:
 $ dephell project bump 0.3.2
 INFO generated new version (old=0.1.0.post1.dev1, new=0.3.2)
 ```
+
+## See also
+
+1. [dephell inspect versioning](cmd-inspect-versioning) to get information about the project versioning scheme and available rules.
