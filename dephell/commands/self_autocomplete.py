@@ -17,9 +17,8 @@ class SelfAutocompleteCommand(BaseCommand):
     """Enable DepHell commands autocomplete for current shell.
     """
 
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_output(parser)
         return parser
