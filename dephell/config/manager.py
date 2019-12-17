@@ -2,6 +2,7 @@
 import json
 import re
 from collections import defaultdict
+from contextlib import suppress
 from copy import deepcopy
 from logging import captureWarnings
 from logging.config import dictConfig
@@ -15,7 +16,7 @@ from cerberus import Validator
 from tomlkit.exceptions import TOMLKitError
 
 # app
-from ..constants import ENV_VAR_TEMPLATE, NON_PATH_FORMATS, SUFFIXES
+from ..constants import ARCHIVE_EXTENSIONS, ENV_VAR_TEMPLATE, NON_PATH_FORMATS, SUFFIXES
 from .defaults import DEFAULT
 from .logging_config import LOGGING
 from .scheme import SCHEME
@@ -96,7 +97,10 @@ class Config:
 
         # if passed only filename
         path = Path(text)
-        content = None if not path.is_file() else path.read_text()
+        content = None
+        if path.is_file() and not path.name.endswith(ARCHIVE_EXTENSIONS):
+            with suppress(Exception):
+                content = path.read_text()
         for name, converter in CONVERTERS.items():
             if converter.can_parse(path=path, content=content):
                 return dict(format=name, path=text)
