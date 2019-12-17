@@ -36,9 +36,12 @@ def get_data_dir() -> Path:
             return path / 'dephell'
 
         try:
-            from pip._internal import main
+            from pip._internal.main import main
         except ImportError:
-            from pip import main
+            try:
+                from pip._internal import main
+            except ImportError:
+                from pip import main
 
         main(['install', 'appdirs'])
         from appdirs import user_data_dir
