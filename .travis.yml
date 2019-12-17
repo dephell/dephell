@@ -33,7 +33,7 @@ matrix:
       env: ENV=pytest
     - python: "3.8"
       env: ENV=pytest
-    - python: "pypy3.6"
+    - python: "pypy3"
       env: ENV=pytest
 
     - os: osx
