@@ -31,14 +31,23 @@ def get_data_dir() -> Path:
         from appdirs import user_data_dir
     except ImportError:
 
+        # linux
         path = Path.home() / '.local' / 'share'
         if path.exists():
             return path / 'dephell'
 
+        # mac os
+        path = Path.home() / 'Library' / 'Application Support'
+        if path.exists():
+            return path / 'dephell'
+
         try:
-            from pip._internal import main
+            from pip._internal.main import main
         except ImportError:
-            from pip import main
+            try:
+                from pip._internal import main
+            except ImportError:
+                from pip import main
 
         main(['install', 'appdirs'])
         from appdirs import user_data_dir
