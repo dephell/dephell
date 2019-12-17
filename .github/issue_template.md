@@ -1,25 +1,44 @@
-### Required Information
 
-Please attach the output of the following commands
+## Short description
 
-* [ ] Output of failing Dephell command with `--traceback` and `--level=DEBUG` flags set
-* [ ] Project's current Dephell config
-* [ ] Output of `dephell inspect self`
+<!-- Thank you for your feedback! Please, fill the sections below to help us to solve the issue. -->
 
-For more information, see the `CONTRIBUTING` guide.
+## Output
 
-### Description
+<!-- What is the output of invalid command and what is the expected behavior. -->
 
-[Description of the bug or feature]
+## Steps to reproduce
 
-### Steps to Reproduce
+<!-- Please, provide as detailed and minimal set of commands to reproduce the bug as possible. If it is an Open Source Project, add `git clone ...` command as well. -->
 
-1. [First Step]
-2. [Second Step]
-3. [and so on...]
+```bash
+$ git clone ...
+$ cd ...
+$ dephell deps convert
+...
+```
 
-**Expected behavior:** [What you expected to happen]
+## Traceback
 
-**Actual behavior:** [What actually happened]
+<!-- If a command fails, run it with `--traceback` and attach output -->
 
-Thank you for reporting this issue! Every issue reported helps improve Dephell!
+```
+...
+```
+
+## Config
+
+<!-- Attach `cat pyproject.toml` output -->
+
+```toml
+[tool.dephell.main]
+...
+```
+
+# Versions
+
+<!-- Attach `dephell inspect self` output -->
+
+```json
+...
+```
