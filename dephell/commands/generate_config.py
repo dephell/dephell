@@ -7,7 +7,8 @@ from pathlib import Path
 import tomlkit
 
 # app
-from ..config import builders, config
+from ..cached_property import cached_property
+from ..config import Config, builders, config
 from ..constants import PAIRS, SUFFIXES
 from ..converters import CONVERTERS
 from .base import BaseCommand
@@ -16,18 +17,17 @@ from .base import BaseCommand
 class GenerateConfigCommand(BaseCommand):
     """Create config file for DepHell.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_output(parser)
         builders.build_other(parser)
         return parser
 
-    @classmethod
-    def get_config(cls, args):
+    @cached_property
+    def config(self) -> Config:
         config.setup_logging()
-        config.attach_cli(args)
+        config.attach_cli(self.args)
         config.setup_logging()
         if 'config' not in config._data:
             config._data['config'] = 'pyproject.toml'

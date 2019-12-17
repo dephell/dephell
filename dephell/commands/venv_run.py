@@ -21,9 +21,8 @@ from .base import BaseCommand
 class VenvRunCommand(BaseCommand):
     """Run command in the project virtual environment
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_api(parser)
         builders.build_venv(parser)

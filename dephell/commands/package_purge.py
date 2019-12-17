@@ -17,10 +17,8 @@ from .base import BaseCommand
 class PackagePurgeCommand(BaseCommand):
     """Remove given packages and their dependencies.
     """
-
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)

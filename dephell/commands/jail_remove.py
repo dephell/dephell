@@ -15,9 +15,8 @@ from .base import BaseCommand
 class JailRemoveCommand(BaseCommand):
     """Remove package isolated environment.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_venv(parser)
         builders.build_output(parser)

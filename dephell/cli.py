@@ -1,10 +1,11 @@
 # built-in
-from argparse import Action, ArgumentParser
-from collections import Counter, defaultdict
 from logging import getLogger
 from pdb import post_mortem
 from sys import argv
-from typing import List, Optional, Tuple
+from typing import List
+
+# external
+from dephell_argparse import Command, Parser
 
 # app
 from .commands import COMMANDS
@@ -13,89 +14,37 @@ from .exceptions import ExtraException
 
 
 logger = getLogger('dephell.cli')
-
-
-class PatchedParser(ArgumentParser):
-    def format_help(self):
-        formatter = self._get_formatter()
-        formatter.add_usage(self.usage, self._actions, self._mutually_exclusive_groups)
-        formatter.add_text(self.description)
-
-        for action_group in self._action_groups:
-            formatter.start_section(action_group.title)
-            formatter.add_text(action_group.description)
-            formatter.add_arguments(action_group._group_actions)
-            formatter.end_section()
-        formatter.add_text(self.epilog)
-
-        formatter.start_section('commands')
-        for name, command in sorted(COMMANDS.items()):
-            descr = command.get_parser().description.split('\n')[0]
-            formatter.add_argument(Action([name], '', help=descr))
-        formatter.end_section()
-
-        return formatter.format_help()
-
-
-parser = PatchedParser(
+parser = Parser(
     description='Manage dependencies, projects, virtual environments.',
     usage='dephell COMMAND [OPTIONS]',
 )
-parser.add_argument('command', choices=COMMANDS.keys(), nargs='?', help='command to execute')
-
-
-def commands_are_similar(command1: str, command2: str) -> bool:
-    given = Counter(command1)
-    guess = Counter(command2)
-    counter_diff = (given - guess) + (guess - given)
-    diff = sum(counter_diff.values())
-    return diff <= 1
-
-
-def get_command_name_and_size(argv: List[str], commands=COMMANDS) -> Optional[Tuple[str, int]]:
-    if not argv:
-        return None
-
-    for size, direction in ((1, 1), (2, 1), (2, -1)):
-        command_name = ' '.join(argv[:size][::direction])
-        if command_name in commands:
-            return command_name, size
-
-    # specified the only one word from command
-    commands_by_parts = defaultdict(list)
-    for command_name in commands:
-        for part in command_name.split():
-            commands_by_parts[part].append(command_name)
-    command_names = commands_by_parts[argv[0]]
-    if len(command_names) == 1:
-        return command_names[0], 1
-
-    # typo in command name
-    for size in 1, 2:
-        command_specified = ' '.join(argv[:size])
-        for command_guess in commands:
-            if commands_are_similar(command_specified, command_guess):
-                return command_guess, size
-
-    return None
+for handler in COMMANDS.values():
+    parser.add_command(handler=handler)
 
 
 def main(argv: List[str]) -> int:
-    if not argv or argv[0] in ('--help', 'help', 'commands'):
-        parser.parse_args(['--help'])
+    # print help
+    if not argv:
+        parser._print_message(parser.format_help())
+        return ReturnCodes.OK.value
+    if len(argv) == 1 and argv[0] in ('--help', 'help', 'commands'):
+        parser._print_message(parser.format_help())
+        return ReturnCodes.OK.value
 
-    name_and_size = get_command_name_and_size(argv=argv)
-    if name_and_size:
-        command_name = name_and_size[0]
-        command_args = argv[name_and_size[1]:]
-    else:
-        logger.error('ERROR: Unknown command')
-        parser.parse_args(['--help'])
+    # rewrite argv to get help about command
+    if len(argv) >= 1 and argv[0] in ('--help', 'help'):
+        argv = list(argv[1:]) + ['--help']
 
-    # get and init command object
-    command = COMMANDS[command_name]
+    # get command
+    handler = parser.get_command(argv=argv)
+    if not handler:
+        command = Command(argv=argv, commands=parser._handlers.keys())
+        parser._print_message(parser.format_help(command=command))
+        return ReturnCodes.UNKNOWN_COMMAND.value
+
+    # parse config
     try:
-        task = command(command_args)
+        handler.config
     except KeyError as e:  # env not found
         logger.exception(e.args[0])
         return ReturnCodes.INVALID_CONFIG.value
@@ -106,19 +55,19 @@ def main(argv: List[str]) -> int:
         return ReturnCodes.UNKNOWN_EXCEPTION.value
 
     # validate config
-    is_valid = task.validate()
+    is_valid = handler.validate()
     if not is_valid:
         return ReturnCodes.INVALID_CONFIG.value
 
     # execute command
     try:
-        result = task()
+        result = handler()
     except Exception as exc:
         if isinstance(exc, ExtraException):
             logger.exception(str(exc), extra=exc.extra)
         else:
             logger.exception('{}: {}'.format(type(exc).__name__, exc))
-        if hasattr(task, 'config') and task.config.get('pdb', False):
+        if hasattr(handler, 'config') and handler.config.get('pdb', False):
             post_mortem()
         return ReturnCodes.UNKNOWN_EXCEPTION.value
     except KeyboardInterrupt:

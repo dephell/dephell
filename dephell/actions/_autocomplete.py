@@ -33,7 +33,7 @@ def make_bash_autocomplete() -> str:
 
     arguments = defaultdict(set)
     for command_name, command in COMMANDS.items():
-        for action in command.get_parser()._actions:
+        for action in command().parser._actions:
             arguments[command_name].update(action.option_strings)
 
     return template.render(first_words=first_words, tree=tree, arguments=arguments)
@@ -49,12 +49,12 @@ def make_zsh_autocomplete() -> str:
         command_name, _sep, subcommand = command_name.partition(' ')
         first_words.add(command_name)
         if subcommand:
-            description = command.get_parser().description.lstrip().split('\n', maxsplit=1)[0]
+            description = command().summary
             tree[command_name].add((subcommand, description))
 
     arguments = defaultdict(list)
     for command_name, command in COMMANDS.items():
-        for action in command.get_parser()._actions:
+        for action in command().parser._actions:
             if action.help:
                 arguments[command_name].append(dict(
                     opts=action.option_strings,

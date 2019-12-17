@@ -12,6 +12,7 @@ class ReturnCodes(Enum):
     COMMAND_ERROR = 1
     INVALID_CONFIG = 2
     UNKNOWN_EXCEPTION = 3
+    UNKNOWN_COMMAND = 4
 
 
 IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')

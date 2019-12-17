@@ -14,9 +14,8 @@ from .base import BaseCommand
 class VendorImportCommand(BaseCommand):
     """Patch all imports in project to use vendored dependencies.
     """
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_from(parser)
         builders.build_resolver(parser)

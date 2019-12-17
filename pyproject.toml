@@ -166,6 +166,7 @@ yapf = {optional = true, version = "*"}
 
 # dephell ecosystem
 dephell-archive = ">=0.1.5"
+dephell-argparse = ">=0.1.1"
 dephell-discover = ">=0.2.6"
 dephell-licenses = ">=0.1.6"
 dephell-links = ">=0.1.4"

@@ -10,7 +10,9 @@ from dephell.commands import GenerateConfigCommand
 
 def test_create(temp_path: Path):
     config = temp_path / 'pyproject.toml'
-    task = GenerateConfigCommand(['--config', str(config), '--project', str(temp_path)])
+    task = GenerateConfigCommand(
+        argv=['--config', str(config), '--project', str(temp_path)],
+    )
     result = task()
     assert result is True
     assert config.exists()
@@ -33,7 +35,9 @@ def test_detect(temp_path: Path):
     (temp_path / 'requirements.txt').write_text('Django>=1.9\n')
 
     config = temp_path / 'pyproject.toml'
-    task = GenerateConfigCommand(['--config', str(config), '--project', str(temp_path)])
+    task = GenerateConfigCommand(
+        argv=['--config', str(config), '--project', str(temp_path)],
+    )
     result = task()
     assert result is True
     assert config.exists()

@@ -15,9 +15,8 @@ class SelfAuthCommand(BaseCommand):
     """
     _global_config_path = get_data_dir() / GLOBAL_CONFIG_NAME
 
-    @classmethod
-    def get_parser(cls) -> ArgumentParser:
-        parser = cls._get_default_parser()
+    @staticmethod
+    def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_output(parser)
         parser.add_argument('hostname', help='server hostname')
