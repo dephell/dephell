@@ -185,7 +185,7 @@ class Dependency:
     # magic methods
 
     def __str__(self) -> str:
-        result = self.name
+        result = self.base_name
         if self.extra:
             result += '[{}]'.format(self.extra)
         if self.constraint:
