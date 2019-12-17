@@ -122,7 +122,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
@@ -135,17 +134,15 @@ classifiers = [
 dephell = "dephell.cli:entrypoint"
 
 [tool.poetry.dependencies]
-python = ">=3.5"
+python = ">=3.6"
 aiohttp = "*"
 appdirs = "*"
 attrs = ">=19.2.0"
-bowler = {python = ">=3.6",version = "*"}
-bowler-py35 = {version = ">=0.9.1",python = "<3.6"}
+bowler = "*"
 cerberus = ">=1.3"
 docker = "*"
 dockerpty = "*"
-fissix = {python = ">=3.6",allows-prereleases = true,version = "*"}
-fissix-py35 = {python = "<3.6",version = "*"}
+fissix = {allows-prereleases = true, version = "*"}
 flatdict = "*"
 html5lib = "*"
 jinja2 = "*"
