@@ -31,7 +31,13 @@ def get_data_dir() -> Path:
         from appdirs import user_data_dir
     except ImportError:
 
+        # linux
         path = Path.home() / '.local' / 'share'
+        if path.exists():
+            return path / 'dephell'
+
+        # mac os
+        path = Path.home() / 'Library' / 'Application Support'
         if path.exists():
             return path / 'dephell'
 
