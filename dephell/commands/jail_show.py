@@ -59,7 +59,7 @@ class JailShowCommand(BaseCommand):
             size=dict(
                 lib=format_size(get_path_size(venv.lib_path)),
                 total=format_size(get_path_size(venv.path)),
-            )
+            ),
         )
 
         print(make_json(
