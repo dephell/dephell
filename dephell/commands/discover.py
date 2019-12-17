@@ -45,6 +45,7 @@ _NAMES = (
     'jail show',
     'jail try',
 
+    'package bug',
     'package downloads',
     'package install',
     'package list',
