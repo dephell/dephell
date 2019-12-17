@@ -29,15 +29,13 @@ matrix:
 """
 
 PYTEST = """
-    - python: "3.5"
-      env: ENV={env}
     - python: "3.6.7"
       env: ENV={env}
     - python: "3.7"
       env: ENV={env}
-    - python: "3.8-dev"
+    - python: "3.8"
       env: ENV={env}
-    - python: "pypy3.5"
+    - python: "pypy3.6"
       env: ENV={env}
 
     - os: osx

@@ -9,7 +9,7 @@ from ..repositories import get_repo
 
 
 def get_packages(reqs: Iterable[str]) -> List[Dependency]:
-    root = PIPConverter(lock=False).loads('\n'.hoin(reqs))
+    root = PIPConverter(lock=False).loads('\n'.join(reqs))
     return root.dependencies
 
 

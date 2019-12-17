@@ -37,10 +37,12 @@ class JailRemoveCommand(BaseCommand):
             self.logger.info('remove executables...')
             for entrypoint in venv.bin_path.iterdir():
                 global_entrypoint = Path(self.config['bin']) / entrypoint.name
-                if global_entrypoint.exists():
-                    if global_entrypoint.resolve().samefile(entrypoint):
-                        global_entrypoint.unlink()
-                        self.logger.info('removed', extra=dict(script=entrypoint.name))
+                if not global_entrypoint.exists():
+                    continue
+                if not global_entrypoint.resolve().samefile(entrypoint):
+                    continue
+                global_entrypoint.unlink()
+                self.logger.info('removed', extra=dict(script=entrypoint.name))
 
             # remove venv
             shutil.rmtree(venv.path)

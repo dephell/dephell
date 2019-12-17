@@ -77,12 +77,12 @@ class JailInstallCommand(BaseCommand):
                 continue
             if not (venv.bin_path / entrypoint.name).exists():
                 self.logger.error('cannot find script in venv', extra=dict(script=entrypoint.name))
-            else:
-                self._publish_script(
-                    src=venv.bin_path / entrypoint.name,
-                    dst=Path(self.config['bin']) / entrypoint.name,
-                )
-                self.logger.info('copied', extra=dict(script=entrypoint.name))
+                continue
+            self._publish_script(
+                src=venv.bin_path / entrypoint.name,
+                dst=Path(self.config['bin']) / entrypoint.name,
+            )
+            self.logger.info('copied', extra=dict(script=entrypoint.name))
 
         return True
 
@@ -93,6 +93,5 @@ class JailInstallCommand(BaseCommand):
         if IS_WINDOWS:
             shutil.copy(str(src), str(dst))
         else:
-            # Python 3.5 cannot resove non-existing paths.
             dst = dst.parent.resolve() / dst.name
             dst.symlink_to(src)

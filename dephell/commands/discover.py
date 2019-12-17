@@ -4,9 +4,6 @@ from importlib import import_module
 
 # keep sorted
 _NAMES = (
-    'auth',
-    'autocomplete',
-
     'deps add',
     'deps audit',
     'deps check',
@@ -35,15 +32,18 @@ _NAMES = (
     'inspect auth',
     'inspect config',
     'inspect gadget',
+    'inspect project',
     'inspect self',
     'inspect venv',
-    'inspect project',
+    'inspect versioning',
 
     'jail install',
     'jail list',
     'jail remove',
+    'jail show',
     'jail try',
 
+    'package bug',
     'package downloads',
     'package install',
     'package list',
@@ -58,6 +58,8 @@ _NAMES = (
     'project test',
     'project validate',
 
+    'self auth',
+    'self autocomplete',
     'self uncache',
     'self upgrade',
 

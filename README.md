@@ -10,7 +10,7 @@
 Why it is better than all other tools:
 
 1. **Format agnostic**. You can use DepHell with your favorite format: setup.py, requirements.txt, Pipfile, poetry. DepHell supports them all and much more.
-1. **Use your favorite tool on any project**. Want to install a poetry based project, but don't like poetry? Just tell DepHell to convert the project's meta information into a setup.py and install it with pip. Or work directly work with the project from DepHell, because DepHell can do everything that you usually want to do with packages.
+1. **Use your favorite tool on any project**. Want to install a poetry based project, but don't like poetry? Just tell DepHell to convert the project's meta information into a setup.py and install it with pip. Or directly work with the project from DepHell, because DepHell can do everything that you usually want to do with packages.
 1. **DepHell doesn't try to replace your favorite tools**. If you use poetry, you have to use poetry's file formats and commands. However, DepHell can be combined with any other tool or can even combine all these tools together by converting formats. You can use DepHell, poetry, and pip all at the same time.
 1. **Easily extendable**. DepHell has strong modularity and can be easily extended with new formats and commands.
 1. **Developer friendly**. We aren't going to place all of our modules into [`_internal`](https://github.com/pypa/pip/tree/master/src/pip/_internal). Also, DepHell has a [large ecosystem](https://github.com/dephell) with separated libraries so you can use only the parts of DepHell that you need.
@@ -71,7 +71,7 @@ First of all, install DepHell and activate autocomplete:
 
 ```bash
 python3 -m pip install --user dephell[full]
-dephell autocomplete
+dephell self autocomplete
 ```
 
 Let's get [sampleproject](https://github.com/pypa/sampleproject) and make it better.

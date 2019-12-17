@@ -9,5 +9,6 @@ Commands to manage CLI tools (like [httpie](https://httpie.org/)) to keep them i
     cmd-jail-install
     cmd-jail-list
     cmd-jail-remove
+    cmd-jail-show
     cmd-jail-try
 ```
