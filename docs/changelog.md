@@ -2,7 +2,7 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
-## v.0.7.9
+## v.0.7.9 (2019-11-19)
 
 + [dephell self uncache](cmd-self-uncache) ([#312](https://github.com/dephell/dephell/pull/312)).
 + [dephell self upgrade](cmd-self-upgrade) ([#311](https://github.com/dephell/dephell/pull/311)).
@@ -14,7 +14,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + Cleaner sdist ([#297](https://github.com/dephell/dephell/pull/297)).
 + [a little bit more](https://github.com/dephell/dephell/milestone/2?closed=1)
 
-## v.0.7.8
+## v.0.7.8 (2019-10-22)
 
 + Fuzzy command name search ([#247](https://github.com/dephell/dephell/pull/247), [#122](https://github.com/dephell/dephell/issues/122)).
 + [Configure](config) DepHell with environment variables ([#248](https://github.com/dephell/dephell/pull/248)).
@@ -25,7 +25,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + pip 19.3.1 support ([#276](https://github.com/dephell/dephell/pull/276)).
 + [a little bit more](https://github.com/dephell/dephell/milestone/1?closed=1)
 
-## v.0.7.7
+## v.0.7.7 (2019-07-23)
 
 + Meet [dephell.org](https://dephell.org/) ([#244](https://github.com/dephell/dephell/pull/244)).
 + Lazy dependencies overwriting ([#232](https://github.com/dephell/dephell/pull/232), [#229](https://github.com/dephell/dephell/issues/229)).
@@ -34,7 +34,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + Updated documentation interface ([#241](https://github.com/dephell/dephell/pull/241)).
 + `path` support for `pip`, `pipenv`, `poetry` ([#230](https://github.com/dephell/dephell/pull/230), [#227](https://github.com/dephell/dephell/issues/227)).
 
-## v.0.7.6
+## v.0.7.6 (2019-07-17)
 
 + Docker support ([#220](https://github.com/dephell/dephell/pull/220), [#49](https://github.com/dephell/dephell/issues/49)).
 + Fixed dependencies for DepHell itself ([#218](https://github.com/dephell/dephell/pull/218), [#216](https://github.com/dephell/dephell/issues/216)).
@@ -43,7 +43,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + Simplified "usage" for commands' help ([#212](https://github.com/dephell/dephell/pull/212), [#120](https://github.com/dephell/dephell/issues/120)).
 + Install extras in [dephell project test](cmd-project-test) if needed ([#204](https://github.com/dephell/dephell/pull/204), [#195](https://github.com/dephell/dephell/issues/195)).
 
-## v.0.7.5
+## v.0.7.5 (2019-07-07)
 
 + Vendorization ([dephell vendor download](cmd-vendor-download) and [dephell vendor import](cmd-vendor-import)) ([#194](https://github.com/dephell/dephell/pull/194), [#109](https://github.com/dephell/dephell/issues/109))
 + Now CLI for some commands accepts `--from` instead of `--to`, because it makes much more sense ([#194](https://github.com/dephell/dephell/pull/194), [#138](https://github.com/dephell/dephell/issues/138))
@@ -52,7 +52,7 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + Meet [dephell_versioning](https://github.com/dephell/dephell_versioning), our new friend to handle packages versioning ([#191](https://github.com/dephell/dephell/pull/191), [#147](https://github.com/dephell/dephell/issues/147))
 + Shorter links in documentation ([#183](https://github.com/dephell/dephell/pull/183), [#182](https://github.com/dephell/dephell/issues/182))
 
-## v.0.7.4
+## v.0.7.4 (2019-06-17)
 
 + Custom warehouse and simple index support ([#53](https://github.com/dephell/dephell/issues/53), [#128](https://github.com/dephell/dephell/pull/128)).
 + Fixed bug with packages names that made them incompatible with `pkg_resources` ([#110](https://github.com/dephell/dephell/issues/110), [#117](https://github.com/dephell/dephell/pull/117)).
@@ -66,21 +66,21 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + Improved poetry support ([#159](https://github.com/dephell/dephell/pull/159), [#152](https://github.com/dephell/dephell/issues/152), [#154](https://github.com/dephell/dephell/issues/154)).
 + Lazy load for bash autocomplete ([#132](https://github.com/dephell/dephell/pull/132)).
 
-## v.0.7.3
+## v.0.7.3 (2019-05-19)
 
 + Added `imports` converter to get dependencies from package imports ([#97](https://github.com/dephell/dephell/pull/97)).
 + `sdist` includes tests if they not too big (`--sdist-ratio` option) ([#99](https://github.com/dephell/dephell/pull/99), [#95](https://github.com/dephell/dephell/issues/95)).
 + You can specify path to `.env` file ([#69](https://github.com/dephell/dephell/issues/69), [#100](https://github.com/dephell/dephell/pull/100)).
 + `dephell package list` doesn't fail if some packages missed on PyPI ([#85](https://github.com/dephell/dephell/issues/85), [#102](https://github.com/dephell/dephell/pull/102)).
 
-## v.0.7.2
+## v.0.7.2 (2019-05-19)
 
 + [flit](https://flit.readthedocs.io/en/latest/pyproject_toml.html) support.
 + Missed meta information (like project version when you read from `requirements.txt`) will be automatically parsed from magic variables (like `__version__`) in the project source code.
 + Fix `plugins` parsing in poetry and `extras` parsing for `egg-info` and `sdist` ([#86](https://github.com/dephell/dephell/issues/86), [#89](https://github.com/dephell/dephell/pull/89)).
 + Fix `sdist` structure ([#94](https://github.com/dephell/dephell/pull/94), [#93](https://github.com/dephell/dephell/issues/93)).
 
-## v.0.7.1
+## v.0.7.1 (2019-05-12)
 
 + [`dependency_links`](https://setuptools.readthedocs.io/en/latest/setuptools.html#dependencies-that-aren-t-in-pypi) support for `setup.py`, `sdist` and `wheel` ([#79](https://github.com/dephell/dephell/pull/79), [#63](https://github.com/dephell/dephell/issues/63)).
 + Python 3.8 support ([#78](https://github.com/dephell/dephell/pull/78)).
@@ -88,14 +88,14 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + Preserve dots in packages names ([#71](https://github.com/dephell/dephell/issues/71), [#80](https://github.com/dephell/dephell/pull/80), [pypa/pip#3666](https://github.com/pypa/pip/issues/3666)).
 + Make autocomplete for zsh really cool: added support for paths and choices ([#81](https://github.com/dephell/dephell/pull/81)).
 
-## v.0.7.0
+## v.0.7.0 (2019-05-05)
 
 + Filter dependencies by envs ([#56](https://github.com/dephell/dephell/issues/56), [#58](https://github.com/dephell/dephell/pull/58)).
 + Change API: now all import must be from the second level. For example, `from dephell.models import Dependency` instead of `from dephell import Dependency` or `from dephell.models.dependency import Dependency`.
 + Support for `allow-prereleases`, `python` and `platform` options in poetry ([#59](https://github.com/dephell/dephell/pull/59)).
 + [Serial versioning](https://packaging.python.org/guides/distributing-packages-using-setuptools/#serial-versioning) support ([#60](https://github.com/dephell/dephell/pull/60)).
 
-## v.0.6.0
+## v.0.6.0 (2019-04-30)
 
 + [Conda](https://github.com/conda/conda/) support ([#48](https://github.com/dephell/dephell/pull/48)).
     + [Anaconda Cloud](https://docs.anaconda.com/anaconda-cloud/).
@@ -105,7 +105,12 @@ Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get upd
 + Do not write hashes in `piplock` when some dependencies is local ([#41](https://github.com/dephell/dephell/issues/41), [#47](https://github.com/dephell/dephell/pull/47)).
 + Do not mess up setup.py on `project bump` ([#46](https://github.com/dephell/dephell/pull/46)).
 
-## v.0.5.8
+## v.0.5.8 (2019-04-25)
 
 + Fix some typos ([#43](https://github.com/dephell/dephell/issues/43), [#40](https://github.com/dephell/dephell/pull/40)).
-+ Fix autocomplete when data direcotry wasn't created ([#42](https://github.com/dephell/dephell/issues/42)).
++ Fix autocomplete when data directory wasn't created ([#42](https://github.com/dephell/dephell/issues/42)).
+
+## Before
+
++ The first public release: 2019-03-14.
++ The first proof-of-concept: 2018-09-03.
