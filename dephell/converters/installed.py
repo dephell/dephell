@@ -33,7 +33,7 @@ class InstalledConverter(BaseConverter):
     def load(self, path: Union[Path, str] = None, paths: Iterable[Union[Path, str]] = None,
              names: Iterable[str] = None) -> RootDependency:
         if names:
-            names = {canonicalize_name(name).replace('-', '_') for name in names}
+            names = {canonicalize_name(name) for name in names}
 
         if paths is None:
             if path is not None:
