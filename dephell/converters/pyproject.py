@@ -1,5 +1,6 @@
 # built-in
 from pathlib import Path
+from typing import Optional
 
 # external
 from dephell_discover import Root as PackageRoot
@@ -15,13 +16,20 @@ from .base import BaseConverter
 class PyProjectConverter(BaseConverter):
     lock = False
 
+    def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
+        if isinstance(path, str):
+            path = Path(path)
+        if content:
+            return '[build-system]' in content
+        return path.name == 'pyproject.toml'
+
     def loads(self, content: str) -> RootDependency:
         doc = parse(content)
         deps = []
         root = RootDependency(
             package=PackageRoot(path=self.project_path or Path()),
         )
-        for req in doc['build-system']['requires']:
+        for req in doc['build-system'].get('requires', []):
             req = Requirement(req)
             deps.extend(DependencyMaker.from_requirement(source=root, req=req))
         root.attach_dependencies(deps)
