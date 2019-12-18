@@ -30,9 +30,8 @@ class PoetryConverter(BaseConverter):
         if isinstance(path, str):
             path = Path(path)
         if content:
-            return ('[tool.poetry]' in content)
-        else:
-            return (path.name == 'pyproject.toml')
+            return '[tool.poetry]' in content
+        return path.name == 'pyproject.toml'
 
     def loads(self, content) -> RootDependency:
         doc = tomlkit.parse(content)
