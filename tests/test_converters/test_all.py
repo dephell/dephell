@@ -11,7 +11,7 @@ from dephell.controllers import DependencyMaker, Graph, RepositoriesRegistry
 from dephell.models import Requirement, RootDependency
 
 
-root_path = Path(__file__).parent / 'requirements'
+root_path = Path(__file__).parent.parent / 'requirements'
 
 
 @pytest.mark.allow_hosts()
