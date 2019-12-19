@@ -2,13 +2,35 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.8.0 (2019-12-19)
+
+New commands:
+
++ [dephell package bug](https://dephell.readthedocs.io/cmd-package-bug.html) ([#318](https://github.com/dephell/dephell/pull/318)).
++ [dephell jail show](https://dephell.readthedocs.io/cmd-jail-show.html) ([#318](https://github.com/dephell/dephell/pull/319)).
++ [dephell inspect versioning](https://dephell.readthedocs.io/cmd-inspect-versioning.html) ([#318](https://github.com/dephell/dephell/pull/320)).
+
+Improvements:
+
++ Meet [dephell_argparse](https://github.com/dephell/dephell_argparse) ([#317](https://github.com/dephell/dephell/pull/317)).
++ Meet [DepHell-powered projects](https://dephell.readthedocs.io/use-projects.html) list ([#339](https://github.com/dephell/dephell/pull/339))
++ Rename `dephell autocomplete` into `dephell self autocomplete`, and `dephell auth` into `dephell self auth` ([#321](https://github.com/dephell/dephell/pull/321)).
++ Support `allow-prereleases` key from Poetry 1.0.0 ([#323](https://github.com/dephell/dephell/pull/323))
++ From now DepHell will not be tested on Python 3.5 installation because nobody installs DepHell on Python 3.5 ([#334](https://github.com/dephell/dephell/pull/334)).
++ [a little bit more](https://github.com/dephell/dephell/milestone/3?closed=1).
+
 ## v.0.7.9 (2019-11-19)
+
+New commands:
 
 + [dephell self uncache](cmd-self-uncache) ([#312](https://github.com/dephell/dephell/pull/312)).
 + [dephell self upgrade](cmd-self-upgrade) ([#311](https://github.com/dephell/dephell/pull/311)).
 + [dephell generate contributing](cmd-generate-contributing) ([#255](https://github.com/dephell/dephell/pull/255)).
 + [dephell inspect project](cmd-inspect-project) ([#296](https://github.com/dephell/dephell/pull/296)).
 + [dephell project validate](cmd-project-validate) ([#310](https://github.com/dephell/dephell/pull/310)).
+
+Improvements:
+
 + Smart `setup.py` parsing. Meet [dephell_setuptools](https://github.com/dephell/dephell_setuptools) ([#308](https://github.com/dephell/dephell/pull/308)).
 + Stable `setup.py` generation ([#292](https://github.com/dephell/dephell/pull/292)).
 + Cleaner sdist ([#297](https://github.com/dephell/dephell/pull/297)).
