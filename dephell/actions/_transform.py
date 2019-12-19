@@ -1,8 +1,17 @@
+from typing import TYPE_CHECKING
+
 # external
-from bowler import LN, Capture, Filename, Query
-from bowler.helpers import dotted_parts, power_parts, quoted_parts
 from fissix.fixer_util import Dot, Name, syms
 from fissix.pytree import Node
+
+
+if TYPE_CHECKING:
+    from bowler import LN, Capture, Filename, Query
+
+try:
+    from bowler.helpers import dotted_parts, power_parts, quoted_parts
+except ImportError:
+    pass
 
 
 modifiers = []
