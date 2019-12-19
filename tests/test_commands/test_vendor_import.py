@@ -2,15 +2,18 @@
 from pathlib import Path
 
 # external
+import pytest
 from dephell_discover import Root as PackageRoot
 
 # project
 from dephell.commands import VendorImportCommand
 from dephell.config import Config
+from dephell.constants import IS_WINDOWS
 from dephell.controllers import Graph, Mutator, Resolver
 from dephell.models import RootDependency
 
 
+@pytest.mark.skipif(IS_WINDOWS, reason='unsupported on windows')
 def test_patch_imports(temp_path: Path):
     (temp_path / 'project').mkdir()
     (temp_path / 'project' / '__init__.py').write_text('import requests\nimport django')
