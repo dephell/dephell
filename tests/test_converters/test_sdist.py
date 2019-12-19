@@ -5,16 +5,16 @@ from pathlib import Path
 from dephell.converters import SDistConverter
 
 
-def test_load_deps():
-    path = Path('tests') / 'requirements' / 'sdist.tar.gz'
+def test_load_deps(requirements_path):
+    path = requirements_path / 'sdist.tar.gz'
     root = SDistConverter().load(path)
 
     needed = {'attrs', 'cached-property', 'packaging', 'requests'}
     assert {dep.name for dep in root.dependencies} == needed
 
 
-def test_load_metadata():
-    path = Path('tests') / 'requirements' / 'sdist.tar.gz'
+def test_load_metadata(requirements_path):
+    path = requirements_path / 'sdist.tar.gz'
     root = SDistConverter().load(path)
 
     assert root.name == 'dephell'

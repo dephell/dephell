@@ -10,16 +10,16 @@ from dephell.converters.setuppy import SetupPyConverter
 from dephell.models import Requirement
 
 
-def test_load_deps():
-    path = Path('tests') / 'requirements' / 'setup.py'
+def test_load_deps(requirements_path):
+    path = requirements_path / 'setup.py'
     root = SetupPyConverter().load(path)
 
     needed = {'attrs', 'cached-property', 'packaging', 'requests', 'colorama', 'libtest'}
     assert {dep.name for dep in root.dependencies} == needed
 
 
-def test_load_metadata():
-    path = Path('tests') / 'requirements' / 'setup.py'
+def test_load_metadata(requirements_path):
+    path = requirements_path / 'setup.py'
     root = SetupPyConverter().load(path)
 
     assert root.name == 'dephell'
@@ -81,8 +81,8 @@ def test_import(temp_path: Path):
     assert root.name == 'imported'
 
 
-def test_dumps_deps():
-    path = Path('tests') / 'requirements' / 'setup.py'
+def test_dumps_deps(requirements_path):
+    path = requirements_path / 'setup.py'
     converter = SetupPyConverter()
     resolver = converter.load_resolver(path)
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
