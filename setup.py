@@ -9,9 +9,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-# built-in
 import os.path
-
 
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
@@ -23,7 +21,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.7.9',
+    version='0.8.0',
     description='Dependency resolution for Python',
     python_requires='>=3.6',
     project_urls={
