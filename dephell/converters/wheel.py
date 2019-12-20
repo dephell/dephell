@@ -74,7 +74,7 @@ class _Reader:
             urls = converter.parse_dependency_links(content)
 
         # METADATA
-        with (path / 'METADATA').open('r') as stream:
+        with (path / 'METADATA').open('r', encoding='utf8') as stream:
             content = stream.read()
         root = converter.parse_info(content, urls=urls)
 

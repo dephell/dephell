@@ -8,9 +8,9 @@ import pytest
 from dephell.config import Config
 
 
-def test_load():
+def test_load(requirements_path):
     config = Config()
-    config.attach_file(path=str(Path('tests') / 'requirements' / 'dephell.toml'), env='some_env')
+    config.attach_file(path=str(requirements_path / 'dephell.toml'), env='some_env')
     assert config['from']['format'] == 'pip'
 
 
