@@ -5,7 +5,7 @@ from pathlib import Path
 from dephell.converters.wheel import WheelConverter
 
 
-def test_load_deps(requirements_path):
+def test_load_deps(requirements_path: Path):
     loader = WheelConverter()
     path = requirements_path / 'wheel.whl'
     root = loader.load(path)
@@ -13,7 +13,7 @@ def test_load_deps(requirements_path):
     assert set(deps) == {'attrs', 'cached-property', 'packaging', 'requests'}
 
 
-def test_load_metadata(requirements_path):
+def test_load_metadata(requirements_path: Path):
     loader = WheelConverter()
     path = requirements_path / 'wheel.whl'
     root = loader.load(path)

@@ -12,7 +12,7 @@ from dephell.models import Requirement
 from dephell.repositories import GitRepo
 
 
-def test_load(requirements_path):
+def test_load(requirements_path: Path):
     converter = PoetryConverter()
     root = converter.load(requirements_path / 'poetry.toml')
     deps = {dep.name: dep for dep in root.dependencies}
@@ -28,7 +28,7 @@ def test_load(requirements_path):
     assert deps['pytest'].envs == {'dev'}
 
 
-def test_dump(requirements_path):
+def test_dump(requirements_path: Path):
     converter = PoetryConverter()
     resolver = converter.load_resolver(requirements_path / 'poetry.toml')
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
@@ -54,7 +54,7 @@ def test_dump(requirements_path):
     assert 'pytest' in parsed['dev-dependencies']
 
 
-def test_entrypoints(requirements_path):
+def test_entrypoints(requirements_path: Path):
     converter = PoetryConverter()
     root = converter.load(requirements_path / 'poetry.toml')
     assert len(root.entrypoints) == 2

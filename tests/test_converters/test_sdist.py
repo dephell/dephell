@@ -5,7 +5,7 @@ from pathlib import Path
 from dephell.converters import SDistConverter
 
 
-def test_load_deps(requirements_path):
+def test_load_deps(requirements_path: Path):
     path = requirements_path / 'sdist.tar.gz'
     root = SDistConverter().load(path)
 
@@ -13,7 +13,7 @@ def test_load_deps(requirements_path):
     assert {dep.name for dep in root.dependencies} == needed
 
 
-def test_load_metadata(requirements_path):
+def test_load_metadata(requirements_path: Path):
     path = requirements_path / 'sdist.tar.gz'
     root = SDistConverter().load(path)
 

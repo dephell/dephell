@@ -13,7 +13,7 @@ from dephell.repositories import GitRepo
 
 
 @pytest.mark.allow_hosts()
-def test_load(requirements_path):
+def test_load(requirements_path: Path):
     converter = PIPFileLockConverter()
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile.lock
     root = converter.load(requirements_path / 'pipfile.lock.json')
@@ -26,7 +26,7 @@ def test_load(requirements_path):
 
 
 @pytest.mark.allow_hosts()
-def test_load_git_based_dep(requirements_path):
+def test_load_git_based_dep(requirements_path: Path):
     converter = PIPFileLockConverter()
     root = converter.load(requirements_path / 'pipfile.lock.json')
     deps = {dep.name: dep for dep in root.dependencies}
@@ -40,7 +40,7 @@ def test_load_git_based_dep(requirements_path):
 
 
 @pytest.mark.allow_hosts()
-def test_dump(requirements_path):
+def test_dump(requirements_path: Path):
     converter = PIPFileLockConverter()
     resolver = converter.load_resolver(requirements_path / 'pipfile.lock.json')
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)

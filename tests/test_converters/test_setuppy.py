@@ -10,7 +10,7 @@ from dephell.converters.setuppy import SetupPyConverter
 from dephell.models import Requirement
 
 
-def test_load_deps(requirements_path):
+def test_load_deps(requirements_path: Path):
     path = requirements_path / 'setup.py'
     root = SetupPyConverter().load(path)
 
@@ -18,7 +18,7 @@ def test_load_deps(requirements_path):
     assert {dep.name for dep in root.dependencies} == needed
 
 
-def test_load_metadata(requirements_path):
+def test_load_metadata(requirements_path: Path):
     path = requirements_path / 'setup.py'
     root = SetupPyConverter().load(path)
 
@@ -81,7 +81,7 @@ def test_import(temp_path: Path):
     assert root.name == 'imported'
 
 
-def test_dumps_deps(requirements_path):
+def test_dumps_deps(requirements_path: Path):
     path = requirements_path / 'setup.py'
     converter = SetupPyConverter()
     resolver = converter.load_resolver(path)

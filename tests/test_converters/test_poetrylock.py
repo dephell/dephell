@@ -10,7 +10,7 @@ from dephell.models import Requirement
 from dephell.repositories import GitRepo
 
 
-def test_load(requirements_path):
+def test_load(requirements_path: Path):
     converter = PoetryLockConverter()
     root = converter.load(requirements_path / 'poetry.lock.toml')
     deps = {dep.name: dep for dep in root.dependencies}
@@ -23,7 +23,7 @@ def test_load(requirements_path):
     assert isinstance(deps['django'].repo, GitRepo)
 
 
-def test_dump(requirements_path):
+def test_dump(requirements_path: Path):
     converter = PoetryLockConverter()
     resolver = converter.load_resolver(requirements_path / 'poetry.lock.toml')
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)

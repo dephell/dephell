@@ -21,7 +21,7 @@ def test_one():
 
 
 @pytest.mark.allow_hosts()
-def test_two_different(requirements_path):
+def test_two_different(requirements_path: Path):
     resolver = loader.load_resolver(path=requirements_path / 'django-deal.txt')
     resolved = resolver.resolve()
     assert resolved is True
@@ -30,14 +30,14 @@ def test_two_different(requirements_path):
 
 
 @pytest.mark.allow_hosts()
-def test_unresolved(requirements_path):
+def test_unresolved(requirements_path: Path):
     resolver = loader.load_resolver(path=requirements_path / 'django-django.txt')
     resolved = resolver.resolve()
     assert resolved is False
 
 
 @pytest.mark.allow_hosts()
-def test_resolution(requirements_path):
+def test_resolution(requirements_path: Path):
     resolver = loader.load_resolver(path=requirements_path / 'scipy-pandas-numpy.txt')
     resolved = resolver.resolve()
     assert resolved is True
@@ -51,7 +51,7 @@ def test_resolution(requirements_path):
 
 
 @pytest.mark.allow_hosts()
-def test_unlocked(requirements_path):
+def test_unlocked(requirements_path: Path):
     resolver = loader.load_resolver(path=requirements_path / 'attrs-requests.txt')
     resolved = resolver.resolve()
     assert resolved is True
