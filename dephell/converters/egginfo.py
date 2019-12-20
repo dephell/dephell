@@ -249,7 +249,8 @@ class _Writer:
 
         (path / 'dependency_links.txt').write_text(self.make_dependency_links(reqs=reqs))
         (path / 'entry_points.txt').write_text(self.make_entrypoints(project=project))
-        (path / 'PKG-INFO').write_text(self.make_info(reqs=reqs, project=project, with_requires=False))
+        (path / 'PKG-INFO').write_text(self.make_info(reqs=reqs, project=project, with_requires=False),
+                                       encoding='utf8')
         (path / 'requires.txt').write_text(self.make_requires(reqs=reqs))
         (path / 'SOURCES.txt').write_text(self.make_sources(project=project))
         (path / 'top_level.txt').write_text(self.make_top_level(project=project))

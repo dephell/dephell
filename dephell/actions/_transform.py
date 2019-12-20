@@ -1,8 +1,17 @@
+from typing import TYPE_CHECKING
+
 # external
-from bowler import LN, Capture, Filename, Query
-from bowler.helpers import dotted_parts, power_parts, quoted_parts
 from fissix.fixer_util import Dot, Name, syms
 from fissix.pytree import Node
+
+
+if TYPE_CHECKING:
+    from bowler import LN, Capture, Filename, Query
+
+try:
+    from bowler.helpers import dotted_parts, power_parts, quoted_parts
+except ImportError:
+    pass
 
 
 modifiers = []
@@ -13,7 +22,7 @@ def _register(modifier):
     return modifier
 
 
-def transform_imports(query: Query, old_name: str, new_name: str) -> Query:
+def transform_imports(query: 'Query', old_name: str, new_name: str) -> 'Query':
     params = dict(
         name=old_name,
         dotted_name=' '.join(quoted_parts(old_name)),
@@ -46,7 +55,7 @@ class ModuleImportModifier:
         self.old_name = old_name
         self.new_name = new_name
 
-    def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+    def __call__(self, node: 'LN', capture: 'Capture', filename: 'Filename') -> None:
         old_node = capture['module_name']
         new_node = Node(
             type=syms.dotted_as_name,
@@ -83,7 +92,7 @@ class FromImportModifier:
         self.old_name = old_name
         self.new_name = new_name
 
-    def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+    def __call__(self, node: 'LN', capture: 'Capture', filename: 'Filename') -> None:
         new_name_node = build_new_name_node(
             old_node=capture['module_name'],
             new_name=self.new_name,
@@ -130,7 +139,7 @@ class ModuleAsImportModifier:
         self.old_name = old_name
         self.new_name = new_name
 
-    def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+    def __call__(self, node: 'LN', capture: 'Capture', filename: 'Filename') -> None:
         new_name_node = build_new_name_node(
             old_node=capture['module_name'],
             new_name=self.new_name,
@@ -153,7 +162,7 @@ class StringModifier:
         self.old_name = old_name
         self.new_name = new_name
 
-    def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+    def __call__(self, node: 'LN', capture: 'Capture', filename: 'Filename') -> None:
         if not self._capture(capture['string'].value):
             return
 
@@ -190,7 +199,7 @@ class DottedModuleImportModifier:
         self.old_name = old_name
         self.new_name = new_name
 
-    def __call__(self, node: LN, capture: Capture, filename: Filename) -> None:
+    def __call__(self, node: 'LN', capture: 'Capture', filename: 'Filename') -> None:
         if node.type == syms.power:
             self._modify_power(node)
         else:

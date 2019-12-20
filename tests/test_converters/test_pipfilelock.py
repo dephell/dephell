@@ -13,10 +13,10 @@ from dephell.repositories import GitRepo
 
 
 @pytest.mark.allow_hosts()
-def test_load():
+def test_load(requirements_path: Path):
     converter = PIPFileLockConverter()
     # https://github.com/pypa/pipfile/blob/master/examples/Pipfile.lock
-    root = converter.load(Path('tests') / 'requirements' / 'pipfile.lock.json')
+    root = converter.load(requirements_path / 'pipfile.lock.json')
     deps = {dep.name: dep for dep in root.dependencies}
     assert 'requests' in deps
     assert 'records' in deps
@@ -26,9 +26,9 @@ def test_load():
 
 
 @pytest.mark.allow_hosts()
-def test_load_git_based_dep():
+def test_load_git_based_dep(requirements_path: Path):
     converter = PIPFileLockConverter()
-    root = converter.load(Path('tests') / 'requirements' / 'pipfile.lock.json')
+    root = converter.load(requirements_path / 'pipfile.lock.json')
     deps = {dep.name: dep for dep in root.dependencies}
     dep = deps['django']
     assert isinstance(dep.link, VCSLink)
@@ -40,9 +40,9 @@ def test_load_git_based_dep():
 
 
 @pytest.mark.allow_hosts()
-def test_dump():
+def test_dump(requirements_path: Path):
     converter = PIPFileLockConverter()
-    resolver = converter.load_resolver(Path('tests') / 'requirements' / 'pipfile.lock.json')
+    resolver = converter.load_resolver(requirements_path / 'pipfile.lock.json')
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
     assert len(reqs) > 2
     content = converter.dumps(reqs=reqs, project=resolver.graph.metainfo)

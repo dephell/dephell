@@ -11,23 +11,26 @@ from dephell.controllers import DependencyMaker, Graph, RepositoriesRegistry
 from dephell.models import Requirement, RootDependency
 
 
+root_path = Path(__file__).parent.parent / 'requirements'
+
+
 @pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path', [
-    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'attrs-requests.txt'),
-    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'django-deal.txt'),
-    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'scipy-pandas-numpy.txt'),
+    (converters.PIPConverter(lock=False), root_path / 'attrs-requests.txt'),
+    (converters.PIPConverter(lock=False), root_path / 'django-deal.txt'),
+    (converters.PIPConverter(lock=False), root_path / 'scipy-pandas-numpy.txt'),
 
-    (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml'),
-    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json'),
+    (converters.PIPFileConverter(), root_path / 'pipfile.toml'),
+    (converters.PIPFileLockConverter(), root_path / 'pipfile.lock.json'),
 
-    (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml'),
+    (converters.FlitConverter(), root_path / 'flit.toml'),
 
-    (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml'),
-    (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml'),
+    (converters.PoetryConverter(), root_path / 'poetry.toml'),
+    (converters.PoetryLockConverter(), root_path / 'poetry.lock.toml'),
 
-    (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py'),
-    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info'),
-    (converters.WheelConverter(), Path('tests') / 'requirements' / 'wheel.whl'),
+    (converters.SetupPyConverter(), root_path / 'setup.py'),
+    (converters.EggInfoConverter(), root_path / 'egg-info'),
+    (converters.WheelConverter(), root_path / 'wheel.whl'),
 ])
 def test_load_dump_load_deps(converter, path):
     root1 = converter.load(path)
@@ -76,26 +79,26 @@ def test_load_dump_load_deps(converter, path):
 @pytest.mark.parametrize('converter, path, exclude', [
     (
         converters.PIPFileConverter(),
-        Path('tests') / 'requirements' / 'pipfile.toml',
+        root_path / 'pipfile.toml',
         ['raw_name'],
     ),
     (
         converters.PIPFileLockConverter(),
-        Path('tests') / 'requirements' / 'pipfile.lock.json',
+        root_path / 'pipfile.lock.json',
         ['raw_name', 'python'],
     ),
-    (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml', []),
-    (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml', []),
-    (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml', []),
-    (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py', []),
+    (converters.FlitConverter(), root_path / 'flit.toml', []),
+    (converters.PoetryConverter(), root_path / 'poetry.toml', []),
+    (converters.PoetryLockConverter(), root_path / 'poetry.lock.toml', []),
+    (converters.SetupPyConverter(), root_path / 'setup.py', []),
     (
         converters.EggInfoConverter(),
-        Path('tests') / 'requirements' / 'egg-info',
+        root_path / 'egg-info',
         ['package', 'entrypoints', 'readme'],
     ),
     (
         converters.WheelConverter(),
-        Path('tests') / 'requirements' / 'wheel.whl',
+        root_path / 'wheel.whl',
         ['package', 'entrypoints'],
     ),
 ])
@@ -116,21 +119,21 @@ def test_load_dump_load_metainfo(converter, path, exclude):
 
 @pytest.mark.allow_hosts()
 @pytest.mark.parametrize('converter, path', [
-    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'attrs-requests.txt'),
-    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'django-deal.txt'),
-    (converters.PIPConverter(lock=False), Path('tests') / 'requirements' / 'scipy-pandas-numpy.txt'),
+    (converters.PIPConverter(lock=False), root_path / 'attrs-requests.txt'),
+    (converters.PIPConverter(lock=False), root_path / 'django-deal.txt'),
+    (converters.PIPConverter(lock=False), root_path / 'scipy-pandas-numpy.txt'),
 
-    (converters.PIPFileConverter(), Path('tests') / 'requirements' / 'pipfile.toml'),
-    (converters.PIPFileLockConverter(), Path('tests') / 'requirements' / 'pipfile.lock.json'),
+    (converters.PIPFileConverter(), root_path / 'pipfile.toml'),
+    (converters.PIPFileLockConverter(), root_path / 'pipfile.lock.json'),
 
-    (converters.FlitConverter(), Path('tests') / 'requirements' / 'flit.toml'),
+    (converters.FlitConverter(), root_path / 'flit.toml'),
 
-    (converters.PoetryConverter(), Path('tests') / 'requirements' / 'poetry.toml'),
-    # (converters.PoetryLockConverter(), Path('tests') / 'requirements' / 'poetry.lock.toml'),
+    (converters.PoetryConverter(), root_path / 'poetry.toml'),
+    # (converters.PoetryLockConverter(), root_path / 'poetry.lock.toml'),
 
-    (converters.SetupPyConverter(), Path('tests') / 'requirements' / 'setup.py'),
-    (converters.EggInfoConverter(), Path('tests') / 'requirements' / 'egg-info' / 'PKG-INFO'),
-    (converters.WheelConverter(), Path('tests') / 'requirements' / 'wheel.whl'),
+    (converters.SetupPyConverter(), root_path / 'setup.py'),
+    (converters.EggInfoConverter(), root_path / 'egg-info' / 'PKG-INFO'),
+    (converters.WheelConverter(), root_path / 'wheel.whl'),
 ])
 def test_idempotency(converter, path):
     root1 = converter.load(path)

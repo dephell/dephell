@@ -6,12 +6,17 @@ from typing import List, Optional
 # external
 import attr
 import docker
-import dockerpty
 from dephell_venvs import VEnvs
 
 # app
 from ..cached_property import cached_property
 from ..networking import requests_session
+
+
+try:
+    import dockerpty
+except ImportError:
+    dockerpty = None
 
 
 DOCKER_PREFIX = 'dephell-'
@@ -152,6 +157,8 @@ class DockerContainer:
         return self.run(['sh', '-c', 'zsh || bash || sh'])
 
     def run(self, command: List[str]) -> None:
+        if dockerpty is None:
+            raise RuntimeError('cannot run Docker on Windows')
         self.container.start()
         dockerpty.exec_command(
             client=self.client.api,

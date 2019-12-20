@@ -41,29 +41,31 @@ class RepositoriesRegistry(WarehouseBaseRepo):
     propagate = True
 
     def add_repo(self, *, url: str, name: str = None, from_config: bool = False) -> bool:
-        # try to interpret URL as local path
         if url in self._urls:
             return False
-        path = Path(url)
-        if path.exists():
-            if name is None:
-                name = path.name
-            if name in self._names:
-                return False
-            full_path = str(path.resolve())
-            if full_path in self._urls:
-                return False
-            self._names.add(name)
-            self._urls.update({url, full_path})
-            self.repos.append(WarehouseLocalRepo(
-                name=name,
-                path=path,
-                prereleases=self.prereleases,
-                from_config=from_config,
-            ))
-            return True
-        elif '.' not in url:
-            raise FileNotFoundError('cannot find directory: {}'.format(url))
+
+        # try to interpret URL as local path
+        if '://' not in url:
+            path = Path(url)
+            if path.exists():
+                if name is None:
+                    name = path.name
+                if name in self._names:
+                    return False
+                full_path = str(path.resolve())
+                if full_path in self._urls:
+                    return False
+                self._names.add(name)
+                self._urls.update({url, full_path})
+                self.repos.append(WarehouseLocalRepo(
+                    name=name,
+                    path=path,
+                    prereleases=self.prereleases,
+                    from_config=from_config,
+                ))
+                return True
+            if '.' not in url and 'localhost' not in url:
+                raise FileNotFoundError('cannot find directory: {}'.format(url))
 
         if not urlparse(url).scheme:
             url = 'https://' + url

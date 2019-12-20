@@ -2,13 +2,16 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-# external
-from bowler import Query
-
 # app
 from ..actions import transform_imports
 from ..config import builders
 from .base import BaseCommand
+
+
+try:
+    from bowler import Query
+except ImportError:
+    Query = None
 
 
 class VendorImportCommand(BaseCommand):
@@ -25,6 +28,8 @@ class VendorImportCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        if Query is None:
+            raise RuntimeError('vendorization is unsupported on Windows')
         resolver = self._get_locked()
         if resolver is None:
             return False

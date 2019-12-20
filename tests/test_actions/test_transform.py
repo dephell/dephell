@@ -3,12 +3,18 @@ from pathlib import Path
 
 # external
 import pytest
-from bowler import Query
 
 # project
 from dephell.actions import transform_imports
 
 
+try:
+    from bowler import Query
+except ImportError:
+    Query = None
+
+
+@pytest.mark.skipif(Query is None, reason='unsupported on windows')
 @pytest.mark.parametrize('code_in, code_out, old_name, new_name', [
     # module import
     ('import astana', 'import nursultan as astana', 'astana', 'nursultan'),

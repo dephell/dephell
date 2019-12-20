@@ -10,23 +10,23 @@ from dephell.converters import EggInfoConverter
 from dephell.models import Requirement
 
 
-def test_load_deps():
-    path = Path('tests') / 'requirements' / 'egg-info'
+def test_load_deps(requirements_path: Path):
+    path = requirements_path / 'egg-info'
     root = EggInfoConverter().load(path)
 
     needed = {'attrs', 'cached-property', 'packaging', 'requests', 'colorama', 'libtest'}
     assert {dep.name for dep in root.dependencies} == needed
 
 
-def test_load_dependency_links():
-    path = Path('tests') / 'requirements' / 'egg-info'
+def test_load_dependency_links(requirements_path: Path):
+    path = requirements_path / 'egg-info'
     root = EggInfoConverter().load(path)
     deps = {dep.name: dep for dep in root.dependencies}
     assert type(deps['libtest'].link) is VCSLink
 
 
-def test_dump_dependency_links(temp_path):
-    path = Path('tests') / 'requirements' / 'egg-info'
+def test_dump_dependency_links(requirements_path, temp_path):
+    path = requirements_path / 'egg-info'
     temp_path /= 'test.egg-info'
     converter = EggInfoConverter()
     resolver = converter.load_resolver(path)
@@ -37,8 +37,8 @@ def test_dump_dependency_links(temp_path):
     assert content.strip() == 'git+https://github.com/gwtwod/poetrylibtest#egg=libtest'
 
 
-def test_dumps_deps():
-    path = Path('tests') / 'requirements' / 'egg-info'
+def test_dumps_deps(requirements_path: Path):
+    path = requirements_path / 'egg-info'
     converter = EggInfoConverter()
     resolver = converter.load_resolver(path)
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
@@ -55,8 +55,8 @@ def test_dumps_deps():
     assert set(parsed.get_all('Requires-Dist')) == needed
 
 
-def test_dumps_metainfo():
-    path = Path('tests') / 'requirements' / 'egg-info'
+def test_dumps_metainfo(requirements_path: Path):
+    path = requirements_path / 'egg-info'
     converter = EggInfoConverter()
     resolver = converter.load_resolver(path)
     reqs = Requirement.from_graph(graph=resolver.graph, lock=False)
