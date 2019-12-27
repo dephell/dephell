@@ -1,22 +1,24 @@
 # built-in
 from logging import getLogger
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 # external
 import attr
-import docker
 from dephell_venvs import VEnvs
 
 # app
+from ..imports import lazy_import
 from ..cached_property import cached_property
 from ..networking import requests_session
 
 
-try:
+docker = lazy_import('docker')
+dockerpty = lazy_import('dockerpty')
+
+if TYPE_CHECKING:
+    import docker
     import dockerpty
-except ImportError:
-    dockerpty = None
 
 
 DOCKER_PREFIX = 'dephell-'

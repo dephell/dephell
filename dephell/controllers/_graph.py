@@ -1,11 +1,21 @@
 # built-in
 from collections import ChainMap
 from logging import getLogger
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 # app
 from ..models.dependency import Dependency
 from ..models.root import RootDependency
+from ..imports import lazy_import
+
+
+graphviz = lazy_import('graphviz')
+graphviz_backend = lazy_import('graphviz.backend')
+
+
+if TYPE_CHECKING:
+    import graphviz
+    import graphviz.backend as graphviz_backend
 
 
 logger = getLogger(__name__)
@@ -184,10 +194,7 @@ class Graph:
         return parents
 
     def draw(self, path: str = '.dephell_report', suffix: str = '') -> None:
-        from graphviz import Digraph
-        from graphviz.backend import ExecutableNotFound
-
-        dot = Digraph(
+        dot = graphviz.Digraph(
             name=self._roots[0].name + suffix,
             directory=path,
             format='png',
@@ -217,8 +224,8 @@ class Graph:
         # save files
         try:
             dot.render()
-        except ExecutableNotFound as e:
-            raise ImportError('GraphViz is not installed yet.') from e
+        except graphviz_backend.ExecutableNotFound as e:
+            raise ImportError('GraphViz binary is not installed yet.') from e
 
     # properties
 

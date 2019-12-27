@@ -1,17 +1,18 @@
 from typing import TYPE_CHECKING
 
-# external
-from fissix.fixer_util import Dot, Name, syms
-from fissix.pytree import Node
+from ..imports import lazy_import
+
+
+bowler_helpers = lazy_import('bowler.helpers')
+fissix_pytree = lazy_import('fissix.pytree')
+fixer_util = lazy_import('fissix.fixer_util')
 
 
 if TYPE_CHECKING:
+    import bowler.helpers as bowler_helpers
+    import fissix.pytree as fissix_pytree
     from bowler import LN, Capture, Filename, Query
-
-try:
-    from bowler.helpers import dotted_parts, power_parts, quoted_parts
-except ImportError:
-    pass
+    from fissix import fixer_util
 
 
 modifiers = []
@@ -25,8 +26,8 @@ def _register(modifier):
 def transform_imports(query: 'Query', old_name: str, new_name: str) -> 'Query':
     params = dict(
         name=old_name,
-        dotted_name=' '.join(quoted_parts(old_name)),
-        power_name=' '.join(power_parts(old_name)),
+        dotted_name=' '.join(bowler_helpers.quoted_parts(old_name)),
+        power_name=' '.join(bowler_helpers.power_parts(old_name)),
     )
     for modifier_class in modifiers:
         modifier = modifier_class(old_name=old_name, new_name=new_name)
@@ -57,15 +58,15 @@ class ModuleImportModifier:
 
     def __call__(self, node: 'LN', capture: 'Capture', filename: 'Filename') -> None:
         old_node = capture['module_name']
-        new_node = Node(
-            type=syms.dotted_as_name,
+        new_node = fissix_pytree.Node(
+            type=fixer_util.syms.dotted_as_name,
             children=[
                 build_new_name_node(
                     old_node=old_node,
                     new_name=self.new_name,
                     attach=False,
                 ),
-                Name('as', prefix=' '),
+                fixer_util.Name('as', prefix=' '),
                 old_node.clone(),
             ],
         )
@@ -200,7 +201,7 @@ class DottedModuleImportModifier:
         self.new_name = new_name
 
     def __call__(self, node: 'LN', capture: 'Capture', filename: 'Filename') -> None:
-        if node.type == syms.power:
+        if node.type == fixer_util.syms.power:
             self._modify_power(node)
         else:
             self._modify_import(capture)
@@ -218,17 +219,18 @@ class DottedModuleImportModifier:
         prefix = node.children[0].prefix
 
         # remove old prefix
-        parts = dotted_parts(self.old_name)
+        parts = bowler_helpers.dotted_parts(self.old_name)
         for _ in range((len(parts) + 1) // 2):
             node.children.pop(0)
 
         # add new prefix
-        head = Name(self.new_name.split('.', maxsplit=1)[0], prefix=prefix)
+        name = self.new_name.split('.', maxsplit=1)[0]
+        head = fixer_util.Name(name, prefix=prefix)
         children = []
-        for part in dotted_parts(self.new_name)[2::2]:
-            children.append(Node(
-                type=syms.trailer,
-                children=[Dot(), Name(part)],
+        for part in bowler_helpers.dotted_parts(self.new_name)[2::2]:
+            children.append(fissix_pytree.Node(
+                type=fixer_util.syms.trailer,
+                children=[fixer_util.Dot(), fixer_util.Name(part)],
             ))
         node.children = [head] + children + node.children
 
@@ -237,25 +239,25 @@ def build_new_name_node(*, old_node, attach: bool, new_name: str, old_name: str 
     # build new node from new_name
     if '.' in new_name:
         children = []
-        for part in dotted_parts(new_name):
+        for part in bowler_helpers.dotted_parts(new_name):
             if part == '.':
-                children.append(Dot())
+                children.append(fixer_util.Dot())
             else:
-                children.append(Name(part))
+                children.append(fixer_util.Name(part))
     else:
-        children = [Name(new_name)]
+        children = [fixer_util.Name(new_name)]
 
     # attach to the new node subimports from the old module
-    if attach and type(old_node) is Node:
-        original_name_size = len(dotted_parts(old_name))
+    if attach and type(old_node) is fissix_pytree.Node:
+        original_name_size = len(bowler_helpers.dotted_parts(old_name))
         for part in old_node.children[original_name_size:]:
             if part.value == '.':
-                children.append(Dot())
+                children.append(fixer_util.Dot())
             else:
-                children.append(Name(part.value))
+                children.append(fixer_util.Name(part.value))
 
-    return Node(
-        type=syms.dotted_name,
+    return fissix_pytree.Node(
+        type=fixer_util.syms.dotted_name,
         children=children,
         prefix=old_node.prefix,
     )

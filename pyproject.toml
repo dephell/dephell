@@ -138,11 +138,7 @@ python = ">=3.6"
 aiohttp = "*"
 appdirs = "*"
 attrs = ">=19.2.0"
-bowler = "*"
 cerberus = ">=1.3"
-docker = "*"
-dockerpty = "*"
-fissix = {allows-prereleases = true, version = "*"}
 flatdict = "*"
 html5lib = "*"
 jinja2 = "*"
@@ -157,11 +153,17 @@ tabulate = "*"
 tomlkit = "*"
 yaspin = "*"
 
+# lazy
+bowler = {optional = true, version = "*"}
+docker = {optional = true, version = "*"}
+dockerpty = {optional = true, version = "*"}
+fissix = {allows-prereleases = true, version = "*"}
+graphviz = {optional = true, version = "*"}
+
 # optional
 aiofiles = {optional = true, version = "*"}
 autopep8 = {optional = true, version = "*"}
 colorama = {optional = true, version = "*"}
-graphviz = {optional = true, version = "*"}
 yapf = {optional = true, version = "*"}
 
 # dephell ecosystem
