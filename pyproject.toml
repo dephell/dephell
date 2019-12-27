@@ -147,7 +147,6 @@ pip = ">=18.0"
 pygments = "*"
 requests = "*"
 "ruamel.yaml" = "*"
-setuptools = "*"
 tomlkit = "*"
 yaspin = "*"
 
@@ -195,6 +194,19 @@ isort = {extras = ["pyproject"], version = "*"}
 # pre-commit = "*"
 
 [tool.poetry.extras]
-full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
-tests = ["aioresponses", "pytest", "requests-mock"]
 docs = ["alabaster", "pygments-github-lexers", "recommonmark", "sphinx"]
+tests = ["aioresponses", "pytest", "requests-mock"]
+full = [
+    "aiofiles",
+    "appdirs",
+    "autopep8",
+    "bowler",
+    "colorama",
+    "docker",
+    "dockerpty",
+    "fissix",
+    "graphviz",
+    "graphviz",
+    "tabulate",
+    "yapf",
+]
