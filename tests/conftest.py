@@ -94,14 +94,26 @@ def temp_cache(temp_path):
 
 
 @pytest.fixture
-def requirements_path() -> Path:
-    """ Return the absolute Path to 'tests/requirements' """
-    return Path(__file__).parent / Path('requirements')
+def tests_path() -> Path:
+    """ Return the absolute Path to 'tests' directory """
+    return Path(__file__).parent
 
 
 @pytest.fixture
-def fixtures_path() -> Path:
-    return Path(__file__).parent / Path('fixtures')
+def requirements_path(tests_path) -> Path:
+    """ Return the absolute Path to 'tests/requirements' """
+    return tests_path / Path('requirements')
+
+
+@pytest.fixture
+def repository_path(tests_path) -> Path:
+    """ Return the absolute Path to 'tests/repository' """
+    return tests_path / Path('repository')
+
+
+@pytest.fixture
+def fixtures_path(tests_path) -> Path:
+    return tests_path / Path('fixtures')
 
 
 class PatchedAIOResponses(aioresponses):
