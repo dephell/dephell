@@ -26,7 +26,7 @@ DOCKER_PREFIX = 'dephell-'
 
 class DockerContainers:
     @cached_property
-    def client(self) -> docker.DockerClient:
+    def client(self) -> 'docker.DockerClient':
         return docker.from_env()
 
     def list(self):
@@ -87,14 +87,14 @@ class DockerContainer:
         return docker.from_env()
 
     @cached_property
-    def container(self) -> Optional[docker.models.containers.Container]:
+    def container(self) -> Optional['docker.models.containers.Container']:
         try:
             return self.client.containers.get(self.container_name)
         except docker.errors.NotFound:
             return None
 
     @cached_property
-    def network(self) -> Optional[docker.models.networks.Network]:
+    def network(self) -> Optional['docker.models.networks.Network']:
         return self.client.networks.get(self.network_name)
 
     # public methods
