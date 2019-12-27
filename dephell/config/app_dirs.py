@@ -3,8 +3,11 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-# external
-from appdirs import user_data_dir
+# app
+from ..imports import lazy_import
+
+
+appdirs = lazy_import('appdirs')
 
 
 @lru_cache(maxsize=2)
@@ -25,7 +28,7 @@ def get_data_dir(app: str = 'dephell') -> Path:
     if path.exists():
         return path / app
 
-    return Path(user_data_dir(app))
+    return Path(appdirs.user_data_dir(app))
 
 
 @lru_cache(maxsize=2)

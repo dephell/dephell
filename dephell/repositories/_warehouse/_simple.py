@@ -10,7 +10,6 @@ from urllib.parse import parse_qs, quote, urljoin, urlparse
 
 # external
 import attr
-import html5lib
 from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
@@ -20,11 +19,13 @@ from ...cache import JSONCache, TextCache
 from ...config import config
 from ...constants import ARCHIVE_EXTENSIONS
 from ...exceptions import PackageNotFoundError
+from ...imports import import_module
 from ...models.release import Release
 from ...networking import requests_session
 from ._base import WarehouseBaseRepo
 
 
+html5lib = import_module('html5lib')
 logger = getLogger('dephell.repositories.warehouse.simple')
 
 

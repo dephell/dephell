@@ -1,42 +1,29 @@
-try:
-    from ruamel.yaml import YAML
-    ruamel_yaml = YAML()
-    ruamel_yaml_safe = YAML(typ='safe')
-except ImportError:
-    ruamel_yaml = None
+# app
+from .imports import lazy_import
 
-try:
-    import yaml as py_yaml
-except ImportError:
-    py_yaml = None
 
-if py_yaml is None and ruamel_yaml is None:
-    raise ImportError('please, install ruamel.yaml')
+ruamel_yaml = lazy_import('ruamel.yaml', package='ruamel.yaml')
+py_yaml = lazy_import('yaml', package='PyYAML')
 
 
 def yaml_load(stream, *, safe: bool = True):
-    if ruamel_yaml is not None:
-        try:
-            if safe:
-                return ruamel_yaml_safe.load(stream)
-            return ruamel_yaml.load(stream)
-        except Exception:
-            # on error try to parse by PyYAML if available
-            if py_yaml is not None:
-                if safe:
-                    return py_yaml.safe_load(stream)
-                return py_yaml.load(stream)
-            raise
-    if py_yaml is not None:
-        if safe:
-            return py_yaml.safe_load(stream)
-        return py_yaml.load(stream)
-    raise RuntimeError('unreachable point reached')
+    if safe:
+        parser = ruamel_yaml.YAML(typ='safe')
+    else:
+        parser = ruamel_yaml.YAML()
+
+    # first of all, try to parse by ruamel.yaml
+    try:
+        return parser.load(stream)
+    except Exception:
+        pass
+
+    # on error try to parse by PyYAML
+    if safe:
+        return py_yaml.safe_load(stream)
+    return py_yaml.load(stream)
 
 
 def yaml_dump(data, stream):
-    if ruamel_yaml is not None:
-        return ruamel_yaml.dump(data, stream)
-    if py_yaml is not None:
-        return py_yaml.dump(data, stream)
-    raise RuntimeError('unreachable point reached')
+    parser = ruamel_yaml.YAML()
+    return parser.dump(data, stream)

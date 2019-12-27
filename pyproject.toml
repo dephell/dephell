@@ -39,7 +39,7 @@ command = "mypy --ignore-missing-imports --allow-redefinition dephell"
 # read dependencies from poetry format
 from = {format = "poetry", path = "pyproject.toml"}
 # install dependencies from `dependencies` section and `tests` extra
-envs = ["main", "tests"]
+envs = ["main", "full", "tests"]
 # copy files that requred for tests
 tests = ["tests", "README.md"]
 # run command `pytest`
@@ -49,6 +49,7 @@ command = "python -m pytest tests/"
 from = {format = "poetry", path = "pyproject.toml"}
 # force python interpreter for env
 python = "pypy3"
+envs = ["main", "full", "tests"]
 command = "pytest -x tests/"
 
 # Install `docs` extra dependencies  in the separated venv and run sphinx:
@@ -66,7 +67,7 @@ command = "sphinx-build -W docs docs/build"
 # Sort imports in the project:
 [tool.dephell.isort]
 from = {format = "poetry", path = "pyproject.toml"}
-envs = ["main", "dev"]
+envs = ["main", "full", "dev"]
 command = "isort -y"
 
 [tool.dephell.vendorized]
@@ -136,32 +137,33 @@ dephell = "dephell.cli:entrypoint"
 [tool.poetry.dependencies]
 python = ">=3.6"
 aiohttp = "*"
-appdirs = "*"
 attrs = ">=19.2.0"
-bowler = "*"
 cerberus = ">=1.3"
-docker = "*"
-dockerpty = "*"
-fissix = {allows-prereleases = true, version = "*"}
-flatdict = "*"
-html5lib = "*"
 jinja2 = "*"
 m2r = "*"
 packaging = "*"
 pip = ">=18.0"
-pygments = "*"
 requests = "*"
-"ruamel.yaml" = "*"
-setuptools = "*"
-tabulate = "*"
 tomlkit = "*"
 yaspin = "*"
+
+# lazy
+appdirs = {optional = true, version = "*"}
+bowler = {optional = true, version = "*"}
+docker = {optional = true, version = "*"}
+dockerpty = {optional = true, version = "*"}
+fissix = {allows-prereleases = true, version = "*"}
+flatdict = {optional = true, version = "*"}
+graphviz = {optional = true, version = "*"}
+html5lib = {optional = true, version = "*"}
+pygments = {optional = true, version = "*"}
+"ruamel.yaml" = {optional = true, version = "*"}
+tabulate = {optional = true, version = "*"}
 
 # optional
 aiofiles = {optional = true, version = "*"}
 autopep8 = {optional = true, version = "*"}
 colorama = {optional = true, version = "*"}
-graphviz = {optional = true, version = "*"}
 yapf = {optional = true, version = "*"}
 
 # dephell ecosystem
@@ -193,6 +195,22 @@ isort = {extras = ["pyproject"], version = "*"}
 # pre-commit = "*"
 
 [tool.poetry.extras]
-full = ["aiofiles", "autopep8", "colorama", "graphviz", "yapf"]
-tests = ["aioresponses", "pytest", "requests-mock"]
 docs = ["alabaster", "pygments-github-lexers", "recommonmark", "sphinx"]
+tests = ["aioresponses", "pytest", "requests-mock"]
+full = [
+    "aiofiles",
+    "appdirs",
+    "autopep8",
+    "bowler",
+    "colorama",
+    "docker",
+    "dockerpty",
+    "fissix",
+    "flatdict",
+    "graphviz",
+    "html5lib",
+    "pygments",
+    "ruamel.yaml",
+    "tabulate",
+    "yapf",
+]

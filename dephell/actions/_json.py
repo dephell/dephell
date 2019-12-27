@@ -4,10 +4,15 @@ from collections import defaultdict
 from functools import reduce
 from typing import Optional
 
-# external
-from flatdict import FlatDict
-from pygments import formatters, highlight, lexers
-from tabulate import tabulate
+# app
+from ..imports import lazy_import
+
+
+flatdict = lazy_import('flatdict')
+pygments = lazy_import('pygments')
+pygments_lexers = lazy_import('pygments.lexers')
+pygments_formatters = lazy_import('pygments.formatters')
+tabulate = lazy_import('tabulate')
 
 
 def _each(value):
@@ -96,23 +101,35 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
     if table:
         # one dict
         if isinstance(data, dict):
-            data = FlatDict(data, delimiter='.').items()
-            return tabulate(data, headers=('key', 'value'), tablefmt='fancy_grid')
+            data = flatdict.FlatDict(data, delimiter='.').items()
+            return tabulate.tabulate(
+                data,
+                headers=('key', 'value'),
+                tablefmt='fancy_grid',
+            )
         # list of dicts
         if isinstance(data, list) and data and isinstance(data[0], dict):
             table = []
             for row in data:
-                row = FlatDict(row, delimiter='.')
+                row = flatdict.FlatDict(row, delimiter='.')
                 keys = tuple(row)
                 row = [v for _, v in sorted(row.items())]
                 table.append(row)
-            return tabulate(table, headers=keys, tablefmt='fancy_grid')
+            return tabulate.tabulate(
+                table,
+                headers=keys,
+                tablefmt='fancy_grid',
+            )
 
     json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
     dumped = json.dumps(data, **json_params)
     if not colors:
         return dumped
-    return highlight(dumped, lexers.JsonLexer(), formatters.TerminalFormatter())
+    return pygments.highlight(
+        code=dumped,
+        lexer=pygments_lexers.JsonLexer(),
+        formatter=pygments_formatters.TerminalFormatter(),
+    )
 
 
 def make_json(data, key: str = None, sep: Optional[str] = '-',
