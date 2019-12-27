@@ -6,15 +6,10 @@ import pytest
 
 # project
 from dephell.actions import transform_imports
+from dephell.constants import IS_WINDOWS
 
 
-try:
-    from bowler import Query
-except ImportError:
-    Query = None
-
-
-@pytest.mark.skipif(Query is None, reason='unsupported on windows')
+@pytest.mark.skipif(IS_WINDOWS, reason='unsupported on windows')
 @pytest.mark.parametrize('code_in, code_out, old_name, new_name', [
     # module import
     ('import astana', 'import nursultan as astana', 'astana', 'nursultan'),
@@ -55,6 +50,8 @@ except ImportError:
     # ),
 ])
 def test_transform_imports(code_in: str, code_out: str, old_name: str, new_name: str, temp_path: Path):
+    from bowler import Query
+
     code_in += '\n'
     code_out += '\n'
     path = temp_path / 'tmp.py'
