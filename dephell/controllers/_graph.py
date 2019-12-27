@@ -1,12 +1,12 @@
 # built-in
 from collections import ChainMap
 from logging import getLogger
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 # app
+from ..imports import lazy_import
 from ..models.dependency import Dependency
 from ..models.root import RootDependency
-from ..imports import lazy_import
 
 
 graphviz = lazy_import('graphviz')

@@ -1,15 +1,15 @@
 # built-in
 from logging import getLogger
 from pathlib import Path
-from typing import List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional
 
 # external
 import attr
 from dephell_venvs import VEnvs
 
 # app
-from ..imports import lazy_import
 from ..cached_property import cached_property
+from ..imports import lazy_import
 from ..networking import requests_session
 
 
