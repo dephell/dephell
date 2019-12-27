@@ -7,7 +7,11 @@ from typing import Optional
 # external
 from flatdict import FlatDict
 from pygments import formatters, highlight, lexers
-from tabulate import tabulate
+
+from ..imports import lazy_import
+
+
+tabulate = lazy_import('tabulate')
 
 
 def _each(value):
@@ -97,7 +101,11 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
         # one dict
         if isinstance(data, dict):
             data = FlatDict(data, delimiter='.').items()
-            return tabulate(data, headers=('key', 'value'), tablefmt='fancy_grid')
+            return tabulate.tabulate(
+                data,
+                headers=('key', 'value'),
+                tablefmt='fancy_grid',
+            )
         # list of dicts
         if isinstance(data, list) and data and isinstance(data[0], dict):
             table = []
@@ -106,7 +114,11 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
                 keys = tuple(row)
                 row = [v for _, v in sorted(row.items())]
                 table.append(row)
-            return tabulate(table, headers=keys, tablefmt='fancy_grid')
+            return tabulate.tabulate(
+                table,
+                headers=keys,
+                tablefmt='fancy_grid',
+            )
 
     json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
     dumped = json.dumps(data, **json_params)

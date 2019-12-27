@@ -148,7 +148,6 @@ pygments = "*"
 requests = "*"
 "ruamel.yaml" = "*"
 setuptools = "*"
-tabulate = "*"
 tomlkit = "*"
 yaspin = "*"
 
@@ -159,6 +158,7 @@ docker = {optional = true, version = "*"}
 dockerpty = {optional = true, version = "*"}
 fissix = {allows-prereleases = true, version = "*"}
 graphviz = {optional = true, version = "*"}
+tabulate = {optional = true, version = "*"}
 
 # optional
 aiofiles = {optional = true, version = "*"}
