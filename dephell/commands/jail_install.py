@@ -75,12 +75,17 @@ class JailInstallCommand(BaseCommand):
         for entrypoint in entrypoints:
             if entrypoint.group != 'console_scripts':
                 continue
-            if not (venv.bin_path / entrypoint.name).exists():
+
+            entrypoint_filename = entrypoint.name
+            if IS_WINDOWS:
+                entrypoint_filename += '.exe'
+
+            if not (venv.bin_path / entrypoint_filename).exists():
                 self.logger.error('cannot find script in venv', extra=dict(script=entrypoint.name))
                 continue
             self._publish_script(
-                src=venv.bin_path / entrypoint.name,
-                dst=Path(self.config['bin']) / entrypoint.name,
+                src=venv.bin_path / entrypoint_filename,
+                dst=Path(self.config['bin']) / entrypoint_filename,
             )
             self.logger.info('copied', extra=dict(script=entrypoint.name))
 
