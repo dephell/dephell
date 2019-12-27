@@ -19,7 +19,7 @@ $ dephell venv create --env=docs
 Get venv path template with [dephell inspect config](cmd-inspect-config) command:
 
 ```bash
-$ dephell inspect config venv
+$ dephell inspect config --filter=venv
 /home/gram/.local/share/dephell/venvs/{project}-{digest}/{env}
 ```
 
