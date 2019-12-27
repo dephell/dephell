@@ -8,6 +8,7 @@ from dephell_venvs import VEnv
 # app
 from ..converters import EggInfoConverter
 from ..models import EntryPoint
+from ..constants import IS_WINDOWS
 
 
 logger = getLogger('dephell.actions')
@@ -34,6 +35,10 @@ def get_entrypoints(*, venv: VEnv, name: str) -> Optional[Tuple[EntryPoint, ...]
                 venv.bin_path / name.replace('-', '_'),
                 venv.bin_path / name.replace('_', '-'),
             )
+
+            if IS_WINDOWS:
+                paths = tuple(p.with_suffix('.exe') for p in paths)
+
             for path in paths:
                 if path.exists():
                     return tuple([EntryPoint(path=path, name=name)])
