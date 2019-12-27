@@ -143,7 +143,6 @@ jinja2 = "*"
 m2r = "*"
 packaging = "*"
 pip = ">=18.0"
-pygments = "*"
 requests = "*"
 "ruamel.yaml" = "*"
 tomlkit = "*"
@@ -158,6 +157,7 @@ fissix = {allows-prereleases = true, version = "*"}
 flatdict = {optional = true, version = "*"}
 graphviz = {optional = true, version = "*"}
 html5lib = {optional = true, version = "*"}
+pygments = {optional = true, version = "*"}
 tabulate = {optional = true, version = "*"}
 
 # optional
@@ -209,6 +209,7 @@ full = [
     "flatdict",
     "graphviz",
     "html5lib",
+    "pygments",
     "tabulate",
     "yapf",
 ]

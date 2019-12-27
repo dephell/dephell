@@ -4,14 +4,14 @@ from collections import defaultdict
 from functools import reduce
 from typing import Optional
 
-# external
-from pygments import formatters, highlight, lexers
-
 # app
 from ..imports import lazy_import
 
 
 flatdict = lazy_import('flatdict')
+pygments = lazy_import('pygments')
+pygments_lexers = lazy_import('pygments.lexers')
+pygments_formatters = lazy_import('pygments.formatters')
 tabulate = lazy_import('tabulate')
 
 
@@ -125,7 +125,11 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
     dumped = json.dumps(data, **json_params)
     if not colors:
         return dumped
-    return highlight(dumped, lexers.JsonLexer(), formatters.TerminalFormatter())
+    return pygments.highlight(
+        code=dumped,
+        lexer=pygments_lexers.JsonLexer(),
+        formatter=pygments_formatters.TerminalFormatter(),
+    )
 
 
 def make_json(data, key: str = None, sep: Optional[str] = '-',
