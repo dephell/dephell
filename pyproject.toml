@@ -139,7 +139,6 @@ python = ">=3.6"
 aiohttp = "*"
 attrs = ">=19.2.0"
 cerberus = ">=1.3"
-html5lib = "*"
 jinja2 = "*"
 m2r = "*"
 packaging = "*"
@@ -158,6 +157,7 @@ dockerpty = {optional = true, version = "*"}
 fissix = {allows-prereleases = true, version = "*"}
 flatdict = {optional = true, version = "*"}
 graphviz = {optional = true, version = "*"}
+html5lib = {optional = true, version = "*"}
 tabulate = {optional = true, version = "*"}
 
 # optional
@@ -208,7 +208,7 @@ full = [
     "fissix",
     "flatdict",
     "graphviz",
-    "graphviz",
+    "html5lib",
     "tabulate",
     "yapf",
 ]
