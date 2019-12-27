@@ -83,7 +83,7 @@ class DockerContainer:
         return sorted(tags, key=lambda tag: tags[tag], reverse=True)
 
     @cached_property
-    def client(self) -> docker.DockerClient:
+    def client(self) -> 'docker.DockerClient':
         return docker.from_env()
 
     @cached_property
