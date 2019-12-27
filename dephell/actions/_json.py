@@ -5,12 +5,12 @@ from functools import reduce
 from typing import Optional
 
 # external
-from flatdict import FlatDict
 from pygments import formatters, highlight, lexers
 
 from ..imports import lazy_import
 
 
+flatdict = lazy_import('flatdict')
 tabulate = lazy_import('tabulate')
 
 
@@ -100,7 +100,7 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
     if table:
         # one dict
         if isinstance(data, dict):
-            data = FlatDict(data, delimiter='.').items()
+            data = flatdict.FlatDict(data, delimiter='.').items()
             return tabulate.tabulate(
                 data,
                 headers=('key', 'value'),
@@ -110,7 +110,7 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
         if isinstance(data, list) and data and isinstance(data[0], dict):
             table = []
             for row in data:
-                row = FlatDict(row, delimiter='.')
+                row = flatdict.FlatDict(row, delimiter='.')
                 keys = tuple(row)
                 row = [v for _, v in sorted(row.items())]
                 table.append(row)
