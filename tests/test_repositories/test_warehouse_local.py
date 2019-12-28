@@ -1,6 +1,5 @@
 # built-in
 import asyncio
-from pathlib import Path
 
 # project
 from dephell.controllers import DependencyMaker
