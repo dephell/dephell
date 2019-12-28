@@ -6,10 +6,9 @@ from typing import Optional, Tuple
 from dephell_venvs import VEnv
 
 # app
+from ..constants import IS_WINDOWS
 from ..converters import EggInfoConverter
 from ..models import EntryPoint
-from ..constants import IS_WINDOWS
-
 
 logger = getLogger('dephell.actions')
 
