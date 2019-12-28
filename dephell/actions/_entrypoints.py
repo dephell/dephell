@@ -40,7 +40,7 @@ def get_entrypoints(*, venv: VEnv, name: str) -> Optional[Tuple[EntryPoint, ...]
 
             for path in paths:
                 if path.exists():
-                    return tuple([EntryPoint(path=path, name=name)])
+                    return EntryPoint(path=path, name=name),
         logger.error('cannot find any entrypoints for package')
         return None
     return EggInfoConverter().parse_entrypoints(content=path.read_text()).entrypoints
