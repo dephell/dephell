@@ -6,6 +6,7 @@ from typing import Optional, Tuple
 from dephell_venvs import VEnv
 
 # app
+from ..constants import IS_WINDOWS
 from ..converters import EggInfoConverter
 from ..models import EntryPoint
 
@@ -34,9 +35,13 @@ def get_entrypoints(*, venv: VEnv, name: str) -> Optional[Tuple[EntryPoint, ...]
                 venv.bin_path / name.replace('-', '_'),
                 venv.bin_path / name.replace('_', '-'),
             )
+
+            if IS_WINDOWS:
+                paths = tuple(p.with_suffix('.exe') for p in paths)
+
             for path in paths:
-                if path.exists:
-                    return [EntryPoint(path=path, name=name)]
+                if path.exists():
+                    return (EntryPoint(path=path, name=name), )
         logger.error('cannot find any entrypoints for package')
         return None
     return EggInfoConverter().parse_entrypoints(content=path.read_text()).entrypoints

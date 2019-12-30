@@ -6,7 +6,7 @@ from typing import Optional
 
 # external
 from dephell_discover import Root as PackageRoot
-from dephell_links import DirLink
+from dephell_links import DirLink, FileLink
 from pip._internal.download import PipSession
 from pip._internal.index import PackageFinder
 from pip._internal.req import parse_requirements
@@ -178,12 +178,13 @@ class PIPConverter(BaseConverter):
             line += '-e '
         if req.link is not None:
             link = req.link.long
-            path = Path(link.split('#egg=')[0])
-            if path.exists():
-                link = str(self._make_dependency_path_relative(path))
-                link = link.replace('\\', '/')
-                if '/' not in link:
-                    link = './' + link
+            if isinstance(req.link, (DirLink, FileLink)):
+                path = Path(link.split('#egg=')[0])
+                if path.exists():
+                    link = str(self._make_dependency_path_relative(path))
+                    link = link.replace('\\', '/')
+                    if '/' not in link:
+                        link = './' + link
             line += link
         else:
             line += req.raw_name
