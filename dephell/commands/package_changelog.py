@@ -27,7 +27,7 @@ class PackageChangelogCommand(BaseCommand):
         dep.repo.get_releases(dep)  # fetch metainfo
         url = self._get_url(links=dep.links)
         if not url:
-            self.logger.error('cannot changelog URL')
+            self.logger.error('cannot find changelog URL')
             return False
         webbrowser.open_new_tab(url=url)
         return True
