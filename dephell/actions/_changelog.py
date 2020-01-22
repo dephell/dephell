@@ -146,7 +146,6 @@ def parse_changelog(content: str) -> Dict[str, str]:
     version = None
     notes = []
     for line in content.splitlines():
-        line = line.strip()
         new_version = _get_version(line=line)
         if not new_version:
             notes.append(line)
