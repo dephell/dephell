@@ -9,7 +9,9 @@ try:
 except ImportError:
     from distutils.core import setup
 
+# built-in
 import os.path
+
 
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
@@ -60,8 +62,8 @@ setup(
         'dephell-markers>=1.0.0', 'dephell-pythons>=0.1.11',
         'dephell-setuptools>=0.2.1', 'dephell-shells>=0.1.3',
         'dephell-specifier>=0.1.7', 'dephell-venvs>=0.1.16',
-        'dephell-versioning', 'html5lib', 'jinja2', 'm2r', 'packaging',
-        'pip>=18.0', 'pygments', 'requests', 'ruamel.yaml', 'tomlkit', 'yaspin'
+        'dephell-versioning', 'jinja2', 'm2r', 'packaging', 'pip>=18.0',
+        'requests', 'tomlkit', 'yaspin'
     ],
     extras_require={
         "dev": [
@@ -74,7 +76,8 @@ setup(
         ],
         "full": [
             "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
-            "dockerpty", "fissix", "flatdict", "graphviz", "tabulate", "yapf"
+            "dockerpty", "fissix", "flatdict", "graphviz", "html5lib",
+            "pygments", "ruamel.yaml", "tabulate", "yapf"
         ],
         "tests": ["aioresponses", "pytest", "requests-mock"]
     },

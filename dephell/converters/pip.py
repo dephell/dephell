@@ -8,7 +8,6 @@ from typing import Optional
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink
 from pip._internal.download import PipSession
-from pip._internal.index import PackageFinder
 from pip._internal.req import parse_requirements
 
 # app
@@ -17,6 +16,14 @@ from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
+
+
+try:
+    # pip<20.0.1
+    from pip._internal.index import PackageFinder
+except ImportError:
+    # pip>=20.0.1
+    from pip._internal.index.package_finder import PackageFinder
 
 
 class PIPConverter(BaseConverter):

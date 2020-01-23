@@ -50,7 +50,7 @@ class SDistConverter(BaseConverter):
                 archive.glob('src/*.egg-info'),
                 archive.glob('src/*/*.egg-info'),
             )
-            paths = [path for path in paths if 'tests' not in path.parts]
+            paths = [path for path in paths if 'tests' not in path.member_path.parts]
             if paths:
                 root = converter.load_dir(*paths)
                 root.readme = Readme.discover(path=archive)
