@@ -34,7 +34,7 @@ class SelfUpgradeCommand(BaseCommand):
             return (result.returncode == 0)
 
     def _upgrade_package(self) -> bool:
-        manager = PackageManager(executable=sys.executable)
+        manager = PackageManager(executable=Path(sys.executable))
         args = ['-U']
         if manager.is_global:
             args.append('--user')
