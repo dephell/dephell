@@ -1,5 +1,5 @@
 # built-in
-import webbrowser
+import os
 from argparse import ArgumentParser, REMAINDER
 from typing import Dict, Optional
 
@@ -9,6 +9,9 @@ import requests
 from ..actions import get_changelog_url, get_package, parse_changelog
 from ..config import builders
 from .base import BaseCommand
+
+
+DEFAULT_WIDTH = int(os.environ.get('COLUMNS', 90))
 
 
 class PackageChangelogCommand(BaseCommand):
@@ -32,24 +35,33 @@ class PackageChangelogCommand(BaseCommand):
             self.logger.error('cannot find changelog URL')
             return False
 
-        if len(self.args.name) == 1:
-            self._show_url(url=url)
-            return True
-
-        # get changelog content
         response = requests.get(url=url)
         if not response.ok:
-            self._show_url(url=url)
+            self.logger.error('cannot get changelog content', extra=dict(url=url))
+            return False
+        content = response.text
+
+        if len(self.args.name) == 1:
+            print(content)
             return True
 
-        # extract changelog for the given version
-        version = self.args.name[1]
-        changelog = parse_changelog(response.text)
-        if version not in changelog:
-            self._show_url(url=url)
+        changelog = parse_changelog(content=content)
+        if len(changelog) == 1:
+            self.logger.warning('cannot parse changelog', extra=dict(url=url))
+            print(content)
             return True
 
-        print(changelog[version])
+        for version in self.args.name[1:]:
+            if version not in changelog:
+                self.logger.error('cannot find version in changelog', extra=dict(
+                    url=url,
+                    version=version,
+                ))
+                return False
+
+        for version in self.args.name[1:]:
+            print('\n## Release {}\n'.format(version))
+            print(changelog[version].strip('\n'))
         return True
 
     def _get_url(self, links: Dict[str, str]) -> Optional[str]:
@@ -60,7 +72,3 @@ class PackageChangelogCommand(BaseCommand):
             url = get_changelog_url(base_url=url)
             if url is not None:
                 return url
-
-    def _show_url(self, url):
-        self.logger.info('found changelog URL', extra=dict(url=url))
-        webbrowser.open_new_tab(url=url)

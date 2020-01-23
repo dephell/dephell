@@ -139,6 +139,17 @@ def _get_version(line: str) -> Optional[str]:
     if match:
         return match.group(0)
 
+    if line.startswith(('Version ', 'Release ')):
+        version = line.split()[1]
+        if version[0].isdigit():
+            return version
+
+    version = line.lstrip('Vv. ')
+    if version[0].isdigit():
+        return version.split()[0]
+
+    return None
+
 
 def parse_changelog(content: str) -> Dict[str, str]:
     changelog = dict()
@@ -146,11 +157,18 @@ def parse_changelog(content: str) -> Dict[str, str]:
     version = None
     notes = []
     for line in content.splitlines():
+        # drop rst-like header from the section beginning
+        if not notes:
+            symbols = ''.join(set(line.strip()))
+            if len(symbols) == 1 and symbols in '+-=':
+                continue
+
         new_version = _get_version(line=line)
         if not new_version:
             notes.append(line)
             continue
 
+        # save old section and start new one
         if notes:
             changelog[version] = '\n'.join(notes)
         version = new_version
