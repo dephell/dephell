@@ -1,8 +1,9 @@
 # built-in
 import os
-from argparse import ArgumentParser, REMAINDER
+from argparse import REMAINDER, ArgumentParser
 from typing import Dict, Optional
 
+# external
 import requests
 
 # app
