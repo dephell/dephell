@@ -145,6 +145,7 @@ class Context:
     # actions
 
     def make_venv(self) -> None:
+        self.pip_main  # install pip before all to have it in the venv
         if self.venv_path.exists():
             rmtree(str(self.venv_path))
         create(str(self.venv_path), with_pip=True)
