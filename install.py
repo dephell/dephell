@@ -1,10 +1,35 @@
 # built-in
 import subprocess
+import sys
 from argparse import ArgumentParser
-from os import environ, pathsep
+from os import environ, name as os_name, pathsep
 from pathlib import Path
 from shutil import rmtree
+from typing import Tuple
 from venv import create
+
+
+POST_MESSAGE = """DepHell is installed now. Great!
+
+To get started you need DepHell's bin directory ({dephell_home_bin}) in your `PATH`
+environment variable. Future applications will automatically have the
+correct environment, but you may need to restart your current shell.
+"""
+
+POST_MESSAGE_NO_MODIFY_PATH = """DepHell is installed now. Great!
+
+To get started you need DepHell's bin directory ({dephell_home_bin}) in your `PATH`
+environment variable. This has not been done automatically.
+"""
+
+
+def get_platform_names() -> Tuple[str, str]:
+    """Get platform-dependent executable names"""
+    windows = sys.platform.startswith('win') or (sys.platform == 'cli' and os_name == 'nt')
+    names = 'dephell', 'python3'
+    if windows:
+        names = 'dephell.exe', 'python.exe'
+    return names
 
 
 # parse CLI arguments
@@ -62,8 +87,10 @@ if path.exists():
 create(str(path), with_pip=True)
 
 
+dephell_name, python_name = get_platform_names()
+
 print('update pip')
-python_path = list(path.glob('*/python3'))[0]
+python_path = list(path.glob(f'*/{python_name}'))[0]
 command = [str(python_path), '-m', 'pip', 'install', '-U', 'pip']
 result = subprocess.run(command)
 if result.returncode != 0:
@@ -101,11 +128,24 @@ def get_bin_dir() -> Path:
 
 
 print('copy binary dephell')
-local_path = python_path.parent / 'dephell'
+dephell_home_bin = python_path.parent
+local_path = dephell_home_bin / dephell_name
 if not local_path.exists():
     print('DepHell binary not found')
     exit(1)
-global_path = get_bin_dir() / 'dephell'
+global_path = get_bin_dir() / dephell_name
+modified_path = True
 if global_path.exists() or global_path.is_symlink():
     global_path.unlink()
-global_path.symlink_to(local_path)
+try:
+    global_path.symlink_to(local_path)
+except OSError:
+    modified_path = False
+
+kwargs = {
+    'dephell_home_bin': dephell_home_bin,
+}
+if modified_path:
+    print(POST_MESSAGE.format(**kwargs))
+else:
+    print(POST_MESSAGE_NO_MODIFY_PATH.format(**kwargs))
