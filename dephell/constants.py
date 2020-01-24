@@ -17,7 +17,7 @@ class ReturnCodes(Enum):
 
 IS_WINDOWS = (os.name == 'nt') or (platform.system() == 'Windows')
 
-CONFIG_NAMES = ('poetry.toml', 'pyproject.toml')
+CONFIG_NAMES = ('dephell.toml', 'pyproject.toml')
 GLOBAL_CONFIG_NAME = 'config.toml'
 ENV_VAR_TEMPLATE = 'DEPHELL_{}'
 
@@ -45,7 +45,7 @@ NON_PATH_FORMATS = ('imports', 'installed')
 
 FILES = (
     'setup.py',
-    'pyproject.toml', 'pyproject.lock',
+    'pyproject.toml', 'pyproject.lock', 'poetry.toml',
     'requirements.in', 'requirements.txt',
     'Pipfile', 'Pipfile.lock',
     'environment.yml', 'environment.yaml',
