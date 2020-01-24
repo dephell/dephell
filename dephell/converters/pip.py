@@ -7,7 +7,6 @@ from typing import Optional
 # external
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink
-from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
 
 # app
@@ -24,6 +23,14 @@ try:
 except ImportError:
     # pip>=20.0.1
     from pip._internal.index.package_finder import PackageFinder
+
+try:
+    from pip._internal.download import PipSession
+except ImportError:
+    try:
+        from pip._internal.network import PipSession
+    except ImportError:
+        from pip._internal.network.session import PipSession
 
 
 class PIPConverter(BaseConverter):
@@ -151,30 +158,19 @@ class PIPConverter(BaseConverter):
         except TypeError:
             pass
 
-        # pip 19.3.1
         from pip._internal.models.target_python import TargetPython
         try:
+            # pip 19.3.1
             from pip._internal.collector import LinkCollector
-            return PackageFinder.create(
-                link_collector=LinkCollector(
-                    search_scope=SearchScope(find_links=[], index_urls=[]),
-                    session=PipSession(),
-                ),
-                selection_prefs=SelectionPreferences(allow_yanked=False),
-                target_python=TargetPython(),
-            )
         except ImportError:
-            pass
-
-        # pip 19.3.2?
-        from pip._internal.index.collector import LinkCollector
+            from pip._internal.index.collector import LinkCollector
         return PackageFinder.create(
             link_collector=LinkCollector(
                 search_scope=SearchScope(find_links=[], index_urls=[]),
                 session=PipSession(),
             ),
+            selection_prefs=SelectionPreferences(allow_yanked=False),
             target_python=TargetPython(),
-            allow_yanked=False,
         )
 
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
