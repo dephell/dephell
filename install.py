@@ -110,15 +110,7 @@ class Context:
             if path.exists():
                 return path / 'dephell'
 
-            try:
-                from pip._internal.main import main
-            except ImportError:
-                try:
-                    from pip._internal import main
-                except ImportError:
-                    from pip import main
-
-            main(['install', 'appdirs'])
+            self.pip_main(['install', 'appdirs'])
             from appdirs import user_data_dir
 
         return Path(user_data_dir('dephell'))
