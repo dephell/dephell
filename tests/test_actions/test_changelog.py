@@ -16,8 +16,13 @@ from dephell.actions._changelog import _get_version
     ('2.2.2 (2019-12-26)',          '2.2.2'),   # dynaconf
     ('20.0.1 (2020-01-21)',         '20.0.1'),  # pip
     ('0.2',                         '0.2'),     # pip
-    ('* :release:`1.11.0 <2018-03-19>`', '1.11.0'),  # twine
-    ("What's new in psycopg 2.8.4", '2.8.4'),   # psycopg2-binary
+    ('* 2.2.1',                     '2.2.1'),   # pyyaml
+    ('- v0.5.1',                    '0.5.1'),   # websocket-client
+
+    ('.. scm-version-title:: v5.5.1', '5.5.1'),             # cheroot
+    ('= 2.0.0 "Who cares for fish?" (20050410)', '2.0.0'),  # bs4
+    ('* :release:`1.11.0 <2018-03-19>`', '1.11.0'),         # twine
+    ("What's new in psycopg 2.8.4", '2.8.4'),               # psycopg2-binary
 ])
 def test_get_version(given: str, expected: str):
     assert _get_version(given) == expected

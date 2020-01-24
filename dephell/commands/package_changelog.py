@@ -51,6 +51,7 @@ class PackageChangelogCommand(BaseCommand):
             self.logger.warning('cannot parse changelog', extra=dict(url=url))
             print(content)
             return True
+        self.logger.debug('changelog parsed', extra=dict(versions=list(changelog)))
 
         for version in self.args.name[1:]:
             if version not in changelog:
@@ -66,7 +67,7 @@ class PackageChangelogCommand(BaseCommand):
         return True
 
     def _get_url(self, links: Dict[str, str]) -> Optional[str]:
-        for url in links.values():
+        for url in reversed(list(links.values())):
             if not url.startswith('http'):
                 url = 'https://' + url
             self.logger.debug('found project URL', extra=dict(url=url))

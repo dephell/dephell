@@ -39,11 +39,41 @@ EXTENSIONS = (
     '',
 )
 KNOWN_CHANGELOGS = {
-    # 'django': 'https://raw.githubusercontent.com/django/django/master/docs/releases/{}.txt',
-    # 'flake8': 'https://gitlab.com/pycqa/flake8/raw/master/docs/source/release-notes/{}.rst',
-    # 'numpy': 'https://raw.githubusercontent.com/numpy/numpy/master/doc/changelog/{}-changelog.rst',
-    'pytest': 'https://raw.githubusercontent.com/pytest-dev/pytest/master/doc/en/changelog.rst',
+    'alabaster': 'https://raw.githubusercontent.com/bitprophet/alabaster/master/docs/changelog.rst',
+    'alembic': 'https://bitbucket.org/zzzeek/alembic/raw/master/docs/build/changelog.rst',
+    'appenlight-client': 'https://raw.githubusercontent.com/AppEnlight/appenlight-client-python/master/CHANGELOG',  # noqa: E501
+    'beautifulsoup4': 'https://bazaar.launchpad.net/~leonardr/beautifulsoup/bs4/download/head:/changelog-20090313220919-6rx0n6tw9wyjihv8-6/CHANGELOG',  # noqa: E501
+    'cffi': 'https://bitbucket.org/cffi/release-doc/raw/default/doc/source/whatsnew.rst',
+    'django-haystack': 'https://raw.githubusercontent.com/django-haystack/django-haystack/master/docs/changelog.rst',  # noqa: E501
+    'django-hijack': 'https://raw.githubusercontent.com/arteria/django-hijack/master/CHANGELOG.txt',
+    'django-registration': 'https://raw.githubusercontent.com/macropin/django-registration/master/CHANGELOG',
+    'docutils': 'http://docutils.sourceforge.net/RELEASE-NOTES.txt',
+    'genshi': 'https://genshi.edgewall.org/export/head/trunk/ChangeLog',
+    'gitpython': 'https://raw.githubusercontent.com/gitpython-developers/GitPython/master/doc/source/changes.rst',  # noqa: E501
+    'gunicorn': 'https://raw.githubusercontent.com/benoitc/gunicorn/master/docs/source/news.rst',
+    'imapclient': 'https://raw.githubusercontent.com/mjs/imapclient/master/doc/src/releases.rst',
+    'mako': 'https://raw.githubusercontent.com/sqlalchemy/mako/master/doc/build/changelog.rst',
     'py-trello': 'https://raw.githubusercontent.com/sarumont/py-trello/master/CHANGELOG',
+    'pyinvoke': 'https://raw.githubusercontent.com/pyinvoke/invoke/master/sites/www/changelog.rst',
+    'pytest': 'https://raw.githubusercontent.com/pytest-dev/pytest/master/doc/en/changelog.rst',
+    'python-ldap': 'https://raw.githubusercontent.com/python-ldap/python-ldap/python-ldap-3.2.0/CHANGES',
+    'python-memcached': 'https://raw.githubusercontent.com/linsomniac/python-memcached/master/ChangeLog',
+    'pytz': 'https://raw.githubusercontent.com/stub42/pytz/master/tz/NEWS',
+    'selenium': 'https://raw.githubusercontent.com/SeleniumHQ/selenium/master/py/CHANGES',
+    'websocket-client': 'https://raw.githubusercontent.com/websocket-client/websocket-client/master/ChangeLog',  # noqa: E501
+    'whitenoise': 'https://raw.githubusercontent.com/evansd/whitenoise/master/docs/changelog.rst',
+}
+
+PAGES = {
+    'django-rest-framework': 'https://github.com/encode/django-rest-framework/tree/master/docs/community',
+    'django': 'https://github.com/django/django/tree/master/docs/releases',
+    'flake8': 'https://gitlab.com/pycqa/flake8/tree/master/docs/source/release-notes',
+    'graphene': 'https://github.com/graphql-python/graphene/releases',
+    'mccabe': 'https://github.com/PyCQA/mccabe/blob/master/README.rst',
+    'numpy': 'https://github.com/numpy/numpy/tree/master/doc/changelog',
+    'pandas': 'https://github.com/pandas-dev/pandas/tree/master/doc/source/whatsnew',
+    'pyinotify': 'https://github.com/seb-m/pyinotify/wiki/Recent-Developments',
+    'sqlalchemy': 'https://github.com/sqlalchemy/sqlalchemy/tree/master/doc/build/changelog',
 }
 
 
@@ -67,14 +97,14 @@ def _known_domain(hostname: str) -> bool:
         hostname = hostname[4:]
     if hostname == 'github.com':
         return True
+    if hostname == 'pypi.org':
+        return True
     return False
 
 
 def _get_changelog_github(parsed) -> Optional[str]:
     # make URLs
     author, project, *_ = parsed.path.lstrip('/').split('/')
-    if project in KNOWN_CHANGELOGS:
-        return KNOWN_CHANGELOGS[project]
     tmpl = 'https://raw.githubusercontent.com/{}/{}/master/'
     raw_url = tmpl.format(author, project)
     tmpl = 'https://github.com/{}/{}/tree/master/'
@@ -104,6 +134,12 @@ def _get_changelog_github(parsed) -> Optional[str]:
     return None
 
 
+def _get_changelog_pypi(parsed) -> Optional[str]:
+    project_name = parsed.path.strip('/').split('/')[1]
+    project_name = project_name.lower().replace('_', '-')
+    return KNOWN_CHANGELOGS.get(project_name)
+
+
 def get_changelog_url(base_url) -> Optional[str]:
     # fast checks for URL
     parsed = urlparse(base_url)
@@ -123,6 +159,8 @@ def get_changelog_url(base_url) -> Optional[str]:
     # select the best parser
     if hostname == 'github.com':
         return _get_changelog_github(parsed)
+    if hostname == 'pypi.org':
+        return _get_changelog_pypi(parsed)
     return None
 
 
@@ -134,17 +172,24 @@ def _get_version(line: str) -> Optional[str]:
     if ':release:`' in line:
         return line.split(':release:`')[1].split()[0]
 
-    if not (line[0].isdigit() or line[0].isalpha() or line[0] == '#'):
+    if line.startswith(('Version ', 'Release ', ':version:', '.. scm-version-title:: ')):
+        version = line.lstrip('. ').split()[1].lstrip('Vv.')
+        if version[0].isdigit():
+            return version
+
+    match = rex_version.fullmatch(line.strip('#=*-v '))
+    if match:
+        return match.group(0)
+
+    line = line.lstrip('# =')
+    if not line:
+        return None
+    if not (line[0].isdigit() or line[0].isalpha()):
         return None
 
     match = rex_version.search(line)
     if match:
         return match.group(0)
-
-    if line.startswith(('Version ', 'Release ')):
-        version = line.split()[1]
-        if version[0].isdigit():
-            return version
 
     version = line.lstrip('Vv. ')
     if version[0].isdigit():
