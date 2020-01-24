@@ -25,11 +25,12 @@ except ImportError:
     from pip._internal.index.package_finder import PackageFinder
 
 try:
-    # pip<20.0.1
     from pip._internal.download import PipSession
 except ImportError:
-    # pip>=20.0.1
-    from pip._internal.network import PipSession
+    try:
+        from pip._internal.network import PipSession
+    except ImportError:
+        from pip._internal.network.session import PipSession
 
 
 class PIPConverter(BaseConverter):
