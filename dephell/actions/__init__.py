@@ -3,7 +3,6 @@
 
 # app
 from ._autocomplete import make_bash_autocomplete, make_zsh_autocomplete
-from ._changelog import get_changelog_url, parse_changelog
 from ._contributing import make_contributing
 from ._converting import attach_deps
 from ._docker import get_docker_container
@@ -24,7 +23,6 @@ from ._venv import get_venv
 __all__ = [
     'attach_deps',
     'format_size',
-    'get_changelog_url',
     'get_docker_container',
     'get_downloads_by_category',
     'get_entrypoints',
@@ -44,7 +42,6 @@ __all__ = [
     'make_json',
     'make_travis',
     'make_zsh_autocomplete',
-    'parse_changelog',
     'read_dotenv',
     'transform_imports',
 ]
