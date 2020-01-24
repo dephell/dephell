@@ -7,7 +7,6 @@ from typing import Optional
 # external
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink
-from pip._internal.download import PipSession
 from pip._internal.req import parse_requirements
 
 # app
@@ -24,6 +23,13 @@ try:
 except ImportError:
     # pip>=20.0.1
     from pip._internal.index.package_finder import PackageFinder
+
+try:
+    # pip<20.0.1
+    from pip._internal.download import PipSession
+except ImportError:
+    # pip>=20.0.1
+    from pip._internal.network import PipSession
 
 
 class PIPConverter(BaseConverter):
