@@ -45,7 +45,7 @@ NON_PATH_FORMATS = ('imports', 'installed')
 
 FILES = (
     'setup.py',
-    'pyproject.toml', 'pyproject.lock',
+    'pyproject.toml', 'pyproject.lock', 'poetry.toml',
     'requirements.in', 'requirements.txt',
     'Pipfile', 'Pipfile.lock',
     'environment.yml', 'environment.yaml',
