@@ -158,30 +158,19 @@ class PIPConverter(BaseConverter):
         except TypeError:
             pass
 
-        # pip 19.3.1
         from pip._internal.models.target_python import TargetPython
         try:
+            # pip 19.3.1
             from pip._internal.collector import LinkCollector
-            return PackageFinder.create(
-                link_collector=LinkCollector(
-                    search_scope=SearchScope(find_links=[], index_urls=[]),
-                    session=PipSession(),
-                ),
-                selection_prefs=SelectionPreferences(allow_yanked=False),
-                target_python=TargetPython(),
-            )
         except ImportError:
-            pass
-
-        # pip 19.3.2?
-        from pip._internal.index.collector import LinkCollector
+            from pip._internal.index.collector import LinkCollector
         return PackageFinder.create(
             link_collector=LinkCollector(
                 search_scope=SearchScope(find_links=[], index_urls=[]),
                 session=PipSession(),
             ),
+            selection_prefs=SelectionPreferences(allow_yanked=False),
             target_python=TargetPython(),
-            allow_yanked=False,
         )
 
     # https://github.com/pypa/packaging/blob/master/packaging/requirements.py
