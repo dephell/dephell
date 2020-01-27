@@ -84,8 +84,10 @@ class Resolver:
         with spinner as spinner:
             while True:
                 resolved = self._resolve(debug=debug, silent=silent, level=level, spinner=spinner)
-                if resolved is not None:
-                    return resolved
+                if resolved is None:
+                    continue
+                self.graph.clear()  # remove unused deps from graph
+                return resolved
 
     def _resolve(self, debug: bool, silent: bool, level: Optional[int], spinner) -> Optional[bool]:
         if silent:

@@ -29,9 +29,6 @@ class Requirement:
         extras = defaultdict(list)
         roots = [root.name for root in graph.get_layer(0)]
 
-        # remove unused deps from graph
-        graph.clear()
-
         # if roots wasn't applied then apply them
         if len(graph._layers) == 1:
             for root in graph._roots:
