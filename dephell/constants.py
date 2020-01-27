@@ -101,11 +101,14 @@ ARCHIVE_EXTENSIONS = (
 
 DEPHELL_ECOSYSTEM = (
     'dephell_archive',
+    'dephell_argparse',
+    'dephell_changelogs',
     'dephell_discover',
     'dephell_licenses',
     'dephell_links',
     'dephell_markers',
     'dephell_pythons',
+    'dephell_setuptools',
     'dephell_shells',
     'dephell_specifier',
     'dephell_venvs',
