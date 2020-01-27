@@ -2,6 +2,20 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.8.1 (2020-01-27)
+
+New commands:
+
++ [dephell package changelog](https://dephell.readthedocs.io/cmd-package-changelog.html) ([#361](https://github.com/dephell/dephell/pull/361)).
+
+Improvements:
+
++ Experimental Windows support. Test it and contribute! ([#343](https://github.com/dephell/dephell/issues/343)). Special thanks to [@espdev](https://github.com/espdev) who has done almost all the migration.
++ Lazy imports. About 10 dependencies were converted into optional and will be installed by-demand. Installation with `curl -L dephell.org/install | python3` isn't affected. ([#349](https://github.com/dephell/dephell/pull/349))
++ Support new pip ([362](https://github.com/dephell/dephell/pull/362)) and lock older pip because a new one is broken ([#363](https://github.com/dephell/dephell/pull/363))
++ Rewritten installer ([#365](https://github.com/dephell/dephell/pull/365), [#355](https://github.com/dephell/dephell/pull/355))
++ [a little bit more](https://github.com/dephell/dephell/milestone/4?closed=1).
+
 ## v.0.8.0 (2019-12-19)
 
 New commands:
