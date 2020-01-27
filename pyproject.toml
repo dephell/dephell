@@ -103,7 +103,7 @@ import_heading_localfolder = "app"
 
 [tool.poetry]
 name = "dephell"
-version = "0.8.0"
+version = "0.8.1"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
@@ -152,7 +152,7 @@ appdirs = {optional = true, version = "*"}
 bowler = {optional = true, version = "*"}
 docker = {optional = true, version = "*"}
 dockerpty = {optional = true, version = "*"}
-fissix = {allows-prereleases = true, version = "*"}
+fissix = {optional = true, allows-prereleases = true, version = "*"}
 flatdict = {optional = true, version = "*"}
 graphviz = {optional = true, version = "*"}
 html5lib = {optional = true, version = "*"}
@@ -198,20 +198,4 @@ isort = {extras = ["pyproject"], version = "*"}
 [tool.poetry.extras]
 docs = ["alabaster", "pygments-github-lexers", "recommonmark", "sphinx"]
 tests = ["aioresponses", "pytest", "requests-mock"]
-full = [
-    "aiofiles",
-    "appdirs",
-    "autopep8",
-    "bowler",
-    "colorama",
-    "docker",
-    "dockerpty",
-    "fissix",
-    "flatdict",
-    "graphviz",
-    "html5lib",
-    "pygments",
-    "ruamel.yaml",
-    "tabulate",
-    "yapf",
-]
+full = ["aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker", "dockerpty", "fissix", "flatdict", "graphviz", "html5lib", "pygments", "ruamel-yaml", "tabulate", "yapf"]
