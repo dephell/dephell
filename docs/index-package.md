@@ -11,6 +11,7 @@ Manage: [install](cmd-package-install), [remove](cmd-package-remove), [remove wi
     :maxdepth: 1
 
     cmd-package-bug
+    cmd-package-changelog
     cmd-package-downloads
     cmd-package-install
     cmd-package-list
