@@ -23,7 +23,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='dephell',
-    version='0.8.0',
+    version='0.8.1',
     description='Dependency resolution for Python',
     python_requires='>=3.6',
     project_urls={
@@ -63,7 +63,8 @@ setup(
         'dephell-pythons>=0.1.11', 'dephell-setuptools>=0.2.1',
         'dephell-shells>=0.1.3', 'dephell-specifier>=0.1.7',
         'dephell-venvs>=0.1.16', 'dephell-versioning', 'jinja2', 'm2r',
-        'packaging', 'pip<=19.3.1,>=18.0', 'requests', 'tomlkit', 'yaspin'
+        'packaging', 'pip<=19.3.1,>=18.0', 'requests', 'ruamel.yaml', 'tomlkit',
+        'yaspin'
     ],
     extras_require={
         "dev": [
@@ -77,7 +78,7 @@ setup(
         "full": [
             "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
             "dockerpty", "fissix", "flatdict", "graphviz", "html5lib",
-            "pygments", "ruamel.yaml", "tabulate", "yapf"
+            "pygments", "tabulate", "yapf"
         ],
         "tests": ["aioresponses", "pytest", "requests-mock"]
     },
