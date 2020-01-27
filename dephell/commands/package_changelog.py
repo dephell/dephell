@@ -4,8 +4,6 @@ from argparse import REMAINDER, ArgumentParser
 
 # external
 import requests
-
-# project
 from dephell_changelogs import get_changelog_url, parse_changelog
 
 # app
