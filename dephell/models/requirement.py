@@ -27,7 +27,6 @@ class Requirement:
     def from_graph(cls, graph, *, lock: bool) -> Tuple['Requirement', ...]:
         result = OrderedDict()
         extras = defaultdict(list)
-        applied = graph.applied
         roots = [root.name for root in graph.get_layer(0)]
 
         # if roots wasn't applied then apply them
@@ -39,8 +38,6 @@ class Requirement:
         # get all nodes
         for layer in reversed(graph._layers[1:]):  # skip roots
             for dep in sorted(layer):
-                if applied and not dep.applied:
-                    continue
                 if dep.constraint.empty:
                     continue
                 if dep.extra is None:
