@@ -146,6 +146,7 @@ pip = ">=18.0,<=19.3.1"
 requests = "*"
 tomlkit = "*"
 yaspin = "*"
+certifi = "*"
 
 # lazy
 appdirs = {optional = true, version = "*"}
