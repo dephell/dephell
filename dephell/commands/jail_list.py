@@ -23,7 +23,7 @@ class JailListCommand(BaseCommand):
     def __call__(self) -> bool:
         venvs_path = self.config['venv'].replace('-{digest}', '')
         venvs_path = venvs_path.format(project='*', digest='', env='')
-        venvs_path = str(Path(venvs_path))
+        venvs_path = str(Path(venvs_path).resolve())
 
         entrypoints = defaultdict(list)
         for entrypoint in Path(self.config['bin']).iterdir():
