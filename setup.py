@@ -77,7 +77,7 @@ setup(
         ],
         "full": [
             "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
-            "dockerpty", "fissix", "flatdict", "graphviz", "html5lib",
+            "dockerpty", "fissix", "graphviz", "html5lib",
             "pygments", "tabulate", "yapf"
         ],
         "tests": ["aioresponses", "pytest", "requests-mock"]
