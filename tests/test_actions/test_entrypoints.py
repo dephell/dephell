@@ -1,7 +1,10 @@
+# built-in
 from pathlib import Path
 
+# external
 import pytest
 
+# project
 from dephell.actions._entrypoints import _get_matching_path, get_entrypoints
 
 
