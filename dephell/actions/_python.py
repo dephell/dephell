@@ -1,3 +1,8 @@
+# built-in
+import subprocess
+from pathlib import Path
+from typing import Optional
+
 # external
 from dephell_pythons import Python, Pythons
 
@@ -5,6 +10,11 @@ from dephell_pythons import Python, Pythons
 from ..config import Config
 from ..converters import CONVERTERS
 from ._venv import get_venv
+
+
+# https://docs.python.org/3/library/site.html
+PTHS = ('easy-install.pth', 'setuptools.pth', None)
+DIRS = ('site-packages', 'dist-packages')
 
 
 def get_python(config: Config) -> Python:
@@ -46,3 +56,46 @@ def get_python_env(config: Config) -> Python:
     if venv.exists():
         return venv.python
     return get_python(config=config)
+
+
+def get_lib_path(python: Python) -> Optional[Path]:
+    """Find site-packages or dist-packages dir for the given python
+    """
+    # get user site dir path
+    user_site = None
+    cmd = [str(python.path), '-c', r'print(__import__("site").USER_SITE)']
+    result = subprocess.run(cmd, stdout=subprocess.PIPE)
+    if result.returncode == 0:
+        user_site = result.stdout.decode().strip()
+        if user_site:
+            user_site = Path(user_site)
+
+    # get sys.path paths
+    cmd = [str(python.path), '-c', r'print(*__import__("sys").path, sep="\n")']
+    result = subprocess.run(cmd, stdout=subprocess.PIPE)
+    if result.returncode != 0:
+        return None
+    paths = []
+    for path in result.stdout.decode().splitlines():
+        path = Path(path)
+        if not path.exists():
+            continue
+        paths.append(path)
+
+    # if user site dir in the sys.path, use it
+    if user_site:
+        for path in paths:
+            if path.samefile(user_site):
+                return path
+
+    # Otherwise, lookup for site-packages or dist-packages dir.
+    # Prefer a dir that is used by easy-install.
+    for pth in PTHS:
+        for dir_name in DIRS:
+            for path in paths:
+                if path.name != dir_name:
+                    continue
+                if pth and not (path / pth).exists():
+                    continue
+                return path
+    return None

@@ -1,24 +1,14 @@
 # built-in
-import subprocess
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Optional
-
-# external
-from dephell_pythons import Python
 
 # app
-from ..actions import attach_deps, get_python
+from ..actions import attach_deps, get_lib_path, get_python
 from ..config import builders
 from ..controllers import analyze_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
-
-
-# https://docs.python.org/3/library/site.html
-PTHS = ('easy-install.pth', 'setuptools.pth', None)
-DIRS = ('site-packages', 'dist-packages')
 
 
 class ProjectRegisterCommand(BaseCommand):
@@ -66,7 +56,7 @@ class ProjectRegisterCommand(BaseCommand):
         self.logger.info('creating egg-link...')
         python = get_python(self.config)
         self.logger.debug('python found', extra=dict(python=str(python.path)))
-        lib_path = self._get_lib_path(python=python)
+        lib_path = get_lib_path(python=python)
         if lib_path is None:
             self.logger.error('cannot find site-packages path', extra=dict(python=str(python.path)))
             return False
@@ -77,49 +67,6 @@ class ProjectRegisterCommand(BaseCommand):
         self._upd_pth(lib_path=lib_path, project_path=project_path)
         self.logger.info('registered!', extra=dict(python=str(python.path.name)))
         return True
-
-    @staticmethod
-    def _get_lib_path(python: Python) -> Optional[Path]:
-        """Find site-packages or dist-packages dir for the given python
-        """
-        # get user site dir path
-        user_site = None
-        cmd = [str(python.path), '-c', r'print(__import__("site").USER_SITE)']
-        result = subprocess.run(cmd, stdout=subprocess.PIPE)
-        if result.returncode == 0:
-            user_site = result.stdout.decode().strip()
-            if user_site:
-                user_site = Path(user_site)
-
-        # get sys.path paths
-        cmd = [str(python.path), '-c', r'print(*__import__("sys").path, sep="\n")']
-        result = subprocess.run(cmd, stdout=subprocess.PIPE)
-        if result.returncode != 0:
-            return None
-        paths = []
-        for path in result.stdout.decode().splitlines():
-            path = Path(path)
-            if not path.exists():
-                continue
-            paths.append(path)
-
-        # if user site dir in the sys.path, use it
-        if user_site:
-            for path in paths:
-                if path.samefile(user_site):
-                    return path
-
-        # Otherwise, lookup for site-packages or dist-packages dir.
-        # Prefer a dir that is used by easy-install.
-        for pth in PTHS:
-            for dir_name in DIRS:
-                for path in paths:
-                    if path.name != dir_name:
-                        continue
-                    if pth and not (path / pth).exists():
-                        continue
-                    return path
-        return None
 
     def _upd_egg_link(self, lib_path: Path, project_path: Path) -> bool:
         # find the correct one egg-info
