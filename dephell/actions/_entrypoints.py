@@ -41,12 +41,18 @@ def get_entrypoints(*, venv: VEnv, name: str) -> Optional[Tuple[EntryPoint, ...]
     # entry_points.txt can be missed for egg-info.
     # In that case let's try to find a binary with the same name as package.
     if venv.bin_path:
-        paths = (
-            venv.bin_path / name,
-            venv.bin_path / name.replace('-', '_'),
-            venv.bin_path / name.replace('_', '-'),
-        )
+        names = {
+            name,
+            name.replace('-', '_'),
+            name.replace('_', '-'),
+            name.replace('-', '').replace('_', ''),
 
+            canonicalize_name(name),
+            canonicalize_name(name).replace('-', '_'),
+            canonicalize_name(name).replace('_', '-'),
+            canonicalize_name(name).replace('-', '').replace('_', ''),
+        }
+        paths = (venv.bin_path / name for name in names)
         if IS_WINDOWS:
             paths = tuple(p.with_suffix('.exe') for p in paths)
 
