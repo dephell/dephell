@@ -58,12 +58,12 @@ def get_python_env(config: Config) -> Python:
     return get_python(config=config)
 
 
-def get_lib_path(python: Python) -> Optional[Path]:
+def get_lib_path(python_path: Path) -> Optional[Path]:
     """Find site-packages or dist-packages dir for the given python
     """
     # get user site dir path
     user_site = None
-    cmd = [str(python.path), '-c', r'print(__import__("site").USER_SITE)']
+    cmd = [str(python_path), '-c', r'print(__import__("site").USER_SITE)']
     result = subprocess.run(cmd, stdout=subprocess.PIPE)
     if result.returncode == 0:
         user_site = result.stdout.decode().strip()
@@ -71,7 +71,7 @@ def get_lib_path(python: Python) -> Optional[Path]:
             user_site = Path(user_site)
 
     # get sys.path paths
-    cmd = [str(python.path), '-c', r'print(*__import__("sys").path, sep="\n")']
+    cmd = [str(python_path), '-c', r'print(*__import__("sys").path, sep="\n")']
     result = subprocess.run(cmd, stdout=subprocess.PIPE)
     if result.returncode != 0:
         return None

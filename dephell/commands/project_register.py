@@ -56,7 +56,7 @@ class ProjectRegisterCommand(BaseCommand):
         self.logger.info('creating egg-link...')
         python = get_python(self.config)
         self.logger.debug('python found', extra=dict(python=str(python.path)))
-        lib_path = get_lib_path(python=python)
+        lib_path = get_lib_path(python_path=python.path)
         if lib_path is None:
             self.logger.error('cannot find site-packages path', extra=dict(python=str(python.path)))
             return False
