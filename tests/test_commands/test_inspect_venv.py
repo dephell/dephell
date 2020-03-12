@@ -29,4 +29,5 @@ def test_inspect_venv_command(temp_path: Path, capsys):
     captured = capsys.readouterr()
     output = json.loads(captured.out)
     assert output['exists'] is True
-    assert output['bin'] == str(venv.bin_path)
+    assert output['paths']['bin'] == str(venv.bin_path)
+    assert output['paths']['venv'] == str(venv.path)
