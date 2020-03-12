@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from dephell.actions._entrypoints import _get_matching_path
+from dephell.actions._entrypoints import _get_matching_path, get_entrypoints
 
 
 @pytest.mark.parametrize('distinfo, pkg, match', [
@@ -25,3 +25,14 @@ def test_get_matching_path(distinfo: str, pkg: str, match: bool):
         assert actual.name == distinfo
     else:
         assert actual is None
+
+
+def test_smoke_get_entrypoints():
+    class FakeVenv:
+        lib_path = Path(pytest.__file__).parent.parent
+        bin_path = None
+
+    entrypoints = get_entrypoints(venv=FakeVenv, name='pytest')
+    assert len(entrypoints) == 2
+    assert {e.name for e in entrypoints} == {'pytest', 'py.test'}
+    assert {e.path for e in entrypoints} == {'pytest:main'}
