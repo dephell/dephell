@@ -30,7 +30,7 @@ class InspectVenvCommand(BaseCommand):
             paths=dict(
                 venv=str(venv.path),
                 project=self.config['project'],
-            )
+            ),
         )
 
         if venv.exists():
