@@ -18,9 +18,12 @@ def get_entrypoints(*, venv: VEnv, name: str) -> Optional[Tuple[EntryPoint, ...]
     if not venv.lib_path:
         logger.critical('cannot locate lib path in the venv')
         return None
-    paths = list(venv.lib_path.glob('{}*.*-info'.format(name)))
+    name_anycase = ''.join([
+        '[{}{}]'.format(x.lower(), x.upper()) if x.isalpha() else x for x in name
+    ])
+    paths = list(venv.lib_path.glob('{}-*.*-info'.format(name_anycase)))
     if not paths:
-        paths = list(venv.lib_path.glob('{}*.*-info'.format(name.replace('-', '_'))))
+        paths = list(venv.lib_path.glob('{}-*.*-info'.format(name_anycase.replace('-', '_'))))
         if not paths:
             logger.critical('cannot locate dist-info for installed package')
             return None
