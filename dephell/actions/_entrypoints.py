@@ -38,26 +38,29 @@ def get_entrypoints(*, venv: VEnv, name: str) -> Optional[Tuple[EntryPoint, ...]
     if path.exists():
         return EggInfoConverter().parse_entrypoints(content=path.read_text()).entrypoints
 
+    if not venv.bin_path:
+        logger.error('cannot find any entrypoints for package')
+        return None
+
     # entry_points.txt can be missed for egg-info.
     # In that case let's try to find a binary with the same name as package.
-    if venv.bin_path:
-        names = {
-            name,
-            name.replace('-', '_'),
-            name.replace('_', '-'),
-            name.replace('-', '').replace('_', ''),
+    names = {
+        name,
+        name.replace('-', '_'),
+        name.replace('_', '-'),
+        name.replace('-', '').replace('_', ''),
 
-            canonicalize_name(name),
-            canonicalize_name(name).replace('-', '_'),
-            canonicalize_name(name).replace('_', '-'),
-            canonicalize_name(name).replace('-', '').replace('_', ''),
-        }
-        paths = (venv.bin_path / name for name in names)
-        if IS_WINDOWS:
-            paths = tuple(p.with_suffix('.exe') for p in paths)
+        canonicalize_name(name),
+        canonicalize_name(name).replace('-', '_'),
+        canonicalize_name(name).replace('_', '-'),
+        canonicalize_name(name).replace('-', '').replace('_', ''),
+    }
+    paths = (venv.bin_path / name for name in names)
+    if IS_WINDOWS:
+        paths = tuple(p.with_suffix('.exe') for p in paths)
 
-        for path in paths:
-            if path.exists():
-                return (EntryPoint(path=path, name=name), )
+    for path in paths:
+        if path.exists():
+            return (EntryPoint(path=path, name=name), )
     logger.error('cannot find any entrypoints for package')
     return None
