@@ -27,17 +27,31 @@ class InspectVenvCommand(BaseCommand):
 
         data = dict(
             exists=venv.exists(),
-            venv=str(venv.path),
-            project=self.config['project'],
+            paths=dict(
+                venv=str(venv.path),
+                project=self.config['project'],
+            )
         )
 
         if venv.exists():
-            data.update(dict(
+            data['paths'].update(dict(
                 activate=str(venv.bin_path / shells.current.activate),
                 bin=str(venv.bin_path),
                 lib=str(venv.lib_path),
-                lib_size=format_size(get_path_size(venv.lib_path)),
                 python=str(venv.python_path),
+            ))
+            impl = venv.python.implementation
+            if impl == 'python':
+                impl = 'cpython'
+            data.update(dict(
+                sizes=dict(
+                    lib=format_size(get_path_size(venv.lib_path)),
+                    venv=format_size(get_path_size(venv.path)),
+                ),
+                python=dict(
+                    version=str(venv.python.version),
+                    implementation=impl,
+                ),
             ))
         print(make_json(
             data=data,
