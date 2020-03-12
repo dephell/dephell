@@ -82,6 +82,16 @@ class ProjectRegisterCommand(BaseCommand):
     def _get_lib_path(python: Python) -> Optional[Path]:
         """Find site-packages or dist-packages dir for the given python
         """
+        # get user site dir path
+        user_site = None
+        cmd = [str(python.path), '-c', r'print(__import__("site").USER_SITE)']
+        result = subprocess.run(cmd, stdout=subprocess.PIPE)
+        if result.returncode == 0:
+            user_site = result.stdout.decode().strip()
+            if user_site:
+                user_site = Path(user_site)
+
+        # get sys.path paths
         cmd = [str(python.path), '-c', r'print(*__import__("sys").path, sep="\n")']
         result = subprocess.run(cmd, stdout=subprocess.PIPE)
         if result.returncode != 0:
@@ -93,6 +103,14 @@ class ProjectRegisterCommand(BaseCommand):
                 continue
             paths.append(path)
 
+        # if user site dir in the sys.path, use it
+        if user_site:
+            for path in paths:
+                if path.samefile(user_site):
+                    return path
+
+        # Otherwise, lookup for site-packages or dist-packages dir.
+        # Prefer a dir that is used by easy-install.
         for pth in PTHS:
             for dir_name in DIRS:
                 for path in paths:
