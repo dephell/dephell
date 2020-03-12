@@ -33,6 +33,9 @@ class ProjectBuildCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        if 'from' not in self.config:
+            self.logger.error('`--from` is required for this command')
+            return False
         loader = CONVERTERS[self.config['from']['format']]
         loader = loader.copy(project_path=Path(self.config['project']))
         resolver = loader.load_resolver(path=self.config['from']['path'])
