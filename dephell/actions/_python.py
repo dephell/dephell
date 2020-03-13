@@ -69,6 +69,8 @@ def get_lib_path(python_path: Path) -> Optional[Path]:
         user_site = result.stdout.decode().strip()
         if user_site:
             user_site = Path(user_site)
+        if not user_site.exisis():
+            user_site = None
 
     # get sys.path paths
     cmd = [str(python_path), '-c', r'print(*__import__("sys").path, sep="\n")']

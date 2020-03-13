@@ -3,9 +3,8 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 # app
-from ..actions import attach_deps, get_lib_path, get_python
+from ..actions import get_lib_path, get_python
 from ..config import builders
-from ..controllers import analyze_conflict
 from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
@@ -23,36 +22,20 @@ class ProjectRegisterCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
-        # read deps file
+        # make egg-info
         if 'from' not in self.config:
             self.logger.error('`--from` is required for this command')
             return False
-        loader = CONVERTERS[self.config['from']['format']]
-        loader = loader.copy(project_path=Path(self.config['project']))
-        resolver = loader.load_resolver(path=self.config['from']['path'])
-        if loader.lock:
-            self.logger.warning('do not build project from lockfile!')
-
-        # attach
-        merged = attach_deps(resolver=resolver, config=self.config, merge=True)
-        if not merged:
-            conflict = analyze_conflict(resolver=resolver)
-            self.logger.warning('conflict was found')
-            print(conflict)
+        project_path = Path(self.config['project'])
+        ok = self._make_egg_info(
+            project_path=project_path,
+            from_format=self.config['from']['format'],
+            from_path=self.config['from']['path'],
+        )
+        if not ok:
             return False
 
-        # create egg-info
-        project_path = Path(self.config['project'])
-        reqs = Requirement.from_graph(resolver.graph, lock=False)
-        self.logger.info('creating egg-info...')
-        dumper = CONVERTERS['egginfo']
-        dumper = dumper.copy(project_path=Path(self.config['project']))
-        dumper.dump(
-            path=project_path,
-            reqs=reqs,
-            project=resolver.graph.metainfo,
-        )
-
+        # make egg-link
         self.logger.info('creating egg-link...')
         python = get_python(self.config)
         self.logger.debug('python found', extra=dict(python=str(python.path)))
@@ -64,9 +47,33 @@ class ProjectRegisterCommand(BaseCommand):
         ok = self._upd_egg_link(lib_path=lib_path, project_path=project_path)
         if not ok:
             return False
+
+        # update pth
         self._upd_pth(lib_path=lib_path, project_path=project_path)
         self.logger.info('registered!', extra=dict(python=str(python.path.name)))
         return True
+
+    def _make_egg_info(self, project_path: Path, from_format: str, from_path: str) -> bool:
+        loader = CONVERTERS[from_format]
+        loader = loader.copy(project_path=project_path)
+        resolver = loader.load_resolver(path=from_path)
+        if loader.lock:
+            self.logger.warning('do not build project from lockfile!')
+
+        # We don't attach deps here.
+        # Use `deps convert` before to merge deps if you need it.
+        # Please, open an issue if it is a case for you.
+
+        # create egg-info
+        reqs = Requirement.from_graph(resolver.graph, lock=False)
+        self.logger.info('creating egg-info...')
+        dumper = CONVERTERS['egginfo']
+        dumper = dumper.copy(project_path=project_path)
+        dumper.dump(
+            path=project_path,
+            reqs=reqs,
+            project=resolver.graph.metainfo,
+        )
 
     def _upd_egg_link(self, lib_path: Path, project_path: Path) -> bool:
         # find the correct one egg-info
