@@ -139,7 +139,7 @@ class ProjectRegisterCommand(BaseCommand):
         self.logger.debug('egg-link created', extra=dict(path=str(link_path)))
         return True
 
-    def _upd_pth(self, lib_path: Path, project_path: Path):
+    def _upd_pth(self, lib_path: Path, project_path: Path) -> None:
         # read existing content
         pth_path = lib_path / 'dephell.pth'
         content = ''
