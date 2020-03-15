@@ -80,6 +80,12 @@ def build_docker(parser):
     venv_group.add_argument('--docker-container', help='container name')
 
 
+def build_gpg(parser):
+    venv_group = parser.add_argument_group('GPG signing')
+    venv_group.add_argument('--sign', help='sign packages')
+    venv_group.add_argument('--identity', help='identity file to use for signing')
+
+
 def build_other(parser):
     other_group = parser.add_argument_group('Other')
 

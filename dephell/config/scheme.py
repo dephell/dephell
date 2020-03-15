@@ -91,6 +91,9 @@ SCHEME = {
         },
     ),
 
+    # gpg
+    'sign':     dict(type='bool', required=True),
+    'identity': dict(type='string', required=False),
 
     # other
     'owner':    dict(type='string', required=False),

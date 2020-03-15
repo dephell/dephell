@@ -11,13 +11,14 @@ from ..models import Auth, Requirement
 from .base import BaseCommand
 
 
-class ProjectBuildCommand(BaseCommand):
+class ProjectUCommandpload(BaseCommand):
     """Upload project dist archives on pypi.org (or somewhere else).
     """
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_from(parser)
+        builders.build_gpg(parser)
         builders.build_output(parser)
         builders.build_other(parser)
         return parser
@@ -36,8 +37,11 @@ class ProjectBuildCommand(BaseCommand):
 
         paths = self._get_paths(loader=loader, root=root)
         for path in paths:
-            if ...:
-                uploader.sign(path=path, identity=...)
+            if self.config['sign']:
+                uploader.sign(
+                    path=path,
+                    identity=self.config.get('identity'),
+                )
             uploader.upload(path=path, root=root, reqs=reqs)
         return True
 

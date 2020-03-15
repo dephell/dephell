@@ -41,6 +41,9 @@ DEFAULT = dict(
         tag='latest',
     ),
 
+    # gpg
+    sign=False,
+
     # other
     cache=dict(
         path=str(get_cache_dir()),
