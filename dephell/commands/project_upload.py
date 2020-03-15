@@ -11,7 +11,7 @@ from ..models import Auth, Requirement
 from .base import BaseCommand
 
 
-class ProjectUCommandpload(BaseCommand):
+class ProjectUploadCommand(BaseCommand):
     """Upload project dist archives on pypi.org (or somewhere else).
     """
     @staticmethod

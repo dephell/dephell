@@ -92,7 +92,7 @@ SCHEME = {
     ),
 
     # gpg
-    'sign':     dict(type='bool', required=True),
+    'sign':     dict(type='boolean', required=True),
     'identity': dict(type='string', required=False),
 
     # other
