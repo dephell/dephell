@@ -3,15 +3,15 @@ from argparse import ArgumentParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import gnupg
-
 # app
 from ..actions import get_package, make_json
 from ..config import builders
+from ..imports import lazy_import
 from ..networking import requests_session
 from .base import BaseCommand
 
 
+gnupg = lazy_import('gnupg', package='python-gnupg')
 DEFAULT_KEYSERVER = 'pgp.mit.edu'
 
 
