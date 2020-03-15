@@ -9,6 +9,7 @@ from ._repos import RepositoriesRegistry
 from ._resolver import Resolver
 from ._safety import Safety, SafetyVulnInfo
 from ._snyk import Snyk, SnykVulnInfo
+from ._uploader import Uploader
 
 
 __all__ = [
@@ -25,4 +26,5 @@ __all__ = [
     'SafetyVulnInfo',
     'Snyk',
     'SnykVulnInfo',
+    'Uploader',
 ]

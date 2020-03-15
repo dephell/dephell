@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 
 import attr
 
+from ..cached_property import cached_property
 from ..constants import DEFAULT_UPLOAD, TEST_UPLOAD
 from ..networking import requests_session
 
@@ -17,11 +18,14 @@ BOUNDARY = '--------------GHSKFJDLGDS7543FJKLFHRE75642756743254'
 @attr.s()
 class Uploader:
     url = attr.ib(type=str, default=DEFAULT_UPLOAD)
-    username = attr.ib(type=str, default=None)
-    password = attr.ib(type=str, default=None)
+    auth = attr.ib(default=None)
 
     def __attrs_post_init__(self):
         self.url = self._fix_url(url=self.url)
+
+    @cached_property
+    def hostname(self) -> str:
+        return urlparse(self.url).hostname
 
     @staticmethod
     def _fix_url(url: str) -> str:
@@ -33,12 +37,6 @@ class Uploader:
         if parsed.hostname in ('testpypi.python.org', 'test.pypi.org'):
             return TEST_UPLOAD
         return url
-
-    def get_session(self):
-        session = requests_session()
-        if self.username is not None and self.password is not None:
-            session.auth = (self.username, self.password)
-        return session
 
     @staticmethod
     def _get_hashes(path: Path) -> Dict[str, str]:
@@ -224,7 +222,7 @@ class Uploader:
             'Content-length': str(len(body)),
         }
 
-        with self.get_session() as session:
+        with requests_session(auth=self.auth) as session:
             response = session.post(
                 url=self.url,
                 data=body,
