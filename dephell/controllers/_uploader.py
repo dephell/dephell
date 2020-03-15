@@ -1,10 +1,13 @@
 import hashlib
+import subprocess
 from io import BytesIO
 from pathlib import Path
 from typing import Dict
+from urllib.parse import urlparse
 
 import attr
 
+from ..constants import DEFAULT_UPLOAD, TEST_UPLOAD
 from ..networking import requests_session
 
 
@@ -13,9 +16,23 @@ BOUNDARY = '--------------GHSKFJDLGDS7543FJKLFHRE75642756743254'
 
 @attr.s()
 class Uploader:
-    url = attr.ib()
-    username = attr.ib(default=None)
-    password = attr.ib(default=None)
+    url = attr.ib(type=str, default=DEFAULT_UPLOAD)
+    username = attr.ib(type=str, default=None)
+    password = attr.ib(type=str, default=None)
+
+    def __attrs_post_init__(self):
+        self.url = self._fix_url(url=self.url)
+
+    @staticmethod
+    def _fix_url(url: str) -> str:
+        if '://' not in url:
+            url = 'https://' + url
+        parsed = urlparse(url)
+        if parsed.hostname in ('pypi.python.org', 'pypi.org'):
+            return DEFAULT_UPLOAD
+        if parsed.hostname in ('testpypi.python.org', 'test.pypi.org'):
+            return TEST_UPLOAD
+        return url
 
     def get_session(self):
         session = requests_session()
@@ -48,15 +65,21 @@ class Uploader:
 
     @classmethod
     def _get_file_info(cls, path: Path) -> dict:
+        # file type
         if path.suffix == '.whl':
             ftype = 'bdist_wheel'
         elif path.suffix == '.gz':
             ftype = 'sdist'
         else:
             raise TypeError('invalid extension: *{}'.format(path.suffix))
-        return dict(
-            filetype=ftype,
-        )
+        result = dict(filetype=ftype)
+
+        # gpg signature
+        sign_path = path.with_suffix(path.suffix + '.asc')
+        if sign_path.exists():
+            result['gpg_signature'] = sign_path.read_bytes()
+
+        return result
 
     @classmethod
     def _get_metadata(cls, root) -> dict:
@@ -170,15 +193,24 @@ class Uploader:
                     value = str(value).encode('utf-8')
                 body.write(sep_boundary)
                 body.write(title.encode('utf-8'))
-                body.write(b"\r\n\r\n")
+                body.write(b'\r\n\r\n')
                 body.write(value)
         body.write(end_boundary)
         return body.getvalue()
 
-    def upload(self, path: Path, root, reqs):
+    @staticmethod
+    def sign(path: Path, identity: str) -> bool:
+        cmd = ['gpg', '--detach-sign']
+        if identity:
+            cmd.extend(['--local-user', identity])
+        cmd.extend(['-a', str(path)])
+        result = subprocess.run(cmd)
+        return result.returncode == 0
+
+    def upload(self, path: Path, root, reqs) -> None:
         data = {
-            ":action": "file_upload",
-            "protocol_version": "1",
+            ':action': 'file_upload',
+            'protocol_version': '1',
         }
         data.update(self._get_hashes(path=path))
         data.update(self._get_file_info(path=path))
@@ -199,4 +231,4 @@ class Uploader:
                 allow_redirects=False,
                 headers=headers,
             )
-        return response
+            response.raise_for_status()
