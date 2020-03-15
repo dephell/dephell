@@ -49,6 +49,7 @@ class PackageVerifyCommand(BaseCommand):
             return False
 
         verified = False
+        all_valid = True
         with TemporaryDirectory() as root_path:
             for url in release.urls:
                 sign_path = Path(root_path) / 'archive.bin.asc'
@@ -71,6 +72,8 @@ class PackageVerifyCommand(BaseCommand):
                 verified = True
                 if not info:
                     return False
+                if info['status'] != 'signature valid':
+                    all_valid = False
                 info['release'] = str(release.version)
                 print(make_json(
                     data=info,
@@ -81,7 +84,7 @@ class PackageVerifyCommand(BaseCommand):
         if not verified:
             self.logger.error("no signed files found")
             return False
-        return True
+        return all_valid
 
     def _verify_data(self, gpg, sign_path: Path, data: bytes, retry: bool = True):
         verif = gpg.verify_data(str(sign_path), data)
