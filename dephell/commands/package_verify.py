@@ -30,7 +30,14 @@ class PackageVerifyCommand(BaseCommand):
     def __call__(self) -> bool:
         dep = get_package(self.args.name, repo=self.config.get('repo'))
         releases = dep.repo.get_releases(dep)
-        release = releases[0]
+        if not releases:
+            self.logger.error('cannot find releases for the package')
+            return False
+        releases = dep.constraint.filter(releases=releases)
+        if not releases:
+            self.logger.error('cannot find releases for the constraint')
+            return False
+        release = sorted(releases, reverse=True)[0]
         gpg = gnupg.GPG()
         return self._verify_release(release=release, gpg=gpg)
 
@@ -41,6 +48,7 @@ class PackageVerifyCommand(BaseCommand):
             ))
             return False
 
+        verified = False
         with TemporaryDirectory() as root_path:
             for url in release.urls:
                 sign_path = Path(root_path) / 'archive.bin.asc'
@@ -60,14 +68,19 @@ class PackageVerifyCommand(BaseCommand):
                     data = response.content
 
                 info = self._verify_data(gpg=gpg, sign_path=sign_path, data=data)
+                verified = True
                 if not info:
                     return False
+                info['release'] = str(release.version)
                 print(make_json(
                     data=info,
                     key=self.config.get('filter'),
                     colors=not self.config['nocolors'],
                     table=self.config['table'],
                 ))
+        if not verified:
+            self.logger.error("no signed files found")
+            return False
         return True
 
     def _verify_data(self, gpg, sign_path: Path, data: bytes, retry: bool = True):
@@ -91,6 +104,6 @@ class PackageVerifyCommand(BaseCommand):
                 ))
                 return result
             gpg.recv_keys(DEFAULT_KEYSERVER, keys[0]['keyid'])
-            return self._verify(gpg=gpg, sign_path=sign_path, data=data, retry=False)
+            return self._verify_data(gpg=gpg, sign_path=sign_path, data=data, retry=False)
 
         return result
