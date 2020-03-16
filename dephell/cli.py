@@ -30,6 +30,8 @@ def main(argv: List[str]) -> int:
     if len(argv) == 1 and argv[0] in ('--help', 'help', 'commands'):
         parser._print_message(parser.format_help())
         return ReturnCodes.OK.value
+    if len(argv) == 1 and argv[0] in ('-v', '--version'):
+        argv = ['inspect', 'self']
 
     # rewrite argv to get help about command
     if len(argv) >= 1 and argv[0] in ('--help', 'help'):

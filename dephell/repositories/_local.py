@@ -86,7 +86,7 @@ class LocalRepo(Interface):
         # read from dephell config
         path = self.path / 'pyproject.toml'
         if path.exists():
-            config = Config().attach_file(path=path, env='main')
+            config = Config().attach_file(path=path, env='main', silent=True)
             if config is not None:
                 section = config.get('to') or config.get('from')
                 if section and 'path' in section and 'format' in section:

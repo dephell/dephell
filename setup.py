@@ -56,15 +56,15 @@ setup(
     package_dir={"": "."},
     package_data={"dephell": ["templates/*.j2", "templates/*.sh"]},
     install_requires=[
-        'aiohttp', 'attrs>=19.2.0', 'cerberus>=1.3', 'dephell-archive>=0.1.5',
-        'dephell-argparse>=0.1.1', 'dephell-changelogs',
-        'dephell-discover>=0.2.6', 'dephell-licenses>=0.1.6',
-        'dephell-links>=0.1.4', 'dephell-markers>=1.0.0',
-        'dephell-pythons>=0.1.11', 'dephell-setuptools>=0.2.1',
-        'dephell-shells>=0.1.3', 'dephell-specifier>=0.1.7',
-        'dephell-venvs>=0.1.16', 'dephell-versioning', 'jinja2', 'm2r',
-        'packaging', 'pip<=19.3.1,>=18.0', 'requests', 'ruamel.yaml', 'tomlkit',
-        'yaspin'
+        'aiohttp', 'attrs>=19.2.0', 'cerberus>=1.3', 'certifi',
+        'dephell-archive>=0.1.5', 'dephell-argparse>=0.1.1',
+        'dephell-changelogs', 'dephell-discover>=0.2.6',
+        'dephell-licenses>=0.1.6', 'dephell-links>=0.1.4',
+        'dephell-markers>=1.0.0', 'dephell-pythons>=0.1.11',
+        'dephell-setuptools>=0.2.1', 'dephell-shells>=0.1.3',
+        'dephell-specifier>=0.1.7', 'dephell-venvs>=0.1.16',
+        'dephell-versioning', 'jinja2', 'm2r', 'packaging',
+        'pip<=19.3.1,>=18.0', 'requests', 'ruamel.yaml', 'tomlkit', 'yaspin'
     ],
     extras_require={
         "dev": [
@@ -77,8 +77,8 @@ setup(
         ],
         "full": [
             "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
-            "dockerpty", "fissix", "flatdict", "graphviz", "html5lib",
-            "pygments", "tabulate", "yapf"
+            "dockerpty", "fissix", "graphviz", "html5lib", "pygments",
+            "tabulate", "yapf"
         ],
         "tests": ["aioresponses", "pytest", "requests-mock"]
     },

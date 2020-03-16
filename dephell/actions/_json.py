@@ -8,7 +8,6 @@ from typing import Optional
 from ..imports import lazy_import
 
 
-flatdict = lazy_import('flatdict')
 pygments = lazy_import('pygments')
 pygments_lexers = lazy_import('pygments.lexers')
 pygments_formatters = lazy_import('pygments.formatters')
@@ -36,6 +35,23 @@ def _flatten(value) -> list:
     for element in value:
         new_value.extend(_flatten(element))
     return new_value
+
+
+def _flatdict(data, sep: str = '.', prefix: str = ''):
+    if isinstance(data, (list, tuple)):
+        return [_flatdict(row) for row in data]
+    if isinstance(data, dict):
+        result = dict()
+        for key, value in data.items():
+            new_key = str(key)
+            if prefix:
+                new_key = prefix + sep + new_key
+            if isinstance(value, dict):
+                result.update(_flatdict(data=value, sep=sep, prefix=new_key))
+            else:
+                result[new_key] = value
+        return result
+    return data
 
 
 FILTERS = {
@@ -101,9 +117,8 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
     if table:
         # one dict
         if isinstance(data, dict):
-            data = flatdict.FlatDict(data, delimiter='.').items()
             return tabulate.tabulate(
-                data,
+                _flatdict(data).items(),
                 headers=('key', 'value'),
                 tablefmt='fancy_grid',
             )
@@ -111,7 +126,7 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
         if isinstance(data, list) and data and isinstance(data[0], dict):
             table = []
             for row in data:
-                row = flatdict.FlatDict(row, delimiter='.')
+                row = _flatdict(row)
                 keys = tuple(row)
                 row = [v for _, v in sorted(row.items())]
                 table.append(row)
