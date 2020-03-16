@@ -57,6 +57,23 @@ dephell venv run --env isort
 
 Main things you contribute are ideas and implementation. So, if you struggled with flake8 checks, don't worry, just ask help of maintainers in comments to your Pull Request. If your code passed CI, merging of Pull Request can't be rejected or delayed because of style. No [bikeshedding](https://en.wikipedia.org/wiki/Law_of_triviality) and meaningless discussions.
 
+## Documentation
+
+To install Sphinx and other related dependencies, set up the `docs` environment:
+
+```bash
+dephell venv create --env=docs
+dephell deps install --env=docs
+```
+
+Then (re-)build the documentation by running the environment:
+
+```bash
+dephell venv run --env=docs
+```
+
+The result can be viewed in your browser by calling `xdg-open docs/build/index.html`.
+
 ## Using an IDE
 
 If you want to use an IDE to edit / test dephell code, you'll have to point that IDE to the virtual environment dephell created.  You can either get this path using `dephell inspect venv` or create the venv in a directory your IDE will find (e.g. `dephell venv create --venv .venv`).  Some tests currently assume they are being run from the root of the project.  If your IDE likes to run tests from other directories, you may need to update some existing tests to use relative paths.
