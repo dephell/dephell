@@ -16,7 +16,7 @@ DEFAULT_KEYSERVER = 'pgp.mit.edu'
 
 
 class PackageVerifyCommand(BaseCommand):
-    """Verify GPG signature for a package release.
+    """Verify GPG signature for a release from PyPI.org.
     """
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
@@ -75,6 +75,7 @@ class PackageVerifyCommand(BaseCommand):
                 if info['status'] != 'signature valid':
                     all_valid = False
                 info['release'] = str(release.version)
+                info['name'] = url.rsplit('/', maxsplit=1)[-1]
                 print(make_json(
                     data=info,
                     key=self.config.get('filter'),
