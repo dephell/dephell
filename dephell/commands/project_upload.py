@@ -65,6 +65,17 @@ class ProjectUploadCommand(BaseCommand):
                     identity=self.config['upload'].get('identity'),
                 )
             uploader.upload(path=path, root=root, reqs=reqs)
+
+        # show release url
+        if uploader.hostname in {'pypi.org', 'test.pypi.org'}:
+            url = 'https://{h}/project/{n}/{v}/'.format(
+                h=uploader.hostname,
+                n=root.name,
+                v=str(root.version),
+            )
+            self.logger.info('release uploaded', extra=dict(url=url))
+        else:
+            self.logger.info('release uploaded')
         return True
 
     def _get_paths(self, loader, root) -> List[Path]:

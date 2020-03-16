@@ -65,14 +65,17 @@ class Uploader:
 
     @classmethod
     def _get_file_info(cls, path: Path) -> dict:
-        # file type
+        result = dict()
+
+        # file type and python version
         if path.suffix == '.whl':
-            ftype = 'bdist_wheel'
+            result['filetype'] = 'bdist_wheel'
+            result['pyversion'] = 'py3'
         elif path.suffix == '.gz':
-            ftype = 'sdist'
+            result['filetype'] = 'sdist'
+            result['pyversion'] = 'source'
         else:
             raise TypeError('invalid extension: *{}'.format(path.suffix))
-        result = dict(filetype=ftype)
 
         # gpg signature
         sign_path = path.with_suffix(path.suffix + '.asc')
@@ -85,7 +88,6 @@ class Uploader:
     def _get_metadata(cls, root) -> dict:
         meta = dict(
             # defaults that goes as-is on API
-            pyversion='py3',
             comment=None,
             metadata_version='2.1',
             platform=None,
@@ -171,7 +173,7 @@ class Uploader:
             if isinstance(value, (list, tuple)):
                 for item in value:
                     result.append((key, item))
-                    continue
+                continue
             result.append((key, value))
         return result
 
