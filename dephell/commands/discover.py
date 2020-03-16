@@ -53,6 +53,7 @@ _NAMES = (
     'package remove',
     'package search',
     'package show',
+    'package verify',
 
     'project build',
     'project bump',

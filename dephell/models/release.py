@@ -21,6 +21,7 @@ class Release:
     time = attr.ib(repr=False)                      # upload_time
     python = attr.ib(default=None, repr=False)      # requires_python
     hashes = attr.ib(factory=tuple, repr=False)     # digests/sha256
+    urls = attr.ib(factory=tuple, repr=False)       # url
 
     extra = attr.ib(type=Optional[str], default=None)
 
@@ -40,6 +41,7 @@ class Release:
             time=datetime.strptime(latest['upload_time'], '%Y-%m-%dT%H:%M:%S'),
             python=python,
             hashes=tuple(rel['digests']['sha256'] for rel in info),
+            urls=tuple(rel['url'] for rel in info),
             extra=extra,
         )
 
