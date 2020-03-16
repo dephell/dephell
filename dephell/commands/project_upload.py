@@ -1,13 +1,14 @@
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 # app
 from ..config import builders
 from ..controllers import Uploader
 from ..converters import CONVERTERS
 from ..models import Auth, Requirement
+from ..repositories import WarehouseAPIRepo
 from .base import BaseCommand
 
 
@@ -46,9 +47,28 @@ class ProjectUploadCommand(BaseCommand):
         reqs = Requirement.from_graph(resolver.graph, lock=False)
         self.logger.info('uploading release', extra=dict(
             release_name=root.raw_name,
-            release_version=str(root.version),
+            release_version=root.version,
             upload_url=uploader.url,
         ))
+
+        # get release info to check uploaded files
+        release = None
+        if uploader.hostname in {'pypi.org', 'test.pypi.org'}:
+            repo = WarehouseAPIRepo(name='pypi', url='https://{}/'.format(uploader.hostname))
+            releases = repo.get_releases(dep=root)
+            if not releases:
+                self.logger.debug('cannot find releases', extra=dict(
+                    release_name=root.name,
+                ))
+            releases = [r for r in releases if str(r.version) == root.version]
+            if len(releases) == 1:
+                release = releases[0]
+            else:
+                self.logger.debug('cannot find release', extra=dict(
+                    release_name=root.name,
+                    version=root.version,
+                    count=len(releases),
+                ))
 
         # files to upload
         paths = self._get_paths(loader=loader, root=root)
@@ -57,7 +77,13 @@ class ProjectUploadCommand(BaseCommand):
             return False
 
         # do upload
+        uploaded = False
         for path in paths:
+            url = self._uploaded(release=release, path=path)
+            if url:
+                self.logger.info('dist already uploaded', extra=dict(path=str(path), url=url))
+                continue
+            uploaded = True
             self.logger.info('uploading dist...', extra=dict(path=str(path)))
             if self.config['upload']['sign']:
                 uploader.sign(
@@ -66,12 +92,16 @@ class ProjectUploadCommand(BaseCommand):
                 )
             uploader.upload(path=path, root=root, reqs=reqs)
 
+        if not uploaded:
+            self.logger.warning('all dists already uploaded, nothing to do.')
+            return True
+
         # show release url
         if uploader.hostname in {'pypi.org', 'test.pypi.org'}:
             url = 'https://{h}/project/{n}/{v}/'.format(
                 h=uploader.hostname,
                 n=root.name,
-                v=str(root.version),
+                v=root.version,
             )
             self.logger.info('release uploaded', extra=dict(url=url))
         else:
@@ -124,6 +154,12 @@ class ProjectUploadCommand(BaseCommand):
         )
         result.extend(list(path.glob(glob)))
 
-        if not result:
-            raise LookupError('cannot find sdist or wheel for the release')
         return result
+
+    def _uploaded(self, release, path: Path) -> Optional[str]:
+        if release is None:
+            return None
+        for url in release.urls:
+            if url.rsplit('/', maxsplit=1)[-1] == path.name:
+                return url
+        return None

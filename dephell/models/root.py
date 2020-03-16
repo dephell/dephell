@@ -64,10 +64,15 @@ class RootDependency:
     compat = True
     used = True
     constraint = None
+    extra = None
 
     @cached_property
     def name(self) -> str:
         return canonicalize_name(self.raw_name)
+
+    @property
+    def base_name(self) -> str:
+        return self.name
 
     @property
     def pep_version(self) -> str:
