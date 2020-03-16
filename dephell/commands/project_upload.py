@@ -30,10 +30,15 @@ class ProjectUploadCommand(BaseCommand):
 
     def __call__(self) -> bool:
         uploader = Uploader(url=self.config['upload']['url'])
+        # auth
         for cred in self.config['auth']:
             if cred['hostname'] == uploader.hostname:
                 uploader.auth = Auth(**cred)
+        if uploader.auth is None:
+            self.logger.error('no credentials found', extra=dict(hostname=uploader.hostname))
+            return False
 
+        # metainfo
         loader = CONVERTERS[self.config['from']['format']]
         loader = loader.copy(project_path=Path(self.config['project']))
         resolver = loader.load_resolver(path=self.config['from']['path'])
@@ -45,11 +50,13 @@ class ProjectUploadCommand(BaseCommand):
             upload_url=uploader.url,
         ))
 
+        # files to upload
         paths = self._get_paths(loader=loader, root=root)
         if not paths:
             self.logger.error('no release files found')
             return False
 
+        # do upload
         for path in paths:
             self.logger.info('uploading dist...', extra=dict(path=str(path)))
             if self.config['upload']['sign']:

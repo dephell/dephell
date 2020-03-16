@@ -180,21 +180,17 @@ class Uploader:
         sep_boundary = b'\r\n--' + BOUNDARY.encode('ascii')
         end_boundary = sep_boundary + b'--\r\n'
         body = BytesIO()
-        for key, value in data.items():
+        for key, value in data:
             title = '\r\nContent-Disposition: form-data; name="%s"' % key
-            # handle multiple entries for the same name
-            if not isinstance(value, list):
-                value = [value]
-            for value in value:
-                if type(value) is tuple:
-                    title += '; filename="%s"' % value[0]
-                    value = value[1]
-                else:
-                    value = str(value).encode('utf-8')
-                body.write(sep_boundary)
-                body.write(title.encode('utf-8'))
-                body.write(b'\r\n\r\n')
-                body.write(value)
+            if type(value) is tuple:
+                title += '; filename="%s"' % value[0]
+                value = value[1]
+            else:
+                value = str(value).encode('utf-8')
+            body.write(sep_boundary)
+            body.write(title.encode('utf-8'))
+            body.write(b'\r\n\r\n')
+            body.write(value)
         body.write(end_boundary)
         return body.getvalue()
 
@@ -217,6 +213,7 @@ class Uploader:
         data.update(self._get_metadata(root=root))
         data.update(self._get_reqs_info(reqs=reqs))
         data = self._dict_to_list(data=data)
+        data.append(('content', (path.name, path.read_bytes())))
         body = self._make_body(data=data)
 
         headers = {
