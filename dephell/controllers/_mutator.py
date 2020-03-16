@@ -84,10 +84,14 @@ class Mutator:
 
     def _check_soft(self, groups: Sequence[Group], deps: Sequence[Dependency],
                     conflict: Dependency) -> bool:
+        """True if that mutation wasn't tried before
+        """
         return self._make_snapshot(groups) not in self._snapshots
 
     def _check_not_empty(self, groups: Sequence[Group], deps: Sequence[Dependency],
                          conflict: Dependency) -> bool:
+        """True if chosen groups have no conflicts
+        """
         for group in groups:
             if group.empty:
                 return False
@@ -95,6 +99,8 @@ class Mutator:
 
     def _check_in_subgraph(self, groups: Sequence[Group], deps: Sequence[Dependency],
                            conflict: Dependency) -> bool:
+        """True if the mutation changes state of mutation parents
+        """
         if not self._check_not_empty(groups=groups, deps=deps, conflict=conflict):
             return False
         # any new group has to change state of the subgraph
@@ -122,6 +128,8 @@ class Mutator:
 
     def _check_in_conflict(self, groups: Sequence[Group], deps: Sequence[Dependency],
                            conflict: Dependency) -> bool:
+        """True if any direct parent of conflict was mutated
+        """
         if not self._check_not_empty(groups=groups, deps=deps, conflict=conflict):
             return False
         state = {dep.name: dict(dep.constraint.specs) for dep in deps if not isinstance(dep, RootDependency)}
@@ -138,4 +146,6 @@ class Mutator:
         return False
 
     def remember(self, groups: Iterable[Group]) -> None:
+        """Remember given mutation to not repeat it in the future.
+        """
         self._snapshots.add(self._make_snapshot(groups))
