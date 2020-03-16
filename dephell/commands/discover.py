@@ -71,6 +71,7 @@ _NAMES = (
 
     'venv create',
     'venv destroy',
+    'venv entrypoint',
     'venv run',
     'venv shell',
 )
