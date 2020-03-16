@@ -29,6 +29,8 @@ class Uploader:
 
     @staticmethod
     def _fix_url(url: str) -> str:
+        if url == 'test':
+            return TEST_UPLOAD
         if '://' not in url:
             url = 'https://' + url
         parsed = urlparse(url)

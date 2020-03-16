@@ -2,7 +2,7 @@
 from pathlib import Path
 
 # app
-from ..constants import DEFAULT_WAREHOUSE
+from ..constants import DEFAULT_WAREHOUSE, DEFAULT_UPLOAD
 from .app_dirs import get_cache_dir, get_data_dir
 
 
@@ -41,8 +41,10 @@ DEFAULT = dict(
         tag='latest',
     ),
 
-    # gpg
-    sign=False,
+    upload=dict(
+        url=DEFAULT_UPLOAD,
+        sign=False,
+    ),
 
     # other
     cache=dict(

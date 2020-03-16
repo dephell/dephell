@@ -18,13 +18,18 @@ class ProjectUploadCommand(BaseCommand):
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
         builders.build_from(parser)
-        builders.build_gpg(parser)
+
+        group = parser.add_argument_group('Release upload')
+        group.add_argument('--upload-sign', help='sign packages with GPG')
+        group.add_argument('--upload-identity', help='use name as the key to sign with')
+        group.add_argument('--upload-url', help='use name as the key to sign with')
+
         builders.build_output(parser)
         builders.build_other(parser)
         return parser
 
     def __call__(self) -> bool:
-        uploader = Uploader()
+        uploader = Uploader(url=self.config['upload']['url'])
         for cred in self.config['auth']:
             if cred['hostname'] == uploader.hostname:
                 uploader.auth = Auth(**cred)
@@ -34,13 +39,23 @@ class ProjectUploadCommand(BaseCommand):
         resolver = loader.load_resolver(path=self.config['from']['path'])
         root = resolver.graph.metainfo
         reqs = Requirement.from_graph(resolver.graph, lock=False)
+        self.logger.info('uploading release', extra=dict(
+            release_name=root.raw_name,
+            release_version=str(root.version),
+            upload_url=uploader.url,
+        ))
 
         paths = self._get_paths(loader=loader, root=root)
+        if not paths:
+            self.logger.error('no release files found')
+            return False
+
         for path in paths:
-            if self.config['sign']:
+            self.logger.info('uploading dist...', extra=dict(path=str(path)))
+            if self.config['upload']['sign']:
                 uploader.sign(
                     path=path,
-                    identity=self.config.get('identity'),
+                    identity=self.config['upload'].get('identity'),
                 )
             uploader.upload(path=path, root=root, reqs=reqs)
         return True
