@@ -156,6 +156,7 @@ dockerpty = {optional = true, version = "*"}
 fissix = {optional = true, allows-prereleases = true, version = "*"}
 graphviz = {optional = true, version = "*"}
 html5lib = {optional = true, version = "*"}
+python-gnupg = {optional = true, version = "*"}
 pygments = {optional = true, version = "*"}
 "ruamel.yaml" = {optional = true, version = "*"}
 tabulate = {optional = true, version = "*"}
@@ -198,4 +199,8 @@ isort = {extras = ["pyproject"], version = "*"}
 [tool.poetry.extras]
 docs = ["alabaster", "pygments-github-lexers", "recommonmark", "sphinx"]
 tests = ["aioresponses", "pytest", "requests-mock"]
-full = ["aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker", "dockerpty", "fissix", "graphviz", "html5lib", "pygments", "ruamel-yaml", "tabulate", "yapf"]
+full = [
+    "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
+    "dockerpty", "fissix", "graphviz", "html5lib", "python-gnupg", "pygments",
+    "ruamel-yaml", "tabulate", "yapf",
+]
