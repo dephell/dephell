@@ -24,8 +24,8 @@ ENV_VAR_TEMPLATE = 'DEPHELL_{}'
 DEFAULT_WAREHOUSE = 'https://pypi.org/pypi/'
 WAREHOUSE_DOMAINS = {'pypi.org', 'pypi.python.org', 'test.pypi.org'}
 
-DEFAULT_UPLOAD = "https://upload.pypi.org/legacy/"
-TEST_UPLOAD = "https://test.pypi.org/legacy/"
+DEFAULT_UPLOAD = 'https://upload.pypi.org/legacy/'
+TEST_UPLOAD = 'https://test.pypi.org/legacy/'
 
 FORMATS = (
     'conda',

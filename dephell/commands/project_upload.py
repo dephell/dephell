@@ -30,6 +30,10 @@ class ProjectUploadCommand(BaseCommand):
         return parser
 
     def __call__(self) -> bool:
+        if 'from' not in self.config:
+            self.logger.error('`--from` is required for this command')
+            return False
+
         uploader = Uploader(url=self.config['upload']['url'])
         # auth
         for cred in self.config['auth']:

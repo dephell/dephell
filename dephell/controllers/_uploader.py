@@ -183,9 +183,9 @@ class Uploader:
         end_boundary = sep_boundary + b'--\r\n'
         body = BytesIO()
         for key, value in data:
-            title = '\r\nContent-Disposition: form-data; name="%s"' % key
+            title = '\r\nContent-Disposition: form-data; name="{}"'.format(key)
             if type(value) is tuple:
-                title += '; filename="%s"' % value[0]
+                title += '; filename="{}"'.format(value[0])
                 value = value[1]
             else:
                 value = str(value).encode('utf-8')
