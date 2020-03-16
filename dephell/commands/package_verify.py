@@ -56,15 +56,15 @@ class PackageVerifyCommand(BaseCommand):
                 with requests_session() as session:
                     response = session.get(url + '.asc')
                     if response.status_code == 404:
-                        self.logger.debug("no signature found", extra=dict(url=url))
+                        self.logger.debug('no signature found', extra=dict(url=url))
                         continue
                     sign_path.write_bytes(response.content)
 
-                self.logger.info("getting release file...", extra=dict(url=url))
+                self.logger.info('getting release file...', extra=dict(url=url))
                 with requests_session() as session:
                     response = session.get(url)
                     if response.status_code == 404:
-                        self.logger.debug("no signature found", extra=dict(url=url))
+                        self.logger.debug('no signature found', extra=dict(url=url))
                         continue
                     data = response.content
 
@@ -83,7 +83,7 @@ class PackageVerifyCommand(BaseCommand):
                     table=self.config['table'],
                 ))
         if not verified:
-            self.logger.error("no signed files found")
+            self.logger.error('no signed files found')
             return False
         return all_valid
 
@@ -99,10 +99,10 @@ class PackageVerifyCommand(BaseCommand):
 
         if verif.status == 'no public key' and retry:
             # try to import keys and verify again
-            self.logger.debug("searching the key...", extra=dict(key_id=verif.key_id))
+            self.logger.debug('searching the key...', extra=dict(key_id=verif.key_id))
             keys = gpg.search_keys(query=verif.key_id, keyserver=DEFAULT_KEYSERVER)
             if len(keys) != 1:
-                self.logger.debug("cannot find the key", extra=dict(
+                self.logger.debug('cannot find the key', extra=dict(
                     count=len(keys),
                     key_id=verif.key_id,
                 ))

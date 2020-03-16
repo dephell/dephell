@@ -4,7 +4,7 @@ Verify GPG signature for a release from [PyPI](https://pypi.org/).
 
 Verify files for the latest release:
 
-```json
+```bash
 $ dephell package verify flask
 INFO getting release file... (url=https://files.pythonhosted.org/packages/.../Flask-1.1.1-py2.py3-none-any.whl)
 {
