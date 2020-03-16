@@ -19,13 +19,13 @@ from ...cache import JSONCache, TextCache
 from ...config import config
 from ...constants import ARCHIVE_EXTENSIONS
 from ...exceptions import PackageNotFoundError
-from ...imports import import_module
+from ...imports import lazy_import
 from ...models.release import Release
 from ...networking import requests_session
 from ._base import WarehouseBaseRepo
 
 
-html5lib = import_module('html5lib')
+html5lib = lazy_import('html5lib')
 logger = getLogger('dephell.repositories.warehouse.simple')
 
 
