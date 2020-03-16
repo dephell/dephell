@@ -1,3 +1,4 @@
+# built-in
 import hashlib
 import subprocess
 from io import BytesIO
@@ -5,8 +6,10 @@ from pathlib import Path
 from typing import Dict
 from urllib.parse import urlparse
 
+# external
 import attr
 
+# app
 from ..cached_property import cached_property
 from ..constants import DEFAULT_UPLOAD, TEST_UPLOAD
 from ..networking import requests_session
