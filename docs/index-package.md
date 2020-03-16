@@ -4,7 +4,7 @@ Commands to work with single packages.
 
 Get information: [download statistics](cmd-package-downloads), [installed packages](cmd-package-list), [available releases](cmd-package-releases), [package metainfo](cmd-package-show), [search packages](cmd-package-search).
 
-Manage: [install](cmd-package-install), [remove](cmd-package-remove), [remove with dependencies](cmd-package-purge), [report bug](cmd-package-bug).
+Manage: [install](cmd-package-install), [remove](cmd-package-remove), [remove with dependencies](cmd-package-purge), [report bug](cmd-package-bug), [verify GPG signature](cmd-package-verify).
 
 ```eval_rst
 .. toctree::
@@ -20,4 +20,5 @@ Manage: [install](cmd-package-install), [remove](cmd-package-remove), [remove wi
     cmd-package-remove
     cmd-package-search
     cmd-package-show
+    cmd-package-verify
 ```
