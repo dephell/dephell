@@ -6,6 +6,7 @@ from ._package import get_resolver
 
 
 def install_deps(resolver: Resolver, python_path: Path, silent: bool, logger=None) -> bool:
+    # resolve
     if logger is not None:
         logger.info('build dependencies graph...')
     resolved = resolver.resolve(silent=silent)
