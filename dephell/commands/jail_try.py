@@ -10,12 +10,9 @@ from typing import Set
 from dephell_venvs import VEnv
 
 # app
-from ..actions import get_python, get_resolver
+from ..actions import get_python, get_resolver, install_dep, install_deps
 from ..config import builders
 from ..context_tools import override_env_vars
-from ..controllers import analyze_conflict
-from ..models import Requirement
-from ..package_manager import PackageManager
 from .base import BaseCommand
 
 
@@ -58,7 +55,12 @@ class JailTryCommand(BaseCommand):
             venv.create(python_path=python.path)
 
             # install
-            ok = self._install(resolver=resolver, python_path=venv.python_path)
+            ok = install_deps(
+                resolver=resolver,
+                python_path=venv.python_path,
+                logger=self.logger,
+                silent=self.config['silent'],
+            )
             if not ok:
                 return False
 
@@ -68,9 +70,11 @@ class JailTryCommand(BaseCommand):
                 self.logger.warning('executable is not found in venv, trying to install...', extra=dict(
                     executable=command[0],
                 ))
-                ok = self._install(
-                    resolver=get_resolver(reqs=command[:1]),
+                ok = install_dep(
+                    name=command[0],
                     python_path=venv.python_path,
+                    logger=self.logger,
+                    silent=self.config['silent'],
                 )
                 if not ok:
                     return False
@@ -95,27 +99,6 @@ class JailTryCommand(BaseCommand):
                 return False
 
             return True
-
-    def _install(self, resolver, python_path: Path) -> bool:
-        self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve(silent=self.config['silent'])
-        if not resolved:
-            conflict = analyze_conflict(resolver=resolver)
-            self.logger.warning('conflict was found')
-            print(conflict)
-            return False
-
-        # install
-        reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
-        self.logger.info('installation...', extra=dict(
-            executable=python_path,
-            packages=len(reqs),
-        ))
-        code = PackageManager(executable=python_path).install(reqs=reqs)
-        if code != 0:
-            return False
-        self.logger.info('installed')
-        return True
 
     @staticmethod
     def _get_startup_packages(lib_path: Path, packages) -> Set[str]:
