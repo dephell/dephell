@@ -12,6 +12,7 @@ from ._editorconfig import make_editorconfig
 from ._entrypoints import get_entrypoints
 from ._git import git_commit, git_tag
 from ._json import make_json
+from ._install import install_deps, install_dep
 from ._package import get_package, get_packages, get_resolver
 from ._python import get_lib_path, get_python, get_python_env
 from ._shutil import format_size, get_path_size
@@ -37,6 +38,8 @@ __all__ = [
     'get_venv',
     'git_commit',
     'git_tag',
+    'install_dep',
+    'install_deps',
     'make_bash_autocomplete',
     'make_contributing',
     'make_editorconfig',

@@ -7,11 +7,8 @@ from pathlib import Path
 from dephell_venvs import VEnvs
 
 # app
-from ..actions import get_python, get_resolver
+from ..actions import get_python, install_dep
 from ..config import builders
-from ..controllers import analyze_conflict
-from ..models import Requirement
-from ..package_manager import PackageManager
 from .base import BaseCommand
 
 
@@ -58,7 +55,12 @@ class VenvEntrypointCommand(BaseCommand):
             self.logger.warning('executable is not found in venv, trying to install...', extra=dict(
                 executable=command[0],
             ))
-            result = self._install(name=command[0], python_path=venv.python_path)
+            result = install_dep(
+                name=command[0],
+                python_path=venv.python_path,
+                logger=self.logger,
+                silent=self.config['silent'],
+            )
             if not result:
                 return False
         if not executable.exists():
@@ -80,29 +82,6 @@ class VenvEntrypointCommand(BaseCommand):
             self.logger.info('script updated', extra=dict(path=path))
         else:
             self.logger.info('script created', extra=dict(path=path))
-        return True
-
-    def _install(self, name: str, python_path: Path) -> bool:
-        # resolve
-        resolver = get_resolver(reqs=[name])
-        self.logger.info('build dependencies graph...')
-        resolved = resolver.resolve(silent=self.config['silent'])
-        if not resolved:
-            conflict = analyze_conflict(resolver=resolver)
-            self.logger.warning('conflict was found')
-            print(conflict)
-            return False
-
-        # install
-        reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
-        self.logger.info('installation...', extra=dict(
-            executable=python_path,
-            packages=len(reqs),
-        ))
-        code = PackageManager(executable=python_path).install(reqs=reqs)
-        if code != 0:
-            return False
-        self.logger.info('installed')
         return True
 
     def _make_script(self, command: list, executable: Path) -> str:
