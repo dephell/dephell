@@ -1,4 +1,7 @@
+# built-in
 from pathlib import Path
+
+# app
 from ..controllers import Resolver, analyze_conflict
 from ..models import Requirement
 from ..package_manager import PackageManager

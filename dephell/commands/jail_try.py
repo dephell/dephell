@@ -10,7 +10,7 @@ from typing import Set
 from dephell_venvs import VEnv
 
 # app
-from ..actions import get_python, get_resolver, install_deps, install_dep
+from ..actions import get_python, get_resolver, install_dep, install_deps
 from ..config import builders
 from ..context_tools import override_env_vars
 from .base import BaseCommand

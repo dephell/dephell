@@ -2,7 +2,7 @@
 from argparse import REMAINDER, ArgumentParser
 
 # app
-from ..actions import install_deps, get_python_env, get_resolver
+from ..actions import get_python_env, get_resolver, install_deps
 from ..config import builders
 from .base import BaseCommand
 
