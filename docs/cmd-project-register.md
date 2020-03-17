@@ -61,6 +61,5 @@ dephell project register --from-format=poetry --from-path=pyproject.toml ./path/
 ## See also
 
 1. [dephell deps install](cmd-deps-install) to install dependencies of a project.
-1. [dephell deps install](cmd-deps-install) to install dependencies of a project.
 1. [Python lookup](python-lookup) for details how you can specify Python version for commands.
 1. [Full list of config parameters](params)

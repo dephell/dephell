@@ -2,7 +2,7 @@
 from pathlib import Path
 
 # app
-from ..constants import DEFAULT_WAREHOUSE
+from ..constants import DEFAULT_UPLOAD, DEFAULT_WAREHOUSE
 from .app_dirs import get_cache_dir, get_data_dir
 
 
@@ -39,6 +39,11 @@ DEFAULT = dict(
     docker=dict(
         repo='python',
         tag='latest',
+    ),
+
+    upload=dict(
+        url=DEFAULT_UPLOAD,
+        sign=False,
     ),
 
     # other

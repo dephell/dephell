@@ -91,6 +91,16 @@ SCHEME = {
         },
     ),
 
+    # project upload
+    'upload': dict(
+        type='dict',
+        required=True,
+        schema={
+            'url':      dict(type='string', required=True),
+            'sign':     dict(type='boolean', required=True),
+            'identity': dict(type='string', required=False),
+        },
+    ),
 
     # other
     'owner':    dict(type='string', required=False),

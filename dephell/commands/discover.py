@@ -59,6 +59,7 @@ _NAMES = (
     'project bump',
     'project register',
     'project test',
+    'project upload',
     'project validate',
 
     'self auth',
