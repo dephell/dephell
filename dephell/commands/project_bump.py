@@ -1,6 +1,5 @@
 # built-in
 from argparse import ArgumentParser
-from itertools import chain
 from pathlib import Path
 from typing import Iterator
 
@@ -95,11 +94,7 @@ class ProjectBumpCommand(BaseCommand):
 
         # update version in project files
         paths = []
-        paths_lazy = chain(
-            self._bump_project(project=package, old=old_version, new=new_version),
-            self._bump_docs(project_path=project_path, old=old_version, new=new_version),
-        )
-        for path in paths_lazy:
+        for path in self._bump_project(project=package, old=old_version, new=new_version):
             paths.append(path)
             self.logger.info('file bumped', extra=dict(path=str(path)))
 
@@ -117,6 +112,7 @@ class ProjectBumpCommand(BaseCommand):
 
     @staticmethod
     def _bump_project(project: PackageRoot, old: str, new: str) -> Iterator[Path]:
+        # bump in the source
         for package in project.packages:
             for path in package:
                 if path.name not in FILE_NAMES:
@@ -125,10 +121,9 @@ class ProjectBumpCommand(BaseCommand):
                 if file_bumped:
                     yield path
 
-    @staticmethod
-    def _bump_docs(project_path: Path, old: str, new: str) -> Iterator[Path]:
+        # bump in the docs
         for parts in DOCS_PATHS:
-            path = project_path.joinpath(*parts)
+            path = project.path.joinpath(*parts)
             if not path.exists():
                 continue
             content = path.read_text()
