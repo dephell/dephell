@@ -14,6 +14,9 @@ from .base import BaseCommand
 class SelfUpgradeCommand(BaseCommand):
     """Upgrade DepHell to the latest version.
     """
+    # because we don't actually use anything from the config
+    find_config = False
+
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
@@ -27,13 +30,15 @@ class SelfUpgradeCommand(BaseCommand):
             return self._upgrade_repo(path=path)
         return self._upgrade_package()
 
-    def _upgrade_repo(self, path: Path) -> bool:
+    @staticmethod
+    def _upgrade_repo(path: Path) -> bool:
         with chdir(path):
             cmd = ['git', 'pull', 'origin', 'master']
             result = subprocess.run(cmd)
             return (result.returncode == 0)
 
-    def _upgrade_package(self) -> bool:
+    @staticmethod
+    def _upgrade_package() -> bool:
         manager = PackageManager(executable=Path(sys.executable))
         args = ['-U']
         if manager.is_global:

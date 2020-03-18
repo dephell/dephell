@@ -17,6 +17,9 @@ DEFAULT_WIDTH = int(os.environ.get('COLUMNS', 90))
 class PackageChangelogCommand(BaseCommand):
     """Find project changelog.
     """
+    # because we don't actually use anything from the config
+    find_config = False
+
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)

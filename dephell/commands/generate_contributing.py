@@ -14,6 +14,8 @@ from .base import BaseCommand
 class GenerateContributingCommand(BaseCommand):
     """Create CONTRIBUTING.md for DepHell-based project.
     """
+    # because we don't actually use anything from the config
+    find_config = False
     file_name = 'CONTRIBUTING.md'
 
     @staticmethod

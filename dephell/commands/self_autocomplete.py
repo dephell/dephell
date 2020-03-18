@@ -16,6 +16,8 @@ from .base import BaseCommand
 class SelfAutocompleteCommand(BaseCommand):
     """Enable DepHell commands autocomplete for current shell.
     """
+    # because we don't actually use anything from the config
+    find_config = False
 
     @staticmethod
     def build_parser(parser) -> ArgumentParser:

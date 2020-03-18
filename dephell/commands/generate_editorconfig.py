@@ -12,6 +12,9 @@ class GenerateEditorconfigCommand(BaseCommand):
     """Create EditorConfig for project.
     https://editorconfig.org/
     """
+    # because we don't actually use anything from the config
+    find_config = False
+
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)

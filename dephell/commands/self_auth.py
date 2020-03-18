@@ -13,6 +13,8 @@ from .base import BaseCommand
 class SelfAuthCommand(BaseCommand):
     """Insert, update or delete credentials.
     """
+    # because we don't actually use anything from the config
+    find_config = False
     _global_config_path = get_data_dir() / GLOBAL_CONFIG_NAME
 
     @staticmethod
