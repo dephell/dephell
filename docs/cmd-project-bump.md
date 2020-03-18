@@ -15,6 +15,19 @@ It's recommend to explicitly add `versioning` in config to let your users know w
 versioning = "semver"
 ```
 
+If you don't have [dephell config](config), you should explicitly specify `from` parameter:
+
+```bash
+dephell project bump --from-format=poetry --from-path=pyproject.toml minor
+```
+
+Or just add it into your config:
+
+```toml
+[tool.dephell.main]
+from = {format = "poetry", path = "pyproject.toml"}
+```
+
 Command steps:
 
 1. Try to detect version from `from` file.
@@ -23,7 +36,9 @@ Command steps:
 1. Write new version in source code. DepHell looks for `__version__` variable in project source and writes new version in it.
 1. Write new version in `from` file.
 
-Also, the command adds git tag if `--tag` option (or `tag = <your_template>` in the config) is specified as template.
+## Git tag
+
+The command adds git tag if `--tag` option (or `tag = <your_template>` in the config) is specified as template.
 Template can be string with `{version}` placeholder (e.g. `v.{version}`) or just prefix string (e.g. `v.`)
 
 ```bash
