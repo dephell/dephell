@@ -11,6 +11,9 @@ from .base import BaseCommand
 class GenerateAuthorsCommand(BaseCommand):
     """Create AUTHORS file for project by git log.
     """
+    # because we don't actually use anything from the config
+    find_config = False
+
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)

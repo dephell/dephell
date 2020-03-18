@@ -13,9 +13,13 @@ from .base import BaseCommand
 
 class GenerateTravisCommand(BaseCommand):
     """Create .travis.yml for DepHell-based project.
+
     https://docs.travis-ci.com/user/languages/python/
     https://docs.travis-ci.com/user/customizing-the-build
     """
+    # because we don't actually use anything from the config
+    find_config = False
+
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)

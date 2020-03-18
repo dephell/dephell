@@ -25,6 +25,7 @@ REX_WORD = re.compile(r'([a-z\d])([A-Z])')
 class BaseCommand(CommandHandler):
     logger = getLogger('dephell.commands')
     prog = 'dephell'
+    find_config = True
 
     @cached_property
     def config(self) -> Config:
@@ -78,6 +79,11 @@ class BaseCommand(CommandHandler):
         if path:
             config.attach_file(path=path, env=env)
             return True
+
+        # do not implicitly attach file for some commands like `jail`
+        if not cls.find_config:
+            cls.logger.debug('cannot find config file')
+            return False
 
         # if path isn't specified, carefully try default names
         for path in CONFIG_NAMES:

@@ -16,6 +16,8 @@ from .base import BaseCommand
 class JailInstallCommand(BaseCommand):
     """Download and install package into isolated environment.
     """
+    find_config = False
+
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)

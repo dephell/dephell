@@ -16,6 +16,8 @@ from .base import BaseCommand
 class PackageBugCommand(BaseCommand):
     """Report bug in a package.
     """
+    find_config = False
+
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)

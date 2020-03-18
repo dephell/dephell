@@ -19,6 +19,8 @@ from .base import BaseCommand
 class JailTryCommand(BaseCommand):
     """Try packages into temporary isolated environment.
     """
+    find_config = False
+
     @staticmethod
     def build_parser(parser) -> ArgumentParser:
         builders.build_config(parser)
