@@ -1,5 +1,6 @@
 # built-in
 from argparse import ArgumentParser
+from itertools import chain
 from pathlib import Path
 from typing import Iterator
 
@@ -31,6 +32,11 @@ FILE_NAMES = (
     'about.py',
 )
 
+DOCS_PATHS = (
+    ('docs', 'conf.py'),
+    ('wiki', 'conf.py'),
+)
+
 
 class ProjectBumpCommand(BaseCommand):
     """Bump project version.
@@ -50,7 +56,8 @@ class ProjectBumpCommand(BaseCommand):
         old_version = None
         root = None
         loader = None
-        package = PackageRoot(path=Path(self.config['project']))
+        project_path = Path(self.config['project'])
+        package = PackageRoot(path=project_path)
 
         if 'from' in self.config:
             # get project metainfo
@@ -88,7 +95,11 @@ class ProjectBumpCommand(BaseCommand):
 
         # update version in project files
         paths = []
-        for path in self._bump_project(project=package, old=old_version, new=new_version):
+        paths_lazy = chain(
+            self._bump_project(project=package, old=old_version, new=new_version),
+            self._bump_docs(project_path=project_path, old=old_version, new=new_version),
+        )
+        for path in paths_lazy:
             paths.append(path)
             self.logger.info('file bumped', extra=dict(path=str(path)))
 
@@ -113,6 +124,18 @@ class ProjectBumpCommand(BaseCommand):
                 file_bumped = bump_file(path=path, old=old, new=new)
                 if file_bumped:
                     yield path
+
+    @staticmethod
+    def _bump_docs(project_path: Path, old: str, new: str) -> Iterator[Path]:
+        for parts in DOCS_PATHS:
+            path = project_path.joinpath(*parts)
+            if not path.exists():
+                continue
+            content = path.read_text()
+            new_content = content.replace(old, new)
+            if new_content != content:
+                path.write_text(new_content)
+                yield path
 
     def _update_metadata(self, root, loader, new_version) -> bool:
         if root is None:
