@@ -1,4 +1,4 @@
-# dephell jail list
+# dephell jail show
 
 Shows information about a jail installed by [dephell jail install](cmd-jail-install).
 

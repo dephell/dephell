@@ -118,7 +118,7 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
         # one dict
         if isinstance(data, dict):
             return tabulate.tabulate(
-                _flatdict(data).items(),
+                sorted(_flatdict(data).items()),
                 headers=('key', 'value'),
                 tablefmt='fancy_grid',
             )
