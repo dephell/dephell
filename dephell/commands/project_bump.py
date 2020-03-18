@@ -17,11 +17,18 @@ from .base import BaseCommand
 
 
 FILE_NAMES = (
+    # dunder
     '__init__.py',
     '__version__.py',
     '__about__.py',
+
+    # sunder
     '_version.py',
     '_about.py',
+
+    # human
+    'version.py',
+    'about.py',
 )
 
 
