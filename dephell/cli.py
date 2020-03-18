@@ -27,14 +27,14 @@ def main(argv: List[str]) -> int:
     if not argv:
         parser._print_message(parser.format_help())
         return ReturnCodes.OK.value
-    if len(argv) == 1 and argv[0] in ('--help', 'help', 'commands'):
+    if len(argv) == 1 and argv[0] in ('--help', '-h', 'help', 'commands'):
         parser._print_message(parser.format_help())
         return ReturnCodes.OK.value
     if len(argv) == 1 and argv[0] in ('-v', '--version'):
         argv = ['inspect', 'self']
 
     # rewrite argv to get help about command
-    if len(argv) >= 1 and argv[0] in ('--help', 'help'):
+    if len(argv) >= 1 and argv[0] in ('--help', '-h', 'help'):
         argv = list(argv[1:]) + ['--help']
 
     # get command
