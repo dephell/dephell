@@ -223,6 +223,8 @@ class PoetryConverter(BaseConverter):
                 section['extras'] = tomlkit.table()
             # add new extras
             for extra, deps in extras.items():
+                if list(section['extras'].get(extra, [])) == deps:
+                    continue
                 section['extras'][extra] = deps
         elif 'extras' in section:
             # deop all old extras if there are no new extras

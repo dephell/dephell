@@ -10,6 +10,8 @@ to = {format = "setuppy", path = "setup.py"}
 
 # explicitly specify your versioning scheme to let your users know what they can expect
 versioning = "semver"
+# git tag template for releases
+tag = "v."
 
 # Make lockfile
 # $ dephell deps convert --env=lock
@@ -201,6 +203,6 @@ docs = ["alabaster", "pygments-github-lexers", "recommonmark", "sphinx"]
 tests = ["aioresponses", "pytest", "requests-mock"]
 full = [
     "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
-    "dockerpty", "fissix", "graphviz", "html5lib", "python-gnupg", "pygments",
+    "dockerpty", "fissix", "graphviz", "html5lib", "pygments", "python-gnupg",
     "ruamel-yaml", "tabulate", "yapf",
 ]

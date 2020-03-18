@@ -17,11 +17,23 @@ from .base import BaseCommand
 
 
 FILE_NAMES = (
+    # dunder
     '__init__.py',
     '__version__.py',
     '__about__.py',
+
+    # sunder
     '_version.py',
     '_about.py',
+
+    # human
+    'version.py',
+    'about.py',
+)
+
+DOCS_PATHS = (
+    ('docs', 'conf.py'),
+    ('wiki', 'conf.py'),
 )
 
 
@@ -43,7 +55,8 @@ class ProjectBumpCommand(BaseCommand):
         old_version = None
         root = None
         loader = None
-        package = PackageRoot(path=Path(self.config['project']))
+        project_path = Path(self.config['project'])
+        package = PackageRoot(path=project_path)
 
         if 'from' in self.config:
             # get project metainfo
@@ -99,6 +112,7 @@ class ProjectBumpCommand(BaseCommand):
 
     @staticmethod
     def _bump_project(project: PackageRoot, old: str, new: str) -> Iterator[Path]:
+        # bump in the source
         for package in project.packages:
             for path in package:
                 if path.name not in FILE_NAMES:
@@ -106,6 +120,17 @@ class ProjectBumpCommand(BaseCommand):
                 file_bumped = bump_file(path=path, old=old, new=new)
                 if file_bumped:
                     yield path
+
+        # bump in the docs
+        for parts in DOCS_PATHS:
+            path = project.path.joinpath(*parts)
+            if not path.exists():
+                continue
+            content = path.read_text()
+            new_content = content.replace(old, new)
+            if new_content != content:
+                path.write_text(new_content)
+                yield path
 
     def _update_metadata(self, root, loader, new_version) -> bool:
         if root is None:
