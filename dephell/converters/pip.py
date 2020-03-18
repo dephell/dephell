@@ -39,18 +39,36 @@ class PIPConverter(BaseConverter):
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if isinstance(path, str):
             path = Path(path)
+        if self.lock:
+            return self._can_parse_lock(path=path)
+        return self._can_parse_in(path=path)
 
+    @staticmethod
+    def _can_parse_in(path: Path) -> bool:
+        # if there is `requirements.in` somewhere around, return True only for it.
+        if path.name == 'requirements.in':
+            return True
+        if path.with_name('requirements.in').exists():
+            return False
+
+        # otherwise, return True for any `requirements*.txt` file.
+        if path.name.startswith('requirements') and path.name.endswith('.txt'):
+            return True
+        return False
+
+    @staticmethod
+    def _can_parse_lock(path: Path) -> bool:
+        # if there is `requirements.lock` somewhere around, return True only for it.
+        if path.name == 'requirements.lock':
+            return True
+        if path.with_name('requirements.lock').exists():
+            return False
+
+        # otherwise, return True for `requirements.txt` if `requirements.in` exists.
         if path.name == 'requirements.txt':
             if path.with_name('requirements.in').exists():
-                return (self.lock is True)
-            if path.with_name('requirements.lock').exists():
-                return (self.lock is False)
-            return True
-
-        if self.lock:
-            return (path.name == 'requirements.lock')
-        else:
-            return (path.name == 'requirements.in')
+                return True
+        return False
 
     def load(self, path) -> RootDependency:
         if isinstance(path, str):

@@ -13,6 +13,37 @@ from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
 
 
+@pytest.mark.parametrize('lock, given, expected', [
+    # only non-lock can parse classic name
+    (False, ['requirements.txt'], ['requirements.txt']),
+    (True, ['requirements.txt'], []),
+
+    # same for non-classic name
+    (False, ['requirements-test.txt'], ['requirements-test.txt']),
+    (True, ['requirements-test.txt'], []),
+
+    # in pair lock+in every parser takes only its file
+    (False, ['requirements.in', 'requirements.lock'], ['requirements.in']),
+    (True, ['requirements.in', 'requirements.lock'], ['requirements.lock']),
+
+    # correct matching for in+txt and txt+lock pairs
+    (False, ['requirements.in', 'requirements.txt'], ['requirements.in']),
+    (True, ['requirements.in', 'requirements.txt'], ['requirements.txt']),
+    (False, ['requirements.txt', 'requirements.lock'], ['requirements.txt']),
+    (True, ['requirements.txt', 'requirements.lock'], ['requirements.lock']),
+
+    # don't match invalid names
+    (True, ['req.txt'], []),
+    (False, ['req.txt'], []),
+])
+def test_can_parse(temp_path: Path, lock: bool, given: list, expected: list):
+    for name in given:
+        (temp_path / name).touch()
+    for name in given:
+        actual = PIPConverter(lock=lock).can_parse(path=(temp_path / name))
+        assert actual is (name in expected)
+
+
 def test_format():
     root = RootDependency()
     text = (
