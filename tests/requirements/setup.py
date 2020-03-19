@@ -20,7 +20,6 @@ setup(
     description='Dependency resolution for Python',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://dephell.org/',
     author='orsinium',
 
     packages=[],
@@ -47,7 +46,8 @@ setup(
     ],
     keywords='sample setuptools development',
     project_urls={  # Optional
-        'Source': 'https://github.com/dephell/dephell/',
+        'homepage': 'https://dephell.org/',
+        'source': 'https://github.com/dephell/dephell/',
     },
     entry_points={
         'console_scripts': ['dephell = dephell.cli:entrypoint'],

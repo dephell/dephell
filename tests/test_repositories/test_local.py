@@ -22,7 +22,7 @@ def test_root_dir(requirements_path: Path):
     root = repo.get_root(name='dephell', version='0.2.0')
     assert root.name == 'dephell'
     assert root.version == '0.2.1'
-    assert root.links['home'] == 'https://github.com/orsinium/dephell'
+    assert root.links['homepage'] == 'https://github.com/orsinium/dephell'
 
 
 def test_deps_file(requirements_path: Path):

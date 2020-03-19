@@ -138,7 +138,7 @@ class _Reader:
                 root.links[key] = link
         for link in cls._get_list(info, 'Project-URL'):
             key, url = link.split(', ')
-            root.links[key] = url
+            root.links[key.lower()] = url
 
         # authors
         for name in ('author', 'maintainer'):

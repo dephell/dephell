@@ -68,4 +68,5 @@ def test_dumps_metainfo(requirements_path: Path):
     parsed = Parser().parsestr(content)
     assert parsed.get('Name') == 'dephell'
     assert parsed.get('Version') == '0.2.0'
-    assert parsed.get('Home-Page') == 'https://github.com/orsinium/dephell'
+    exp = ['Homepage, https://github.com/orsinium/dephell']
+    assert parsed.get_all('Project-URL') == exp
