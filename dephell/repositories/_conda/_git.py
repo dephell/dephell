@@ -16,10 +16,10 @@ from dephell_specifier import RangeSpecifier
 from jinja2 import Environment
 
 # app
-from ...constants import HOMEPAGE_FIELD
 from ...cache import JSONCache
 from ...cached_property import cached_property
 from ...config import config
+from ...constants import HOMEPAGE_FIELD
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
 from ...networking import aiohttp_session, requests_session

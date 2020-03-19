@@ -12,7 +12,7 @@ from dephell_markers import Markers
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
-from ..constants import HOMEPAGE_FIELD, DOWNLOAD_FIELD
+from ..constants import DOWNLOAD_FIELD, HOMEPAGE_FIELD
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter

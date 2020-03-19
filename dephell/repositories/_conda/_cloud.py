@@ -16,9 +16,9 @@ from packaging.version import parse
 
 # app
 from ...cache import JSONCache
-from ...constants import HOMEPAGE_FIELD
 from ...cached_property import cached_property
 from ...config import config
+from ...constants import HOMEPAGE_FIELD
 from ...models.release import Release
 from ...models.simple_dependency import SimpleDependency
 from ...networking import requests_session
