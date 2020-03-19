@@ -245,13 +245,19 @@ INFO dumping... (format=wheel)
 INFO builded
 ```
 
-Now, we can upload these packages to [PyPI](https://pypi.org/) with [twine](https://github.com/pypa/twine/).
+Now, we can upload these packages to [PyPI](https://pypi.org/):
+
+```bash
+dephell project upload
+```
 
 These are some of the most useful commands. See [documentation](https://dephell.org/docs/) for more details.
 
 ## Compatibility
 
 DepHell is tested on Linux and Mac OS X with Python 3.5, 3.6, 3.7. And one of the coolest things is that DepHell is run by DepHell on Travis CI.
+
+DepHell works on Windows but has no CI to keep in working yet.
 
 ## How can I help
 
@@ -264,6 +270,6 @@ DepHell is tested on Linux and Mac OS X with Python 3.5, 3.6, 3.7. And one of th
     1. Tests, we always need more tests.
     1. Make READMEs more nice and friendly.
     1. View issues with the [help wanted](https://github.com/dephell/dephell/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) label to find things that you can fix.
-    1. Anything what you want. If it is a new feature, please open an issue before writing code.
+    1. Anything what you want. If it is a new feature, please, open an issue before writing the code.
 
 Thank you :heart:

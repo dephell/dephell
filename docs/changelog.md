@@ -2,6 +2,26 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.8.2 (2020-03-19)
+
+New commands:
+
++ [dephell project upload](https://dephell.readthedocs.io/cmd-project-upload.html) ([#401](https://github.com/dephell/dephell/pull/401)).
++ [dephell venv entrypoint](https://dephell.readthedocs.io/cmd-venv-entrypoint.html) ([#404](https://github.com/dephell/dephell/pull/404)).
++ [dephell package verify](https://dephell.readthedocs.io/cmd-package-verify.html) ([#400](https://github.com/dephell/dephell/pull/400)).
++ [dephell project register](https://dephell.readthedocs.io/cmd-project-register.html) ([#398](https://github.com/dephell/dephell/pull/398)).
+
+Improvements:
+
++ `dephell project bump` now can bump version in Sphinx config ([#407](https://github.com/dephell/dephell/pull/407)).
++ One less dependency. Bye-bye, [flatdict](https://github.com/gmr/flatdict) ([#394](https://github.com/dephell/dephell/pull/394)).
++ A lot of `dephell jail list` improvements ([#381](https://github.com/dephell/dephell/pull/381), [#379](https://github.com/dephell/dephell/pull/379), [#395](https://github.com/dephell/dephell/pull/395)).
++ `--version` and `-h` flags ([#397](https://github.com/dephell/dephell/pull/397), [#410](https://github.com/dephell/dephell/pull/410)).
++ More info in `dephell inspect venv` ([#396](https://github.com/dephell/dephell/pull/396)).
++ `dephell jail` and some similar commands don't try to find project-level config ([#408](https://github.com/dephell/dephell/pull/408)).
++ Better `requirements.txt` lookup ([#409](https://github.com/dephell/dephell/pull/409)).
++ [a little bit more](https://github.com/dephell/dephell/milestone/5?closed=1).
+
 ## v.0.8.1 (2020-01-27)
 
 New commands:
