@@ -7,7 +7,7 @@ Upload project dist archives on [PyPI](https://pypi.org) or another pypi-compati
 First of all, register on [PyPI](https://pypi.org) and add your credentials:
 
 ```bash
-dephell self auth pypi.org my_username my_password
+dephell self auth upload.pypi.org my_username my_password
 ```
 
 **Pro tip**: add a space before the command and bash won't store it in the history ([read more](https://stackoverflow.com/a/29188490)).
@@ -40,7 +40,7 @@ dephell project upload --upload-url="https://rtifactory.example.com/artifactory/
 To keep your PyPI password secure you can generate [API token](https://pypi.org/help/#apitoken) in your [account settings](https://pypi.org/manage/account/) and use it instead:
 
 ```bash
-dephell self auth pypi.org "__token__" "pypi-my-secret-token"
+dephell self auth upload.pypi.org "__token__" "pypi-my-secret-token"
 ```
 
 This is required if you're using 2FA on PyPI.

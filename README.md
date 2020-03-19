@@ -248,6 +248,7 @@ INFO builded
 Now, we can upload these packages to [PyPI](https://pypi.org/):
 
 ```bash
+dephell self auth upload.pypi.org my-username my-password
 dephell project upload
 ```
 
