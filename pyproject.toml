@@ -105,7 +105,7 @@ import_heading_localfolder = "app"
 
 [tool.poetry]
 name = "dephell"
-version = "0.8.1"
+version = "0.8.2"
 authors = ["Gram <master_fess@mail.ru>"]
 description = "Dependency resolution for Python"
 readme = "README.md"
@@ -201,8 +201,4 @@ isort = {extras = ["pyproject"], version = "*"}
 [tool.poetry.extras]
 docs = ["alabaster", "pygments-github-lexers", "recommonmark", "sphinx"]
 tests = ["aioresponses", "pytest", "requests-mock"]
-full = [
-    "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
-    "dockerpty", "fissix", "graphviz", "html5lib", "pygments", "python-gnupg",
-    "ruamel-yaml", "tabulate", "yapf",
-]
+full = ["aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker", "dockerpty", "fissix", "graphviz", "html5lib", "pygments", "python-gnupg", "tabulate", "yapf"]
