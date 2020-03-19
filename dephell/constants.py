@@ -27,6 +27,9 @@ WAREHOUSE_DOMAINS = {'pypi.org', 'pypi.python.org', 'test.pypi.org'}
 DEFAULT_UPLOAD = 'https://upload.pypi.org/legacy/'
 TEST_UPLOAD = 'https://test.pypi.org/legacy/'
 
+HOMEPAGE_FIELD = 'homepage'
+DOWNLOAD_FIELD = 'download'
+
 FORMATS = (
     'conda',
     'egginfo',

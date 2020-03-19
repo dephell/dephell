@@ -12,6 +12,7 @@ from dephell_markers import Markers
 from packaging.requirements import Requirement as PackagingRequirement
 
 # app
+from ..constants import DOWNLOAD_FIELD, HOMEPAGE_FIELD
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
@@ -128,8 +129,8 @@ class _Reader:
 
         # links
         fields = (
-            ('homepage', 'Home-Page'),
-            ('download', 'Download-URL'),
+            (HOMEPAGE_FIELD, 'Home-Page'),
+            (DOWNLOAD_FIELD, 'Download-URL'),
         )
         for key, name in fields:
             link = cls._get(info, name)
@@ -137,7 +138,7 @@ class _Reader:
                 root.links[key] = link
         for link in cls._get_list(info, 'Project-URL'):
             key, url = link.split(', ')
-            root.links[key] = url
+            root.links[key.lower()] = url
 
         # authors
         for name in ('author', 'maintainer'):
@@ -268,16 +269,9 @@ class _Writer:
             content.append(('Summary', project.description))
 
         # links
-        fields = dict(
-            homepage='Home-Page',
-            download='Download-URL',
-        )
         for key, url in project.links.items():
-            if key in fields:
-                content.append((fields[key], url))
-            else:
-                key = key[0].upper() + key[1:]
-                content.append(('Project-URL', '{}, {}'.format(key, url)))
+            key = key[0].upper() + key[1:]
+            content.append(('Project-URL', '{}, {}'.format(key, url)))
 
         # authors
         if project.authors:

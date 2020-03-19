@@ -10,6 +10,7 @@ from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 
 # app
+from ..constants import HOMEPAGE_FIELD
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
@@ -81,7 +82,7 @@ class FlitConverter(BaseConverter):
 
         # links
         if 'home-page' in section:
-            root.links['homepage'] = section['home-page']
+            root.links[HOMEPAGE_FIELD] = section['home-page']
         if 'urls' in section:
             root.links.update(section['urls'])
 
@@ -175,9 +176,7 @@ class FlitConverter(BaseConverter):
                 section[field] = value
 
         # write links
-        if 'homepage' in project.links:
-            section['home-page'] = project.links['homepage']
-        if set(project.links) - {'homepage'}:
+        if project.links:
             if 'urls' in section:
                 # remove old
                 for name in section['urls']:
@@ -187,8 +186,6 @@ class FlitConverter(BaseConverter):
                 section['urls'] = tomlkit.table()
             # add and update
             for name, url in project.links.items():
-                if name == 'homepage':
-                    continue
                 section['urls'][name] = url
         elif 'urls' in section:
             del section['urls']
