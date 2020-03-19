@@ -9,9 +9,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-# built-in
 import os.path
-
 
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
@@ -78,7 +76,7 @@ setup(
         "full": [
             "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
             "dockerpty", "fissix", "graphviz", "html5lib", "pygments",
-            "tabulate", "yapf"
+            "python-gnupg", "tabulate", "yapf"
         ],
         "tests": ["aioresponses", "pytest", "requests-mock"]
     },
