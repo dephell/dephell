@@ -16,6 +16,7 @@ from packaging.version import parse
 
 # app
 from ...cache import JSONCache
+from ...constants import HOMEPAGE_FIELD
 from ...cached_property import cached_property
 from ...config import config
 from ...models.release import Release
@@ -34,7 +35,7 @@ from ._base import CondaBaseRepo
 # https://repo.anaconda.com/pkgs/r/noarch
 
 URL_FIELDS = {
-    'home': 'homepage',
+    'home': HOMEPAGE_FIELD,
     'dev_url': 'repository',
     'doc_url': 'documentation',
     'license_url': 'license',

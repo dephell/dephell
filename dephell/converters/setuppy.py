@@ -13,6 +13,7 @@ from dephell_specifier import RangeSpecifier
 from packaging.requirements import Requirement
 
 # app
+from ..constants import HOMEPAGE_FIELD, DOWNLOAD_FIELD
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
@@ -94,7 +95,11 @@ class SetupPyConverter(BaseConverter):
         )
 
         # links
-        for key, name in (('home', 'url'), ('download', 'download_url')):
+        fields = (
+            (HOMEPAGE_FIELD, 'url'),
+            (DOWNLOAD_FIELD, 'download_url'),
+        )
+        for key, name in fields:
             link = data.get(name)
             if link:
                 root.links[key] = link
@@ -158,13 +163,6 @@ class SetupPyConverter(BaseConverter):
             content.append(('python_requires', str(project.python.peppify())))
 
         # links
-        fields = (
-            ('home', 'url'),
-            ('download', 'download_url'),
-        )
-        for key, name in fields:
-            if key in project.links:
-                content.append((name, project.links[key]))
         if project.links:
             content.append(('project_urls', project.links))
 

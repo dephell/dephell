@@ -135,17 +135,9 @@ class Uploader:
             if author.mail:
                 meta['maintainer_email'] = author.mail
 
-        fields = dict(
-            homepage='home_page',
-            home='home_page',
-            download='download_url',
-        )
         for key, url in root.links.items():
-            if key in fields:
-                meta[fields[key]] = url
-            else:
-                key = key[0].upper() + key[1:]
-                meta['project_urls'].append('{}, {}'.format(key, url))
+            key = key[0].upper() + key[1:]
+            meta['project_urls'].append('{}, {}'.format(key, url))
 
         if root.python:
             meta['requires_python'] = str(root.python.peppify())

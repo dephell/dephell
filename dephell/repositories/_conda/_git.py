@@ -16,6 +16,7 @@ from dephell_specifier import RangeSpecifier
 from jinja2 import Environment
 
 # app
+from ...constants import HOMEPAGE_FIELD
 from ...cache import JSONCache
 from ...cached_property import cached_property
 from ...config import config
@@ -43,7 +44,7 @@ HISTORY_URL = 'https://api.github.com/repos/{repo}/commits?path={path}&per_page=
 CONTENT_URL = 'https://raw.githubusercontent.com/{repo}/{rev}/{path}'
 
 URL_FIELDS = {
-    'home': 'homepage',
+    'home': HOMEPAGE_FIELD,
     'dev_url': 'repository',
     'doc_url': 'documentation',
     'license_url': 'license',
