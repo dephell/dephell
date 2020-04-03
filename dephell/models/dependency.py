@@ -193,7 +193,7 @@ class Dependency:
 
         marker = Markers(str(self.marker))
         if self.envs - {'main'}:
-            extra_markers = {'extra == "{}"'.format(env) for env in self.envs - {'main'}}
+            extra_markers = {'extra == {!r}'.format(env) for env in self.envs - {'main'}}
             marker &= Markers(' or '.join(extra_markers))
         if marker:
             result += '; ' + str(marker)
