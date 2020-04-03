@@ -211,9 +211,6 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             (sdist, '.zip'),
         )
 
-        if name == 'celery':
-            import pdb; pdb.set_trace()
-
         for converter, ext in rules:
             for link in good_links:
                 if not link['name'].endswith(ext):

@@ -13,7 +13,7 @@ from packaging.requirements import InvalidRequirement, Requirement
 # app
 from ...cached_property import cached_property
 from ...constants import WAREHOUSE_DOMAINS
-from ...networking import aiohttp_session
+from ...networking import aiohttp_session, aiohttp_repeat
 from ..base import Interface
 
 
@@ -136,6 +136,7 @@ class WarehouseBaseRepo(Interface):
                         deps.append(str(dep))
             return tuple(deps)
 
+    @aiohttp_repeat
     async def _download(self, *, url: str, path: Path) -> None:
         async with aiohttp_session(auth=self.auth) as session:
             async with session.get(url) as response:

@@ -1,16 +1,20 @@
 # built-in
+from functools import partial, update_wrapper
+from logging import getLogger
+from time import sleep
 from ssl import create_default_context
 
 # external
 import certifi
 import requests
-from aiohttp import ClientSession, TCPConnector
+from aiohttp import ClientSession, TCPConnector, ClientPayloadError
 
 # app
 from . import __version__
 
 
 USER_AGENT = 'DepHell/{version}'.format(version=__version__)
+logger = getLogger('dephell.networking')
 
 
 def aiohttp_session(*, auth=None, **kwargs):
@@ -36,3 +40,22 @@ def requests_session(*, auth=None, headers=None, **kwargs):
     if kwargs:
         session.__dict__.update(kwargs)
     return session
+
+
+def aiohttp_repeat(func=None, *, count: int = 3):
+    if func is None:
+        return partial(func, count=count)
+
+    async def wrapper(*args, **kwargs):
+        for pause in range(1, count + 1):
+            try:
+                return await func(*args, **kwargs)
+            except ClientPayloadError:
+                if pause == count:
+                    raise
+                logger.debug('aiohttp payload error, repeating...', exc_info=True)
+                sleep(pause)
+        raise RuntimeError('unreachable')
+
+    wrapper = update_wrapper(wrapper=wrapper, wrapped=func)
+    return wrapper
