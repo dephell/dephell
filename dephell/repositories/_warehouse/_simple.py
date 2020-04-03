@@ -152,7 +152,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             ttl=config['cache']['ttl'],
         )
         links = cache.load()
-        if links:
+        if links is not None:
             yield from links
             return
 
