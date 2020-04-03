@@ -42,7 +42,7 @@ def requests_session(*, auth=None, headers=None, **kwargs):
     return session
 
 
-def aiohttp_repeat(func=None, *, count: int = 3):
+def aiohttp_repeat(func=None, *, count: int = 4):
     if func is None:
         return partial(func, count=count)
 

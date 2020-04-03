@@ -16,7 +16,7 @@ class BaseCache:
     def __init__(self, *keys, ttl: int = -1):
         self.path = Path(config['cache']['path'], *keys)
         if self.ext:
-            self.path = self.path.with_suffix(self.ext)
+            self.path = self.path.with_name(self.path.name + self.ext)
         self.ttl = ttl
         self._check_ttl()
 
