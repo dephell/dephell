@@ -188,7 +188,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         cache.dump(links)
         return links
 
-    async def _get_deps_from_links(self, name, version):
+    async def _get_deps_from_links(self, name: str, version):
         from ...converters import SDistConverter, WheelConverter
 
         links = self._get_links(name=name)
@@ -197,7 +197,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             link_name, link_version = self._parse_name(link['name'])
             if canonicalize_name(link_name) != name:
                 continue
-            if link_version != version:
+            if link_version != str(version):
                 continue
             good_links.append(link)
 
@@ -210,6 +210,9 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             (sdist, '.tar.gz'),
             (sdist, '.zip'),
         )
+
+        if name == 'celery':
+            import pdb; pdb.set_trace()
 
         for converter, ext in rules:
             for link in good_links:
