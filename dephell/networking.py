@@ -7,7 +7,7 @@ from ssl import create_default_context
 # external
 import certifi
 import requests
-from aiohttp import ClientSession, TCPConnector, ClientPayloadError
+from aiohttp import ClientSession, TCPConnector, ClientError
 
 # app
 from . import __version__
@@ -50,7 +50,7 @@ def aiohttp_repeat(func=None, *, count: int = 4):
         for pause in range(1, count + 1):
             try:
                 return await func(*args, **kwargs)
-            except ClientPayloadError:
+            except ClientError:
                 if pause == count:
                     raise
                 logger.debug('aiohttp payload error, repeating...', exc_info=True)
