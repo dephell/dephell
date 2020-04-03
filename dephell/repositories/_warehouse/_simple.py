@@ -143,7 +143,8 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         )
         links = cache.load()
         if links:
-            return links
+            yield from links
+            return
 
         dep_url = posixpath.join(self.url, quote(name)) + '/'
         with requests_session() as session:
