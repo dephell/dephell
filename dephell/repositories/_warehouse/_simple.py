@@ -53,9 +53,19 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         releases_info = dict()
         for link in links:
             name, version = self._parse_name(link['name'])
-            if canonicalize_name(name) != dep.name:
+            if canonicalize_name(name) != canonicalize_name(dep.base_name):
+                logger.warning('bad dist name', extra=dict(
+                    dist_name=link['name'],
+                    package_name=dep.base_name,
+                    reason='package name does not match',
+                ))
                 continue
             if not version:
+                logger.warning('bad dist name', extra=dict(
+                    dist_name=link['name'],
+                    package_name=dep.base_name,
+                    reason='no version specified',
+                ))
                 continue
 
             if version not in releases_info:
