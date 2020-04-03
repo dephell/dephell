@@ -147,6 +147,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
         dep_url = posixpath.join(self.url, quote(name)) + '/'
         with requests_session() as session:
+            logger.debug('getting dep info from simple repo', extra=dict(url=dep_url))
             response = session.get(dep_url, auth=self.auth)
         if response.status_code == 404:
             raise PackageNotFoundError(package=name, url=dep_url)
@@ -164,12 +165,14 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
             python = tag.get('data-requires-python')
             fragment = parse_qs(parsed.fragment)
-            yield dict(
+            link = dict(
                 url=urljoin(dep_url, link),
                 name=parsed.path.strip('/').split('/')[-1],
                 python=html.unescape(python) if python else '*',
                 digest=fragment['sha256'][0] if 'sha256' in fragment else None,
             )
+            links.append(link)
+            yield link
 
         cache.dump(links)
         return links
