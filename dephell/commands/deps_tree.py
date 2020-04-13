@@ -63,12 +63,18 @@ class DepsTreeCommand(BaseCommand):
 
     @classmethod
     def _make_tree(cls, dep, *, level: int = 0) -> List[str]:
-        lines = ['{level}- {name} [required: {constraint}, locked: {best}, latest: {latest}]'.format(
+        best = dep.group.best_release.version
+        latest = dep.group.best_release.version
+        if best == latest:
+            template = '{level}- {name} [required: {constraint}, latest: {latest}]'
+        else:
+            template = '{level}- {name} [required: {constraint}, locked: {best}, latest: {latest}]'
+        lines = [template.format(
             level='  ' * level,
             name=dep.name,
             constraint=str(dep.constraint) or '*',
-            best=str(dep.group.best_release.version),
-            latest=str(dep.groups.releases[0].version),
+            best=str(best),
+            latest=str(latest),
         )]
         deps = {dep.name: dep for dep in dep.dependencies}.values()  # drop duplicates
         for subdep in sorted(deps):

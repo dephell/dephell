@@ -53,9 +53,19 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         releases_info = dict()
         for link in links:
             name, version = self._parse_name(link['name'])
-            if canonicalize_name(name) != dep.name:
+            if canonicalize_name(name) != canonicalize_name(dep.base_name):
+                logger.warning('bad dist name', extra=dict(
+                    dist_name=link['name'],
+                    package_name=dep.base_name,
+                    reason='package name does not match',
+                ))
                 continue
             if not version:
+                logger.warning('bad dist name', extra=dict(
+                    dist_name=link['name'],
+                    package_name=dep.base_name,
+                    reason='no version specified',
+                ))
                 continue
 
             if version not in releases_info:
@@ -142,11 +152,13 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             ttl=config['cache']['ttl'],
         )
         links = cache.load()
-        if links:
-            return links
+        if links is not None:
+            yield from links
+            return
 
         dep_url = posixpath.join(self.url, quote(name)) + '/'
         with requests_session() as session:
+            logger.debug('getting dep info from simple repo', extra=dict(url=dep_url))
             response = session.get(dep_url, auth=self.auth)
         if response.status_code == 404:
             raise PackageNotFoundError(package=name, url=dep_url)
@@ -164,17 +176,19 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
 
             python = tag.get('data-requires-python')
             fragment = parse_qs(parsed.fragment)
-            yield dict(
+            link = dict(
                 url=urljoin(dep_url, link),
                 name=parsed.path.strip('/').split('/')[-1],
                 python=html.unescape(python) if python else '*',
                 digest=fragment['sha256'][0] if 'sha256' in fragment else None,
             )
+            links.append(link)
+            yield link
 
         cache.dump(links)
         return links
 
-    async def _get_deps_from_links(self, name, version):
+    async def _get_deps_from_links(self, name: str, version):
         from ...converters import SDistConverter, WheelConverter
 
         links = self._get_links(name=name)
@@ -183,7 +197,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
             link_name, link_version = self._parse_name(link['name'])
             if canonicalize_name(link_name) != name:
                 continue
-            if link_version != version:
+            if link_version != str(version):
                 continue
             good_links.append(link)
 
