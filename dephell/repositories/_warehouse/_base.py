@@ -99,22 +99,23 @@ class WarehouseBaseRepo(Interface):
                     ))
 
             try:
-                dep_extra = req.marker and Markers(req.marker).extra
+                dep_extras = req.marker and Markers(req.marker).get_strings('extra')
             except ValueError:  # unsupported operation for version marker python_version: in
-                dep_extra = None
+                dep_extras = set()
 
             # it's not extra and we want not extra too
-            if dep_extra is None and extra is None:
+            if not dep_extras and extra is None:
                 result.append(req)
                 continue
             # it's extra, but we want not the extra
             # or it's not the extra, but we want extra.
-            if dep_extra is None or extra is None:
+            if not dep_extras or extra is None:
                 continue
             # it's extra and we want this extra
-            elif dep_extra == extra:
-                result.append(req)
-                continue
+            for dep_extra in dep_extras:
+                if dep_extra == extra:
+                    result.append(req)
+                    break
 
         return tuple(result)
 
