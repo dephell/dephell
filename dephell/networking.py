@@ -1,13 +1,13 @@
 # built-in
 from functools import partial, update_wrapper
 from logging import getLogger
-from time import sleep
 from ssl import create_default_context
+from time import sleep
 
 # external
 import certifi
 import requests
-from aiohttp import ClientSession, TCPConnector, ClientError
+from aiohttp import ClientError, ClientSession, TCPConnector
 
 # app
 from . import __version__

@@ -13,7 +13,7 @@ from packaging.requirements import InvalidRequirement, Requirement
 # app
 from ...cached_property import cached_property
 from ...constants import WAREHOUSE_DOMAINS
-from ...networking import aiohttp_session, aiohttp_repeat
+from ...networking import aiohttp_repeat, aiohttp_session
 from ..base import Interface
 
 
