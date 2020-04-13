@@ -85,9 +85,9 @@ You can convert anything to anything:
 1. Lock Pipfile: `dephell deps convert --from=Pipfile --to=Pipfile.lock`
 1. Lock poetry: `dephell deps convert --from=pyproject.toml --to=poetry.lock`
 1. Migrate from setup.py to poetry: `dephell deps convert --from=setup.py --to=pyproject.toml`
-1. Migrate from pipenv to poetry: `dephell deps convert --from=Pipenv --to=pyproject.toml`
+1. Migrate from pipenv to poetry: `dephell deps convert --from=Pipfile --to=pyproject.toml`
 1. Generate setup.py for poetry (to make project backward compatible with setuptools): `dephell deps convert --from=pyproject.toml --to=setup.py`
-1. Generate requirements.txt from Pipfile to work on a pipenv-based project without pipenv: `dephell deps convert --from=Pipenv --to=requirements.txt`
+1. Generate requirements.txt from Pipfile to work on a pipenv-based project without pipenv: `dephell deps convert --from=Pipfile --to=requirements.txt`
 1. Generate requirements.txt from poetry to work on a poetry-based project without poetry: `dephell deps convert --from=pyproject.toml --to=requirements.txt`
 1. Pipe poetry requirements into pip for installation in a custom environment: `pip install -r <(dephell deps convert --to-path stdout --to-format pip)`
 
