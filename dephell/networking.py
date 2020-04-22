@@ -12,6 +12,7 @@ from aiohttp import ClientError, ClientSession, TCPConnector
 # app
 from . import __version__
 
+
 USER_AGENT = 'DepHell/{version}'.format(version=__version__)
 logger = getLogger('dephell.networking')
 

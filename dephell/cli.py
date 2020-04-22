@@ -12,6 +12,7 @@ from .commands import COMMANDS
 from .constants import ReturnCodes
 from .exceptions import ExtraException
 
+
 logger = getLogger('dephell.cli')
 parser = Parser(
     description='Manage dependencies, projects, virtual environments.',

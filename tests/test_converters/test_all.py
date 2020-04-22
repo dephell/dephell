@@ -4,10 +4,12 @@ from pathlib import Path
 
 import attr
 import pytest
+
 # project
 from dephell import converters
 from dephell.controllers import DependencyMaker, Graph, RepositoriesRegistry
 from dephell.models import Requirement, RootDependency
+
 
 root_path = Path(__file__).parent.parent / 'requirements'
 

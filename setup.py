@@ -12,6 +12,7 @@ except ImportError:
 # built-in
 import os.path
 
+
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))
 readme_path = os.path.join(here, 'README.rst')

@@ -10,14 +10,16 @@
 import asyncio
 from itertools import islice
 
+# external
+from packaging.requirements import Requirement
+
 # project
 from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
 from dephell.networking import requests_session
 from dephell.repositories import WarehouseAPIRepo
-# external
-from packaging.requirements import Requirement
+
 
 loop = asyncio.get_event_loop()
 URL = 'https://hugovk.github.io/top-pypi-packages/top-pypi-packages-30-days.min.json'

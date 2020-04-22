@@ -2,11 +2,12 @@
 from email.parser import Parser
 from pathlib import Path
 
+# external
+from dephell_links import VCSLink
+
 # project
 from dephell.converters import EggInfoConverter
 from dephell.models import Requirement
-# external
-from dephell_links import VCSLink
 
 
 def test_load_deps(requirements_path: Path):

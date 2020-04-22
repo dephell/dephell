@@ -3,8 +3,8 @@
 from dephell_versioning import get_schemes
 
 # app
-from ..constants import (FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES,
-                         STRATEGIES)
+from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES
+
 
 _TARGET = dict(
     type='dict',

@@ -2,6 +2,7 @@
 from .app_dirs import get_cache_dir, get_data_dir
 from .manager import Config
 
+
 config = Config()
 
 

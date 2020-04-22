@@ -3,6 +3,7 @@ import abc
 import re
 from typing import Dict, Iterable, List, Optional
 
+
 REX_TOKEN = re.compile(r'^((?P<field>[a-z_]+)\:)?(?P<value>.+)$')
 
 

@@ -3,9 +3,11 @@ from pathlib import Path
 
 # external
 import pytest
+from packaging.version import Version
+
 # project
 from dephell.converters.pip import PIPConverter
-from packaging.version import Version
+
 
 loader = PIPConverter(lock=False)
 

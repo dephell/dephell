@@ -16,11 +16,11 @@ from cerberus import Validator
 from tomlkit.exceptions import TOMLKitError
 
 # app
-from ..constants import (ARCHIVE_EXTENSIONS, ENV_VAR_TEMPLATE,
-                         NON_PATH_FORMATS, SUFFIXES)
+from ..constants import ARCHIVE_EXTENSIONS, ENV_VAR_TEMPLATE, NON_PATH_FORMATS, SUFFIXES
 from .defaults import DEFAULT
 from .logging_config import LOGGING
 from .scheme import SCHEME
+
 
 ENV_VAR_REX = re.compile(ENV_VAR_TEMPLATE.format('(.+)'))
 

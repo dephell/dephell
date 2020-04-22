@@ -2,8 +2,8 @@
 from pathlib import Path
 from typing import Optional
 
-import attr
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from packaging.requirements import Requirement
 from tomlkit import document, dumps, parse

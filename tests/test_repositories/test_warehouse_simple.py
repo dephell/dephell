@@ -6,11 +6,13 @@ from urllib.parse import urlparse
 
 # external
 import pytest
+
 # project
 from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.controllers import DependencyMaker
 from dephell.models import Auth, RootDependency
 from dephell.repositories import WarehouseSimpleRepo
+
 
 loop = asyncio.get_event_loop()
 

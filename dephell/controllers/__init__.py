@@ -11,6 +11,7 @@ from ._safety import Safety, SafetyVulnInfo
 from ._snyk import Snyk, SnykVulnInfo
 from ._uploader import Uploader
 
+
 __all__ = [
     'analyze_conflict',
     'DependencyMaker',

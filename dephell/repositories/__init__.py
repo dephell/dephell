@@ -4,8 +4,8 @@ from ._getter import get_repo
 from ._git.git import GitRepo
 from ._local import LocalRepo
 from ._release import ReleaseRepo
-from ._warehouse import (WarehouseAPIRepo, WarehouseBaseRepo,
-                         WarehouseLocalRepo, WarehouseSimpleRepo)
+from ._warehouse import WarehouseAPIRepo, WarehouseBaseRepo, WarehouseLocalRepo, WarehouseSimpleRepo
+
 
 __all__ = [
     'CondaCloudRepo',

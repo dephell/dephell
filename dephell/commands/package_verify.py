@@ -10,6 +10,7 @@ from ..imports import lazy_import
 from ..networking import requests_session
 from .base import BaseCommand
 
+
 gnupg = lazy_import('gnupg', package='python-gnupg')
 DEFAULT_KEYSERVER = 'pgp.mit.edu'
 

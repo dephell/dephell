@@ -3,8 +3,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
 
-import attr
 # external
+import attr
 import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink

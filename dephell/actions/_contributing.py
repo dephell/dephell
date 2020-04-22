@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 # external
 from jinja2 import Environment, PackageLoader
 
+
 env = Environment(loader=PackageLoader('dephell', 'templates'))
 KNOWN_SECTIONS = (
     ('test', 'tests'),

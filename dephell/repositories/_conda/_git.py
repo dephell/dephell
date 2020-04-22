@@ -26,6 +26,7 @@ from ...networking import aiohttp_session, requests_session
 from ...yaml import yaml_load
 from ._base import CondaBaseRepo
 
+
 # source: conda-build/metadata.py
 # Selectors must be either:
 # - at end of the line

@@ -12,6 +12,7 @@ from m2r import convert
 from ..cached_property import cached_property
 from ..constants import EXTENSIONS
 
+
 CODE = """
 import os.path
 

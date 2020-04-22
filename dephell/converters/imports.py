@@ -3,8 +3,8 @@ import ast
 from pathlib import Path
 from typing import Dict, List, Set
 
-import attr
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 
 # app
@@ -14,6 +14,7 @@ from ..controllers import DependencyMaker
 from ..models import RootDependency
 from ..networking import requests_session
 from .base import BaseConverter
+
 
 MAPPING_URLS = (
     'https://raw.githubusercontent.com/bndr/pipreqs/master/pipreqs/mapping',

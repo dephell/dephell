@@ -4,11 +4,12 @@ from pathlib import Path
 
 # external
 import pytest
+from dephell_links import VCSLink
+
 # project
 from dephell.converters import PIPFileLockConverter
 from dephell.models import Requirement
 from dephell.repositories import GitRepo
-from dephell_links import VCSLink
 
 
 @pytest.mark.allow_hosts()

@@ -17,6 +17,7 @@ from ...models.release import Release
 from .._local import LocalRepo
 from ..base import Interface
 
+
 logger = getLogger(__name__)
 rex_version = re.compile(r'(?:refs/tags/)?v?\.?\s*(.+)')
 

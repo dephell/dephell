@@ -3,8 +3,8 @@ from itertools import chain
 from pathlib import Path
 from typing import Optional
 
-import attr
 # external
+import attr
 import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier

@@ -4,11 +4,12 @@ from pathlib import Path
 
 # external
 import pytest
+from dephell_venvs import VEnv
+
 # project
 from dephell.commands import JailInstallCommand
 from dephell.config import Config
 from dephell.constants import IS_WINDOWS
-from dephell_venvs import VEnv
 
 
 @pytest.mark.allow_hosts()

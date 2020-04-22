@@ -12,6 +12,7 @@ from ..context_tools import nullcontext
 from ..models import RootDependency
 from ._conflict import analyze_conflict
 
+
 logger = getLogger('dephell.resolver')
 REX_BASE_VERSION = re.compile(r'[0-9\.]+')
 

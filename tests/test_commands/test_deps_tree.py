@@ -4,6 +4,7 @@ from pathlib import Path
 
 # external
 import pytest
+
 # project
 from dephell.commands import DepsTreeCommand
 from dephell.config import Config

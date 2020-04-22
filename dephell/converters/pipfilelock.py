@@ -5,8 +5,8 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Optional
 
-import attr
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
@@ -16,6 +16,7 @@ from ..controllers import RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .pipfile import PIPFileConverter
+
 
 # https://stackoverflow.com/a/23820416
 # https://github.com/pypa/pipfile/blob/master/examples/Pipfile.lock

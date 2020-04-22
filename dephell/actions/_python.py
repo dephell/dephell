@@ -11,6 +11,7 @@ from ..config import Config
 from ..converters import CONVERTERS
 from ._venv import get_venv
 
+
 # https://docs.python.org/3/library/site.html
 PTHS = ('easy-install.pth', 'setuptools.pth', None)
 DIRS = ('site-packages', 'dist-packages')

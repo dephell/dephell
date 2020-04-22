@@ -9,6 +9,7 @@ from pathlib import Path
 import alabaster
 from recommonmark.transform import AutoStructify
 
+
 sys.path.append(os.path.abspath('../'))
 extensions = [
     'alabaster',

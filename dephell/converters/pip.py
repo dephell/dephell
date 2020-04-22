@@ -4,12 +4,11 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Optional
 
-from pip._internal.req import parse_requirements
-
-import attr
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink
+from pip._internal.req import parse_requirements
 
 # app
 from ..context_tools import chdir
@@ -17,6 +16,7 @@ from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
+
 
 try:
     # pip<20.0.1

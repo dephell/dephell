@@ -11,6 +11,7 @@ from ..constants import IS_WINDOWS
 from ..converters import EggInfoConverter
 from ..models import EntryPoint
 
+
 logger = getLogger('dephell.actions')
 
 

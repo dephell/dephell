@@ -12,6 +12,7 @@ from ..cache import JSONCache
 from ..cached_property import cached_property
 from ..networking import requests_session
 
+
 DUMP_URL = 'https://github.com/pyupio/safety-db/raw/master/data/insecure_full.json'
 REX_LINK = re.compile(r'https?\:\/\/[a-z]+[^\s\"]+')
 

@@ -3,8 +3,8 @@ import sys
 from pathlib import Path
 from typing import Iterable, Union
 
-import attr
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from packaging.utils import canonicalize_name
 

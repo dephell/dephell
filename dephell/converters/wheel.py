@@ -7,8 +7,8 @@ from tempfile import TemporaryDirectory
 from typing import Optional
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
-import attr
 # external
+import attr
 from dephell_archive import ArchivePath
 from dephell_discover import Root as PackageRoot
 

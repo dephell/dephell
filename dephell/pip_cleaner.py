@@ -1,6 +1,7 @@
 # built-in
 import sys
 
+
 whitelist = {
     'Collecting ',
     'Installing collected packages: ',

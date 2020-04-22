@@ -2,8 +2,8 @@
 from pathlib import Path
 from typing import List, Optional
 
-import attr
 # external
+import attr
 import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
@@ -15,6 +15,7 @@ from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo, get_repo
 from .base import BaseConverter
+
 
 VCS_LIST = ('git', 'svn', 'hg', 'bzr')
 

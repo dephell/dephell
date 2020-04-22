@@ -3,8 +3,8 @@ from io import StringIO
 from pathlib import Path
 from typing import Optional
 
-import attr
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name

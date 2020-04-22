@@ -5,11 +5,13 @@ from pathlib import Path
 
 # external
 import pytest
+
 # project
 from dephell.constants import DEFAULT_WAREHOUSE
 from dephell.controllers import DependencyMaker
 from dephell.models import Auth, RootDependency
 from dephell.repositories import WarehouseAPIRepo
+
 
 loop = asyncio.get_event_loop()
 
