@@ -2,13 +2,12 @@
 from collections import OrderedDict
 from datetime import datetime
 
-# external
-from dephell_links import VCSLink
-
 # project
 from dephell.controllers import DependencyMaker
 from dephell.models import GitRelease, RootDependency
 from dephell.repositories import GitRepo
+# external
+from dephell_links import VCSLink
 
 
 class PatchedGitRepo(GitRepo):

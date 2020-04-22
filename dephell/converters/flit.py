@@ -3,6 +3,7 @@ from itertools import chain
 from pathlib import Path
 from typing import Optional
 
+import attr
 # external
 import tomlkit
 from dephell_discover import Root as PackageRoot
@@ -17,8 +18,9 @@ from .base import BaseConverter
 from .egginfo import EggInfoConverter
 
 
+@attr.s()
 class FlitConverter(BaseConverter):
-    lock = False
+    lock = attr.ib(type=bool, default=False)
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if not content:

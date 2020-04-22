@@ -24,7 +24,6 @@ from ...models.release import Release
 from ...networking import requests_session
 from ._base import WarehouseBaseRepo
 
-
 html5lib = lazy_import('html5lib')
 logger = getLogger('dephell.repositories.warehouse.simple')
 

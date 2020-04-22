@@ -3,6 +3,7 @@ import ast
 from pathlib import Path
 from typing import Dict, List, Set
 
+import attr
 # external
 from dephell_discover import Root as PackageRoot
 
@@ -14,7 +15,6 @@ from ..models import RootDependency
 from ..networking import requests_session
 from .base import BaseConverter
 
-
 MAPPING_URLS = (
     'https://raw.githubusercontent.com/bndr/pipreqs/master/pipreqs/mapping',
     'https://raw.githubusercontent.com/JetBrains/intellij-community/master/python/helpers/tools/packages',
@@ -23,8 +23,9 @@ STDLIB_URL = 'https://raw.githubusercontent.com/bndr/pipreqs/master/pipreqs/stdl
 CACHE_TTL = 3600 * 24 * 30  # 30 days
 
 
+@attr.s()
 class ImportsConverter(BaseConverter):
-    lock = True
+    lock = attr.ib(type=bool, default=True)
 
     def can_parse(self, path: Path, content: str = None) -> bool:
         if isinstance(path, str):

@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 # app
 from ..imports import lazy_import
 
-
 bowler_helpers = lazy_import('bowler.helpers')
 fissix_pytree = lazy_import('fissix.pytree')
 fixer_util = lazy_import('fissix.fixer_util')

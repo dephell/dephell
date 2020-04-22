@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 from typing import Optional
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
+import attr
 # external
 from dephell_archive import ArchivePath
 from dephell_discover import Root as PackageRoot
@@ -207,9 +208,10 @@ class _Writer:
         return content + ('\n{},,'.format(path))
 
 
+@attr.s()
 class WheelConverter(_Reader, _Writer, BaseConverter):
     """
     PEP-0427
     https://www.python.org/dev/peps/pep-0427/
     """
-    lock = False
+    lock = attr.ib(type=bool, default=False)

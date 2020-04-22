@@ -6,7 +6,6 @@ from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency
 from dephell.repositories import WarehouseLocalRepo
 
-
 loop = asyncio.get_event_loop()
 
 

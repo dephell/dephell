@@ -2,12 +2,11 @@
 from pathlib import Path
 from textwrap import dedent
 
-# external
-from dephell_links import VCSLink
-
 # project
 from dephell.converters.setuppy import SetupPyConverter
 from dephell.models import Requirement
+# external
+from dephell_links import VCSLink
 
 
 def test_load_deps(requirements_path: Path):

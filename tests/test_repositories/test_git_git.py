@@ -5,11 +5,9 @@ from pathlib import Path
 
 # external
 import pytest
-from dephell_links import VCSLink
-
 # project
 from dephell.repositories import GitRepo
-
+from dephell_links import VCSLink
 
 loop = asyncio.get_event_loop()
 git_path = Path('.git')

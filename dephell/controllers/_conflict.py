@@ -5,7 +5,6 @@ from logging import getLogger
 # external
 from jinja2 import Environment, PackageLoader
 
-
 logger = getLogger('dephell')
 env = Environment(
     loader=PackageLoader('dephell', 'templates'),

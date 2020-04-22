@@ -3,7 +3,6 @@ from os import environ
 
 # external
 import pytest
-
 # project
 from dephell.controllers import DependencyMaker
 from dephell.models import RootDependency

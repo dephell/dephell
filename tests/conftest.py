@@ -7,7 +7,6 @@ from pathlib import Path
 import pytest
 from aioresponses import aioresponses
 
-
 true_socket = socket.socket
 true_connect = socket.socket.connect
 

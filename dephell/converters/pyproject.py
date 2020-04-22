@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import Optional
 
+import attr
 # external
 from dephell_discover import Root as PackageRoot
 from packaging.requirements import Requirement
@@ -13,8 +14,9 @@ from ..models import RootDependency
 from .base import BaseConverter
 
 
+@attr.s()
 class PyProjectConverter(BaseConverter):
-    lock = False
+    lock = attr.ib(type=bool, default=False)
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if isinstance(path, str):

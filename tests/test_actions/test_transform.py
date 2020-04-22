@@ -3,7 +3,6 @@ from pathlib import Path
 
 # external
 import pytest
-
 # project
 from dephell.actions import transform_imports
 from dephell.constants import IS_WINDOWS

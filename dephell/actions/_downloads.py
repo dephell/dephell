@@ -10,7 +10,6 @@ import attr
 # app
 from ..networking import requests_session
 
-
 RECENT_URL = 'https://pypistats.org/api/packages/{}/recent'
 CATEGORIES_URLS = dict(
     pythons='https://pypistats.org/api/packages/{}/python_minor',

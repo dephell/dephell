@@ -18,7 +18,6 @@ from ..constants import CONFIG_NAMES, ENV_VAR_TEMPLATE, GLOBAL_CONFIG_NAME
 from ..controllers import analyze_conflict
 from ..converters import CONVERTERS, InstalledConverter
 
-
 REX_WORD = re.compile(r'([a-z\d])([A-Z])')
 
 

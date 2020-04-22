@@ -14,7 +14,8 @@ from ..config import config as global_config
 from ..constants import WAREHOUSE_DOMAINS
 from ..exceptions import PackageNotFoundError
 from ..models import Auth
-from ..repositories import WarehouseAPIRepo, WarehouseBaseRepo, WarehouseLocalRepo, WarehouseSimpleRepo
+from ..repositories import (WarehouseAPIRepo, WarehouseBaseRepo,
+                            WarehouseLocalRepo, WarehouseSimpleRepo)
 
 
 @lru_cache(maxsize=16)

@@ -2,11 +2,12 @@
 import subprocess
 import sys
 from argparse import ArgumentParser
-from os import environ, name as os_name, pathsep
+from os import environ
+from os import name as os_name
+from os import pathsep
 from pathlib import Path
 from shutil import rmtree
 from venv import create
-
 
 POST_MESSAGE = """DepHell is installed now. Great!
 

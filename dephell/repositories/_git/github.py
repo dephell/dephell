@@ -6,7 +6,6 @@ from ...networking import requests_session
 from ..cached_property import cached_property
 from .base import BaseRepo
 
-
 rex_author = re.compile(r'github\.com[/:]([a-zA-Z_-])')
 
 

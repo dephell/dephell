@@ -5,7 +5,6 @@ from pathlib import Path
 from ..constants import DEFAULT_UPLOAD, DEFAULT_WAREHOUSE
 from .app_dirs import get_cache_dir, get_data_dir
 
-
 DEFAULT = dict(
     tests=['tests'],
     sdist=dict(

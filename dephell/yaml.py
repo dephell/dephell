@@ -1,7 +1,6 @@
 # app
 from .imports import lazy_import
 
-
 ruamel_yaml = lazy_import('ruamel.yaml', package='ruamel.yaml')
 py_yaml = lazy_import('yaml', package='PyYAML')
 

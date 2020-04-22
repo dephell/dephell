@@ -10,7 +10,6 @@ from dephell_changelogs import get_changelog_url, parse_changelog
 from ..config import builders
 from .base import BaseCommand
 
-
 DEFAULT_WIDTH = int(os.environ.get('COLUMNS', 90))
 
 

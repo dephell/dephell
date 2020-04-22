@@ -14,7 +14,6 @@ from .requirement import Requirement
 from .root import RootDependency
 from .simple_dependency import SimpleDependency
 
-
 __all__ = [
     'Auth',
     'Author',

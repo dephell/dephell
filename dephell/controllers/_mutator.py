@@ -12,7 +12,6 @@ from ..models import Dependency, Group, RootDependency
 from ._dependency import DependencyMaker
 from ._graph import Graph
 
-
 logger = getLogger('dephell.controllers')
 
 

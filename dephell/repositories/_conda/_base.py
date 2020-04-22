@@ -8,7 +8,6 @@ from dephell_licenses import License, licenses
 # app
 from ..base import Interface
 
-
 # idk how this regex works
 # source: conda/models/match_spec.py
 REX_VERSION_BUILD = re.compile(r'((?:.+?)[^><!,|]?)(?:(?<![=!|,<>~])(?:[ =])([^-=,|<>~]+?))?$')

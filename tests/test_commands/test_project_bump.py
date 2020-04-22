@@ -5,7 +5,6 @@ from textwrap import dedent
 # external
 import pytest
 import tomlkit
-
 # project
 from dephell.actions._git import _run
 from dephell.commands import ProjectBumpCommand

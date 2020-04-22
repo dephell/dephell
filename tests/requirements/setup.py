@@ -5,7 +5,6 @@ from os import path
 # external
 from setuptools import setup
 
-
 here = path.abspath(path.dirname(__file__))
 root = path.dirname(path.dirname(here))
 with open(path.join(root, 'README.md'), encoding='utf-8') as f:

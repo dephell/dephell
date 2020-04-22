@@ -24,7 +24,6 @@ from ...models.simple_dependency import SimpleDependency
 from ...networking import requests_session
 from ._base import CondaBaseRepo
 
-
 # https://conda.anaconda.org/conda-forge/linux-64
 # https://conda.anaconda.org/conda-forge/noarch
 # https://repo.anaconda.com/pkgs/main/linux-64

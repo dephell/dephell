@@ -25,7 +25,7 @@ class SDistConverter(BaseConverter):
     # ratio of tests and project size after which tests will be excluded from sdist
     ratio = attr.ib(type=Optional[float], default=None)
 
-    lock = False
+    lock = attr.ib(type=bool, default=False)
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if content is not None:

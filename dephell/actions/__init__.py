@@ -20,7 +20,6 @@ from ._transform import transform_imports
 from ._travis import make_travis
 from ._venv import get_venv
 
-
 __all__ = [
     'attach_deps',
     'format_size',

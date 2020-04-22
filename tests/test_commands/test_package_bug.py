@@ -1,6 +1,5 @@
 # external
 import pytest
-
 # project
 from dephell.commands import PackageBugCommand
 

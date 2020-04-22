@@ -6,7 +6,6 @@ from pathlib import Path
 # app
 from ..imports import lazy_import
 
-
 appdirs = lazy_import('appdirs')
 
 

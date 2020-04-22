@@ -1,11 +1,10 @@
 # built-in
 from datetime import datetime
 
-# external
-from dephell_specifier import Specifier
-
 # project
 from dephell.models.release import Release
+# external
+from dephell_specifier import Specifier
 
 
 def test_version_compare():

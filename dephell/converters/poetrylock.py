@@ -3,6 +3,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
 
+import attr
 # external
 import tomlkit
 from dephell_discover import Root as PackageRoot
@@ -16,8 +17,10 @@ from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
 
 
+@attr.s()
 class PoetryLockConverter(BaseConverter):
-    lock = True
+    lock = attr.ib(type=bool, default=True)
+
     fields = (
         'category', 'description', 'name', 'marker', 'optional',
         'python-versions', 'version', 'dependencies',

@@ -3,7 +3,6 @@ from pathlib import Path
 
 # external
 import tomlkit
-
 # project
 from dephell.converters.poetrylock import PoetryLockConverter
 from dephell.models import Requirement

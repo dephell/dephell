@@ -3,12 +3,11 @@ import json
 import sys
 from pathlib import Path
 
-# external
-from dephell_venvs import VEnv
-
 # project
 from dephell.commands import InspectVenvCommand
 from dephell.config import Config
+# external
+from dephell_venvs import VEnv
 
 
 def test_inspect_venv_command(temp_path: Path, capsys):

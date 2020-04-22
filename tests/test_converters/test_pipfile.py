@@ -3,13 +3,12 @@ from pathlib import Path
 
 # external
 import pytest
-from dephell_links import VCSLink
-
 # project
 from dephell.controllers import DependencyMaker
 from dephell.converters import PIPFileConverter
 from dephell.models import Requirement, RootDependency
 from dephell.repositories import GitRepo
+from dephell_links import VCSLink
 
 
 @pytest.mark.allow_hosts()

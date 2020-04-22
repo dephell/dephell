@@ -1,12 +1,11 @@
 # built-in
 from pathlib import Path
 
-# external
-from dephell_venvs import VEnv
-
 # project
 from dephell.commands import VenvCreateCommand
 from dephell.config import Config
+# external
+from dephell_venvs import VEnv
 
 
 def test_venv_create_command(temp_path: Path):

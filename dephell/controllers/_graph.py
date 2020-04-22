@@ -8,7 +8,6 @@ from ..imports import lazy_import
 from ..models.dependency import Dependency
 from ..models.root import RootDependency
 
-
 graphviz = lazy_import('graphviz')
 graphviz_backend = lazy_import('graphviz.backend')
 

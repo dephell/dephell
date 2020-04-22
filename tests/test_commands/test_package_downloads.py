@@ -3,7 +3,6 @@ import json
 
 # external
 import pytest
-
 # project
 from dephell.commands import PackageDownloadsCommand
 from dephell.config import Config

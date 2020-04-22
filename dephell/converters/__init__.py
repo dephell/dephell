@@ -18,7 +18,6 @@ from .sdist import SDistConverter
 from .setuppy import SetupPyConverter
 from .wheel import WheelConverter
 
-
 __all__ = [
     'CONVERTERS',
 

@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import List, Optional
 
+import attr
 # external
 import tomlkit
 from dephell_discover import Root as PackageRoot
@@ -15,12 +16,13 @@ from ..models import Constraint, Dependency, RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo, get_repo
 from .base import BaseConverter
 
-
 VCS_LIST = ('git', 'svn', 'hg', 'bzr')
 
 
+@attr.s()
 class PIPFileConverter(BaseConverter):
-    lock = False
+    lock = attr.ib(type=bool, default=False)
+
     fields = (
         'version', 'editable', 'extras', 'markers',
         'ref', 'vcs', 'index', 'hashes',

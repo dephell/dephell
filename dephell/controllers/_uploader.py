@@ -14,7 +14,6 @@ from ..cached_property import cached_property
 from ..constants import DEFAULT_UPLOAD, TEST_UPLOAD
 from ..networking import requests_session
 
-
 BOUNDARY = '--------------GHSKFJDLGDS7543FJKLFHRE75642756743254'
 
 

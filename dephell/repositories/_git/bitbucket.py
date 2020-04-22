@@ -7,7 +7,6 @@ from ...config import config
 from ...networking import requests_session
 from .base import BaseRepo
 
-
 rex_author = re.compile(r'bitbucket\.com[/:]([a-zA-Z_-])')
 
 

@@ -1,7 +1,6 @@
 # built-in
 from typing import Any, Dict, Optional
 
-
 HEADER = """
 # Config for Travis CI, tests powered by DepHell.
 # https://travis-ci.org/

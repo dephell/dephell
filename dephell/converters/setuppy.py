@@ -5,6 +5,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import Optional
 
+import attr
 # external
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink, URLLink, VCSLink, parse_link
@@ -17,7 +18,6 @@ from ..constants import DOWNLOAD_FIELD, HOMEPAGE_FIELD
 from ..controllers import DependencyMaker, Readme
 from ..models import Author, EntryPoint, RootDependency
 from .base import BaseConverter
-
 
 try:
     from yapf.yapflib.style import CreateGoogleStyle
@@ -54,8 +54,9 @@ setup(
 """
 
 
+@attr.s()
 class SetupPyConverter(BaseConverter):
-    lock = False
+    lock = attr.ib(type=bool, default=False)
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if isinstance(path, str):

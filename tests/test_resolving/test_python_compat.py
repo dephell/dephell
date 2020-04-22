@@ -1,9 +1,8 @@
 # external
 import pytest
-from dephell_specifier import RangeSpecifier
-
 # project
 from dephell.models import Dependency, Group, MarkerTracker, Release
+from dephell_specifier import RangeSpecifier
 
 
 @pytest.mark.parametrize('pdep, prel, ok', [

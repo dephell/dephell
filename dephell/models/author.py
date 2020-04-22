@@ -5,7 +5,6 @@ from typing import Optional
 # external
 import attr
 
-
 REX_AUTHOR = re.compile(r'^\s*(?P<name>.+?) \<(?P<mail>.+?)\>\s*$')
 
 

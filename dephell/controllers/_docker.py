@@ -12,7 +12,6 @@ from ..cached_property import cached_property
 from ..imports import lazy_import
 from ..networking import requests_session
 
-
 docker = lazy_import('docker')
 dockerpty = lazy_import('dockerpty')
 

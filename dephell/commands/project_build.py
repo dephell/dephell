@@ -10,7 +10,6 @@ from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
 
-
 DUMPERS = (
     ('setuppy', 'setup.py'),
     ('egginfo', '.'),

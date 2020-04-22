@@ -5,7 +5,6 @@ from argparse import ArgumentParser
 from ..config import builders
 from .base import BaseCommand
 
-
 # Source: https://www.asciiart.eu/cartoons/inspector-gadget
 # Author: https://en.wikipedia.org/wiki/Joan_Stark
 GADGET = r"""

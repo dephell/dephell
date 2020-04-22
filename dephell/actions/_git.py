@@ -4,7 +4,6 @@ from logging import getLogger
 from pathlib import Path
 from typing import Iterable, Tuple
 
-
 logger = getLogger('dephell.actions.git')
 
 

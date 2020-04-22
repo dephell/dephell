@@ -7,7 +7,6 @@ from typing import Optional
 # app
 from ..imports import lazy_import
 
-
 pygments = lazy_import('pygments')
 pygments_lexers = lazy_import('pygments.lexers')
 pygments_formatters = lazy_import('pygments.formatters')

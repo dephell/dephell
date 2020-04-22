@@ -5,6 +5,7 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Optional
 
+import attr
 # external
 from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
@@ -16,14 +17,14 @@ from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .pipfile import PIPFileConverter
 
-
 # https://stackoverflow.com/a/23820416
 # https://github.com/pypa/pipfile/blob/master/examples/Pipfile.lock
 # https://github.com/pypa/pipfile/blob/master/pipfile/api.py
 
 
+@attr.s()
 class PIPFileLockConverter(PIPFileConverter):
-    lock = True
+    lock = attr.ib(type=bool, default=True)
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if isinstance(path, str):

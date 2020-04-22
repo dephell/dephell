@@ -6,11 +6,13 @@ from logging import getLogger
 from pathlib import Path
 from typing import Dict, Optional
 
+import attr
 # external
 from dephell_discover import Root as PackageRoot
 from dephell_links import parse_link
 from dephell_markers import Markers
-from packaging.requirements import InvalidRequirement, Requirement as PackagingRequirement
+from packaging.requirements import InvalidRequirement
+from packaging.requirements import Requirement as PackagingRequirement
 
 # app
 from ..constants import DOWNLOAD_FIELD, HOMEPAGE_FIELD
@@ -401,9 +403,10 @@ class _Writer:
         return line
 
 
+@attr.s()
 class EggInfoConverter(_Reader, _Writer, BaseConverter):
     """
     PEP-314, PEP-345, PEP-566
     https://packaging.python.org/specifications/core-metadata/
     """
-    lock = False
+    lock = attr.ib(type=bool, default=False)

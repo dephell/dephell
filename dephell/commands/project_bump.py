@@ -15,7 +15,6 @@ from ..converters import CONVERTERS
 from ..models import Requirement
 from .base import BaseCommand
 
-
 FILE_NAMES = (
     # dunder
     '__init__.py',

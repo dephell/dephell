@@ -13,7 +13,6 @@ from packaging.version import VERSION_PATTERN, Version
 from ..cached_property import cached_property
 from ..networking import requests_session
 
-
 RSS_URL = 'https://snyk.io/vuln/feed.xml?type=pip'
 REX_VERSION = re.compile(VERSION_PATTERN, re.VERBOSE | re.IGNORECASE)
 REX_TAG = re.compile(r'<\/?[a-z]+.*?>')

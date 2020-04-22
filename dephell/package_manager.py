@@ -14,7 +14,6 @@ from .cached_property import cached_property
 from .converters import PIPConverter
 from .models import Requirement
 
-
 logger = getLogger('dephell')
 
 

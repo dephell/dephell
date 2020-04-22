@@ -3,6 +3,7 @@ from io import StringIO
 from pathlib import Path
 from typing import Optional
 
+import attr
 # external
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
@@ -16,6 +17,7 @@ from ..yaml import yaml_dump, yaml_load
 from .base import BaseConverter
 
 
+@attr.s()
 class CondaConverter(BaseConverter):
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if isinstance(path, str):

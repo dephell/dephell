@@ -1,6 +1,5 @@
 # external
 import pytest
-
 # project
 from dephell.converters import PIPConverter
 from dephell.models import Requirement

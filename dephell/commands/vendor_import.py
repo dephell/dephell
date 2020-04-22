@@ -9,7 +9,6 @@ from ..config import builders
 from ..imports import lazy_import
 from .base import BaseCommand
 
-
 bowler = lazy_import('bowler')
 
 if TYPE_CHECKING:
