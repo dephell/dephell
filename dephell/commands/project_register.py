@@ -69,6 +69,7 @@ class ProjectRegisterCommand(BaseCommand):
         return True
 
     def _register(self, project_path: Path, lib_path: Path = None) -> bool:
+        project_path = project_path.resolve()
         self._make_egg_info(
             project_path=project_path,
             from_format=self.config['from']['format'],
