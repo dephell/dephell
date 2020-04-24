@@ -5,6 +5,7 @@ from pathlib import Path
 
 # external
 import pytest
+from packaging.version import Version
 
 # project
 from dephell.constants import DEFAULT_WAREHOUSE
@@ -110,8 +111,9 @@ def test_get_deps_auth(asyncio_mock, temp_cache, fixtures_path: Path):
     assert client._default_headers['authorization'] == 'Basic Z3JhbTp0ZXN0'
 
 
+@pytest.mark.parametrize("version", ["0.1.2", Version("0.1.2")])
 def test_download(asyncio_mock, temp_cache, fixtures_path: Path, temp_path: Path,
-                  requirements_path: Path):
+                  requirements_path: Path, version):
     pypi_url = 'https://custom.pypi.org/pypi/'
     json_response = (fixtures_path / 'warehouse-api-release.json').read_text()
     json_content = json.loads(json_response)
@@ -123,7 +125,7 @@ def test_download(asyncio_mock, temp_cache, fixtures_path: Path, temp_path: Path
     asyncio_mock.get(file_url, body=file_content)
 
     repo = WarehouseAPIRepo(name='pypi', url=pypi_url)
-    coroutine = repo.download(name='dephell-shells', version='0.1.2', path=temp_path)
+    coroutine = repo.download(name='dephell-shells', version=version, path=temp_path)
     result = loop.run_until_complete(asyncio.gather(coroutine))[0]
     assert result is True
     assert (temp_path / file_name).exists()
