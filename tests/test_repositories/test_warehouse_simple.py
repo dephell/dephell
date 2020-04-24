@@ -129,7 +129,7 @@ def test_get_deps_auth(requests_mock, temp_cache, fixtures_path):
     assert requests_mock.last_request.headers['Authorization'] == 'Basic Z3JhbTp0ZXN0'
 
 
-@pytest.mark.parametrize("version", ["0.1.2", Version("0.1.2")])
+@pytest.mark.parametrize('version', ['0.1.2', Version('0.1.2')])
 def test_download(requests_mock, asyncio_mock, temp_cache, fixtures_path: Path,
                   temp_path: Path, requirements_path: Path, version):
     pypi_url = 'https://custom.pypi.org/pypi/'

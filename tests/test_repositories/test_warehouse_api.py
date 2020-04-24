@@ -111,7 +111,7 @@ def test_get_deps_auth(asyncio_mock, temp_cache, fixtures_path: Path):
     assert client._default_headers['authorization'] == 'Basic Z3JhbTp0ZXN0'
 
 
-@pytest.mark.parametrize("version", ["0.1.2", Version("0.1.2")])
+@pytest.mark.parametrize('version', ['0.1.2', Version('0.1.2')])
 def test_download(asyncio_mock, temp_cache, fixtures_path: Path, temp_path: Path,
                   requirements_path: Path, version):
     pypi_url = 'https://custom.pypi.org/pypi/'
