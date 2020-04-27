@@ -12,6 +12,9 @@ from .group import Group
 
 
 loop = asyncio.get_event_loop()
+# How many latest releases should go in their own group.
+# Lesser value -> less network requests per package and more mutations.
+ONE_GROUP_RELEASES = 1
 
 
 def get_key(release) -> str:
@@ -164,12 +167,15 @@ class Groups:
             self.actualize(group=group)
             yield group
 
-        # load first group
+        # load the first two groups
         if not self._loaded_groups:
-            release = self.releases[0]
-            self._load_release_deps(release)
-            self._loaded_releases_count += 1
-            yield self._make_group([release])
+            for i in range(ONE_GROUP_RELEASES):
+                if len(self.releases) <= i:
+                    return
+                release = self.releases[i]
+                self._load_release_deps(release)
+                self._loaded_releases_count += 1
+                yield self._make_group([release])
 
         # load new groups
         prev_key = None
