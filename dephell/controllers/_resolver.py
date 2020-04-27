@@ -161,13 +161,13 @@ class Resolver:
 
         # Some child deps can be unapplied from other child deps, but we need them.
         # For example, if we need A, but don't need B, and A and B depends on C,
-        # then C will be unapplied from B. Let's return B in the graph by re-applying A.
+        # then C will be unapplied from B. Let's return B in the graph by reapplying A.
         for dep in self.graph:
             if not dep.applied:
                 continue
             if not (dep.envs | dep.inherited_envs) & envs:
                 continue
-            logger.debug('re-apply', extra=dict(dep=dep.name, envs=envs))
+            logger.debug('reapply', extra=dict(dep=dep.name, envs=envs))
             self.apply(dep, recursive=True)
 
     def apply_markers(self, python) -> None:
