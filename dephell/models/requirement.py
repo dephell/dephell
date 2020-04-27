@@ -28,20 +28,14 @@ class Requirement:
         result = OrderedDict()
         extras = defaultdict(list)
         roots = [root.name for root in graph.get_layer(0)]
-
-        # if roots wasn't applied then apply them
-        applied = len(graph._layers) != 1
-        if not applied:
-            for root in graph._roots:
-                for dep in root.dependencies:
-                    graph.add(dep)
+        graph.fast_apply()  # if roots wasn't applied, apply them
 
         # get all nodes
         for layer in reversed(graph._layers[1:]):  # skip roots
             for dep in sorted(layer):
                 if not dep.used:
                     continue
-                if applied and not dep.applied:
+                if not dep.applied:
                     continue
                 if dep.extra is None:
                     req = cls(dep=dep, lock=lock, roots=roots)

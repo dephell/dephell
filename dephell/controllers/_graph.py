@@ -193,6 +193,19 @@ class Graph:
             ))
         return parents
 
+    def fast_apply(self) -> bool:
+        """Apply only the first layer.
+        """
+        if len(self._layers) != 1:
+            return False
+        for root in self._roots:
+            for dep in root.dependencies:
+                dep.applied = True
+                self.add(dep)
+        for root in self._roots:
+            root.applied = True
+        return True
+
     def draw(self, path: str = '.dephell_report', suffix: str = '') -> None:
         dot = graphviz.Digraph(
             name=self._roots[0].name + suffix,

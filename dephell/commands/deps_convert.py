@@ -66,13 +66,7 @@ class DepsConvertCommand(BaseCommand):
 
         # filter out deps by `--envs`
         if self.config.get('envs'):
-            if len(resolver.graph._layers) == 1:
-                for root in resolver.graph._roots:
-                    for dep in root.dependencies:
-                        dep.applied = True
-                        resolver.graph.add(dep)
-                for root in resolver.graph._roots:
-                    root.applied = True
+            resolver.graph.fast_apply()
             resolver.apply_envs(set(self.config['envs']))
             resolver.graph._layers = resolver.graph._layers[:1]
 
