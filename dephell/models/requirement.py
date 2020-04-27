@@ -28,7 +28,10 @@ class Requirement:
         result = OrderedDict()
         extras = defaultdict(list)
         roots = [root.name for root in graph.get_layer(0)]
-        graph.fast_apply()  # if roots wasn't applied, apply them
+
+        # if roots weren't applied, apply them
+        if not lock:
+            graph.fast_apply()
 
         # get all nodes
         for layer in reversed(graph._layers[1:]):  # skip roots
