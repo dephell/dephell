@@ -219,7 +219,10 @@ class Requirement:
 
     @staticmethod
     def _get_comparable_dict(dep) -> dict:
-        excluded = {'constraint', 'repo', 'link', 'marker', 'license', 'inherited_envs', 'locations'}
+        excluded = {
+            'constraint', 'repo', 'link', 'marker', 'license',
+            'inherited_envs', 'locations', 'applied',
+        }
         result = attr.asdict(dep, recurse=True, filter=lambda x, _: x.name not in excluded)
         result['constraint'] = str(dep.constraint)
         if dep.marker:
