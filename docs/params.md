@@ -52,13 +52,27 @@ Commands that accept these parameters:
     + `{digest}` will be replaced by the short 4-letters digest of the project path to avoid conflicts for the projects with the same name in different locations.
     + `{env}` will be replaced by current environment (`main` by default).
 + `--python` -- python version for venv. This can be reloaded in the dependencies file.
++ `--dotenv` -- path to a [.env](https://www.npmjs.com/package/dotenv) file. Will be sourced on a venv activation.
 + `vars` (config only) -- dict of environment variables to pass in virtual environment.
+
+## Docker
+
++ `--docker-repo` -- image name without tag to use for [Docker-based commands](index-docker).
++ `--docker-tag` -- image tag.
++ `--docker-container` -- container name. By default, automatically generated from the project name.
+
+## Project upload
+
++ `--upload-url` -- URL of API endpoint to use to upload dist.
++ `--sign` -- a flag indicates that dists must be signed before uploading.
++ `--identity` -- GPG identity to use to sign dists.
 
 ## Output
 
 + `--format` -- output format.
 + `--level` -- minimal level for log messages. Available levels: `DEBUG`, `INFO`, `WARNING`, `ERROR` and `EXCEPTION`. `INFO` by default. `DEBUG` and `INFO` writes in the stdout, other levels in the stderr.
 + `--nocolors` -- do not color output.
++ `--table` -- format output as a nice ASCII table.
 + `--silent` -- suppress any output except errors. Disables progress bar for resolver.
 + `--filter` -- [filter for JSON output](filters).
 + `--traceback` -- show traceback for exceptions.
@@ -71,9 +85,14 @@ Other:
 + `--cache-ttl` -- Time to live for releases list cache (in seconds). 1 hour by default.
 + `--project` -- path to the current project. Current directory by default.
 + `--bin` -- path to the dir for installing scripts.
++ `--ca` -- path to a custom [CA bundle](https://www.namecheap.com/support/knowledgebase/article.aspx/986/69/what-is-ca-bundle) file. If provided, will be used for both `requests` and `aiohttp`.
 + `--envs` -- environments (`main`, `dev`) or extras to install or convert.
 + `--tests` -- path to test files for [dephell project test](cmd-project-test) command.
 + `--versioning` -- versioning scheme for project. See [dephell project bump](cmd-project-bump) for details.
++ `--tag` -- template for git tag to use in [dephell project bump](cmd-project-bump).
++ `command` (config-only) -- default command to run in [dephell venv run](cmd-venv-run) and [dephell docker run](cmd-docker-run).
++ `--vendor-exclude` -- dependencies that shouldn't be [vendorized](index-vendor).
++ `--vendor-path` -- path to store vendorized dependencies..
 
 ## Default values
 
