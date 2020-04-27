@@ -77,6 +77,35 @@ def test_with_real_names():
     check(root=root, boltons='==1.0', missed=['bandit', 'colorama'], envs={'main'})
 
 
+def test_deep_dependencies():
+    root = make_root(
+        root=Fake('', 'apiwrapper', 'sphinx', 'certifi'),
+        sphinx=(Fake('1.0', 'requests'), ),
+        apiwrapper=(Fake('1.0', 'requests'), ),
+        requests=(Fake('1.0', 'certifi'), ),
+        certifi=(Fake('1.0'), ),
+    )
+    set_envs(root, 'sphinx', {'main'})
+    set_envs(root, 'apiwrapper', {'dev'})
+    set_envs(root, 'certifi', {'dev'})
+    check(root=root, sphinx='==1.0', certifi='==1.0', requests='==1.0', missed=['apiwrapper'], envs={'main'})
+
+
+def test_very_deep_dependencies_reapply():
+    root = make_root(
+        root=Fake('', 'a', 'b'),
+        a=(Fake('1.0', 'c'), ),
+        b=(Fake('1.0', 'c'), ),
+
+        c=(Fake('1.0', 'd'), ),
+        d=(Fake('1.0', 'e'), ),
+        e=(Fake('1.0'), ),
+    )
+    set_envs(root, 'a', {'main'})
+    set_envs(root, 'b', {'dev'})
+    check(root=root, a='==1.0', c='==1.0', d='==1.0', e='==1.0', missed=['b'], envs={'main'})
+
+
 def test_direct_dependencies_without_resolving():
     root = make_root(
         root=Fake('', 'a', 'b'),
