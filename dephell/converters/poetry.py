@@ -33,7 +33,7 @@ class PoetryConverter(BaseConverter):
         if isinstance(path, str):
             path = Path(path)
         if content:
-            return '[tool.poetry]' in content
+            return '[tool.poetry]' in content or '[tool.poetry.' in content
         return path.name in ('poetry.toml', 'pyproject.toml')
 
     def loads(self, content) -> RootDependency:

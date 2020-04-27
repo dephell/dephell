@@ -22,9 +22,9 @@ class Resolver:
         self.graph = graph
         self.mutator = mutator
 
-    def apply(self, parent):
+    def apply(self, parent, recursive: bool = False):
         """
-        Returns conflicting (incompatible) dependency
+        Returns conflicting (incompatible) dependency.
         """
         for new_dep in parent.dependencies:
             other_dep = self.graph.get(new_dep.name)
@@ -45,6 +45,10 @@ class Resolver:
                     other_dep += new_dep
                 except TypeError:   # conflict happened
                     return other_dep
+                # `recursive` used only in re-application of dependencies,
+                # when the graph already was built before.
+                if recursive:
+                    self.apply(other_dep, recursive=True)
             # check
             if not other_dep.compat:
                 return other_dep
@@ -163,7 +167,8 @@ class Resolver:
                 continue
             if not (dep.envs | dep.inherited_envs) & envs:
                 continue
-            self.apply(dep)
+            logger.debug('re-apply', extra=dict(dep=dep.name, envs=envs))
+            self.apply(dep, recursive=True)
 
     def apply_markers(self, python) -> None:
         implementation = python.implementation

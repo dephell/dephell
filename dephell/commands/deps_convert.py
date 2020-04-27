@@ -66,15 +66,14 @@ class DepsConvertCommand(BaseCommand):
 
         # filter out deps by `--envs`
         if self.config.get('envs'):
-            if len(resolver.graph._layers) == 1:
-                for root in resolver.graph._roots:
-                    for dep in root.dependencies:
-                        dep.applied = True
-                        resolver.graph.add(dep)
-                for root in resolver.graph._roots:
-                    root.applied = True
+            if not dumper.lock:
+                resolver.graph.fast_apply()
             resolver.apply_envs(set(self.config['envs']))
-            resolver.graph._layers = resolver.graph._layers[:1]
+            # If it's not a lockfile, we should drop all dependencies except direct ones.
+            # While `fast_apply` doesn't produce such dependencies, we want to be sure
+            # that we can't ever have them in the output. Trust no one.
+            if not dumper.lock:
+                resolver.graph._layers = resolver.graph._layers[:2]
 
         # dump
         self.logger.debug('dump dependencies...', extra=dict(

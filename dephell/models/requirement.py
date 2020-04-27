@@ -29,16 +29,15 @@ class Requirement:
         extras = defaultdict(list)
         roots = [root.name for root in graph.get_layer(0)]
 
-        # if roots wasn't applied then apply them
-        if len(graph._layers) == 1:
-            for root in graph._roots:
-                for dep in root.dependencies:
-                    graph.add(dep)
+        # if roots weren't applied, apply them
+        graph.fast_apply()
 
         # get all nodes
         for layer in reversed(graph._layers[1:]):  # skip roots
             for dep in sorted(layer):
-                if dep.constraint.empty:
+                if not dep.used:
+                    continue
+                if not dep.applied:
                     continue
                 if dep.extra is None:
                     req = cls(dep=dep, lock=lock, roots=roots)
@@ -219,7 +218,10 @@ class Requirement:
 
     @staticmethod
     def _get_comparable_dict(dep) -> dict:
-        excluded = {'constraint', 'repo', 'link', 'marker', 'license', 'inherited_envs', 'locations'}
+        excluded = {
+            'constraint', 'repo', 'link', 'marker', 'license',
+            'inherited_envs', 'locations', 'applied',
+        }
         result = attr.asdict(dep, recurse=True, filter=lambda x, _: x.name not in excluded)
         result['constraint'] = str(dep.constraint)
         if dep.marker:

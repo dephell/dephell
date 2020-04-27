@@ -118,7 +118,7 @@ class Graph:
         raise KeyError('cannot find any parent for dependency: ' + str(dep.name))
 
     def get_leafs(self, level: Optional[int] = None) -> tuple:
-        """Get deps that isn't applied yet
+        """Get deps that aren't applied yet
         """
         layers = self._layers
         if level is not None:
@@ -192,6 +192,19 @@ class Graph:
                 avoid=avoid + [dep.name for dep in deps],
             ))
         return parents
+
+    def fast_apply(self) -> bool:
+        """Apply only the first layer.
+        """
+        if len(self._layers) != 1:
+            return False
+        for root in self._roots:
+            for dep in root.dependencies:
+                dep.applied = True
+                self.add(dep)
+        for root in self._roots:
+            root.applied = True
+        return True
 
     def draw(self, path: str = '.dephell_report', suffix: str = '') -> None:
         dot = graphviz.Digraph(
