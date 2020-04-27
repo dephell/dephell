@@ -30,8 +30,7 @@ class Requirement:
         roots = [root.name for root in graph.get_layer(0)]
 
         # if roots weren't applied, apply them
-        if not lock:
-            graph.fast_apply()
+        graph.fast_apply()
 
         # get all nodes
         for layer in reversed(graph._layers[1:]):  # skip roots
