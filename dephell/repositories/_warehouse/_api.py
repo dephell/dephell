@@ -38,6 +38,8 @@ _fields = {
     'summary',
     'version',
 }
+# Do not download too big files
+SIZE_LIMIT = 2 * 1024 * 1024  # 2 Mb
 
 
 @attr.s()
@@ -284,8 +286,11 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
 
         for converter, checker in rules:
             for file_info in files_info:
+                if file_info.get('size') > SIZE_LIMIT:
+                    continue
                 if not checker(file_info):
                     continue
+                logger.debug('downloading file...', extra=dict(url=file_info['url']))
                 try:
                     return await self._download_and_parse(
                         url=file_info['url'],
