@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from typing import Optional
 
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink
 from pip._internal.req import parse_requirements
@@ -33,6 +34,7 @@ except ImportError:
         from pip._internal.network.session import PipSession
 
 
+@attr.s()
 class PIPConverter(BaseConverter):
     sep = ' \\\n  '
 

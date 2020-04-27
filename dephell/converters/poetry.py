@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Optional
 
 # external
+import attr
 import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
@@ -16,8 +17,10 @@ from ..repositories import WarehouseLocalRepo
 from .base import BaseConverter
 
 
+@attr.s()
 class PoetryConverter(BaseConverter):
-    lock = False
+    lock = attr.ib(type=bool, default=False)
+
     fields = (
         'version', 'python', 'platform', 'allows-prereleases',
         'optional', 'extras', 'develop',

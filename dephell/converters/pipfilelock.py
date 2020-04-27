@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
@@ -22,8 +23,9 @@ from .pipfile import PIPFileConverter
 # https://github.com/pypa/pipfile/blob/master/pipfile/api.py
 
 
+@attr.s()
 class PIPFileLockConverter(PIPFileConverter):
-    lock = True
+    lock = attr.ib(type=bool, default=True)
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if isinstance(path, str):

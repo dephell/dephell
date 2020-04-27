@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink, FileLink, URLLink, VCSLink, parse_link
 from dephell_setuptools import read_setup
@@ -54,8 +55,9 @@ setup(
 """
 
 
+@attr.s()
 class SetupPyConverter(BaseConverter):
-    lock = False
+    lock = attr.ib(type=bool, default=False)
 
     def can_parse(self, path: Path, content: Optional[str] = None) -> bool:
         if isinstance(path, str):

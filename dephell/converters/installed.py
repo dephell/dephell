@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Iterable, Union
 
 # external
+import attr
 from dephell_discover import Root as PackageRoot
 from packaging.utils import canonicalize_name
 
@@ -15,8 +16,9 @@ from .egginfo import EggInfoConverter
 from .wheel import WheelConverter
 
 
+@attr.s()
 class InstalledConverter(BaseConverter):
-    lock = True
+    lock = attr.ib(type=bool, default=True)
 
     _blacklist = {
         'pkg-resources',        # https://bugs.launchpad.net/ubuntu/+source/python-pip/+bug/1635463
