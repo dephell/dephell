@@ -106,6 +106,19 @@ def test_very_deep_dependencies_reapply():
     check(root=root, a='==1.0', c='==1.0', d='==1.0', e='==1.0', missed=['b'], envs={'main'})
 
 
+def test_dependencies_unapply_twice_and_reapply():
+    root = make_root(
+        root=Fake('', 'requests', 'sphinx', 'certifi'),
+        requests=(Fake('1.0', 'certifi'), ),
+        sphinx=(Fake('1.0', 'requests'), ),
+        certifi=(Fake('1.0'), ),
+    )
+    set_envs(root, 'sphinx', {'main'})
+    set_envs(root, 'requests', {'dev'})
+    set_envs(root, 'certifi', {'dev'})
+    check(root=root, sphinx='==1.0', requests='==1.0', certifi='==1.0', missed=[], envs={'main'})
+
+
 def test_direct_dependencies_without_resolving():
     root = make_root(
         root=Fake('', 'a', 'b'),
