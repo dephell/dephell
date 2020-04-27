@@ -30,7 +30,8 @@ class Requirement:
         roots = [root.name for root in graph.get_layer(0)]
 
         # if roots wasn't applied then apply them
-        if len(graph._layers) == 1:
+        applied = len(graph._layers) != 1
+        if not applied:
             for root in graph._roots:
                 for dep in root.dependencies:
                     graph.add(dep)
@@ -38,7 +39,9 @@ class Requirement:
         # get all nodes
         for layer in reversed(graph._layers[1:]):  # skip roots
             for dep in sorted(layer):
-                if dep.constraint.empty:
+                if not dep.used:
+                    continue
+                if applied and not dep.applied:
                     continue
                 if dep.extra is None:
                     req = cls(dep=dep, lock=lock, roots=roots)

@@ -71,7 +71,15 @@ def make_root(root, **releases) -> RootDependency:
     return root_dep
 
 
-def check(root, resolved=True, missed=None, **deps):
+def set_envs(root: RootDependency, dep_name: str, envs: str) -> None:
+    for dep in root.dependencies:
+        if dep.name == dep_name:
+            dep.envs = envs
+            return
+    raise RuntimeError('cannot find dep')
+
+
+def check(root: RootDependency, resolved: bool = True, missed=None, envs: set = None, **deps):
     resolver = Resolver(
         graph=Graph(root),
         mutator=Mutator(),
@@ -81,6 +89,9 @@ def check(root, resolved=True, missed=None, **deps):
         return_value=resolver.graph._roots[0].repo,
     ):
         result = resolver.resolve(debug=True, silent=True)
+
+    if envs is not None:
+        resolver.apply_envs(envs=envs)
 
     reqs = Requirement.from_graph(resolver.graph, lock=True)
     reqs = {req.name: req for req in reqs}
@@ -104,4 +115,4 @@ def check(root, resolved=True, missed=None, **deps):
 
     if missed:
         for name in missed:
-            assert name not in reqs
+            assert name not in reqs, '{} must be missed but it is not'.format(name)
