@@ -137,7 +137,12 @@ class Resolver:
                 self.unapply(dep)
                 dep.group = group
 
-    def apply_envs(self, envs: set) -> None:
+    def apply_envs(self, envs: set, deep: bool = True) -> None:
+        """Filter out dependencies from the graph by the given envs.
+
+        deep: Helps to avoid fetching dependencies (hence the network requests).
+            Set it to False for not resolved graph to make filtering faster.
+        """
         if not any(root.dependencies for root in self.graph.get_layer(0)):
             logger.debug('no dependencies, nothing to filter')
             return
@@ -156,7 +161,8 @@ class Resolver:
             # and ignored in Requirement.from_graph.
             # It's bad behavior because deps of this dep can be required for other
             # deps that won't be unapplied.
-            self.unapply(dep, soft=True)
+            if deep:
+                self.unapply(dep, soft=True)
             dep.applied = False
 
         # Some child deps can be unapplied from other child deps, but we need them.
@@ -168,7 +174,9 @@ class Resolver:
             if not (dep.envs | dep.inherited_envs) & envs:
                 continue
             logger.debug('reapply', extra=dict(dep=dep.name, envs=envs))
-            self.apply(dep, recursive=True)
+            if deep:
+                self.apply(dep, recursive=True)
+            dep.applied = True
 
     def apply_markers(self, python) -> None:
         implementation = python.implementation

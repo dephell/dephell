@@ -1,3 +1,4 @@
+from dephell.converters import PIPConverter
 from dephell.controllers import Graph, Mutator, Resolver
 from dephell.models import Requirement
 
@@ -5,13 +6,13 @@ from dephell.models import Requirement
 from ..helpers import Fake, check, make_root, set_envs
 
 
-def fast_filter(root):
+def fast_filter(root, *, deep=True):
     resolver = Resolver(
         graph=Graph(root),
         mutator=Mutator(),
     )
     resolver.graph.fast_apply()
-    resolver.apply_envs(envs={'main'})
+    resolver.apply_envs(envs={'main'}, deep=deep)
     reqs = Requirement.from_graph(resolver.graph, lock=False)
     return {req.name: req for req in reqs}
 
@@ -130,3 +131,14 @@ def test_direct_dependencies_without_resolving():
 
     reqs = fast_filter(root)
     assert set(reqs) == {'a'}
+
+
+def test_not_deep():
+    """If deep is False, filtering must work and no network requests can be made.
+    """
+    loader = PIPConverter(lock=False)
+    root = loader.loads(content='sphinx\nrequests')
+    root.dependencies[0].envs = {'main'}
+    root.dependencies[1].envs = {'dev'}
+    reqs = fast_filter(root, deep=False)
+    assert set(reqs) == {'sphinx'}
