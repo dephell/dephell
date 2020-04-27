@@ -163,6 +163,7 @@ class Resolver:
                 continue
             if not (dep.envs | dep.inherited_envs) & envs:
                 continue
+            logger.debug('re-apply', extra=dict(dep=dep.name, envs=envs))
             self.apply(dep)
 
     def apply_markers(self, python) -> None:
