@@ -71,6 +71,7 @@ Other:
 + `--cache-ttl` -- Time to live for releases list cache (in seconds). 1 hour by default.
 + `--project` -- path to the current project. Current directory by default.
 + `--bin` -- path to the dir for installing scripts.
++ `--ca` -- path to a custom [CA bundle](https://www.namecheap.com/support/knowledgebase/article.aspx/986/69/what-is-ca-bundle) file. If provided, will be used for both `requests` and `aiohttp`.
 + `--envs` -- environments (`main`, `dev`) or extras to install or convert.
 + `--tests` -- path to test files for [dephell project test](cmd-project-test) command.
 + `--versioning` -- versioning scheme for project. See [dephell project bump](cmd-project-bump) for details.

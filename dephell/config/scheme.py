@@ -115,6 +115,7 @@ SCHEME = {
     ),
     'project':      dict(type='string', required=True),
     'bin':          dict(type='string', required=True),
+    'ca':           dict(type='string', required=False),
     'envs':         dict(type='list', schema=dict(type='string'), required=False, empty=False),
     'tests':        dict(type='list', schema=dict(type='string'), required=True),
     'versioning':   dict(type='string', required=True, allowed=get_schemes()),
