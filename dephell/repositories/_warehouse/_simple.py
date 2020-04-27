@@ -122,6 +122,9 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         raise NotImplementedError
 
     async def download(self, name: str, version: str, path: Path) -> bool:
+        if not isinstance(version, str):
+            version = str(version)
+
         links = self._get_links(name=name)
         good_links = []
         for link in links:
