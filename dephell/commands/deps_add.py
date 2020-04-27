@@ -38,6 +38,7 @@ class DepsAddCommand(BaseCommand):
         # get new deps
         new_resolver = get_resolver(reqs=self.args.name)
         new_root = new_resolver.graph._roots[0]
+        new_root.name = 'new-root'
 
         # set envs
         for dep in new_root.dependencies:
