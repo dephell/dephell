@@ -2,6 +2,10 @@
 
 Follow [@PythonDepHell](https://twitter.com/PythonDepHell) on Twitter to get updates about new features and releases.
 
+## v.0.8.3 (2020-04-28)
+
+This release brings a lot of small fixes. See [the milestone](https://github.com/dephell/dephell/milestone/6?closed=1) for the details. The only noticeable change is an ability to provide a custom CA bundle via  `--ca` flag. A few next releases also will bring more stability and speed into DepHell. [Stay tuned!](https://twitter.com/PythonDepHell)
+
 ## v.0.8.2 (2020-03-19)
 
 New commands:
