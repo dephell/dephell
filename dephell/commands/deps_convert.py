@@ -81,10 +81,10 @@ class DepsConvertCommand(BaseCommand):
             path=self.config['to']['path'],
         ))
 
-        dumper_kwargs = {
-            'reqs': Requirement.from_graph(resolver.graph, lock=dumper.lock),
-            'project': resolver.graph.metainfo,
-        }
+        dumper_kwargs = dict(
+            reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),
+            project=resolver.graph.metainfo,
+        )
         if self.config['to']['path'] == 'stdout':
             print(dumper.dumps(**dumper_kwargs))
         else:

@@ -1,5 +1,6 @@
-from dephell.converters import PIPConverter
+# project
 from dephell.controllers import Graph, Mutator, Resolver
+from dephell.converters import PIPConverter
 from dephell.models import Requirement
 
 # app
