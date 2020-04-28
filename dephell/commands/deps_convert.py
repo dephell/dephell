@@ -66,13 +66,13 @@ class DepsConvertCommand(BaseCommand):
 
         # filter out deps by `--envs`
         if self.config.get('envs'):
-            if not dumper.lock:
+            if not should_be_resolved:
                 resolver.graph.fast_apply()
-            resolver.apply_envs(set(self.config['envs']))
+            resolver.apply_envs(envs=set(self.config['envs']), deep=should_be_resolved)
             # If it's not a lockfile, we should drop all dependencies except direct ones.
             # While `fast_apply` doesn't produce such dependencies, we want to be sure
             # that we can't ever have them in the output. Trust no one.
-            if not dumper.lock:
+            if not should_be_resolved:
                 resolver.graph._layers = resolver.graph._layers[:2]
 
         # dump
@@ -81,10 +81,10 @@ class DepsConvertCommand(BaseCommand):
             path=self.config['to']['path'],
         ))
 
-        dumper_kwargs = {
-            'reqs': Requirement.from_graph(resolver.graph, lock=dumper.lock),
-            'project': resolver.graph.metainfo,
-        }
+        dumper_kwargs = dict(
+            reqs=Requirement.from_graph(resolver.graph, lock=dumper.lock),
+            project=resolver.graph.metainfo,
+        )
         if self.config['to']['path'] == 'stdout':
             print(dumper.dumps(**dumper_kwargs))
         else:
