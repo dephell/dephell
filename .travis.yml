@@ -53,6 +53,8 @@ matrix:
     - name: markdown lint
       language: node_js
       node_js: "14"
+      before_install:
+        - true
       install:
         - npm install -g markdownlint-cli
       script:
