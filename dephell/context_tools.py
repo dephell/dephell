@@ -3,10 +3,13 @@ import os
 import sys
 from contextlib import contextmanager
 from typing import Dict
+from pathlib import Path
+from typing import Iterator
+from typing import Union
 
 
 @contextmanager
-def chdir(path):
+def chdir(path: Union[Path, str]) -> Iterator:
     """Context manager for changing dir and restoring previous workdir after exit.
     """
     curdir = os.getcwd()

@@ -54,7 +54,7 @@ class ModuleImportModifier:
         >
         """
 
-    def __init__(self, old_name, new_name):
+    def __init__(self, old_name: str, new_name: str) -> None:
         self.old_name = old_name
         self.new_name = new_name
 
@@ -91,7 +91,7 @@ class FromImportModifier:
         >
         """
 
-    def __init__(self, old_name, new_name):
+    def __init__(self, old_name: str, new_name: str) -> None:
         self.old_name = old_name
         self.new_name = new_name
 
@@ -138,7 +138,7 @@ class ModuleAsImportModifier:
         >
         """
 
-    def __init__(self, old_name, new_name):
+    def __init__(self, old_name: str, new_name: str) -> None:
         self.old_name = old_name
         self.new_name = new_name
 
@@ -161,7 +161,7 @@ class StringModifier:
         string=STRING
         """
 
-    def __init__(self, old_name, new_name):
+    def __init__(self, old_name: str, new_name: str) -> None:
         self.old_name = old_name
         self.new_name = new_name
 
