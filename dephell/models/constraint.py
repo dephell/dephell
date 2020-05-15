@@ -7,9 +7,9 @@ from dephell_specifier import RangeSpecifier
 
 
 if TYPE_CHECKING:
-    from .dependency import Dependency
-    from .extra_dependency import ExtraDependency
-    from .root import RootDependency
+    from .dependency import Dependency              # noqa: F401
+    from .extra_dependency import ExtraDependency   # noqa: F401
+    from .root import RootDependency                # noqa: F401
 
 
 class Constraint:
