@@ -2,7 +2,7 @@
 from collections import defaultdict
 from datetime import date, timedelta
 from itertools import zip_longest
-from typing import Any, DefaultDict, Dict, Sequence, Iterator, List
+from typing import Any, DefaultDict, Dict, Iterator, List, Sequence
 
 # external
 import attr

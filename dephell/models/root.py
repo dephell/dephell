@@ -2,7 +2,7 @@
 from contextlib import suppress
 from itertools import chain
 from pathlib import Path
-from typing import List, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Tuple
 
 # external
 import attr

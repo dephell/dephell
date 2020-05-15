@@ -1,7 +1,7 @@
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 # app
 from ..actions import attach_deps

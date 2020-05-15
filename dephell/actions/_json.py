@@ -2,7 +2,7 @@
 import json
 from collections import defaultdict
 from functools import reduce
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 # app
 from ..imports import lazy_import

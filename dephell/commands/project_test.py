@@ -8,7 +8,7 @@ from tempfile import TemporaryDirectory
 from typing import Dict, Tuple
 
 # external
-from dephell_pythons import Pythons, Python
+from dephell_pythons import Python, Pythons
 from dephell_venvs import VEnv
 
 # app
