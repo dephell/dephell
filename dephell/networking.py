@@ -3,19 +3,20 @@ from functools import partial, update_wrapper
 from logging import getLogger
 from ssl import create_default_context
 from time import sleep
+from typing import Any, Optional
 
 # external
 import certifi
 import requests
 from aiohttp import ClientError, ClientSession, TCPConnector
+from requests.sessions import Session
+
+# project
+from dephell.models.auth import Auth
 
 # app
 from . import __version__
 from .config import config
-from typing import Any
-from typing import Optional
-from dephell.models.auth import Auth
-from requests.sessions import Session
 
 
 USER_AGENT = 'DepHell/{version}'.format(version=__version__)

@@ -1,6 +1,6 @@
 # built-in
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 # external
 import attr
@@ -9,15 +9,13 @@ from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
+from tomlkit.items import InlineTable, String
 
 # app
 from ..controllers import DependencyMaker, RepositoriesRegistry
 from ..models import Constraint, Dependency, Requirement, RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo, get_repo
 from .base import BaseConverter
-from tomlkit.items import InlineTable
-from tomlkit.items import String
-from typing import Union
 
 
 VCS_LIST = ('git', 'svn', 'hg', 'bzr')

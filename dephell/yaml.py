@@ -1,8 +1,8 @@
 # app
+# built-in
+from typing import Any, Dict, Optional, TextIO
+
 from .imports import lazy_import
-from typing import Any
-from typing import Dict
-from typing import Optional, TextIO
 
 
 ruamel_yaml = lazy_import('ruamel.yaml', package='ruamel.yaml')

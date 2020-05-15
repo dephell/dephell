@@ -1,6 +1,6 @@
 # built-in
 from collections import OrderedDict, defaultdict
-from typing import Iterable, Optional, Set, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Optional, Set, Tuple
 
 # external
 import attr
@@ -8,8 +8,6 @@ from dephell_links import DirLink, FileLink, VCSLink
 
 # app
 from ..cached_property import cached_property
-from typing import Any
-from typing import Iterator
 
 
 if TYPE_CHECKING:

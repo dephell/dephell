@@ -2,10 +2,8 @@
 import os
 import sys
 from contextlib import contextmanager
-from typing import Dict
 from pathlib import Path
-from typing import Iterator
-from typing import Union
+from typing import Dict, Iterator, Union
 
 
 @contextmanager

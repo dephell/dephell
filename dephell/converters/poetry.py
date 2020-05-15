@@ -1,7 +1,7 @@
 # built-in
 from collections import defaultdict
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple, Union
 
 # external
 import attr
@@ -9,17 +9,13 @@ import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_specifier import RangeSpecifier
 from packaging.utils import canonicalize_name
+from tomlkit.items import InlineTable, String, Table
 
 # app
 from ..controllers import DependencyMaker, Readme, RepositoriesRegistry
-from ..models import Author, Constraint, Dependency, EntryPoint, RootDependency, Requirement
+from ..models import Author, Constraint, Dependency, EntryPoint, Requirement, RootDependency
 from ..repositories import WarehouseLocalRepo
 from .base import BaseConverter
-from tomlkit.items import Table
-from typing import Tuple
-from tomlkit.items import InlineTable
-from tomlkit.items import String
-from typing import Union
 
 
 @attr.s()

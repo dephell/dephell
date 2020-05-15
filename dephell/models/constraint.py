@@ -1,11 +1,9 @@
 # built-in
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Union
 
 # external
 from dephell_specifier import RangeSpecifier
-from typing import Any
-from typing import Union
 
 
 if TYPE_CHECKING:

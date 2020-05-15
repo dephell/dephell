@@ -3,7 +3,7 @@ import json
 from collections import OrderedDict
 from hashlib import sha256
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
 # external
 import attr
@@ -11,14 +11,14 @@ from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
 
+# project
+from dephell.models.requirement import Requirement
+
 # app
 from ..controllers import RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .pipfile import PIPFileConverter
-from dephell.models.requirement import Requirement
-from typing import Any
-from typing import Dict
 
 
 # https://stackoverflow.com/a/23820416

@@ -1,6 +1,6 @@
 # built-in
 from datetime import datetime
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 # external
 import attr
@@ -10,9 +10,6 @@ from packaging.version import parse
 
 # app
 from ..cached_property import cached_property
-from typing import Any
-from typing import Dict
-from typing import List
 
 
 @attr.s(hash=False, eq=False, order=False)

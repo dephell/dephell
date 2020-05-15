@@ -1,6 +1,6 @@
 # built-in
 import asyncio
-from typing import Optional
+from typing import Iterator, Optional
 
 # external
 import attr
@@ -9,7 +9,6 @@ import attr
 from ..cached_property import cached_property
 from ..config import config
 from .group import Group
-from typing import Iterator
 
 
 loop = asyncio.get_event_loop()

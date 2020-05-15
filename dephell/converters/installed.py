@@ -1,12 +1,15 @@
 # built-in
 import sys
 from pathlib import Path
-from typing import Iterable, Union
+from typing import Iterable, List, Union
 
 # external
 import attr
 from dephell_discover import Root as PackageRoot
 from packaging.utils import canonicalize_name
+
+# project
+from dephell.controllers._resolver import Resolver
 
 # app
 from ..controllers import DependencyMaker
@@ -14,8 +17,6 @@ from ..models import RootDependency
 from .base import BaseConverter
 from .egginfo import EggInfoConverter
 from .wheel import WheelConverter
-from dephell.controllers._resolver import Resolver
-from typing import List
 
 
 @attr.s()

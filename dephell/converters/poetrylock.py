@@ -9,13 +9,13 @@ import tomlkit
 from dephell_discover import Root as PackageRoot
 from dephell_links import DirLink
 from dephell_specifier import RangeSpecifier
+from tomlkit.items import Table
 
 # app
 from ..controllers import DependencyMaker, RepositoriesRegistry
-from ..models import Constraint, Dependency, RootDependency, Requirement
+from ..models import Constraint, Dependency, Requirement, RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .base import BaseConverter
-from tomlkit.items import Table
 
 
 @attr.s()

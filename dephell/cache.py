@@ -3,14 +3,11 @@ import json
 import pickle
 from pathlib import Path
 from time import time
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, List, Optional, Union
 
 # app
 from .cached_property import cached_property
 from .config import config
-from typing import Any
-from typing import Optional
-from typing import Union
 
 
 if TYPE_CHECKING:

@@ -1,7 +1,7 @@
 # built-in
 import re
 from logging import getLogger
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 # external
 from packaging.markers import Marker

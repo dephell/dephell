@@ -1,10 +1,10 @@
 # project
 # external
+from dephell_argparse._parser import Parser
 from dephell_versioning import get_schemes
 
 # app
 from ..constants import FORMATS, LOG_FORMATTERS, LOG_LEVELS, REPOSITORIES, STRATEGIES
-from dephell_argparse._parser import Parser
 
 
 env_help = (

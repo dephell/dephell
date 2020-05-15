@@ -1,12 +1,10 @@
 # built-in
 from operator import attrgetter
-from typing import Optional
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 # app
 from ..cached_property import cached_property
 from ..config import config
-from typing import Union
 
 
 if TYPE_CHECKING:

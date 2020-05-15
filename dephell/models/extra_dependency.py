@@ -1,13 +1,15 @@
 # external
+# built-in
+from typing import Union
+
 import attr
 from packaging.utils import canonicalize_name
+from tomlkit.items import String
 
 # app
 from ..cached_property import cached_property
 from .dependency import Dependency
 from .groups import Groups
-from tomlkit.items import String
-from typing import Union
 
 
 @attr.s(eq=False, order=False)

@@ -5,6 +5,7 @@ from pathlib import Path
 
 # external
 import tomlkit
+from tomlkit.items import Table
 
 # app
 from ..cached_property import cached_property
@@ -12,7 +13,6 @@ from ..config import Config, builders, config
 from ..constants import PAIRS, SUFFIXES
 from ..converters import CONVERTERS
 from .base import BaseCommand
-from tomlkit.items import Table
 
 
 class GenerateConfigCommand(BaseCommand):
