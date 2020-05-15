@@ -24,6 +24,6 @@ class Auth(HTTPBasicAuth):
         return request
 
     # for aiohttp
-    def encode(self):
+    def encode(self) -> str:
         creds = (self.username + ':' + self.password).encode(self.encoding)
         return 'Basic ' + b64encode(creds).decode('ascii')

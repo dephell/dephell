@@ -25,7 +25,7 @@ class Release:
 
     extra = attr.ib(type=Optional[str], default=None)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         assert '[' not in self.raw_name, self.raw_name
 
     @classmethod

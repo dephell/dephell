@@ -3,7 +3,7 @@ from dephell_markers import Markers, OrMarker
 
 
 class MarkerTracker:
-    def __init__(self):
+    def __init__(self) -> None:
         self._markers = dict()
 
     @property

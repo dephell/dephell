@@ -12,7 +12,7 @@ from .groups import Groups
 class ExtraDependency(Dependency):
     extra = attr.ib(type=str, default='')
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         assert self.extra != ''
 
     @classmethod

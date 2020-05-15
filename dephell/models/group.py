@@ -88,7 +88,7 @@ class Group:
     def empty(self) -> bool:
         return not bool(self.releases)
 
-    def __str__(self):
+    def __str__(self) -> str:
         versions = sorted(release.version for release in self.releases)
         versions = [str(v) for v in versions]
         if not versions:

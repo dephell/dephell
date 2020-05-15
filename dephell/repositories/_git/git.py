@@ -53,9 +53,10 @@ class GitRepo(Interface):
         return path
 
     @cached_property
-    def metaversion(self):
+    def metaversion(self) -> Optional[str]:
         if self.link.rev:
             return self.get_nearest_version(self.link.rev)
+        return None
 
     # PUBLIC METHODS
 
@@ -153,7 +154,7 @@ class GitRepo(Interface):
         return data[-1].strip().strip('"')
 
     @staticmethod
-    def _clean_tag(tag):
+    def _clean_tag(tag: str) -> str:
         return rex_version.fullmatch(tag).groups()[0]
 
     def _version_to_rev(self, version) -> str:

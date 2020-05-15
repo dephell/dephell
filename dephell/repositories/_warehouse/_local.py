@@ -32,7 +32,7 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
     from_config = attr.ib(type=bool, default=False)
     propagate = True  # deps of deps will inherit repo
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         if isinstance(self.path, str):
             self.path = Path(self.path)
 
