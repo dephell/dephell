@@ -5,9 +5,10 @@ import subprocess
 from argparse import REMAINDER, ArgumentParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Dict, Tuple
 
 # external
-from dephell_pythons import Pythons
+from dephell_pythons import Python, Pythons
 from dephell_venvs import VEnv
 
 # app
@@ -70,25 +71,26 @@ class ProjectTestCommand(BaseCommand):
         # choose pythons
         self.logger.info('get interpreters')
         pythons = Pythons()
+        choosen_pythons: Tuple[Python, ...]
         if 'python' in self.config:
             # get from config
             choosen_pythons = (pythons.get_best(self.config['python']), )
         else:
             # get from project
-            choosen_pythons = dict()
-            pyrhon_constraint = resolver.graph.metainfo.python
+            pythons_by_version = dict()  # type: Dict[str, Python]
+            python_constraint = resolver.graph.metainfo.python
             for python in pythons:
                 version = str(python.get_short_version())
-                if version in choosen_pythons:
+                if version in pythons_by_version:
                     continue
-                if python.version not in pyrhon_constraint:
+                if python.version not in python_constraint:
                     continue
-                choosen_pythons[version] = python
-            choosen_pythons = tuple(choosen_pythons.values())
+                pythons_by_version[version] = python
+            choosen_pythons = tuple(pythons_by_version.values())
 
         for python in choosen_pythons:
-            with TemporaryDirectory() as path:
-                root_path = Path(path)
+            with TemporaryDirectory() as root_path:  # type: Path # type: ignore
+                root_path = Path(root_path)
 
                 # make venv
                 self.logger.info('create venv', extra=dict(python=str(python.version)))
@@ -96,7 +98,7 @@ class ProjectTestCommand(BaseCommand):
                 venv.create(python_path=python.path)
 
                 # copy tests
-                for path in self.config['tests']:
+                for path in self.config['tests']:  # type: Path # type: ignore
                     self.logger.info('copy files', extra=dict(path=path))
                     path = Path(path)
                     if not path.exists():

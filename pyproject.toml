@@ -33,7 +33,7 @@ command = "flake8"
 from = {format = "poetry", path = "pyproject.toml"}
 # mypy isn't specified in dependencies,
 # but `dephell venv run` command will install it automatically
-command = "mypy --ignore-missing-imports --allow-redefinition dephell"
+command = "mypy --ignore-missing-imports --allow-redefinition --follow-imports=silent dephell/actions dephell/commands"
 
 # Test project package in the separated venv:
 # $ dephell project test --env=pytest

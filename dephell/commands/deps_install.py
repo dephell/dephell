@@ -97,6 +97,6 @@ class DepsInstallCommand(BaseCommand):
         # remove packages not in graph
         if self.sync:
             names = set(installed) - {req.name for req in reqs}
-            remove.extend(SimpleNamespace(name=name) for name in names)
+            remove.extend(SimpleNamespace(name=name) for name in names)  # type: ignore
 
         return install, remove

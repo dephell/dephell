@@ -19,7 +19,7 @@ class CondaRepo(CondaBaseRepo):
 
     _requests = attr.ib(default=0)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         if not self.git_repo.channels:
             self.git_repo.channels = self.channels
         if not self.cloud_repo.channels:

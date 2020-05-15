@@ -10,7 +10,7 @@ from dephell.commands import GenerateLicenseCommand
 from dephell.config import Config
 
 
-@pytest.mark.allow_hosts(['pypi.org', '140.211.169.8'])
+@pytest.mark.allow_hosts()
 def test_generate_license_command(temp_path: Path):
     config = Config()
     config.attach({'project': str(temp_path)})

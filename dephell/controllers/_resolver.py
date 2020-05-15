@@ -1,7 +1,7 @@
 # built-in
 import re
 from logging import getLogger
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 # external
 from packaging.markers import Marker
@@ -13,12 +13,17 @@ from ..models import RootDependency
 from ._conflict import analyze_conflict
 
 
+if TYPE_CHECKING:
+    from dephell.controllers._graph import Graph
+    from dephell.controllers._mutator import Mutator
+
+
 logger = getLogger('dephell.resolver')
 REX_BASE_VERSION = re.compile(r'[0-9\.]+')
 
 
 class Resolver:
-    def __init__(self, graph, mutator):
+    def __init__(self, graph: 'Graph', mutator: 'Mutator') -> None:
         self.graph = graph
         self.mutator = mutator
 

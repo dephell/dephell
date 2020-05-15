@@ -56,7 +56,7 @@ class WarehouseAPIRepo(WarehouseBaseRepo):
     hash = None
     link = None
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         # make name canonical
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'

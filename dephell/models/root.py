@@ -2,7 +2,7 @@
 from contextlib import suppress
 from itertools import chain
 from pathlib import Path
-from typing import Tuple
+from typing import TYPE_CHECKING, List, Tuple
 
 # external
 import attr
@@ -15,6 +15,10 @@ from packaging.version import parse as parse_version
 from ..cached_property import cached_property
 from .author import Author
 from .group import Group
+
+
+if TYPE_CHECKING:
+    from .dependency import Dependency  # noqa: F401
 
 
 @attr.s()
@@ -38,7 +42,7 @@ class RootRelease:
 @attr.s()
 class RootDependency:
     raw_name = attr.ib(default='root')
-    dependencies = attr.ib(factory=list, repr=False)
+    dependencies = attr.ib(factory=list, repr=False, type=List['Dependency'])
     repo = attr.ib(default=None, repr=False)
 
     # additional info strings

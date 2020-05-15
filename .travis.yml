@@ -51,7 +51,10 @@ matrix:
 
     # https://github.com/igorshubovych/markdownlint-cli
     - name: markdown lint
-      language: generic
+      language: node_js
+      node_js: "14"
+      before_install:
+        - true
       install:
         - npm install -g markdownlint-cli
       script:
@@ -65,6 +68,9 @@ matrix:
 
     - python: "3.7"
       env: ENV=flake8
+
+    - python: "3.7"
+      env: ENV=typing
 
     - python: "3.7"
       env: ENV=isort

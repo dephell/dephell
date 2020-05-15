@@ -3,13 +3,16 @@ import json
 from collections import OrderedDict
 from hashlib import sha256
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
 # external
 import attr
 from dephell_discover import Root as PackageRoot
 from dephell_pythons import Pythons
 from dephell_specifier import RangeSpecifier
+
+# project
+from dephell.models.requirement import Requirement
 
 # app
 from ..controllers import RepositoriesRegistry
@@ -120,7 +123,7 @@ class PIPFileLockConverter(PIPFileConverter):
         content = json.dumps(data, sort_keys=True, separators=(',', ':'))
         return sha256(content.encode('utf8')).hexdigest()
 
-    def _format_req(self, req):
+    def _format_req(self, req: Requirement) -> Dict[str, Any]:
         result = dict()
         for name, value in req:
             if name == 'rev':

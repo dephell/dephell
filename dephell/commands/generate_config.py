@@ -5,6 +5,7 @@ from pathlib import Path
 
 # external
 import tomlkit
+from tomlkit.items import Table
 
 # app
 from ..cached_property import cached_property
@@ -33,11 +34,11 @@ class GenerateConfigCommand(BaseCommand):
             config._data['config'] = 'pyproject.toml'
         return config
 
-    def validate(self):
+    def validate(self) -> bool:
         return True
 
     @staticmethod
-    def _make_env(from_format, from_path, to_format, to_path):
+    def _make_env(from_format: str, from_path: str, to_format: str, to_path: str) -> Table:
         table = tomlkit.table()
 
         table['from'] = tomlkit.inline_table()

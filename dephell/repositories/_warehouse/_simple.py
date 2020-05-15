@@ -40,7 +40,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
     from_config = attr.ib(type=bool, default=False)
     propagate = True  # deps of deps will inherit repo
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         # make name canonical
         if self.name in ('pypi.org', 'pypi.python.org'):
             self.name = 'pypi'

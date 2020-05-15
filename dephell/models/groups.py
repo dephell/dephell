@@ -1,6 +1,6 @@
 # built-in
 import asyncio
-from typing import Optional
+from typing import Iterator, Optional
 
 # external
 import attr
@@ -161,7 +161,7 @@ class Groups:
         self.actualize(group=group)
         return group
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         # return all groups from cache
         for group in self._loaded_groups:
             self.actualize(group=group)

@@ -275,7 +275,7 @@ class FlitConverter(BaseConverter):
 
         return tomlkit.dumps(doc)
 
-    def _format_req(self, req):
+    def _format_req(self, req: Requirement) -> str:
         line = req.name
         if req.extras:
             line += '[{extras}]'.format(extras=','.join(req.extras))

@@ -2,7 +2,7 @@
 import json
 from collections import defaultdict
 from functools import reduce
-from typing import Optional
+from typing import Any, Dict, Optional
 
 # app
 from ..imports import lazy_import
@@ -124,19 +124,19 @@ def _beautify(data, *, colors: bool, table: bool) -> str:
             )
         # list of dicts
         if isinstance(data, list) and data and isinstance(data[0], dict):
-            table = []
+            result = []
             for row in data:
                 row = _flatdict(row)
                 keys = tuple(row)
                 row = [v for _, v in sorted(row.items())]
-                table.append(row)
+                result.append(row)
             return tabulate.tabulate(
-                table,
+                result,
                 headers=keys,
                 tablefmt='fancy_grid',
             )
 
-    json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)
+    json_params = dict(indent=2, sort_keys=True, ensure_ascii=False)  # type: Dict[str, Any]
     dumped = json.dumps(data, **json_params)
     if not colors:
         return dumped

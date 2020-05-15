@@ -1,12 +1,19 @@
 # built-in
 from copy import deepcopy
+from typing import TYPE_CHECKING, Any, Union
 
 # external
 from dephell_specifier import RangeSpecifier
 
 
+if TYPE_CHECKING:
+    from .dependency import Dependency              # noqa: F401
+    from .extra_dependency import ExtraDependency   # noqa: F401
+    from .root import RootDependency                # noqa: F401
+
+
 class Constraint:
-    def __init__(self, source, spec):
+    def __init__(self, source: Union['Dependency', 'ExtraDependency', 'RootDependency'], spec: Any) -> None:
         """
         source (Dependency)
         spec (str, LegacySpecifier, Specifier)
@@ -76,7 +83,7 @@ class Constraint:
     def __and__(self, other):
         return self.copy().__iand__(other)
 
-    def __iand__(self, other):
+    def __iand__(self, other: 'Constraint') -> 'Constraint':
         if not isinstance(other, Constraint):
             return NotImplemented
         for name, group in other._groups.items():

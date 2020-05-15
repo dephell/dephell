@@ -41,7 +41,7 @@ class JailTryCommand(BaseCommand):
         if isinstance(command, str):
             command = shlex.split(command)
 
-        with TemporaryDirectory() as base_path:
+        with TemporaryDirectory() as base_path:  # type: Path # type: ignore
             base_path = Path(base_path)
 
             # make venv

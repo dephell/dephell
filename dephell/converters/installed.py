@@ -1,12 +1,15 @@
 # built-in
 import sys
 from pathlib import Path
-from typing import Iterable, Union
+from typing import Iterable, List, Union
 
 # external
 import attr
 from dephell_discover import Root as PackageRoot
 from packaging.utils import canonicalize_name
+
+# project
+from dephell.controllers._resolver import Resolver
 
 # app
 from ..controllers import DependencyMaker
@@ -25,7 +28,7 @@ class InstalledConverter(BaseConverter):
         'command-not-found',    # https://stackoverflow.com/a/22676267
     }
 
-    def load_resolver(self, path=None, paths=None):
+    def load_resolver(self, path=None, paths: List[Path] = None) -> Resolver:
         if path is not None:
             root = self.load(path=path)
         else:

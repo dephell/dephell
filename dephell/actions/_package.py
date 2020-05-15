@@ -21,6 +21,6 @@ def get_package(req: str, repo: str = None) -> Dependency:
     return dep
 
 
-def get_resolver(reqs: Iterable[str] = None) -> Resolver:
+def get_resolver(reqs: Iterable[str]) -> Resolver:
     resolver = PIPConverter(lock=False).loads_resolver('\n'.join(reqs))
     return resolver

@@ -1,6 +1,6 @@
 # built-in
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 # external
 from jinja2 import Environment, PackageLoader
@@ -29,7 +29,7 @@ KNOWN_SECTIONS = (
 )
 
 
-def make_contributing(config: Dict[str, Dict[str, Any]], project_path: Path) -> Optional[str]:
+def make_contributing(config: Dict[str, Dict[str, Any]], project_path: Path) -> str:
     template = env.get_template('contributing.md.j2')
     envs = dict()
     for name, category in KNOWN_SECTIONS:

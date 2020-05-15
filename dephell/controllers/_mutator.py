@@ -16,7 +16,7 @@ from ._graph import Graph
 logger = getLogger('dephell.controllers')
 
 
-def lazy_product(*all_groups):
+def lazy_product(*all_groups) -> Iterator:
     slices = [[] for _ in range(len(all_groups))]
     all_groups = [iter(groups) for groups in all_groups]
 

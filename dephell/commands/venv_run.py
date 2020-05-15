@@ -59,13 +59,13 @@ class VenvRunCommand(BaseCommand):
             self.logger.warning('executable is not found in venv, trying to install...', extra=dict(
                 executable=command[0],
             ))
-            result = install_dep(
+            installed = install_dep(
                 name=command[0],
                 python_path=venv.python_path,
                 logger=self.logger,
                 silent=self.config['silent'],
             )
-            if not result:
+            if not installed:
                 return False
         if not executable.exists():
             self.logger.error('package installed, but executable is not found')

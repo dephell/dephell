@@ -1,6 +1,7 @@
 # built-in
 from copy import deepcopy
-from typing import Tuple
+from pathlib import Path
+from typing import Dict, Set, Tuple
 
 # external
 import attr
@@ -27,11 +28,11 @@ class Dependency:
     applied = attr.ib(type=bool, default=False, repr=False)
 
     # optional info
-    description = attr.ib(type=str, default='', repr=False)     # summary
-    authors = attr.ib(factory=tuple, repr=False)                # author{,_email}, maintainer{,_email}
-    links = attr.ib(factory=dict, repr=False)                   # project_url{,s}, package_url
-    classifiers = attr.ib(type=tuple, factory=tuple, repr=False)            # classifiers
-    license = attr.ib(default=None, repr=False)                 # license
+    description = attr.ib(type=str, default='', repr=False)         # summary
+    authors = attr.ib(factory=tuple, repr=False)                    # author{,_email}, maintainer{,_email}
+    links = attr.ib(factory=dict, type=Dict[str, str], repr=False)  # project_url{,s}, package_url
+    classifiers = attr.ib(type=tuple, factory=tuple, repr=False)    # classifiers
+    license = attr.ib(default=None, repr=False)                     # license
 
     # info from requirements file
     editable = attr.ib(type=bool, default=False, repr=False)
@@ -40,7 +41,7 @@ class Dependency:
     marker = attr.ib(type=MarkerTracker, factory=MarkerTracker, repr=False)
     envs = attr.ib(type=set, factory=set, repr=False)  # which root extras cause this dep
     inherited_envs = attr.ib(type=set, factory=set, repr=False)  # envs of parents
-    locations = attr.ib(type=set, factory=set, repr=False)  # package places on disk
+    locations = attr.ib(type=Set[Path], factory=set, repr=False)  # package places on disk
 
     extra = None
 

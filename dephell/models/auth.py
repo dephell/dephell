@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 # external
 import attr
 from requests.auth import HTTPBasicAuth
+from requests.models import PreparedRequest
 
 
 @attr.s(eq=True, order=True, frozen=True)
@@ -15,7 +16,7 @@ class Auth(HTTPBasicAuth):
     encoding = attr.ib(type=str, default='latin1')
 
     # for requests
-    def __call__(self, request):
+    def __call__(self, request: PreparedRequest) -> PreparedRequest:
         # additional check to prevent lack of creds
         if urlparse(request.url).hostname != self.hostname:
             return request
@@ -24,6 +25,6 @@ class Auth(HTTPBasicAuth):
         return request
 
     # for aiohttp
-    def encode(self):
+    def encode(self) -> str:
         creds = (self.username + ':' + self.password).encode(self.encoding)
         return 'Basic ' + b64encode(creds).decode('ascii')

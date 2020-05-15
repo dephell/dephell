@@ -2,7 +2,7 @@
 from collections import defaultdict
 from datetime import date, timedelta
 from itertools import zip_longest
-from typing import Dict, Iterable, Iterator, List
+from typing import Any, DefaultDict, Dict, Iterator, List, Sequence
 
 # external
 import attr
@@ -20,9 +20,9 @@ CATEGORIES_URLS = dict(
 
 @attr.s()
 class DateList:
-    start = attr.ib()
-    end = attr.ib()
-    _data = attr.ib(factory=dict, repr=False)
+    start = attr.ib(type=date)
+    end = attr.ib(type=date)
+    _data = attr.ib(factory=dict, repr=False, type=Dict[str, int])
 
     def add(self, date: str, value: int):
         self._data[date] = value
@@ -34,7 +34,7 @@ class DateList:
             moment += timedelta(1)
 
 
-def make_chart(values: Iterable[int], group: int = None, ticks: str = '_▁▂▃▄▅▆▇█') -> str:
+def make_chart(values: Sequence[int], group: int = None, ticks: str = '_▁▂▃▄▅▆▇█') -> str:
     peek = max(values)
     if peek == 0:
         chart = ticks[-1] * len(values)
@@ -62,7 +62,7 @@ def get_total_downloads(name: str) -> Dict[str, int]:
     )
 
 
-def get_downloads_by_category(*, category: str, name: str) -> List[Dict[str, int]]:
+def get_downloads_by_category(*, category: str, name: str) -> List[Dict[str, Any]]:
     url = CATEGORIES_URLS[category].format(name)
     with requests_session() as session:
         response = session.get(url)
@@ -70,14 +70,15 @@ def get_downloads_by_category(*, category: str, name: str) -> List[Dict[str, int
     body = response.json()['data']
 
     yesterday = date.today() - timedelta(1)
+    grouped: DefaultDict[str, DateList]
     grouped = defaultdict(lambda: DateList(start=yesterday - timedelta(30), end=yesterday))
     for line in body:
         category = line['category'].replace('.', '')
         grouped[category].add(date=line['date'], value=line['downloads'])
 
     result = []
-    for category, downloads in grouped.items():
-        downloads = list(downloads)
+    for category, dates in grouped.items():
+        downloads = list(dates)
         if sum(downloads) == 0:
             continue
         result.append(dict(

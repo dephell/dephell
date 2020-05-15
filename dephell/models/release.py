@@ -1,6 +1,6 @@
 # built-in
 from datetime import datetime
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 # external
 import attr
@@ -25,11 +25,11 @@ class Release:
 
     extra = attr.ib(type=Optional[str], default=None)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         assert '[' not in self.raw_name, self.raw_name
 
     @classmethod
-    def from_response(cls, name, version, info, extra=None):
+    def from_response(cls, name: str, version: str, info: List[Dict[str, Any]], extra=None) -> 'Release':
         latest = info[-1]
         python = latest['requires_python']
         if python is not None:

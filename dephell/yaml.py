@@ -1,4 +1,7 @@
 # app
+# built-in
+from typing import Any, Dict, Optional, TextIO
+
 from .imports import lazy_import
 
 
@@ -24,6 +27,6 @@ def yaml_load(stream, *, safe: bool = True):
     return py_yaml.load(stream)
 
 
-def yaml_dump(data, stream):
+def yaml_dump(data: Dict[str, Any], stream: TextIO) -> Optional[Any]:
     parser = ruamel_yaml.YAML()
     return parser.dump(data, stream)

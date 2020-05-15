@@ -3,11 +3,16 @@ import json
 import pickle
 from pathlib import Path
 from time import time
-from typing import List
+from typing import TYPE_CHECKING, Any, List, Optional, Union
 
 # app
 from .cached_property import cached_property
 from .config import config
+
+
+if TYPE_CHECKING:
+    from .converters.pip import PIPConverter
+    from .models.dependency import Dependency  # noqa: F401
 
 
 class BaseCache:
@@ -53,7 +58,7 @@ class BinCache(BaseCache):
 class TextCache(BaseCache):
     ext = '.txt'
 
-    def load(self):
+    def load(self) -> Optional[Any]:
         if not self.path.exists():
             return None
         with self.path.open('r') as stream:
@@ -68,7 +73,7 @@ class TextCache(BaseCache):
 class JSONCache(BaseCache):
     ext = '.json'
 
-    def load(self):
+    def load(self) -> Optional[Any]:
         if not self.path.exists():
             return None
         with self.path.open('r') as stream:
@@ -78,7 +83,7 @@ class JSONCache(BaseCache):
                 return None
         return None
 
-    def dump(self, data):
+    def dump(self, data: Union[list, dict]) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open('w') as stream:
             json.dump(data, stream)
@@ -88,12 +93,12 @@ class RequirementsCache(BaseCache):
     ext = '.txt'
 
     @cached_property
-    def converter(self):
+    def converter(self) -> 'PIPConverter':
         from .converters import PIPConverter
 
         return PIPConverter(lock=False)
 
-    def load(self):
+    def load(self) -> Optional[List['Dependency']]:
         if not self.path.exists():
             return None
         root = self.converter.load(self.path)

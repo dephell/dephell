@@ -1,6 +1,6 @@
 # built-in
 from collections import OrderedDict, defaultdict
-from typing import Iterable, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Optional, Set, Tuple
 
 # external
 import attr
@@ -8,6 +8,10 @@ from dephell_links import DirLink, FileLink, VCSLink
 
 # app
 from ..cached_property import cached_property
+
+
+if TYPE_CHECKING:
+    from dephell.models.release import Release  # noqa: F401
 
 
 class Requirement:
@@ -53,7 +57,7 @@ class Requirement:
         return tuple(result.values())
 
     @cached_property
-    def release(self):
+    def release(self) -> Optional['Release']:
         if self.lock:
             return self.dep.group.best_release
 
@@ -243,7 +247,7 @@ class Requirement:
 
     # magic methods
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         for name in self._properties:
             value = getattr(self, name)
             if value:
