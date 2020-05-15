@@ -22,7 +22,7 @@ pip-wheel-metadata/
 /README.rst
 .idea
 .venv
-
 venv/
-
 \.python-version
+monkeytype.sqlite3
+annotations.json
