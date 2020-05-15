@@ -8,14 +8,14 @@ from typing import List, TYPE_CHECKING
 # app
 from .cached_property import cached_property
 from .config import config
-from dephell.converters.pip import PIPConverter
 from typing import Any
 from typing import Optional
 from typing import Union
 
 
 if TYPE_CHECKING:
-    from dephell.models.dependency import Dependency
+    from .converters.pip import PIPConverter
+    from .models.dependency import Dependency  # noqa: F401
 
 
 class BaseCache:
@@ -96,12 +96,12 @@ class RequirementsCache(BaseCache):
     ext = '.txt'
 
     @cached_property
-    def converter(self) -> PIPConverter:
+    def converter(self) -> 'PIPConverter':
         from .converters import PIPConverter
 
         return PIPConverter(lock=False)
 
-    def load(self) -> Optional[List[Dependency]]:
+    def load(self) -> Optional[List['Dependency']]:
         if not self.path.exists():
             return None
         root = self.converter.load(self.path)

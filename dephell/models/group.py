@@ -6,13 +6,13 @@ from typing import TYPE_CHECKING
 # app
 from ..cached_property import cached_property
 from ..config import config
-from dephell.models.release import Release
-from dephell.models.root import RootRelease
 from typing import Union
 
 
 if TYPE_CHECKING:
     from .dependency import Dependency
+    from .release import Release
+    from .root import RootRelease  # noqa: F401
 
 
 class Group:
@@ -27,7 +27,7 @@ class Group:
     # BEST RELEASE PROPERTIES
 
     @property
-    def best_release(self) -> Release:
+    def best_release(self) -> 'Release':
         strategy = max if config['strategy'] == 'max' else min
         best_time = strategy(release.time for release in self.releases)
         best_releases = [release for release in self.releases if release.time == best_time]
@@ -42,7 +42,7 @@ class Group:
     # RANDOM RELEASE PROPERTIES
 
     @cached_property
-    def random(self) -> Union[Release, RootRelease]:
+    def random(self) -> Union['Release', 'RootRelease']:
         return next(iter(self.all_releases))
 
     @cached_property

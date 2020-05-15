@@ -23,7 +23,7 @@ REX_BASE_VERSION = re.compile(r'[0-9\.]+')
 
 
 class Resolver:
-    def __init__(self, graph: Graph, mutator: Mutator) -> None:
+    def __init__(self, graph: 'Graph', mutator: 'Mutator') -> None:
         self.graph = graph
         self.mutator = mutator
 
