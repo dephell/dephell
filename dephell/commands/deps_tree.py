@@ -64,6 +64,8 @@ class DepsTreeCommand(BaseCommand):
             self.logger.info('graph saved into .dephell_report/')
             return True
 
+        raise RuntimeError('unreachable')
+
     @classmethod
     def _make_tree(cls, dep, *, level: int = 0) -> List[str]:
         best = dep.group.best_release.version

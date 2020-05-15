@@ -45,7 +45,7 @@ class VendorDownloadCommand(BaseCommand):
     def _download_packages(self, resolver, output_path: Path,
                            exclude: Iterable[str] = None) -> int:
         exclude = set(exclude or [])
-        with TemporaryDirectory() as archives_path:
+        with TemporaryDirectory() as archives_path:  # type: Path # type: ignore
             archives_path = Path(archives_path)
 
             loop = asyncio.get_event_loop()
@@ -74,14 +74,14 @@ class VendorDownloadCommand(BaseCommand):
 
     def _extract_modules(self, dep, archive_path: Path, output_path: Path) -> bool:
         # say to shutils that wheel can be parsed as zip
-        if 'wheel' not in shutil._UNPACK_FORMATS:
+        if 'wheel' not in shutil._UNPACK_FORMATS:  # type: ignore
             shutil.register_unpack_format(
                 name='wheel',
                 extensions=['.whl'],
-                function=shutil._unpack_zipfile,
+                function=shutil._unpack_zipfile,  # type: ignore
             )
 
-        with TemporaryDirectory(suffix=dep.name) as package_path:
+        with TemporaryDirectory(suffix=dep.name) as package_path:  # type: Path # type: ignore
             package_path = Path(package_path)
             shutil.unpack_archive(str(archive_path), str(package_path))
             if len(list(package_path.iterdir())) == 1:

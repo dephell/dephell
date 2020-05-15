@@ -1,7 +1,6 @@
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 # app
 from ..actions import transform_imports
@@ -11,9 +10,6 @@ from .base import BaseCommand
 
 
 bowler = lazy_import('bowler')
-
-if TYPE_CHECKING:
-    import bowler
 
 
 class VendorImportCommand(BaseCommand):

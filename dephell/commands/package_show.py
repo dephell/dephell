@@ -1,5 +1,7 @@
 # built-in
 from argparse import ArgumentParser
+from pathlib import Path
+from typing import List
 
 # app
 from ..actions import format_size, get_package, get_path_size, get_python_env, make_json
@@ -30,7 +32,7 @@ class PackageShowCommand(BaseCommand):
 
         root = InstalledConverter().load(paths=python.lib_paths, names={self.args.name})
         local_versions = []
-        local_places = []
+        local_places = []  # type: List[Path]
         for subdep in root.dependencies:
             if subdep.name == dep.name:
                 local_versions = str(subdep.constraint).replace('=', '').split(' || ')

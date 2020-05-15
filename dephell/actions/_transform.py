@@ -195,7 +195,7 @@ class DottedModuleImportModifier:
         )
         """
 
-    def __init__(self, old_name, new_name):
+    def __init__(self, old_name: str, new_name: str) -> None:
         self.old_name = old_name
         self.new_name = new_name
 
@@ -205,7 +205,7 @@ class DottedModuleImportModifier:
         else:
             self._modify_import(capture)
 
-    def _modify_import(self, capture):
+    def _modify_import(self, capture) -> None:
         new_name_node = build_new_name_node(
             old_node=capture['module_name'],
             new_name=self.new_name,
@@ -214,7 +214,7 @@ class DottedModuleImportModifier:
         )
         capture['module_name'].replace(new_name_node)
 
-    def _modify_power(self, node):
+    def _modify_power(self, node: 'LN') -> None:
         prefix = node.children[0].prefix
 
         # remove old prefix

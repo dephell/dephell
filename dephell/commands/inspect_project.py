@@ -1,6 +1,7 @@
 # built-in
 from argparse import ArgumentParser
 from pathlib import Path
+from typing import Any, Dict
 
 # app
 from ..actions import make_json
@@ -34,7 +35,7 @@ class InspectProjectCommand(BaseCommand):
             name=root.raw_name,
             version=root.version,
             description=root.description,
-        )
+        )  # type: Dict[str, Any]
         if root.python:
             result['python'] = str(root.python)
         if root.links:
