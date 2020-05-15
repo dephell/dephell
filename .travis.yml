@@ -68,6 +68,9 @@ matrix:
       env: ENV=flake8
 
     - python: "3.7"
+      env: ENV=typing
+
+    - python: "3.7"
       env: ENV=isort
       script:
         - dephell venv run --env=$ENV flake8
