@@ -160,7 +160,7 @@ class PIPConverter(BaseConverter):
         return '\n'.join(lines) + '\n'
 
     @staticmethod
-    def _get_finder():
+    def _get_finder() -> PackageFinder:
         try:
             return PackageFinder(find_links=[], index_urls=[], session=PipSession())
         except TypeError:

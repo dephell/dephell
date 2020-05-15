@@ -126,7 +126,7 @@ class SDistConverter(BaseConverter):
 
             self._write_additional_files(tar=tar, project=project, subdir=subdir)
 
-    def _write_additional_files(self, *, tar, project, subdir):
+    def _write_additional_files(self, *, tar: TarFile, project: RootDependency, subdir: str) -> None:
         # write readme
         if project.readme:
             tar.add(

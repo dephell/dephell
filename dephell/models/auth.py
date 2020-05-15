@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 # external
 import attr
 from requests.auth import HTTPBasicAuth
+from requests.models import PreparedRequest
 
 
 @attr.s(eq=True, order=True, frozen=True)
@@ -15,7 +16,7 @@ class Auth(HTTPBasicAuth):
     encoding = attr.ib(type=str, default='latin1')
 
     # for requests
-    def __call__(self, request):
+    def __call__(self, request: PreparedRequest) -> PreparedRequest:
         # additional check to prevent lack of creds
         if urlparse(request.url).hostname != self.hostname:
             return request

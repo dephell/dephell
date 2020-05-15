@@ -10,6 +10,9 @@ from packaging.version import parse
 
 # app
 from ..cached_property import cached_property
+from typing import Any
+from typing import Dict
+from typing import List
 
 
 @attr.s(hash=False, eq=False, order=False)
@@ -29,7 +32,7 @@ class Release:
         assert '[' not in self.raw_name, self.raw_name
 
     @classmethod
-    def from_response(cls, name, version, info, extra=None):
+    def from_response(cls, name: str, version: str, info: List[Dict[str, Any]], extra=None) -> 'Release':
         latest = info[-1]
         python = latest['requires_python']
         if python is not None:

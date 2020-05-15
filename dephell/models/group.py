@@ -1,10 +1,18 @@
 # built-in
 from operator import attrgetter
 from typing import Optional
+from typing import TYPE_CHECKING
 
 # app
 from ..cached_property import cached_property
 from ..config import config
+from dephell.models.release import Release
+from dephell.models.root import RootRelease
+from typing import Union
+
+
+if TYPE_CHECKING:
+    from .dependency import Dependency
 
 
 class Group:
@@ -19,7 +27,7 @@ class Group:
     # BEST RELEASE PROPERTIES
 
     @property
-    def best_release(self):
+    def best_release(self) -> Release:
         strategy = max if config['strategy'] == 'max' else min
         best_time = strategy(release.time for release in self.releases)
         best_releases = [release for release in self.releases if release.time == best_time]
@@ -34,7 +42,7 @@ class Group:
     # RANDOM RELEASE PROPERTIES
 
     @cached_property
-    def random(self):
+    def random(self) -> Union[Release, RootRelease]:
         return next(iter(self.all_releases))
 
     @cached_property
@@ -52,7 +60,7 @@ class Group:
     # OTHER PROPERTIES
 
     @cached_property
-    def metadependency(self):
+    def metadependency(self) -> 'Dependency':
         """MetaDependency is a dependency on the parent for extra.
 
         For example, `requests[security]` extra depends on `requests` Dependency.

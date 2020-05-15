@@ -1,7 +1,7 @@
 # built-in
 from collections import ChainMap
 from logging import getLogger
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Iterator, Optional
 
 # app
 from ..imports import lazy_import
@@ -63,7 +63,7 @@ class Layer:
             dep = dep.name
         return dep in self._mapping
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         return iter(self._mapping.values())
 
     def __repr__(self):
@@ -76,7 +76,7 @@ class Layer:
 class Graph:
     conflict = None  # type: Optional[Dependency]
 
-    def __init__(self, *roots):
+    def __init__(self, *roots: RootDependency) -> None:
         for root in roots:
             if not root.dependencies:
                 logger.warning('empty root passed')
@@ -260,7 +260,7 @@ class Graph:
 
     # magic
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         return iter(self.deps)
 
     def __contains__(self, dep) -> bool:

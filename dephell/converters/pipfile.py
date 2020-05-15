@@ -12,9 +12,12 @@ from packaging.utils import canonicalize_name
 
 # app
 from ..controllers import DependencyMaker, RepositoriesRegistry
-from ..models import Constraint, Dependency, RootDependency
+from ..models import Constraint, Dependency, Requirement, RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo, get_repo
 from .base import BaseConverter
+from tomlkit.items import InlineTable
+from tomlkit.items import String
+from typing import Union
 
 
 VCS_LIST = ('git', 'svn', 'hg', 'bzr')
@@ -197,7 +200,7 @@ class PIPFileConverter(BaseConverter):
             editable=content.get('editable', False),
         )
 
-    def _format_req(self, req):
+    def _format_req(self, req: Requirement) -> Union[InlineTable, String]:
         result = tomlkit.inline_table()
         for name, value in req:
             if name == 'rev':

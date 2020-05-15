@@ -14,6 +14,8 @@ from ..models import RootDependency
 from .base import BaseConverter
 from .egginfo import EggInfoConverter
 from .wheel import WheelConverter
+from dephell.controllers._resolver import Resolver
+from typing import List
 
 
 @attr.s()
@@ -25,7 +27,7 @@ class InstalledConverter(BaseConverter):
         'command-not-found',    # https://stackoverflow.com/a/22676267
     }
 
-    def load_resolver(self, path=None, paths=None):
+    def load_resolver(self, path=None, paths: List[Path] = None) -> Resolver:
         if path is not None:
             root = self.load(path=path)
         else:

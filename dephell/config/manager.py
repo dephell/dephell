@@ -183,7 +183,7 @@ class Config:
     def format_errors(self) -> str:
         return json.dumps(self.errors, indent=2, sort_keys=True)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         return getattr(self._data, name)
 
     def __getitem__(self, name: str):

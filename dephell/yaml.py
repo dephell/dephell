@@ -1,5 +1,8 @@
 # app
 from .imports import lazy_import
+from typing import Any
+from typing import Dict
+from typing import Optional, TextIO
 
 
 ruamel_yaml = lazy_import('ruamel.yaml', package='ruamel.yaml')
@@ -24,6 +27,6 @@ def yaml_load(stream, *, safe: bool = True):
     return py_yaml.load(stream)
 
 
-def yaml_dump(data, stream):
+def yaml_dump(data: Dict[str, Any], stream: TextIO) -> Optional[Any]:
     parser = ruamel_yaml.YAML()
     return parser.dump(data, stream)

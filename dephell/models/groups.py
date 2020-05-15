@@ -9,6 +9,7 @@ import attr
 from ..cached_property import cached_property
 from ..config import config
 from .group import Group
+from typing import Iterator
 
 
 loop = asyncio.get_event_loop()
@@ -161,7 +162,7 @@ class Groups:
         self.actualize(group=group)
         return group
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         # return all groups from cache
         for group in self._loaded_groups:
             self.actualize(group=group)

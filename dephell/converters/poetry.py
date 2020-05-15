@@ -12,9 +12,14 @@ from packaging.utils import canonicalize_name
 
 # app
 from ..controllers import DependencyMaker, Readme, RepositoriesRegistry
-from ..models import Author, Constraint, Dependency, EntryPoint, RootDependency
+from ..models import Author, Constraint, Dependency, EntryPoint, RootDependency, Requirement
 from ..repositories import WarehouseLocalRepo
 from .base import BaseConverter
+from tomlkit.items import Table
+from typing import Tuple
+from tomlkit.items import InlineTable
+from tomlkit.items import String
+from typing import Union
 
 
 @attr.s()
@@ -239,7 +244,7 @@ class PoetryConverter(BaseConverter):
         return tomlkit.dumps(doc).rstrip() + '\n'
 
     @staticmethod
-    def _add_entrypoints(section, entrypoints):
+    def _add_entrypoints(section: Table, entrypoints: Tuple[EntryPoint, ...]) -> None:
         # drop old console_scripts
         if 'scripts' in section:
             scripts = {e.name for e in entrypoints if e.group == 'console_scripts'}
@@ -370,7 +375,7 @@ class PoetryConverter(BaseConverter):
         )
         return deps
 
-    def _format_req(self, req):
+    def _format_req(self, req: Requirement) -> Union[InlineTable, String]:
         result = tomlkit.inline_table()
         for name, value in req:
             if name in self.fields:

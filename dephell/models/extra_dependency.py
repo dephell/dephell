@@ -6,6 +6,8 @@ from packaging.utils import canonicalize_name
 from ..cached_property import cached_property
 from .dependency import Dependency
 from .groups import Groups
+from tomlkit.items import String
+from typing import Union
 
 
 @attr.s(eq=False, order=False)
@@ -16,7 +18,7 @@ class ExtraDependency(Dependency):
         assert self.extra != ''
 
     @classmethod
-    def from_dep(cls, dep, extra):
+    def from_dep(cls, dep: Dependency, extra: Union[str, String]) -> 'ExtraDependency':
         return cls(**attr.asdict(dep, recurse=False), extra=extra)
 
     @cached_property

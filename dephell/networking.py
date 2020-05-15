@@ -12,13 +12,17 @@ from aiohttp import ClientError, ClientSession, TCPConnector
 # app
 from . import __version__
 from .config import config
+from typing import Any
+from typing import Optional
+from dephell.models.auth import Auth
+from requests.sessions import Session
 
 
 USER_AGENT = 'DepHell/{version}'.format(version=__version__)
 logger = getLogger('dephell.networking')
 
 
-def aiohttp_session(*, auth=None, **kwargs):
+def aiohttp_session(*, auth: Optional[Auth] = None, **kwargs: Any) -> ClientSession:
     headers = {'User-Agent': USER_AGENT}
     if auth:
         headers['Authorization'] = auth.encode()
@@ -36,7 +40,7 @@ def aiohttp_session(*, auth=None, **kwargs):
     return ClientSession(headers=headers, connector=connector, **kwargs)
 
 
-def requests_session(*, auth=None, headers=None, **kwargs):
+def requests_session(*, auth: Optional[Any] = None, headers: Optional[Any] = None, **kwargs: Any) -> Session:
     session = requests.Session()
     if auth:
         session.auth = auth
@@ -61,7 +65,7 @@ def aiohttp_repeat(func=None, *, count: int = 4):
     if func is None:
         return partial(func, count=count)
 
-    async def wrapper(*args, **kwargs):
+    async def wrapper(*args: Any, **kwargs: Any) -> Optional[Any]:
         for pause in range(1, count + 1):
             try:
                 return await func(*args, **kwargs)

@@ -16,6 +16,9 @@ from ..controllers import RepositoriesRegistry
 from ..models import RootDependency
 from ..repositories import WarehouseBaseRepo, WarehouseLocalRepo
 from .pipfile import PIPFileConverter
+from dephell.models.requirement import Requirement
+from typing import Any
+from typing import Dict
 
 
 # https://stackoverflow.com/a/23820416
@@ -120,7 +123,7 @@ class PIPFileLockConverter(PIPFileConverter):
         content = json.dumps(data, sort_keys=True, separators=(',', ':'))
         return sha256(content.encode('utf8')).hexdigest()
 
-    def _format_req(self, req):
+    def _format_req(self, req: Requirement) -> Dict[str, Any]:
         result = dict()
         for name, value in req:
             if name == 'rev':
