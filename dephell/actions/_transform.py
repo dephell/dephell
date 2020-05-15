@@ -11,16 +11,13 @@ fixer_util = lazy_import('fissix.fixer_util')
 
 
 if TYPE_CHECKING:
-    import bowler.helpers as bowler_helpers
-    import fissix.pytree as fissix_pytree
     from bowler import LN, Capture, Filename, Query
-    from fissix import fixer_util
 
 
 modifiers = []
 
 
-def _register(modifier):
+def _register(modifier: type) -> type:
     modifiers.append(modifier)
     return modifier
 

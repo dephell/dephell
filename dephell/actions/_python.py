@@ -1,7 +1,7 @@
 # built-in
 import subprocess
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 # external
 from dephell_pythons import Python, Pythons
@@ -62,14 +62,14 @@ def get_lib_path(python_path: Path) -> Optional[Path]:
     """Find site-packages or dist-packages dir for the given python
     """
     # get user site dir path
-    user_site = None
+    user_site = None  # type: Union[None, Path]
     cmd = [str(python_path), '-c', r'print(__import__("site").USER_SITE)']
     result = subprocess.run(cmd, stdout=subprocess.PIPE)
     if result.returncode == 0:
-        user_site = result.stdout.decode().strip()
-        if user_site:
-            user_site = Path(user_site)
-        if not user_site.exists():
+        line = result.stdout.decode().strip()
+        if line:
+            user_site = Path(line)
+        if user_site and user_site.exists():
             user_site = None
 
     # get sys.path paths
@@ -78,8 +78,8 @@ def get_lib_path(python_path: Path) -> Optional[Path]:
     if result.returncode != 0:
         return None
     paths = []
-    for path in result.stdout.decode().splitlines():
-        path = Path(path)
+    for line in result.stdout.decode().splitlines():
+        path = Path(line)
         if not path.exists():
             continue
         paths.append(path)

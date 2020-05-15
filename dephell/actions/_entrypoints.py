@@ -1,5 +1,6 @@
 # built-in
 from logging import getLogger
+from pathlib import Path
 from typing import Iterable, Optional, Tuple
 
 # external
@@ -15,7 +16,7 @@ from ..models import EntryPoint
 logger = getLogger('dephell.actions')
 
 
-def _get_matching_path(paths: Iterable, name: str) -> Optional[str]:
+def _get_matching_path(paths: Iterable[Path], name: str) -> Optional[Path]:
     name = canonicalize_name(name)
     for path in paths:
         package_name = path.stem.split('-')[0]
@@ -55,7 +56,7 @@ def get_entrypoints(*, venv: VEnv, name: str) -> Optional[Tuple[EntryPoint, ...]
         canonicalize_name(name).replace('_', '-'),
         canonicalize_name(name).replace('-', '').replace('_', ''),
     }
-    paths = (venv.bin_path / name for name in names)
+    paths = tuple(venv.bin_path / name for name in names)
     if IS_WINDOWS:
         paths = tuple(p.with_suffix('.exe') for p in paths)
 
