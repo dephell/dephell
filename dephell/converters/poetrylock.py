@@ -118,12 +118,12 @@ class PoetryLockConverter(BaseConverter):
         # get link
         url = None
         if 'source' in content:
-            if content['source']['type'] == 'legacy':
+            if content['source'].get('type') == 'legacy':
                 repo = repo.make(content['source']['reference'])
             else:
                 repo = None
                 url = content['source']['url']
-                if content['source']['type'] == 'git':
+                if content['source'].get('type') == 'git':
                     url = 'git+' + url
                     if 'reference' in content['source']:
                         url += '@' + content['source']['reference']
