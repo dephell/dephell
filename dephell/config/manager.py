@@ -8,7 +8,7 @@ from logging import captureWarnings
 from logging.config import dictConfig
 from os import environ
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, DefaultDict, Dict, Optional
 
 # external
 import tomlkit
@@ -36,12 +36,12 @@ class Config:
     def __init__(self, data: Optional[dict] = None):
         self._data = data or deepcopy(DEFAULT)
 
-    def setup_logging(self, data: Optional[dict] = None) -> None:
+    def setup_logging(self, data: Optional[Dict[str, Any]] = None) -> None:
         captureWarnings(True)
         if data is None:
             data = LOGGING
             if self._data:
-                data['loggers']['dephell']['level'] = self['level']
+                data['loggers']['dephell']['level'] = self._data['level']
                 for formatter in data['formatters'].values():
                     formatter['colors'] = not self['nocolors']
                     formatter['traceback'] = self['traceback']
@@ -49,7 +49,11 @@ class Config:
                     handler['formatter'] = self['format']
         dictConfig(LOGGING)
 
-    def attach(self, data: dict, container: Optional[dict] = None) -> None:
+    def attach(self, data: Dict[str, Any], container: Optional[Dict[str, Any]] = None) -> None:
+        """Merge `data` into `container`.
+
+        If no container specified, merge into the current config.
+        """
         if container is None:
             container = self._data
 
@@ -70,12 +74,20 @@ class Config:
                     new_value.append(subvalue)
                 value = new_value
 
+            # add a new value into the container
             if key not in container:
                 container[key] = value
-            elif isinstance(value, dict):
-                self.attach(data=value, container=container[key])
-            else:
-                container[key] = value
+                continue
+
+            # merge dicts
+            if isinstance(value, dict):
+                subcontainer = container[key]
+                if isinstance(subcontainer, dict):
+                    self.attach(data=value, container=subcontainer)
+                    continue
+
+            # overwrite the current value
+            container[key] = value
 
     @staticmethod
     def _expand_converter(text: str) -> Dict[str, str]:
@@ -128,8 +140,8 @@ class Config:
         self.env = env
         return data
 
-    def attach_cli(self, args, sep: str = '_') -> dict:
-        data = defaultdict(dict)
+    def attach_cli(self, args, sep: str = '_') -> Dict[str, Any]:
+        data = defaultdict(dict)  # type: DefaultDict[str, Any]
         for name, value in args._get_kwargs():
             if value is None or value is False:
                 continue
@@ -144,8 +156,10 @@ class Config:
         self.attach(data)
         return dict(data)
 
-    def attach_env_vars(self, *, env_vars: Dict[str, str] = environ, sep: str = '_') -> dict:
-        data = defaultdict(dict)
+    def attach_env_vars(self, *, env_vars: Dict[str, str] = None, sep: str = '_') -> dict:
+        if env_vars is None:
+            env_vars = dict(environ)
+        data = defaultdict(dict)  # type: DefaultDict[str, Any]
         for name, value in env_vars.items():
             # drop templated part from name
             match = ENV_VAR_REX.fullmatch(name)
