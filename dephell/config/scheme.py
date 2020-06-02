@@ -119,8 +119,14 @@ SCHEME = {
     'envs':         dict(type='list', schema=dict(type='string'), required=False, empty=False),
     'tests':        dict(type='list', schema=dict(type='string'), required=True),
     'versioning':   dict(type='string', required=True, allowed=get_schemes()),
-    'command':      dict(type='string', required=False),
-    'vendor':       dict(
+    'command': dict(
+        anyof=[
+            dict(type='string'),
+            dict(type='list', schema=dict(type='string')),
+        ],
+        required=False,
+    ),
+    'vendor': dict(
         type='dict',
         required=True,
         schema={

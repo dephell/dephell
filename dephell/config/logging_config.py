@@ -1,4 +1,7 @@
-LOGGING = {
+from typing import Any, Dict
+
+
+LOGGING: Dict[str, Any] = {
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
