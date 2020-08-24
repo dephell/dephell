@@ -22,6 +22,7 @@ class LazyModule:
         return import_module(name=self._name)
 
     def _install(self):
+        # app
         from .package_manager import PackageManager
 
         name = self._package or self._name.split('.', maxsplit=1)[0]

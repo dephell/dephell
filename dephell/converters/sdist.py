@@ -171,6 +171,7 @@ class SDistConverter(BaseConverter):
                 )
 
         # write tests
+        # app
         from ..actions import get_path_size
         if self.ratio is None:
             self.ratio = config['sdist']['ratio']

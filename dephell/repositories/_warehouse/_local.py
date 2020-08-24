@@ -104,6 +104,7 @@ class WarehouseLocalRepo(WarehouseBaseRepo):
         return digest.hexdigest()
 
     def _get_deps_from_files(self, name, version):
+        # app
         from ...converters import SDistConverter, WheelConverter
 
         paths = []

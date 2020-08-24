@@ -14,6 +14,7 @@ graphviz_backend = lazy_import('graphviz.backend')
 
 
 if TYPE_CHECKING:
+    # external
     import graphviz
     import graphviz.backend as graphviz_backend
 

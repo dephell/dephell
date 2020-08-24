@@ -1,4 +1,3 @@
-# project
 # built-in
 from pathlib import Path
 

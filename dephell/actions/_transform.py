@@ -11,6 +11,7 @@ fixer_util = lazy_import('fissix.fixer_util')
 
 
 if TYPE_CHECKING:
+    # external
     from bowler import LN, Capture, Filename, Query
 
 

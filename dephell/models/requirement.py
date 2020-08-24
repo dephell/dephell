@@ -11,6 +11,7 @@ from ..cached_property import cached_property
 
 
 if TYPE_CHECKING:
+    # project
     from dephell.models.release import Release  # noqa: F401
 
 

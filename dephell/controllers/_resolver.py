@@ -14,6 +14,7 @@ from ._conflict import analyze_conflict
 
 
 if TYPE_CHECKING:
+    # project
     from dephell.controllers._graph import Graph
     from dephell.controllers._mutator import Mutator
 

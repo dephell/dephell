@@ -1,7 +1,7 @@
-# external
 # built-in
 from typing import Union
 
+# external
 import attr
 from packaging.utils import canonicalize_name
 from tomlkit.items import String

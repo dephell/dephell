@@ -18,6 +18,7 @@ from .group import Group
 
 
 if TYPE_CHECKING:
+    # app
     from .dependency import Dependency  # noqa: F401
 
 
@@ -107,6 +108,7 @@ class RootDependency:
 
     @property
     def warehouses(self) -> tuple:
+        # app
         from ..repositories import WarehouseBaseRepo
 
         repos = dict()

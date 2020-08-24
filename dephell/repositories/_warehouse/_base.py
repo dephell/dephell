@@ -18,6 +18,7 @@ from ..base import Interface
 
 
 try:
+    # external
     import aiofiles
 except ImportError:
     aiofiles = None

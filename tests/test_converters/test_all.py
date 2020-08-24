@@ -1,7 +1,7 @@
-# external
 # built-in
 from pathlib import Path
 
+# external
 import attr
 import pytest
 

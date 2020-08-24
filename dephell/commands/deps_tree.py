@@ -89,9 +89,10 @@ class DepsTreeCommand(BaseCommand):
     @staticmethod
     def _colorize(content: str) -> str:
         try:
+            # external
             import pygments
-            import pygments.lexers
             import pygments.formatters
+            import pygments.lexers
         except ImportError:
             return content
         content = pygments.highlight(

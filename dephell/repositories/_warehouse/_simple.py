@@ -192,6 +192,7 @@ class WarehouseSimpleRepo(WarehouseBaseRepo):
         return links
 
     async def _get_deps_from_links(self, name: str, version):
+        # app
         from ...converters import SDistConverter, WheelConverter
 
         links = self._get_links(name=name)

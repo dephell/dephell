@@ -5,11 +5,14 @@
 # https://github.com/dephell/dephell
 
 try:
+    # external
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
+# built-in
 import os.path
+
 
 readme = ''
 here = os.path.abspath(os.path.dirname(__file__))

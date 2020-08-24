@@ -20,6 +20,7 @@ PATHS = (
 
 
 def make_bash_autocomplete() -> str:
+    # app
     from ..commands import COMMANDS
 
     template = templates.get_template('autocomplete.sh.j2')
@@ -40,6 +41,7 @@ def make_bash_autocomplete() -> str:
 
 
 def make_zsh_autocomplete() -> str:
+    # app
     from ..commands import COMMANDS
 
     template = templates.get_template('autocomplete-zsh.sh.j2')

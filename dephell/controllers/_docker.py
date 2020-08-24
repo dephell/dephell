@@ -17,6 +17,7 @@ docker = lazy_import('docker')
 dockerpty = lazy_import('dockerpty')
 
 if TYPE_CHECKING:
+    # external
     import docker
     import dockerpty
 

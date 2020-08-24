@@ -1,4 +1,3 @@
-# project
 # external
 from dephell_versioning import get_schemes
 
