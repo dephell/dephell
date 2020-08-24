@@ -205,4 +205,8 @@ isort = {extras = ["pyproject"], version = "*"}
 [tool.poetry.extras]
 docs = ["alabaster", "pygments-github-lexers", "recommonmark", "sphinx"]
 tests = ["aioresponses", "pytest", "requests-mock"]
-full = ["aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker", "dockerpty", "fissix", "graphviz", "html5lib", "pygments", "python-gnupg", "tabulate", "yapf"]
+full = [
+    "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker", "dockerpty",
+    "fissix", "graphviz", "html5lib", "pygments", "python-gnupg", "ruamel.yaml",
+    "tabulate", "yapf",
+]
