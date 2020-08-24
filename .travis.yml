@@ -15,7 +15,7 @@ before_install:
   # - curl https://raw.githubusercontent.com/dephell/dephell/master/install.py | /opt/python/3.6/bin/python
   # https://github.com/travis-ci/travis-ci/issues/8589
   - >
-    /opt/python/3.7/bin/python install.py
+    /opt/python/3.7.1/bin/python install.py
     --branch=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
     --slug=${TRAVIS_PULL_REQUEST_SLUG:-dephell/dephell}
   - dephell inspect self
@@ -29,7 +29,7 @@ matrix:
   include:
     - python: "3.6.7"
       env: ENV=pytest
-    - python: "3.7"
+    - python: "3.7.1"
       env: ENV=pytest
     - python: "3.8"
       env: ENV=pytest
@@ -61,27 +61,27 @@ matrix:
         - bash -c "markdownlint --config markdownlint.json **/*.md"
 
     - name: offline
-      python: "3.7"
+      python: "3.7.1"
       env: ENV=pytest
       script:
         - dephell venv run --env=$ENV pytest --no-network tests/
 
-    - python: "3.7"
+    - python: "3.7.1"
       env: ENV=flake8
 
-    - python: "3.7"
+    - python: "3.7.1"
       env: ENV=typing
 
-    - python: "3.7"
+    - python: "3.7.1"
       env: ENV=isort
       script:
         - dephell venv run --env=$ENV flake8
 
-    - python: "3.7"
+    - python: "3.7.1"
       env: ENV=docs
 
     - name: poetry
-      python: "3.7"
+      python: "3.7.1"
       env: ENV=main
       before_install:
         - pip install poetry
