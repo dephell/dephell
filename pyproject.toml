@@ -36,7 +36,7 @@ from = {format = "poetry", path = "pyproject.toml"}
 command = [
     "mypy",
     "dephell/actions", "dephell/commands", "dephell/config",
-    "dephell/yaml.py"
+    "dephell/controllers", "dephell/yaml.py"
 ]
 
 # Test project package in the separated venv:

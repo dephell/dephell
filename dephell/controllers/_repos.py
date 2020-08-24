@@ -132,23 +132,27 @@ class RepositoriesRegistry(WarehouseBaseRepo):
         return type(self)(repos=repos, prereleases=self.prereleases)
 
     def get_releases(self, dep) -> tuple:
-        first_exception = None
+        first_exception: Optional[Exception] = None
         for repo in self.repos:
             try:
                 return repo.get_releases(dep=dep)
             except PackageNotFoundError as exc:
                 if first_exception is None:
                     first_exception = exc
+        if first_exception is None:
+            raise LookupError('no repositories in registry')
         raise first_exception
 
     async def get_dependencies(self, name: str, version: str, extra: Optional[str] = None) -> tuple:
-        first_exception = None
+        first_exception: Optional[Exception] = None
         for repo in self.repos:
             try:
                 return await repo.get_dependencies(name=name, version=version, extra=extra)
             except PackageNotFoundError as exc:
                 if first_exception is None:
                     first_exception = exc
+        if first_exception is None:
+            raise LookupError('no repositories in registry')
         raise first_exception
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:

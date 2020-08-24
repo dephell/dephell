@@ -1,16 +1,12 @@
 # built-in
 from collections import ChainMap
 from logging import getLogger
-from typing import TYPE_CHECKING, Iterator, Optional
+from typing import Any, Dict, TYPE_CHECKING, Iterator, List, Optional
 
 # app
 from ..imports import lazy_import
 from ..models.dependency import Dependency
 from ..models.root import RootDependency
-
-
-graphviz = lazy_import('graphviz')
-graphviz_backend = lazy_import('graphviz.backend')
 
 
 if TYPE_CHECKING:
@@ -19,10 +15,16 @@ if TYPE_CHECKING:
     import graphviz.backend as graphviz_backend
 
 
+graphviz = lazy_import('graphviz')  # noqa: F811
+graphviz_backend = lazy_import('graphviz.backend')  # noqa: F811
+
+
 logger = getLogger(__name__)
 
 
 class Layer:
+    _mapping: Dict[str, Any]
+
     def __init__(self, level: int, *deps):
         self.level = level
         self._mapping = dict()
@@ -75,7 +77,8 @@ class Layer:
 
 
 class Graph:
-    conflict = None  # type: Optional[Dependency]
+    conflict: Optional[Dependency] = None
+    _layers: List[Layer]
 
     def __init__(self, *roots: RootDependency) -> None:
         for root in roots:
