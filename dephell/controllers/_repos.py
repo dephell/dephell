@@ -1,7 +1,7 @@
 # built-in
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Set
+from typing import Dict, Iterable, List, Optional, Set, Type, Union
 from urllib.parse import urljoin, urlparse
 
 # external
@@ -76,6 +76,7 @@ class RepositoriesRegistry(WarehouseBaseRepo):
             name = 'pypi'
         self._names.add(name)
 
+        cls: Union[Type[WarehouseAPIRepo], Type[WarehouseSimpleRepo]]
         if _has_api(url=url):
             cls = WarehouseAPIRepo
         else:
@@ -170,7 +171,7 @@ class RepositoriesRegistry(WarehouseBaseRepo):
     # properties
 
     @property
-    def name(self) -> str:
+    def name(self) -> str:  # type: ignore
         return self.repos[0].name
 
     @property  # type: ignore
@@ -178,7 +179,7 @@ class RepositoriesRegistry(WarehouseBaseRepo):
         return self.repos[0].url
 
     @url.setter
-    def url(self, url: str):  # type: ignore
+    def url(self, url: str):
         self.repos[0].url = url
 
     @property
