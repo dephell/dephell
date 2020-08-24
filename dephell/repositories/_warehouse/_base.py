@@ -35,6 +35,14 @@ class WarehouseBaseRepo(Interface):
         raise NotImplementedError
 
     @cached_property
+    def url(self) -> str:
+        raise NotImplementedError
+
+    @cached_property
+    def name(self) -> str:
+        raise NotImplementedError
+
+    @cached_property
     def from_config(self):
         raise NotImplementedError
 
