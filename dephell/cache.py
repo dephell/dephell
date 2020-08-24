@@ -11,6 +11,7 @@ from .config import config
 
 
 if TYPE_CHECKING:
+    # app
     from .converters.pip import PIPConverter
     from .models.dependency import Dependency  # noqa: F401
 
@@ -94,6 +95,7 @@ class RequirementsCache(BaseCache):
 
     @cached_property
     def converter(self) -> 'PIPConverter':
+        # app
         from .converters import PIPConverter
 
         return PIPConverter(lock=False)
@@ -105,6 +107,7 @@ class RequirementsCache(BaseCache):
         return root.dependencies
 
     def dump(self, root):
+        # app
         from .controllers import Graph
         from .models import Requirement
 

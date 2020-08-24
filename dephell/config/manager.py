@@ -91,6 +91,7 @@ class Config:
 
     @staticmethod
     def _expand_converter(text: str) -> Dict[str, str]:
+        # app
         from ..converters import CONVERTERS
 
         # passed converter that doesn't require path

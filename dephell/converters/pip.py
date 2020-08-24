@@ -20,17 +20,22 @@ from .base import BaseConverter
 
 try:
     # pip<20.0.1
+    # external
     from pip._internal.index import PackageFinder
 except ImportError:
     # pip>=20.0.1
+    # external
     from pip._internal.index.package_finder import PackageFinder
 
 try:
+    # external
     from pip._internal.download import PipSession
 except ImportError:
     try:
+        # external
         from pip._internal.network import PipSession
     except ImportError:
+        # external
         from pip._internal.network.session import PipSession
 
 
@@ -167,6 +172,7 @@ class PIPConverter(BaseConverter):
             pass
 
         # pip 19.3
+        # external
         from pip._internal.models.search_scope import SearchScope
         from pip._internal.models.selection_prefs import SelectionPreferences
         try:
@@ -178,11 +184,14 @@ class PIPConverter(BaseConverter):
         except TypeError:
             pass
 
+        # external
         from pip._internal.models.target_python import TargetPython
         try:
             # pip 19.3.1
+            # external
             from pip._internal.collector import LinkCollector
         except ImportError:
+            # external
             from pip._internal.index.collector import LinkCollector
         return PackageFinder.create(
             link_collector=LinkCollector(

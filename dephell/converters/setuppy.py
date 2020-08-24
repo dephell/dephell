@@ -21,11 +21,13 @@ from .base import BaseConverter
 
 
 try:
+    # external
     from yapf.yapflib.style import CreateGoogleStyle
     from yapf.yapflib.yapf_api import FormatCode
 except ImportError:
     FormatCode = None
 try:
+    # external
     from autopep8 import fix_code
 except ImportError:
     fix_code = None

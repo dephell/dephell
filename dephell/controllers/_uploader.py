@@ -146,6 +146,7 @@ class Uploader:
 
     @staticmethod
     def _get_reqs_info(reqs: list) -> dict:
+        # app
         from ..converters import EggInfoConverter
 
         extras = set()

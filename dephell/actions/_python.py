@@ -69,7 +69,7 @@ def get_lib_path(python_path: Path) -> Optional[Path]:
         line = result.stdout.decode().strip()
         if line:
             user_site = Path(line)
-        if user_site and user_site.exists():
+        if user_site and not user_site.exists():
             user_site = None
 
     # get sys.path paths

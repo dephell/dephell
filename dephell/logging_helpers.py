@@ -8,8 +8,10 @@ __all__ = ['ColoredFormatter', 'LevelFilter']
 
 try:
     try:
+        # external
         from colorama import Fore, init
     except ImportError:
+        # external
         from pip._vendor.colorama import Fore, init
     init()
 except ImportError:

@@ -50,6 +50,7 @@ from dephell.constants import IS_WINDOWS
     # ),
 ])
 def test_transform_imports(code_in: str, code_out: str, old_name: str, new_name: str, temp_path: Path):
+    # external
     from bowler import Query
 
     code_in += '\n'

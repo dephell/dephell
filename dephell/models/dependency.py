@@ -82,6 +82,7 @@ class Dependency:
         if deps is not None:
             return deps
 
+        # app
         from ..controllers import DependencyMaker
         deps = []
         for dep in self.group.dependencies:
@@ -201,6 +202,7 @@ class Dependency:
         return result
 
     def __iadd__(self, dep: 'Dependency') -> 'Dependency':
+        # app
         from ..repositories import GitRepo
 
         if not isinstance(dep, type(self)):

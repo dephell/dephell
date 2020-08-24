@@ -8,6 +8,7 @@ from ..config import config
 
 
 if TYPE_CHECKING:
+    # app
     from .dependency import Dependency
     from .release import Release
     from .root import RootRelease  # noqa: F401
@@ -69,6 +70,7 @@ class Group:
             raise ValueError('dep required for group of extras')
         min_version = min(self.versions)
         max_version = max(self.versions)
+        # app
         from ..controllers import DependencyMaker
         return DependencyMaker.from_requirement(
             source=self.dep,

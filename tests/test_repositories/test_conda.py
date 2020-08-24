@@ -10,6 +10,7 @@ from dephell.models import RootDependency
 from dephell.repositories import CondaCloudRepo, CondaGitRepo, CondaRepo
 
 
+@pytest.mark.xfail(reason='conda.anaconda.org is dead')
 @pytest.mark.allow_hosts()
 @pytest.mark.parametrize('repo_class', [CondaRepo, CondaCloudRepo])
 def test_conda_get_releases(repo_class):
@@ -21,6 +22,7 @@ def test_conda_get_releases(repo_class):
     assert not {'3.0.3', '3.1.0', '4.0.0', '4.1.0'} - versions
 
 
+@pytest.mark.xfail(reason='conda.anaconda.org is dead')
 @pytest.mark.allow_hosts()
 @pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI usually out of rate for Github')
 def test_conda_get_releases_git():
@@ -32,6 +34,7 @@ def test_conda_get_releases_git():
     assert not {'3.0.3', '3.1.0', '4.0.0', '4.1.0'} - versions
 
 
+@pytest.mark.xfail(reason='conda.anaconda.org is dead')
 @pytest.mark.allow_hosts()
 @pytest.mark.parametrize('repo_class', [CondaRepo, CondaCloudRepo])
 def test_conda_deps(repo_class):
@@ -43,6 +46,7 @@ def test_conda_deps(repo_class):
     assert 'prodigal' in deps
 
 
+@pytest.mark.xfail(reason='conda.anaconda.org is dead')
 @pytest.mark.allow_hosts()
 @pytest.mark.skipif('TRAVIS_OS_NAME' in environ, reason='Travis CI usually out of rate for Github')
 def test_conda_deps_git():

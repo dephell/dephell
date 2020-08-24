@@ -77,19 +77,24 @@ class Context:
     def pip_main(self):
         # install
         try:
+            # external
             import pip  # noQA: F401
         except ImportError:
             print('install pip')
+            # built-in
             from ensurepip import bootstrap
             bootstrap()
 
         # import
         try:
+            # external
             from pip._internal.main import main
         except ImportError:
             try:
+                # external
                 from pip._internal import main
             except ImportError:
+                # external
                 from pip import main
 
         return main
@@ -97,6 +102,7 @@ class Context:
     @cached_property
     def data_dir(self) -> Path:
         try:
+            # external
             from appdirs import user_data_dir
         except ImportError:
 
@@ -111,6 +117,7 @@ class Context:
                 return path / 'dephell'
 
             self.pip_main(['install', 'appdirs'])
+            # external
             from appdirs import user_data_dir
 
         return Path(user_data_dir('dephell'))

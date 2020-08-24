@@ -50,7 +50,8 @@ class LocalRepo(Interface):
         return deps
 
     def get_root(self, name: str, version: str):
-        from ..converters import EggInfoConverter, SDistConverter, WheelConverter, CONVERTERS
+        # app
+        from ..converters import CONVERTERS, EggInfoConverter, SDistConverter, WheelConverter
 
         if not self.path.exists():
             raise FileNotFoundError(str(self.path))

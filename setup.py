@@ -5,6 +5,7 @@
 # https://github.com/dephell/dephell
 
 try:
+    # external
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
@@ -64,7 +65,7 @@ setup(
         'dephell-setuptools>=0.2.1', 'dephell-shells>=0.1.3',
         'dephell-specifier>=0.1.7', 'dephell-venvs>=0.1.16',
         'dephell-versioning', 'jinja2', 'm2r', 'packaging',
-        'pip<=19.3.1,>=18.0', 'requests', 'ruamel.yaml', 'tomlkit', 'yaspin'
+        'pip<=19.3.1,>=18.0', 'requests', 'tomlkit', 'yaspin'
     ],
     extras_require={
         "dev": [
@@ -78,7 +79,7 @@ setup(
         "full": [
             "aiofiles", "appdirs", "autopep8", "bowler", "colorama", "docker",
             "dockerpty", "fissix", "graphviz", "html5lib", "pygments",
-            "python-gnupg", "tabulate", "yapf"
+            "python-gnupg", "ruamel.yaml", "tabulate", "yapf"
         ],
         "tests": ["aioresponses", "pytest", "requests-mock"]
     },

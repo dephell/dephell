@@ -38,4 +38,5 @@ def test_smoke_get_entrypoints():
     entrypoints = get_entrypoints(venv=FakeVenv, name='pytest')
     assert len(entrypoints) == 2
     assert {e.name for e in entrypoints} == {'pytest', 'py.test'}
-    assert {e.path for e in entrypoints} == {'pytest:main'}
+    exp = ({'pytest:main'}, {'pytest:console_main'})
+    assert {e.path for e in entrypoints} in exp
