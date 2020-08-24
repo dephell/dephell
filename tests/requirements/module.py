@@ -7,4 +7,4 @@ __all__ = ['django', 'api', 'lol', 'pytest']
 
 1 / 0
 
-import pytest  # noqa: E402
+import pytest  # noqa: E402  # isort:skip
