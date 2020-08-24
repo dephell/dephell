@@ -16,14 +16,14 @@ from ..cached_property import cached_property
 class Release:
     dependencies = None  # type: tuple
 
-    raw_name = attr.ib(type=str)
-    version = attr.ib(converter=parse)              # type: ignore
+    raw_name: str = attr.ib()
+    version: str = attr.ib(converter=parse)              # type: ignore
     time = attr.ib(repr=False)                      # upload_time
     python = attr.ib(default=None, repr=False)      # requires_python
     hashes = attr.ib(factory=tuple, repr=False)     # digests/sha256
     urls = attr.ib(factory=tuple, repr=False)       # url
 
-    extra = attr.ib(type=Optional[str], default=None)
+    extra: Optional[str] = attr.ib(default=None)
 
     def __attrs_post_init__(self) -> None:
         assert '[' not in self.raw_name, self.raw_name

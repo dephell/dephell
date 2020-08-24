@@ -8,7 +8,7 @@ REX_TOKEN = re.compile(r'^((?P<field>[a-z_]+)\:)?(?P<value>.+)$')
 
 
 class Interface(metaclass=abc.ABCMeta):
-    propagate = False
+    propagate: bool = False
 
     @abc.abstractmethod
     def get_releases(self, dep) -> tuple:
@@ -23,7 +23,7 @@ class Interface(metaclass=abc.ABCMeta):
         return self.__dict__.get('pretty_url', self.url)
 
     @pretty_url.setter
-    def pretty_url(self, url):
+    def pretty_url(self, url: str):
         self.__dict__['pretty_url'] = url
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:

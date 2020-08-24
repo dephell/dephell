@@ -42,6 +42,8 @@ class DepsCheckCommand(BaseCommand):
         data = []
         reqs = Requirement.from_graph(graph=resolver.graph, lock=True)
         for req in reqs:
+            if not req.version:
+                continue
             version = req.version.strip('=')
             # not installed
             if req.name not in installed:

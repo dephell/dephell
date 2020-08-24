@@ -1,7 +1,7 @@
 # built-in
 from itertools import product
 from logging import getLogger
-from typing import Iterable, Iterator, Optional, Sequence, Set, Tuple
+from typing import Iterable, Iterator, List, Optional, Sequence, Set, Tuple
 
 # external
 import attr
@@ -17,7 +17,7 @@ logger = getLogger('dephell.controllers')
 
 
 def lazy_product(*all_groups) -> Iterator:
-    slices = [[] for _ in range(len(all_groups))]
+    slices: List[List[str]] = [[] for _ in range(len(all_groups))]
     all_groups = [iter(groups) for groups in all_groups]
 
     while True:
@@ -62,6 +62,7 @@ class Mutator:
             self._check_not_empty,
             # self._check_soft,
         )
+        assert graph.conflict  # hint for mypy
         for check in checker:
             for groups in self.get_mutations(deps=parents):
                 if check(groups=groups, deps=parents, conflict=graph.conflict):

@@ -8,8 +8,10 @@ try:
     # external
     from setuptools import setup
 except ImportError:
+    # built-in
     from distutils.core import setup
 
+# built-in
 # built-in
 import os.path
 

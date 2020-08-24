@@ -13,13 +13,14 @@ from ..imports import lazy_import
 from ..networking import requests_session
 
 
-docker = lazy_import('docker')
-dockerpty = lazy_import('dockerpty')
-
 if TYPE_CHECKING:
     # external
     import docker
     import dockerpty
+
+
+docker = lazy_import('docker')  # noqa: F811
+dockerpty = lazy_import('dockerpty')  # noqa: F811
 
 
 DOCKER_PREFIX = 'dephell-'
@@ -142,14 +143,18 @@ class DockerContainer:
         )
 
     def stop(self) -> None:
-        self.container.stop()
+        if self.container:
+            self.container.stop()
 
     def remove(self) -> None:
-        self.stop()
-        self.container.remove(force=True)
-        for container in self.network.containers:
-            self.network.disconnect(container, force=True)
-        self.network.remove()
+        if self.container:
+            self.stop()
+            self.container.remove(force=True)
+
+        if self.network:
+            for container in self.network.containers:
+                self.network.disconnect(container, force=True)
+            self.network.remove()
 
     def exists(self) -> bool:
         if 'container' in self.__dict__:
@@ -162,6 +167,8 @@ class DockerContainer:
     def run(self, command: List[str]) -> None:
         if dockerpty is None:
             raise RuntimeError('cannot run Docker on Windows')
+        if not self.container:
+            raise RuntimeError('cannot find container')
         self.container.start()
         dockerpty.exec_command(
             client=self.client.api,

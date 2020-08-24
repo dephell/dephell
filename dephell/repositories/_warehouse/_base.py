@@ -3,7 +3,7 @@ import re
 from logging import getLogger
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Tuple
+from typing import Any, Tuple
 from urllib.parse import urlparse, urlunparse
 
 # external
@@ -29,10 +29,10 @@ REX_WORD = re.compile('[a-zA-Z]+')
 
 
 class WarehouseBaseRepo(Interface):
-    # I'm not sure how to combine `@abstractproperty` and `= attr.ib()`
-    @cached_property
-    def prereleases(self) -> bool:
-        raise NotImplementedError
+    prereleases: bool
+    url: str
+    name: str
+    auth: Any
 
     @cached_property
     def from_config(self):

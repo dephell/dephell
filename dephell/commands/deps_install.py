@@ -82,6 +82,8 @@ class DepsInstallCommand(BaseCommand):
                 install.append(req)
                 continue
             # installed the same version, skip
+            if not req.version:
+                continue
             version = req.version.strip('=')
             if version in installed[req.name]:
                 continue

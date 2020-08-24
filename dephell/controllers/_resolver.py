@@ -142,6 +142,7 @@ class Resolver:
                 ))
                 self.unapply(dep)
                 dep.group = group
+        return None
 
     def apply_envs(self, envs: set, deep: bool = True) -> None:
         """Filter out dependencies from the graph by the given envs.
@@ -191,7 +192,10 @@ class Resolver:
 
         # get only base part of python version because `packagings` drops
         # all markers for python prereleases
-        python_version = REX_BASE_VERSION.match(str(python.version)).group()
+        python_version = str(python.version)
+        match = REX_BASE_VERSION.match(python_version)
+        if match:
+            python_version = match.group()
 
         for dep in self.graph:
             if not dep.applied:

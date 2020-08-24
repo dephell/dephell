@@ -63,7 +63,7 @@ class Safety:
         return vulns
 
     def get(self, name: str, version: Union[str, Version]) -> List[SafetyVulnInfo]:
-        if type(version) is str:
+        if isinstance(version, str):
             version = Version(version)
         vulns = []
         for vuln in self.vulns.get(name, []):

@@ -3,7 +3,7 @@ import hashlib
 import subprocess
 from io import BytesIO
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict
 from urllib.parse import urlparse
 
 # external
@@ -28,7 +28,7 @@ class Uploader:
 
     @cached_property
     def hostname(self) -> str:
-        return urlparse(self.url).hostname
+        return urlparse(self.url).hostname or 'pypi.org'
 
     @staticmethod
     def _fix_url(url: str) -> str:
@@ -47,10 +47,11 @@ class Uploader:
     def _get_hashes(path: Path) -> Dict[str, str]:
         sha256_manager = hashlib.sha256()
         md5_manager = hashlib.md5()
+
+        blake2_manager: Any = None
         if hasattr(hashlib, 'blake2b'):
             blake2_manager = hashlib.blake2b(digest_size=32)
-        else:
-            blake2_manager = None
+
         with path.open('rb') as stream:
             while True:
                 data = stream.read(65536)
@@ -67,8 +68,8 @@ class Uploader:
         )
 
     @classmethod
-    def _get_file_info(cls, path: Path) -> dict:
-        result = dict()
+    def _get_file_info(cls, path: Path) -> Dict[str, str]:
+        result: Dict[str, str] = dict()
 
         # file type and python version
         if path.suffix == '.whl':
@@ -83,12 +84,12 @@ class Uploader:
         # gpg signature
         sign_path = path.with_suffix(path.suffix + '.asc')
         if sign_path.exists():
-            result['gpg_signature'] = sign_path.read_bytes()
+            result['gpg_signature'] = sign_path.read_text()
 
         return result
 
     @classmethod
-    def _get_metadata(cls, root) -> dict:
+    def _get_metadata(cls, root) -> Dict[str, Any]:
         meta = dict(
             # defaults that goes as-is on API
             comment=None,
@@ -137,7 +138,7 @@ class Uploader:
 
         for key, url in root.links.items():
             key = key[0].upper() + key[1:]
-            meta['project_urls'].append('{}, {}'.format(key, url))
+            meta['project_urls'].append('{}, {}'.format(key, url))  # type: ignore
 
         if root.python:
             meta['requires_python'] = str(root.python.peppify())

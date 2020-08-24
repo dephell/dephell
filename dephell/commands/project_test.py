@@ -98,7 +98,7 @@ class ProjectTestCommand(BaseCommand):
                 venv.create(python_path=python.path)
 
                 # copy tests
-                for path in self.config['tests']:  # type: Path # type: ignore
+                for path in self.config['tests']:  # type: Path
                     self.logger.info('copy files', extra=dict(path=path))
                     path = Path(path)
                     if not path.exists():

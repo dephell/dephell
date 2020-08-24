@@ -1,7 +1,7 @@
 # built-in
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Set, Type, Union
 from urllib.parse import urljoin, urlparse
 
 # external
@@ -31,14 +31,12 @@ def _has_api(url: str) -> bool:
 
 @attr.s()
 class RepositoriesRegistry(WarehouseBaseRepo):
-    repos = attr.ib(factory=list)
+    repos: List[WarehouseBaseRepo] = attr.ib(factory=list)
     prereleases = attr.ib(type=bool, factory=lambda: global_config['prereleases'])  # allow prereleases
     from_config = attr.ib(type=bool, default=False)
 
-    _urls = attr.ib(factory=set)
-    _names = attr.ib(factory=set)
-
-    propagate = True
+    _urls: Set[str] = attr.ib(factory=set)
+    _names: Set[str] = attr.ib(factory=set)
 
     def add_repo(self, *, url: str, name: str = None, from_config: bool = False) -> bool:
         if url in self._urls:
@@ -74,8 +72,11 @@ class RepositoriesRegistry(WarehouseBaseRepo):
             name = urlparse(url).hostname
         if name in self._names:
             return False
+        if not name:
+            name = 'pypi'
         self._names.add(name)
 
+        cls: Union[Type[WarehouseAPIRepo], Type[WarehouseSimpleRepo]]
         if _has_api(url=url):
             cls = WarehouseAPIRepo
         else:
@@ -132,23 +133,27 @@ class RepositoriesRegistry(WarehouseBaseRepo):
         return type(self)(repos=repos, prereleases=self.prereleases)
 
     def get_releases(self, dep) -> tuple:
-        first_exception = None
+        first_exception: Optional[Exception] = None
         for repo in self.repos:
             try:
                 return repo.get_releases(dep=dep)
             except PackageNotFoundError as exc:
                 if first_exception is None:
                     first_exception = exc
+        if first_exception is None:
+            raise LookupError('no repositories in registry')
         raise first_exception
 
     async def get_dependencies(self, name: str, version: str, extra: Optional[str] = None) -> tuple:
-        first_exception = None
+        first_exception: Optional[Exception] = None
         for repo in self.repos:
             try:
                 return await repo.get_dependencies(name=name, version=version, extra=extra)
             except PackageNotFoundError as exc:
                 if first_exception is None:
                     first_exception = exc
+        if first_exception is None:
+            raise LookupError('no repositories in registry')
         raise first_exception
 
     def search(self, query: Iterable[str]) -> List[Dict[str, str]]:
@@ -166,17 +171,25 @@ class RepositoriesRegistry(WarehouseBaseRepo):
     # properties
 
     @property
-    def name(self) -> str:
+    def name(self) -> str:  # type: ignore
         return self.repos[0].name
 
-    @property
-    def url(self) -> str:
+    @property  # type: ignore
+    def url(self) -> str:  # type: ignore
         return self.repos[0].url
+
+    @url.setter
+    def url(self, url: str):
+        self.repos[0].url = url
 
     @property
     def pretty_url(self) -> str:
         return self.url
 
+    @pretty_url.setter
+    def pretty_url(self, url: str):
+        self.repos[0].url = url
+
     @property
-    def propagate(self) -> bool:
+    def propagate(self) -> bool:  # type: ignore
         return self.repos[0].propagate

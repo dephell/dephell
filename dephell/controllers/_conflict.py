@@ -1,6 +1,7 @@
 # built-in
 import re
 from logging import getLogger
+from typing import Tuple
 
 # external
 from jinja2 import Environment, PackageLoader
@@ -47,6 +48,7 @@ def analyze_conflict(resolver, suffix: str = '') -> str:
         logger.warning(e.args[0])
 
     conflict = resolver.graph.conflict
+    templates: Tuple[str, ...]
     if conflict is None:
         templates = ('state.html.j2', )
     elif not resolver.graph.conflict.python_compat:
