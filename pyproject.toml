@@ -35,8 +35,8 @@ from = {format = "poetry", path = "pyproject.toml"}
 # but `dephell venv run` command will install it automatically
 command = [
     "mypy",
-    "--ignore-missing-imports", "--allow-redefinition", "--follow-imports=silent",
-    "dephell/actions", "dephell/commands", "dephell/config", "dephell/yaml.py"
+    "dephell/actions", "dephell/commands", "dephell/config",
+    "dephell/yaml.py"
 ]
 
 # Test project package in the separated venv:
