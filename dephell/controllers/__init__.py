@@ -8,7 +8,6 @@ from ._readme import Readme
 from ._repos import RepositoriesRegistry
 from ._resolver import Resolver
 from ._safety import Safety, SafetyVulnInfo
-from ._snyk import Snyk, SnykVulnInfo
 from ._uploader import Uploader
 
 
@@ -24,7 +23,5 @@ __all__ = [
     'Resolver',
     'Safety',
     'SafetyVulnInfo',
-    'Snyk',
-    'SnykVulnInfo',
     'Uploader',
 ]

@@ -8,8 +8,6 @@ This command returns non-zero code if some vulnerabilities was found, so you can
 
 [pyup.io](https://pyup.io/) provides public repository [safety-db](https://github.com/pyupio/safety-db) with all vulnerabilities in their database. DepHell uses it. This repository automatically updates every month. So, if you want to get actual reports you have to use their official solutions. They provide Safety CI that [free for Open Source](https://pyup.io/pricing/) and $30 for personal usage. If you have "Business" plan you also can get API key and use their [official CLI](https://github.com/pyupio/safety).
 
-We used [snyk.io](https://snyk.io/) before, but now they have removed RSS feed.
-
 ## Dependencies lookup
 
 1. If some package and version explicitly specified then this package will be used. Example: `dephell deps audit jinja2==2.0`.
