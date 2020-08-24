@@ -1,7 +1,7 @@
 # built-in
 from collections import ChainMap
 from logging import getLogger
-from typing import Any, Dict, TYPE_CHECKING, Iterator, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional
 
 # app
 from ..imports import lazy_import

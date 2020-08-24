@@ -1,12 +1,6 @@
-from typing import (
-    Any,
-    Callable,
-    Generic,
-    Optional,
-    Type,
-    TypeVar,
-    overload,
-)
+# built-in
+from typing import Any, Callable, Generic, Optional, Type, TypeVar, overload
+
 
 _AnyCallable = Callable[..., Any]
 
