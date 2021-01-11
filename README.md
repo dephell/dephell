@@ -1,3 +1,9 @@
+# THE PROJECT IS ARCHIVED
+
+Forks: https://github.com/orsinium/forks
+
+---
+
 # ![DepHell](./assets/logo.png)
 
 [![pypi](https://img.shields.io/pypi/v/dephell.svg)](https://pypi.python.org/pypi/dephell/)
